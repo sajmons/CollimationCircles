@@ -58,14 +58,14 @@
                 Minimum="1" Maximum="10"/>
 
               <ComboBox Width="120"
-                ToolTip.Tip="{x:Static res:Text.Color}" SelectedItem="{Binding Color}" Items="{Binding $parent[ItemsRepeater].DataContext.ColorList}">
+                ToolTip.Tip="{x:Static res:Text.Color}" SelectedItem="{Binding Color, Mode=TwoWay}" Items="{Binding $parent[ItemsRepeater].DataContext.ColorList}">
                 <ComboBox.ItemTemplate>
                   <DataTemplate>
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                      <Border >
-                        <TextBlock Background="{Binding .}" Width="16" Height="16" />
+                      <Border BorderBrush="Black" BorderThickness="1" Width="14" Height="14">
+                        <TextBlock Background="{Binding .}" Width="12" Height="12" />
                       </Border>
-                      <TextBlock Text="{Binding .}" />
+                      <TextBlock Text="{Binding ., Mode=TwoWay}" />
                     </StackPanel>
                   </DataTemplate>
                 </ComboBox.ItemTemplate>
