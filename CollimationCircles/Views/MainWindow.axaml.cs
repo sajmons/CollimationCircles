@@ -20,14 +20,14 @@ namespace CollimationCircles.Views
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                DataContext = m.Value;
+                DataContext = m.Value;                
                 InvalidateVisual();
             });
         }
 
         public override void Render(DrawingContext context)
         {
-            var vm = Ioc.Default.GetService<MainViewModel>();
+            var vm = DataContext as MainViewModel;
 
             if (vm == null)
                 return;

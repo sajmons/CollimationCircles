@@ -47,7 +47,7 @@
 
               <TextBox Width="80" Text="{Binding Label}" ToolTip.Tip="{x:Static res:Text.Label}" />
 
-              <CheckBox Name="IsCrossCheckBox" IsChecked="{Binding IsCross, Mode=TwoWay}" ToolTip.Tip="{Binding ToolTip}" />
+              <CheckBox Name="IsCrossCheckBox" IsChecked="{Binding IsCross}" ToolTip.Tip="{Binding ToolTip}" />
 
               <NumericUpDown Width="120"
                 ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"
@@ -57,15 +57,17 @@
                 ToolTip.Tip="{x:Static res:Text.Thickness}" Value="{Binding Thickness}"
                 Minimum="1" Maximum="10"/>
 
-              <ComboBox Width="120"
-                ToolTip.Tip="{x:Static res:Text.Color}" SelectedItem="{Binding Color, Mode=TwoWay}" Items="{Binding $parent[ItemsRepeater].DataContext.ColorList}">
+              <ComboBox
+                Width="120" ToolTip.Tip="{x:Static res:Text.Color}" 
+                SelectedItem="{Binding Color}"
+                Items="{Binding $parent[ItemsRepeater].DataContext.ColorList}">
                 <ComboBox.ItemTemplate>
                   <DataTemplate>
                     <StackPanel Orientation="Horizontal" Spacing="5">
                       <Border BorderBrush="Black" BorderThickness="1" Width="14" Height="14">
                         <TextBlock Background="{Binding .}" Width="12" Height="12" />
                       </Border>
-                      <TextBlock Text="{Binding ., Mode=TwoWay}" />
+                      <TextBlock Text="{Binding .}" />
                     </StackPanel>
                   </DataTemplate>
                 </ComboBox.ItemTemplate>

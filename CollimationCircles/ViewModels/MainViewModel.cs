@@ -106,15 +106,10 @@ namespace CollimationCircles.ViewModels
             items.Clear();
             items.AddRange(list);
 
-            items.CollectionChanged += Circles_CollectionChanged;
+            items.CollectionChanged += Items_CollectionChanged;
         }
 
-        private void Croses_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
-        }
-
-        private void Circles_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
         }
