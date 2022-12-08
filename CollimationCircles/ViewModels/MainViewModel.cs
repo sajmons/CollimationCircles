@@ -40,7 +40,7 @@ namespace CollimationCircles.ViewModels
         public bool showLabels = false;
 
         [ObservableProperty]
-        public ObservableCollection<MarkViewModel> marks = new();
+        public ObservableCollection<ItemViewModel> items = new();
 
         [ObservableProperty]
         public ObservableCollection<string> colorList = new();
@@ -57,18 +57,12 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeMessages()
         {
-            WeakReferenceMessenger.Default.Register<CircleChangedMessage>(this, (r, m) =>
+            WeakReferenceMessenger.Default.Register<ItemChangedMessage>(this, (r, m) =>
             {
-                var item = marks.SingleOrDefault(x => x.Id == m.Value.id);
+                var item = items.SingleOrDefault(x => x.Id == m.Value.id);
                 if (item != null)
-                {
-                    item.Thickness = m.Value.Thickness;
-                    item.Color = m.Value.Color;
-                    item.Radius = m.Value.Radius;
-                    item.IsCross = m.Value.IsCross;
-                    item.Spacing = m.Value.Spacing;
-                    item.Label = m.Value.Label;
-                    item.Rotation = m.Value.Rotation;
+                {                    
+                    item = m.Value;
                 }
 
                 WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
@@ -96,7 +90,7 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeDefaults()
         {
-            List<MarkViewModel> list = new()
+            List<ItemViewModel> list = new()
             {
                 // Circles
                 new() { Color = CColor.Orange, Radius = 10, Thickness = 1, Label = $"{Text.Circle} 1" },
@@ -109,10 +103,10 @@ namespace CollimationCircles.ViewModels
                 new() { Color = CColor.Cyan, Radius = 300, Thickness = 2, IsCross = true, Label = $"{Text.Cross} 1" }
             };
 
-            marks.Clear();
-            marks.AddRange(list);
+            items.Clear();
+            items.AddRange(list);
 
-            marks.CollectionChanged += Circles_CollectionChanged;
+            items.CollectionChanged += Circles_CollectionChanged;
         }
 
         private void Croses_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -140,13 +134,13 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void AddCircle()
         {
-            marks.Add(new MarkViewModel() { Label = $"{Text.Circle} {Marks.Count}" });
+            items.Add(new ItemViewModel() { Label = $"{Text.Circle} {Items.Count}" });
         }
 
         [RelayCommand]
-        private void RemoveCircle(MarkViewModel circle)
+        private void RemoveItem(ItemViewModel item)
         {
-            marks.Remove(circle);
+            items.Remove(item);
         }
 
         [RelayCommand]
@@ -158,7 +152,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private async Task SaveList()
         {
-            string jsonString = JsonSerializer.Serialize(marks.ToList());
+            string jsonString = JsonSerializer.Serialize(items.ToList());
 
             var settings = new SaveFileDialogSettings
             {
@@ -200,12 +194,12 @@ namespace CollimationCircles.ViewModels
 
                 if (!string.IsNullOrWhiteSpace(content))
                 {
-                    List<MarkViewModel>? list = JsonSerializer.Deserialize<List<MarkViewModel>>(content);
+                    List<ItemViewModel>? list = JsonSerializer.Deserialize<List<ItemViewModel>>(content);
 
                     if (list != null)
                     {
-                        marks.Clear();
-                        marks.AddRange(list);
+                        items.Clear();
+                        items.AddRange(list);
                     }
                     else
                     {

@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddNewMark" xml:space="preserve">
-    <value>Add new mark to list</value>
+  <data name="AddNewItem" xml:space="preserve">
+    <value>Add new item to list</value>
   </data>
   <data name="ChangeTo" xml:space="preserve">
     <value>Change to {0}</value>
@@ -138,6 +138,9 @@
   <data name="Cross" xml:space="preserve">
     <value>Cross</value>
   </data>
+  <data name="ItemType" xml:space="preserve">
+    <value>Item type</value>
+  </data>
   <data name="Json" xml:space="preserve">
     <value>json</value>
   </data>
@@ -147,14 +150,11 @@
   <data name="Label" xml:space="preserve">
     <value>Label</value>
   </data>
-  <data name="ListOfMarks" xml:space="preserve">
-    <value>List of Marks</value>
+  <data name="ListOfItems" xml:space="preserve">
+    <value>List of items</value>
   </data>
   <data name="LoadList" xml:space="preserve">
     <value>Load list from JSON file</value>
-  </data>
-  <data name="MarkType" xml:space="preserve">
-    <value>Mark Type</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>
@@ -162,10 +162,10 @@
   <data name="Radius" xml:space="preserve">
     <value>Radius</value>
   </data>
-  <data name="RemoveMark" xml:space="preserve">
-    <value>Remove mark from list</value>
+  <data name="RemoveItem" xml:space="preserve">
+    <value>Remove item from list</value>
   </data>
-  <data name="ResetMarks" xml:space="preserve">
+  <data name="ResetItems" xml:space="preserve">
     <value>Reset list to default values</value>
   </data>
   <data name="Rotation" xml:space="preserve">
@@ -196,6 +196,6 @@
     <value>Tickness</value>
   </data>
   <data name="UnableToOpenFile" xml:space="preserve">
-    <value>Unable to open file.</value>
+    <value>Unable to open file</value>
   </data>
 </root>

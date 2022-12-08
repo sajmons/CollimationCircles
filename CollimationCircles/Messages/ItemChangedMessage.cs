@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace CollimationCircles.Messages
 {
-    public class CircleChangedMessage : ValueChangedMessage<MarkViewModel>
+    public class ItemChangedMessage : ValueChangedMessage<ItemViewModel>
     {
-        public CircleChangedMessage(MarkViewModel settings) : base(settings)
+        public ItemChangedMessage(ItemViewModel settings) : base(settings)
         {
         }
     }

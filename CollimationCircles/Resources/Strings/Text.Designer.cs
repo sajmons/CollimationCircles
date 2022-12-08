@@ -61,11 +61,11 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add new mark to list.
+        ///   Looks up a localized string similar to Add new item to list.
         /// </summary>
-        public static string AddNewMark {
+        public static string AddNewItem {
             get {
-                return ResourceManager.GetString("AddNewMark", resourceCulture);
+                return ResourceManager.GetString("AddNewItem", resourceCulture);
             }
         }
         
@@ -124,6 +124,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item type.
+        /// </summary>
+        public static string ItemType {
+            get {
+                return ResourceManager.GetString("ItemType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to json.
         /// </summary>
         public static string Json {
@@ -151,11 +160,11 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to List of Marks.
+        ///   Looks up a localized string similar to List of items.
         /// </summary>
-        public static string ListOfMarks {
+        public static string ListOfItems {
             get {
-                return ResourceManager.GetString("ListOfMarks", resourceCulture);
+                return ResourceManager.GetString("ListOfItems", resourceCulture);
             }
         }
         
@@ -165,15 +174,6 @@ namespace CollimationCircles.Resources.Strings {
         public static string LoadList {
             get {
                 return ResourceManager.GetString("LoadList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Mark Type.
-        /// </summary>
-        public static string MarkType {
-            get {
-                return ResourceManager.GetString("MarkType", resourceCulture);
             }
         }
         
@@ -196,20 +196,20 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove mark from list.
+        ///   Looks up a localized string similar to Remove item from list.
         /// </summary>
-        public static string RemoveMark {
+        public static string RemoveItem {
             get {
-                return ResourceManager.GetString("RemoveMark", resourceCulture);
+                return ResourceManager.GetString("RemoveItem", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Reset list to default values.
         /// </summary>
-        public static string ResetMarks {
+        public static string ResetItems {
             get {
-                return ResourceManager.GetString("ResetMarks", resourceCulture);
+                return ResourceManager.GetString("ResetItems", resourceCulture);
             }
         }
         
@@ -295,7 +295,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to open file..
+        ///   Looks up a localized string similar to Unable to open file.
         /// </summary>
         public static string UnableToOpenFile {
             get {

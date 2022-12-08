@@ -32,63 +32,63 @@ namespace CollimationCircles.Views
             if (vm == null)
                 return;
 
-            foreach (MarkViewModel mark in vm.Marks)
+            foreach (ItemViewModel item in vm.Items)
             {
-                var halfCrossSpacing = mark.Spacing / 2;
-                var w = mark.Radius;
+                var halfCrossSpacing = item.Spacing / 2;
+                var w = item.Radius;
                 var width2 = Width / 2;
                 var height2 = Height / 2;
                 var centerX = width2 - halfCrossSpacing;
                 var centerY = height2 - halfCrossSpacing;
 
-                var brush = new SolidColorBrush(Color.Parse(mark.Color ?? CColor.Orange));
+                var brush = new SolidColorBrush(Color.Parse(item.Color ?? CColor.Orange));
 
-                var pen = new Pen(brush, mark.Thickness);
+                var pen = new Pen(brush, item.Thickness);
 
                 Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
                 Matrix translate = Matrix.CreateTranslation(width2, height2);
 
                 using (context.PushPreTransform(translate.Invert() * scale * translate))
                 {
-                    if (mark.IsCross)
+                    if (item.IsCross)
                     {
-                        Matrix rotate = Matrix.CreateRotation(mark.Rotation * Math.PI / 180);
+                        Matrix rotate = Matrix.CreateRotation(item.Rotation * Math.PI / 180);
 
                         using (context.PushPreTransform(translate.Invert() * rotate * translate))
                         {
-                            context.DrawRectangle(pen, new Rect(centerX - w, centerY, 2 * w + mark.Spacing, mark.Spacing));
-                            context.DrawRectangle(pen, new Rect(centerX, centerY - w, mark.Spacing, 2 * w + mark.Spacing));
+                            context.DrawRectangle(pen, new Rect(centerX - w, centerY, 2 * w + item.Spacing, item.Spacing));
+                            context.DrawRectangle(pen, new Rect(centerX, centerY - w, item.Spacing, 2 * w + item.Spacing));
 
                             if (vm.ShowLabels)
                             {
                                 var formattedText = new FormattedText(
-                                    mark.Label,
+                                    item.Label,
                                     Typeface.Default,
                                     15,
                                     TextAlignment.Center,
                                     TextWrapping.NoWrap,
                                     new Size(Width, Bounds.Height));
 
-                                context.DrawText(brush, new Point(0, height2 - mark.Radius), formattedText);
+                                context.DrawText(brush, new Point(0, height2 - item.Radius), formattedText);
                             }
                         }
                     }
                     else
                     {
-                        context.DrawEllipse(Brushes.Transparent, new Pen(brush, mark.Thickness), new Point(width2, height2), mark.Radius, mark.Radius);
+                        context.DrawEllipse(Brushes.Transparent, new Pen(brush, item.Thickness), new Point(width2, height2), item.Radius, item.Radius);
 
                         if (vm.ShowLabels)
                         {
 
                             var formattedText = new FormattedText(
-                                mark.Label,
+                                item.Label,
                                 Typeface.Default,
                                 15,
                                 TextAlignment.Center,
                                 TextWrapping.NoWrap,
                                 new Size(Width, Bounds.Height));
 
-                            context.DrawText(brush, new Point(0, height2 - mark.Radius), formattedText);
+                            context.DrawText(brush, new Point(0, height2 - item.Radius), formattedText);
 
                         }
                     }                    

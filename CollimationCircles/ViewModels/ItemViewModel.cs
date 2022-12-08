@@ -1,5 +1,4 @@
-﻿using Avalonia.Media;
-using CollimationCircles.Extensions;
+﻿using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
@@ -11,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CollimationCircles.ViewModels
 {
-    public partial class MarkViewModel : BaseViewModel
+    public partial class ItemViewModel : BaseViewModel
     {
         [ObservableProperty]
         public Guid id = Guid.NewGuid();
@@ -46,7 +45,7 @@ namespace CollimationCircles.ViewModels
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new CircleChangedMessage(this));
+            WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
         }
 
         partial void OnIsCrossChanged(bool value)

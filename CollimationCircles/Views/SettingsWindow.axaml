@@ -11,10 +11,10 @@
         Height="400">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
-      <Button Padding="0" Command="{Binding AddCircleCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.AddNewMark}">
+      <Button Padding="0" Command="{Binding AddCircleCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
         <Image Source="/Resources/Images/ic_add.png" Width="30"/>
       </Button>
-      <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetMarks}">
+      <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
         <Image Source="/Resources/Images/ic_reset.png" Width="30"/>
       </Button>
       <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
@@ -29,7 +29,7 @@
       <CheckBox IsChecked="{Binding ShowLabels}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
     </StackPanel>
     <ScrollViewer HorizontalAlignment="Stretch">
-      <ItemsRepeater  Items="{Binding Marks}">
+      <ItemsRepeater  Items="{Binding Items}">
         <ItemsRepeater.Layout>
           <StackLayout Orientation="Vertical" />
         </ItemsRepeater.Layout>
@@ -39,9 +39,9 @@
             <StackPanel Orientation="Horizontal" Spacing="5">
               <Button
                 Width="30" Padding="0"
-                Command="{Binding $parent[ItemsRepeater].DataContext.RemoveCircleCommand}" CommandParameter="{Binding .}"
+                Command="{Binding $parent[ItemsRepeater].DataContext.RemoveItemCommand}" CommandParameter="{Binding .}"
                 VerticalAlignment="Center"
-                ToolTip.Tip="{x:Static res:Text.RemoveMark}">
+                ToolTip.Tip="{x:Static res:Text.RemoveItem}">
                 <Image Source="/Resources/Images/ic_remove.png" />
               </Button>
 
