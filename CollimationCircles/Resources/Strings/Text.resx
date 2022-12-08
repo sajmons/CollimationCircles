@@ -120,6 +120,9 @@
   <data name="AddNewMark" xml:space="preserve">
     <value>Add new mark to list</value>
   </data>
+  <data name="Circle" xml:space="preserve">
+    <value>Circle</value>
+  </data>
   <data name="CollimationCircles" xml:space="preserve">
     <value>Collimation Circles</value>
   </data>
@@ -129,6 +132,18 @@
   <data name="Color" xml:space="preserve">
     <value>Color</value>
   </data>
+  <data name="Cross" xml:space="preserve">
+    <value>Cross</value>
+  </data>
+  <data name="Json" xml:space="preserve">
+    <value>json</value>
+  </data>
+  <data name="JSONDocuments" xml:space="preserve">
+    <value>JSON Documents</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
   <data name="ListOfMarks" xml:space="preserve">
     <value>List of Marks</value>
   </data>
@@ -137,6 +152,9 @@
   </data>
   <data name="MarkType" xml:space="preserve">
     <value>Mark Type</value>
+  </data>
+  <data name="OpenFile" xml:space="preserve">
+    <value>Open file</value>
   </data>
   <data name="Radius" xml:space="preserve">
     <value>Radius</value>
@@ -150,11 +168,20 @@
   <data name="Rotation" xml:space="preserve">
     <value>Rotation</value>
   </data>
+  <data name="SaveFile" xml:space="preserve">
+    <value>Save file</value>
+  </data>
   <data name="SaveList" xml:space="preserve">
     <value>Save list to JSON file</value>
   </data>
+  <data name="Scale" xml:space="preserve">
+    <value>Scale</value>
+  </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="ShowLabels" xml:space="preserve">
+    <value>Show Labels</value>
   </data>
   <data name="Size" xml:space="preserve">
     <value>Size</value>
@@ -164,5 +191,8 @@
   </data>
   <data name="Thickness" xml:space="preserve">
     <value>Tickness</value>
+  </data>
+  <data name="UnableToOpenFile" xml:space="preserve">
+    <value>Unable to open file.</value>
   </data>
 </root>

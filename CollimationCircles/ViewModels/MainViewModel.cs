@@ -1,14 +1,17 @@
-﻿using CollimationCircles.Messages;
+﻿using Avalonia.Media;
+using CollimationCircles.Messages;
 using CollimationCircles.Resources.Strings;
 using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DynamicData;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -29,10 +32,17 @@ namespace CollimationCircles.ViewModels
         public double height = 600;
 
         [ObservableProperty]
+        [Range(0.0, 5.0)]
+        public double scale = 1.0;
+
+        [ObservableProperty]
+        public bool showLabels = true;
+
+        [ObservableProperty]
         public ObservableCollection<MarkViewModel> marks = new();
 
         [ObservableProperty]
-        public ObservableCollection<string> colors = new();
+        public ObservableCollection<string> colorList = new();
         
         public MainViewModel(IDialogService dialogService)
         {
@@ -54,6 +64,10 @@ namespace CollimationCircles.ViewModels
                     item.Thickness = m.Value.Thickness;
                     item.Color = m.Value.Color;
                     item.Radius = m.Value.Radius;
+                    item.IsCross = m.Value.IsCross;
+                    item.Spacing = m.Value.Spacing;
+                    item.Label = m.Value.Label;
+                    item.Rotation = m.Value.Rotation;
                 }
 
                 WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
@@ -64,31 +78,37 @@ namespace CollimationCircles.ViewModels
         {
             List<string> c = new()
             {
-                "Red",
-                "Blue",
-                "Green",
-                "Yellow",
-                "Magenta",
-                "Cyan"
+                Colors.Red.ToString(),
+                Colors.Blue.ToString(),
+                Colors.Green.ToString(),
+                Colors.Yellow.ToString(),
+                Colors.Magenta.ToString(),
+                Colors.Cyan.ToString(),
+                Colors.Lime.ToString(),
+                Colors.Tomato.ToString(),
+                Colors.Gold.ToString()
             };
 
-            colors = new ObservableCollection<string>(c);
+            colorList = new ObservableCollection<string>(c);
         }
 
         private void InitializeDefaults()
         {
             List<MarkViewModel> list = new()
             {
-                new() { Color = "Red", Radius = 10, Thickness = 1 },
-                new() { Color = "Green", Radius = 50, Thickness = 2 },
-                new() { Color = "Blue", Radius = 100, Thickness = 3 },
-                new() { Color = "Yellow", Radius = 200, Thickness = 4 },
-                new() { Color = "Magenta", Radius = 300, Thickness = 5 },
+                // Circles
+                new() { Color = Colors.Red.ToString(), Radius = 10, Thickness = 1, Label = $"{Text.Circle} 1" },
+                new() { Color = Colors.Green.ToString(), Radius = 50, Thickness = 2, Label = $"{Text.Circle} 2" },
+                new() { Color = Colors.Blue.ToString(), Radius = 100, Thickness = 3, Label = $"{Text.Circle} 3" },
+                new() { Color = Colors.Yellow.ToString(), Radius = 200, Thickness = 4, Label = $"{Text.Circle} 4" },
+                new() { Color = Colors.Magenta.ToString(), Radius = 300, Thickness = 5, Label = $"{Text.Circle} 5" },
 
-                new() { Color = "Cyan", Radius = 300, Thickness = 2, IsCross = true }
+                // Crosses
+                new() { Color = Colors.Cyan.ToString(), Radius = 300, Thickness = 2, IsCross = true, Label = $"{Text.Cross} 1" }
             };
 
-            marks = new ObservableCollection<MarkViewModel>(list);
+            marks.Clear();
+            marks.AddRange(list);
 
             marks.CollectionChanged += Circles_CollectionChanged;
         }
@@ -105,7 +125,7 @@ namespace CollimationCircles.ViewModels
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            //WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
+            WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
         }
 
         [RelayCommand]
@@ -125,7 +145,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void AddCircle()
         {
-            marks.Add(new MarkViewModel());
+            marks.Add(new MarkViewModel() { Label = $"{Text.Circle} {Marks.Count}" });
         }
 
         [RelayCommand]
@@ -147,13 +167,13 @@ namespace CollimationCircles.ViewModels
 
             var settings = new SaveFileDialogSettings
             {
-                Title = "Save file",
+                Title = Text.SaveFile,
                 InitialDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter("JSON Documents", new[] { "json" }),
+                    new FileFilter(Text.JSONDocuments, new[] { Text.Json }),
                 },
-                DefaultExtension = "json"
+                DefaultExtension = Text.Json
             };
 
             var result = await dialogService.ShowSaveFileDialogAsync(this, settings);
@@ -169,16 +189,11 @@ namespace CollimationCircles.ViewModels
         {
             var settings = new OpenFileDialogSettings
             {
-                Title = "Open file",
+                Title = Text.OpenFile,
                 InitialDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter(
-                        "JSON Documents",
-                        new[]
-                        {
-                            "json"
-                        })
+                    new FileFilter(Text.JSONDocuments, new[] { Text.Json })
                 }
             };
 
@@ -194,12 +209,12 @@ namespace CollimationCircles.ViewModels
 
                     if (list != null)
                     {
-                        marks = new ObservableCollection<MarkViewModel>(list);
-                        marks.CollectionChanged += Circles_CollectionChanged;
+                        marks.Clear();
+                        marks.AddRange(list);                        
                     }
                     else
                     {
-                        await dialogService.ShowMessageBoxAsync(this, "Unable to open file.");
+                        await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile);
                     }
                 }
             }

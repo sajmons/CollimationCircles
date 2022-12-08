@@ -70,6 +70,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Circle.
+        /// </summary>
+        public static string Circle {
+            get {
+                return ResourceManager.GetString("Circle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Collimation Circles.
         /// </summary>
         public static string CollimationCircles {
@@ -97,6 +106,42 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cross.
+        /// </summary>
+        public static string Cross {
+            get {
+                return ResourceManager.GetString("Cross", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to json.
+        /// </summary>
+        public static string Json {
+            get {
+                return ResourceManager.GetString("Json", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JSON Documents.
+        /// </summary>
+        public static string JSONDocuments {
+            get {
+                return ResourceManager.GetString("JSONDocuments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Label.
+        /// </summary>
+        public static string Label {
+            get {
+                return ResourceManager.GetString("Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to List of Marks.
         /// </summary>
         public static string ListOfMarks {
@@ -120,6 +165,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string MarkType {
             get {
                 return ResourceManager.GetString("MarkType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open file.
+        /// </summary>
+        public static string OpenFile {
+            get {
+                return ResourceManager.GetString("OpenFile", resourceCulture);
             }
         }
         
@@ -160,6 +214,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Save file.
+        /// </summary>
+        public static string SaveFile {
+            get {
+                return ResourceManager.GetString("SaveFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save list to JSON file.
         /// </summary>
         public static string SaveList {
@@ -169,11 +232,29 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Scale.
+        /// </summary>
+        public static string Scale {
+            get {
+                return ResourceManager.GetString("Scale", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Labels.
+        /// </summary>
+        public static string ShowLabels {
+            get {
+                return ResourceManager.GetString("ShowLabels", resourceCulture);
             }
         }
         
@@ -201,6 +282,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string Thickness {
             get {
                 return ResourceManager.GetString("Thickness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to open file..
+        /// </summary>
+        public static string UnableToOpenFile {
+            get {
+                return ResourceManager.GetString("UnableToOpenFile", resourceCulture);
             }
         }
     }

@@ -14,7 +14,7 @@ namespace CollimationCircles.Views
     {
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
 
             DataContext = Ioc.Default.GetService<MainViewModel>();
 
@@ -22,7 +22,7 @@ namespace CollimationCircles.Views
             {
                 DataContext = m.Value;
                 InvalidateVisual();
-            });            
+            });
         }
 
         public override void Render(DrawingContext context)
@@ -30,7 +30,7 @@ namespace CollimationCircles.Views
             var vm = Ioc.Default.GetService<MainViewModel>();
 
             if (vm == null)
-                return;            
+                return;
 
             foreach (MarkViewModel mark in vm.Marks)
             {
@@ -41,24 +41,57 @@ namespace CollimationCircles.Views
                 var centerX = width2 - halfCrossSpacing;
                 var centerY = height2 - halfCrossSpacing;
 
-                var brush = new SolidColorBrush(Color.Parse(mark.Color ?? "Red"));
+                var brush = new SolidColorBrush(Color.Parse(mark.Color ?? Colors.Red.ToString()));
 
                 var pen = new Pen(brush, mark.Thickness);
 
-                if (mark.IsCross)
-                {
-                    Matrix translate = Matrix.CreateTranslation(width2, height2);
-                    Matrix rotate = Matrix.CreateRotation(mark.Rotation * Math.PI / 180);
+                Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
+                Matrix translate = Matrix.CreateTranslation(width2, height2);
 
-                    using (context.PushPreTransform(translate.Invert() * rotate * translate))
-                    {
-                        context.DrawRectangle(pen, new Rect(centerX - w, centerY, 2 * w + mark.Spacing, mark.Spacing));
-                        context.DrawRectangle(pen, new Rect(centerX, centerY - w, mark.Spacing, 2 * w + mark.Spacing));
-                    }
-                }
-                else
+                using (context.PushPreTransform(translate.Invert() * scale * translate))
                 {
-                    context.DrawEllipse(Brushes.Transparent, new Pen(brush, mark.Thickness), new Point(width2, height2), mark.Radius, mark.Radius);
+                    if (mark.IsCross)
+                    {
+                        Matrix rotate = Matrix.CreateRotation(mark.Rotation * Math.PI / 180);
+
+                        using (context.PushPreTransform(translate.Invert() * rotate * translate))
+                        {
+                            context.DrawRectangle(pen, new Rect(centerX - w, centerY, 2 * w + mark.Spacing, mark.Spacing));
+                            context.DrawRectangle(pen, new Rect(centerX, centerY - w, mark.Spacing, 2 * w + mark.Spacing));
+
+                            if (vm.ShowLabels)
+                            {
+                                var formattedText = new FormattedText(
+                                    mark.Label,
+                                    Typeface.Default,
+                                    15,
+                                    TextAlignment.Center,
+                                    TextWrapping.NoWrap,
+                                    new Size(Width, Bounds.Height));
+
+                                context.DrawText(brush, new Point(0, height2 - mark.Radius), formattedText);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        context.DrawEllipse(Brushes.Transparent, new Pen(brush, mark.Thickness), new Point(width2, height2), mark.Radius, mark.Radius);
+
+                        if (vm.ShowLabels)
+                        {
+
+                            var formattedText = new FormattedText(
+                                mark.Label,
+                                Typeface.Default,
+                                15,
+                                TextAlignment.Center,
+                                TextWrapping.NoWrap,
+                                new Size(Width, Bounds.Height));
+
+                            context.DrawText(brush, new Point(0, height2 - mark.Radius), formattedText);
+
+                        }
+                    }                    
                 }
             }
         }

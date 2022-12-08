@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using CollimationCircles.Messages;
+using CollimationCircles.Resources.Strings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
@@ -14,7 +15,7 @@ namespace CollimationCircles.ViewModels
         public Guid id = Guid.NewGuid();
 
         [ObservableProperty]
-        public string color = "Red";
+        public string color = Colors.Red.ToString();
 
         [ObservableProperty]
         [Range(1, 10)]
@@ -37,7 +38,10 @@ namespace CollimationCircles.ViewModels
         public bool isCross = false;
 
         [ObservableProperty]
-        public string opositeType = "Cross";        
+        public string label = string.Empty;
+
+        [ObservableProperty]
+        public string opositeType = Text.Cross;
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -46,7 +50,7 @@ namespace CollimationCircles.ViewModels
 
         partial void OnIsCrossChanged(bool value)
         {
-            OpositeType = IsCross ? "Circle" : "Cross";
+            OpositeType = value ? Text.Circle : Text.Cross;            
         }
     }
 }
