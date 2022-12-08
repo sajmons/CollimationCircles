@@ -1,0 +1,21 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CollimationCircles.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CollimationCircles.Views.MainWindow"
+        Icon="/Resources/Images/ic_launcher.png"
+        Title="{Binding Title}"
+        TransparencyBackgroundFallback="Transparent"
+        Background="{x:Null}"
+        Width="{Binding Width, Mode=TwoWay}"
+        Height="{Binding Height, Mode=TwoWay}">
+  <Button 
+    HorizontalAlignment="Right" 
+    VerticalAlignment="Top"    
+    Width="64" Command="{Binding SettingsButtonCommand}">
+    <Image Source="/Resources/Images/ic_settings.png" />
+  </Button>
+</Window>

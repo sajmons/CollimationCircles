@@ -1,0 +1,85 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CollimationCircles.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="CollimationCircles.Views.SettingsWindow"
+        Title="{Binding Title}"
+        Width="720"
+        Height="400">
+  <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
+      <TextBlock Text="{x:Static res:Text.ListOfMarks}" VerticalAlignment="Center"/>
+      <Button Padding="0" Command="{Binding AddCircleCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.AddNewMark}">
+        <Image Source="/Resources/Images/ic_add.png" Width="30"/>
+      </Button>
+      <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetMarks}">
+        <Image Source="/Resources/Images/ic_reset.png" Width="30"/>
+      </Button>
+      <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
+        <Image Source="/Resources/Images/ic_file_download.png" Width="30"/>
+      </Button>
+      <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
+        <Image Source="/Resources/Images/ic_file_upload.png" Width="30"/>
+      </Button>
+    </StackPanel>
+    <ScrollViewer HorizontalAlignment="Stretch">
+      <ItemsRepeater  Items="{Binding Marks}">
+        <ItemsRepeater.Layout>
+          <StackLayout Orientation="Vertical" />
+        </ItemsRepeater.Layout>
+        <ItemsRepeater.ItemTemplate>
+          <DataTemplate>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <Button
+                Width="30" Padding="0" 
+                Command="{Binding $parent[ItemsRepeater].DataContext.RemoveCircleCommand}" CommandParameter="{Binding .}"
+                VerticalAlignment="Center"
+                ToolTip.Tip="{x:Static res:Text.RemoveMark}">
+                <Image Source="/Resources/Images/ic_remove.png" />
+              </Button>
+
+              <CheckBox IsChecked="{Binding IsCross, Mode=TwoWay}" ToolTip.Tip="{Binding Path=OpositeType, StringFormat=Change to {0}}" />
+              
+              <NumericUpDown Width="120"
+                ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius, Mode=TwoWay}"
+                Minimum="0" Maximum="2000" />
+              
+              <NumericUpDown Width="100"
+                ToolTip.Tip="{x:Static res:Text.Thickness}" Value="{Binding Thickness, Mode=TwoWay}"
+                Minimum="1" Maximum="10"/>
+              
+              <ComboBox Width="100"
+                ToolTip.Tip="{x:Static res:Text.Color}" SelectedItem="{Binding Color}" Items="{Binding $parent[ItemsRepeater].DataContext.Colors}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="5">
+                      <TextBlock Background="{Binding .}" Width="16" Height="16" />
+                      <TextBlock Text="{Binding .}" />
+                    </StackPanel>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+
+              <StackPanel IsVisible="{Binding IsCross}" Orientation="Horizontal" Spacing="10">
+                
+                <NumericUpDown Width="120"
+                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding Rotation, Mode=TwoWay}"
+                  Minimum="0" Maximum="90" />
+                
+                <NumericUpDown Width="120"
+                  ToolTip.Tip="{x:Static res:Text.Spacing}" Value="{Binding Spacing, Mode=TwoWay}"
+                  Minimum="1" Maximum="30"/>
+              </StackPanel>
+              
+            </StackPanel>
+
+          </DataTemplate>
+        </ItemsRepeater.ItemTemplate>
+      </ItemsRepeater>
+    </ScrollViewer>
+  </StackPanel>
+</Window>
