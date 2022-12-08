@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
 using CollimationCircles.Messages;
+using CollimationCircles.Models;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
@@ -41,7 +42,7 @@ namespace CollimationCircles.Views
                 var centerX = width2 - halfCrossSpacing;
                 var centerY = height2 - halfCrossSpacing;
 
-                var brush = new SolidColorBrush(Color.Parse(mark.Color ?? Colors.Red.ToString()));
+                var brush = new SolidColorBrush(Color.Parse(mark.Color ?? CColor.Orange));
 
                 var pen = new Pen(brush, mark.Thickness);
 

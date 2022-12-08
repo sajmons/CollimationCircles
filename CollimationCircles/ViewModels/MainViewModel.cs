@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using CollimationCircles.Messages;
+using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
 using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -78,15 +79,16 @@ namespace CollimationCircles.ViewModels
         {
             List<string> c = new()
             {
-                Colors.Red.ToString(),
-                Colors.Blue.ToString(),
-                Colors.Green.ToString(),
-                Colors.Yellow.ToString(),
-                Colors.Magenta.ToString(),
-                Colors.Cyan.ToString(),
-                Colors.Lime.ToString(),
-                Colors.Tomato.ToString(),
-                Colors.Gold.ToString()
+                CColor.Orange,
+                CColor.LightBlue,
+                CColor.LightGreen,
+                CColor.Yellow,
+                CColor.Fuchsia,
+                CColor.Cyan,
+                CColor.Lime,
+                CColor.Tomato,
+                CColor.Gold,
+                CColor.White
             };
 
             colorList = new ObservableCollection<string>(c);
@@ -97,14 +99,14 @@ namespace CollimationCircles.ViewModels
             List<MarkViewModel> list = new()
             {
                 // Circles
-                new() { Color = Colors.Red.ToString(), Radius = 10, Thickness = 1, Label = $"{Text.Circle} 1" },
-                new() { Color = Colors.Green.ToString(), Radius = 50, Thickness = 2, Label = $"{Text.Circle} 2" },
-                new() { Color = Colors.Blue.ToString(), Radius = 100, Thickness = 3, Label = $"{Text.Circle} 3" },
-                new() { Color = Colors.Yellow.ToString(), Radius = 200, Thickness = 4, Label = $"{Text.Circle} 4" },
-                new() { Color = Colors.Magenta.ToString(), Radius = 300, Thickness = 5, Label = $"{Text.Circle} 5" },
+                new() { Color = CColor.Orange, Radius = 10, Thickness = 1, Label = $"{Text.Circle} 1" },
+                new() { Color = CColor.LightGreen, Radius = 50, Thickness = 2, Label = $"{Text.Circle} 2" },
+                new() { Color = CColor.LightBlue, Radius = 100, Thickness = 3, Label = $"{Text.Circle} 3" },
+                new() { Color = CColor.Yellow, Radius = 200, Thickness = 4, Label = $"{Text.Circle} 4" },
+                new() { Color = CColor.Fuchsia, Radius = 300, Thickness = 5, Label = $"{Text.Circle} 5" },
 
                 // Crosses
-                new() { Color = Colors.Cyan.ToString(), Radius = 300, Thickness = 2, IsCross = true, Label = $"{Text.Cross} 1" }
+                new() { Color = CColor.Cyan, Radius = 300, Thickness = 2, IsCross = true, Label = $"{Text.Cross} 1" }
             };
 
             marks.Clear();

@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media;
 using CollimationCircles.Messages;
+using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -15,7 +16,7 @@ namespace CollimationCircles.ViewModels
         public Guid id = Guid.NewGuid();
 
         [ObservableProperty]
-        public string color = Colors.Red.ToString();
+        public string color = CColor.Orange;
 
         [ObservableProperty]
         [Range(1, 10)]
