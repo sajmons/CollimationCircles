@@ -120,6 +120,9 @@
   <data name="AddNewMark" xml:space="preserve">
     <value>Add new mark to list</value>
   </data>
+  <data name="ChangeTo" xml:space="preserve">
+    <value>Change to {0}</value>
+  </data>
   <data name="Circle" xml:space="preserve">
     <value>Circle</value>
   </data>

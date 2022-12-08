@@ -1,4 +1,5 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
@@ -24,7 +25,6 @@ namespace CollimationCircles.ViewModels
     public partial class MainViewModel : BaseViewModel
     {
         private readonly IDialogService dialogService;
-        private static SettingsWindow? settingsWindow;
 
         [ObservableProperty]
         public double width = 600;
@@ -37,14 +37,14 @@ namespace CollimationCircles.ViewModels
         public double scale = 1.0;
 
         [ObservableProperty]
-        public bool showLabels = true;
+        public bool showLabels = false;
 
         [ObservableProperty]
         public ObservableCollection<MarkViewModel> marks = new();
 
         [ObservableProperty]
         public ObservableCollection<string> colorList = new();
-        
+
         public MainViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
@@ -133,15 +133,8 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void SettingsButton()
         {
-            if (settingsWindow == null)
-            {
-                settingsWindow = new SettingsWindow();
-                settingsWindow.Show();
-            }
-            else if(!settingsWindow.IsVisible)
-            {
-                settingsWindow.Show();
-            }
+            var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+            new SettingsWindow().ShowDialog(mainWindow);
         }
 
         [RelayCommand]
@@ -212,7 +205,7 @@ namespace CollimationCircles.ViewModels
                     if (list != null)
                     {
                         marks.Clear();
-                        marks.AddRange(list);                        
+                        marks.AddRange(list);
                     }
                     else
                     {

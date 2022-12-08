@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CollimationCircles.Views
 {

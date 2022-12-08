@@ -47,7 +47,7 @@
 
               <TextBox Width="80" Text="{Binding Label}" ToolTip.Tip="{x:Static res:Text.Label}" />
 
-              <CheckBox IsChecked="{Binding IsCross}" ToolTip.Tip="{Binding Path=OpositeType, StringFormat=Change to {0}}" />
+              <CheckBox Name="IsCrossCheckBox" IsChecked="{Binding IsCross, Mode=TwoWay}" ToolTip.Tip="{Binding ToolTip}" />
 
               <NumericUpDown Width="120"
                 ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"
@@ -62,14 +62,16 @@
                 <ComboBox.ItemTemplate>
                   <DataTemplate>
                     <StackPanel Orientation="Horizontal" Spacing="5">
-                      <TextBlock Background="{Binding .}" Width="16" Height="16" />
+                      <Border >
+                        <TextBlock Background="{Binding .}" Width="16" Height="16" />
+                      </Border>
                       <TextBlock Text="{Binding .}" />
                     </StackPanel>
                   </DataTemplate>
                 </ComboBox.ItemTemplate>
-              </ComboBox>              
+              </ComboBox>
 
-              <StackPanel IsVisible="{Binding IsCross}" Orientation="Horizontal" Spacing="10">
+              <StackPanel IsVisible="{Binding ElementName=IsCrossCheckBox, Path=IsChecked}" Orientation="Horizontal" Spacing="5">
 
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding Rotation}"
@@ -78,7 +80,7 @@
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Spacing}" Value="{Binding Spacing}"
                   Minimum="1" Maximum="30"/>
-              </StackPanel>              
+              </StackPanel>
 
             </StackPanel>
 

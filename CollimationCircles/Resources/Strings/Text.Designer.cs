@@ -70,6 +70,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change to {0}.
+        /// </summary>
+        public static string ChangeTo {
+            get {
+                return ResourceManager.GetString("ChangeTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Circle.
         /// </summary>
         public static string Circle {

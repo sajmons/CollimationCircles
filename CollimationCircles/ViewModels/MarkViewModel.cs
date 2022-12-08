@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
@@ -35,14 +36,13 @@ namespace CollimationCircles.ViewModels
         public double rotation = 45;
 
         [ObservableProperty]
-        [Range(0, 90)]
         public bool isCross = false;
 
         [ObservableProperty]
         public string label = string.Empty;
 
         [ObservableProperty]
-        public string opositeType = Text.Cross;
+        public string toolTip = string.Empty;
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -51,7 +51,7 @@ namespace CollimationCircles.ViewModels
 
         partial void OnIsCrossChanged(bool value)
         {
-            OpositeType = value ? Text.Circle : Text.Cross;            
+            ToolTip = Text.ChangeTo.F(IsCross ? Text.Circle : Text.Cross);
         }
     }
 }
