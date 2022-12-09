@@ -5,6 +5,7 @@ This program was inspired by Mire De Collimation program written by Gilbert Gril
 Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can run on multiple platforms like Windows, Linux and Mac OS.
 
 # Features
+
 - support multiple shapes (circle, cross, screws)
 - user interface for managing list of shapes
 - scaling up or down of whole setup
@@ -18,6 +19,21 @@ Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can ru
 
 # Instalation
 
-# Build from source
+You need to download and install .NET 6 to run this program.
+https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+
+Install scripts
+https://dotnet.microsoft.com/en-us/download/dotnet/scripts
+
+Clonning source from git
+git clone https://github.com/sajmons/CollimationCircles.git
+
+# Runing
+
+- go to folder where GIT downloaded source. 
+- go to CollimationCircles subfolder
+- type dotnet run
 
 # Binnary packages
+
+Work in progress
