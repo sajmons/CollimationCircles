@@ -2,7 +2,7 @@
 
 This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. 
 
-Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can run on multiple platforms like Windows, Linux and Mac OS.
+Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can run on multiple platforms like Windows, Linux and macOS.
 
 # Features
 
@@ -13,7 +13,7 @@ Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can ru
 - fully customizable shapes: radius, thickness, color, spacing, rotation, label
 - support for profile saving and loading
 - precise position control with keyboard
-- multiple platform support (Windows, Linux, Mac OS)
+- multiple platform support (Windows, Linux, macOS)
 
 ![CollimationCircles](https://user-images.githubusercontent.com/7437280/206667602-65872b09-8ba2-4cd2-9bf1-e4a17e17602c.png)
 
