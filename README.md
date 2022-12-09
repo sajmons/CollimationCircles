@@ -4,6 +4,8 @@ This program was inspired by Mire De Collimation program written by Gilbert Gril
 
 Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can run on multiple platforms like Windows, Linux and macOS.
 
+Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate). I'm unable to test it on macOS, but it should work.
+
 # Features
 
 - support multiple shapes (circle, cross, screws)
