@@ -15,3 +15,9 @@ Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can ru
 - multiple platform support (Windows, Linux, Mac OS)
 
 ![CollimationCircles](https://user-images.githubusercontent.com/7437280/206662962-63975332-77e8-4b50-ba9f-2fdd007a6c63.png)
+
+# Instalation
+
+# Build from source
+
+# Binnary packages
