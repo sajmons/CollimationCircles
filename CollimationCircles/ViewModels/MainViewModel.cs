@@ -123,7 +123,7 @@ namespace CollimationCircles.ViewModels
         private void SettingsButton()
         {
             var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-            new SettingsWindow().ShowDialog(mainWindow);
+            new SettingsWindow().Show(mainWindow);
         }
 
         [RelayCommand]

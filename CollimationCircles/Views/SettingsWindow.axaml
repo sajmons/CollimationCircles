@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CollimationCircles.Views.SettingsWindow"
         Title="{Binding Title}"
-        Width="800"
+        Width="550"
         Height="400">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
@@ -36,44 +36,47 @@
         <ItemsRepeater.ItemTemplate>
           <DataTemplate>
 
-            <StackPanel Orientation="Horizontal" Spacing="5">
-              <Button
-                Width="30" Padding="0"
-                Command="{Binding $parent[ItemsRepeater].DataContext.RemoveItemCommand}" CommandParameter="{Binding .}"
-                VerticalAlignment="Center"
-                ToolTip.Tip="{x:Static res:Text.RemoveItem}">
-                <Image Source="/Resources/Images/ic_remove.png" />
-              </Button>
+            <StackPanel Orientation="Vertical">
+              <StackPanel Orientation="Horizontal" Spacing="5">
+                <Button
+                  Width="30" Padding="0"
+                  Command="{Binding $parent[ItemsRepeater].DataContext.RemoveItemCommand}" CommandParameter="{Binding .}"
+                  VerticalAlignment="Center"
+                  ToolTip.Tip="{x:Static res:Text.RemoveItem}">
+                  <Image Source="/Resources/Images/ic_remove.png" />
+                </Button>
 
-              <TextBox Width="80" Text="{Binding Label}" ToolTip.Tip="{x:Static res:Text.Label}" />
+                <CheckBox Name="IsCrossCheckBox" IsChecked="{Binding IsCross}" ToolTip.Tip="{Binding ToolTip}" />
 
-              <CheckBox Name="IsCrossCheckBox" IsChecked="{Binding IsCross}" ToolTip.Tip="{Binding ToolTip}" />
+                <NumericUpDown Width="120"
+                  ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"
+                  Minimum="0" Maximum="2000" />
 
-              <NumericUpDown Width="120"
-                ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"
-                Minimum="0" Maximum="2000" />
+                <NumericUpDown Width="100"
+                  ToolTip.Tip="{x:Static res:Text.Thickness}" Value="{Binding Thickness}"
+                  Minimum="1" Maximum="10"/>
 
-              <NumericUpDown Width="100"
-                ToolTip.Tip="{x:Static res:Text.Thickness}" Value="{Binding Thickness}"
-                Minimum="1" Maximum="10"/>
+                <ComboBox
+                  Width="120" ToolTip.Tip="{x:Static res:Text.Color}"
+                  SelectedItem="{Binding Color}"
+                  Items="{Binding $parent[ItemsRepeater].DataContext.ColorList}">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <StackPanel Orientation="Horizontal" Spacing="5">
+                        <Border BorderBrush="Black" BorderThickness="1" Width="14" Height="14">
+                          <TextBlock Background="{Binding .}" Width="12" Height="12" />
+                        </Border>
+                        <TextBlock Text="{Binding .}" />
+                      </StackPanel>
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBox Width="80" Text="{Binding Label}" ToolTip.Tip="{x:Static res:Text.Label}" />
+              </StackPanel>
 
-              <ComboBox
-                Width="120" ToolTip.Tip="{x:Static res:Text.Color}" 
-                SelectedItem="{Binding Color}"
-                Items="{Binding $parent[ItemsRepeater].DataContext.ColorList}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Spacing="5">
-                      <Border BorderBrush="Black" BorderThickness="1" Width="14" Height="14">
-                        <TextBlock Background="{Binding .}" Width="12" Height="12" />
-                      </Border>
-                      <TextBlock Text="{Binding .}" />
-                    </StackPanel>
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
-
-              <StackPanel IsVisible="{Binding ElementName=IsCrossCheckBox, Path=IsChecked}" Orientation="Horizontal" Spacing="5">
+              <StackPanel 
+                IsVisible="{Binding ElementName=IsCrossCheckBox, Path=IsChecked}"
+                Orientation="Horizontal" Spacing="5" Margin="68,0,0,0">
 
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding Rotation}"
@@ -82,7 +85,10 @@
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Spacing}" Value="{Binding Spacing}"
                   Minimum="1" Maximum="30"/>
+
               </StackPanel>
+
+              <Separator Height="1" Margin="5" Background="Silver" />
 
             </StackPanel>
 
