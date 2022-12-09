@@ -17,23 +17,15 @@ Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can ru
 
 ![CollimationCircles](https://user-images.githubusercontent.com/7437280/206662962-63975332-77e8-4b50-ba9f-2fdd007a6c63.png)
 
-# Instalation
+# Instalation and running
 
-You need to download and install .NET 6 to run this program.
-https://dotnet.microsoft.com/en-us/download/dotnet/6.0
-
-Install scripts
-https://dotnet.microsoft.com/en-us/download/dotnet/scripts
-
-Clonning source from git
-git clone https://github.com/sajmons/CollimationCircles.git
-
-# Runing
-
-- go to folder where GIT downloaded source. 
+- download and install .NET 6 https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+- or use Install scripts https://dotnet.microsoft.com/en-us/download/dotnet/scripts
+- git clone https://github.com/sajmons/CollimationCircles.git
+- go to folder where GIT downloaded source (ColiminationCircles). 
 - go to CollimationCircles subfolder
 - type dotnet run
 
 # Binnary packages
 
-Work in progress
+Will be awailable soon
