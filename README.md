@@ -15,7 +15,7 @@ Colimation Circles is developed with .NET 6 and AvaloniaUI Framework, and can ru
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, Mac OS)
 
-![CollimationCircles](https://user-images.githubusercontent.com/7437280/206662962-63975332-77e8-4b50-ba9f-2fdd007a6c63.png)
+![CollimationCircles](https://user-images.githubusercontent.com/7437280/206667602-65872b09-8ba2-4cd2-9bf1-e4a17e17602c.png)
 
 # Instalation and running
 
