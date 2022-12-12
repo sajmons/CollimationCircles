@@ -46,7 +46,7 @@ namespace CollimationCircles.ViewModels
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
+            //WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
         }
 
         partial void OnTypeChanged(string value)

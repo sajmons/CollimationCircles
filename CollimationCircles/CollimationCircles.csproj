@@ -8,7 +8,9 @@
 	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Models\ItemType.cs" />
     <Compile Remove="ViewModels\CollimationCrossViewModel.cs" />
+    <Compile Remove="ViewModels\ItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove=".gitignore" />

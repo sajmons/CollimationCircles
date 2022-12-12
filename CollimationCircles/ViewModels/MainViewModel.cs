@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
@@ -37,24 +38,20 @@ namespace CollimationCircles.ViewModels
         public double scale = 1.0;
 
         [ObservableProperty]
-        public bool showLabels = false;
+        public bool showLabels = true;
 
         [ObservableProperty]
-        public ObservableCollection<ItemViewModel> items = new();
+        public ObservableCollection<ICollimationHelper> items = new();        
 
         [ObservableProperty]
-        public ObservableCollection<string> colorList = new();
-
-        [ObservableProperty]
-        public ObservableCollection<string> typeList = new();
+        public ObservableCollection<string> colorList = new();        
 
         public MainViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
 
             Title = Text.Settings;
-            InitializeColors();
-            InitializeTypes();
+            InitializeColors();            
             InitializeDefaults();
             InitializeMessages();
         }
@@ -63,7 +60,8 @@ namespace CollimationCircles.ViewModels
         {
             WeakReferenceMessenger.Default.Register<ItemChangedMessage>(this, (r, m) =>
             {
-                var item = items.SingleOrDefault(x => x.Id == m.Value.id);
+                var item = items.SingleOrDefault(x => x.Id == m.Value.Id);
+
                 if (item != null)
                 {
                     item = m.Value;
@@ -90,42 +88,28 @@ namespace CollimationCircles.ViewModels
             };
 
             colorList = new ObservableCollection<string>(c);
-        }
-
-        private void InitializeTypes()
-        {
-            List<string> c = new()
-            {
-                ItemType.Circle,
-                ItemType.Cross,
-                ItemType.Screw
-            };
-
-            typeList = new ObservableCollection<string>(c);
-        }
+        }        
 
         private void InitializeDefaults()
         {
-            List<ItemViewModel> list = new()
+            List<ICollimationHelper> list = new()
             {
                 // Circles
-                new() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Type = ItemType.Circle, Label = $"{Text.Circle} 1" },
-                new() { Color = ItemColor.LightGreen, Radius = 50, Thickness = 2, Type= ItemType.Circle, Label = $"{Text.Circle} 2" },
-                new() { Color = ItemColor.LightBlue, Radius = 100, Thickness = 3, Type = ItemType.Circle, Label = $"{Text.Circle} 3" },
-                new() { Color = ItemColor.Yellow, Radius = 200, Thickness = 4, Type = ItemType.Circle, Label = $"{Text.Circle} 4" },
-                new() { Color = ItemColor.Fuchsia, Radius = 300, Thickness = 5, Type = ItemType.Circle, Label = $"{Text.Circle} 5" },
+                new CircleViewModel() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Label = "Center" },
+                new CircleViewModel() { Color = ItemColor.LightGreen, Radius = 100, Thickness = 2, Label = "Inner" },
+                new CircleViewModel() { Color = ItemColor.LightBlue, Radius = 300, Thickness = 3, Label = "Outer" },                
 
                 // Crosses
-                new() { Color = ItemColor.Cyan, Radius = 300, Thickness = 2, Type = ItemType.Cross, Label = $"{Text.Cross} 1" },
+                new CrossViewModel(),
 
                 // Screws
-                new() { Color = ItemColor.Cyan, Radius = 300, Thickness = 2, Type = ItemType.Screw, Label = $"{Text.Screw} 1" }
+                new ScrewViewModel()
             };
 
-            items.Clear();
-            items.AddRange(list);
+            Items.CollectionChanged += Items_CollectionChanged;
 
-            items.CollectionChanged += Items_CollectionChanged;
+            Items.Clear();
+            Items.AddRange(list);
         }
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -148,11 +132,23 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void AddCircle()
         {
-            items.Add(new ItemViewModel() { Label = $"{Text.Circle}" });
+            items.Add(new CircleViewModel());
         }
 
         [RelayCommand]
-        private void RemoveItem(ItemViewModel item)
+        private void AddCross()
+        {
+            items.Add(new CrossViewModel());
+        }
+
+        [RelayCommand]
+        private void AddScrew()
+        {
+            items.Add(new ScrewViewModel());
+        }
+
+        [RelayCommand]
+        private void RemoveItem(ICollimationHelper item)
         {
             items.Remove(item);
         }
@@ -208,7 +204,7 @@ namespace CollimationCircles.ViewModels
 
                 if (!string.IsNullOrWhiteSpace(content))
                 {
-                    List<ItemViewModel>? list = JsonSerializer.Deserialize<List<ItemViewModel>>(content);
+                    List<ICollimationHelper>? list = JsonSerializer.Deserialize<List<ICollimationHelper>>(content);
 
                     if (list != null)
                     {

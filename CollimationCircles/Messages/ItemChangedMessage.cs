@@ -1,11 +1,11 @@
-﻿using CollimationCircles.ViewModels;
+﻿using CollimationCircles.Models;
 using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace CollimationCircles.Messages
 {
-    public class ItemChangedMessage : ValueChangedMessage<ItemViewModel>
+    public class ItemChangedMessage : ValueChangedMessage<ICollimationHelper>
     {
-        public ItemChangedMessage(ItemViewModel settings) : base(settings)
+        public ItemChangedMessage(ICollimationHelper settings) : base(settings)
         {
         }
     }

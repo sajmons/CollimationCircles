@@ -32,7 +32,7 @@ namespace CollimationCircles.Views
             if (vm == null)
                 return;
 
-            foreach (ItemViewModel item in vm.Items)
+            foreach (ICollimationHelper item in vm.Items)
             {
                 var width2 = Width / 2;
                 var height2 = Height / 2;
@@ -44,25 +44,25 @@ namespace CollimationCircles.Views
 
                 using (context.PushPreTransform(translate.Invert() * scale * translate))
                 {
-                    if (item.Type == ItemType.Cross)
+                    if (item is CrossViewModel)
                     {
-                        DrawCross(context, vm.ShowLabels, item, width2, height2, brush, translate);
+                        DrawCross(context, vm.ShowLabels, (CrossViewModel)item, width2, height2, brush, translate);
                     }
 
-                    if (item.Type == ItemType.Circle)
+                    if (item is CircleViewModel)
                     {
-                        DrawCircle(context, vm.ShowLabels, item, width2, height2, brush);
+                        DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);
                     }
 
-                    if (item.Type == ItemType.Screw)
+                    if (item is ScrewViewModel)
                     {
-                        DrawScrew(context, vm.ShowLabels, item, width2, height2, brush, translate, 4, 10);
+                        DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate, 4);
                     }
                 }
             }
         }
 
-        private void DrawCircle(DrawingContext context, bool showLabels, ItemViewModel item, double width2, double height2, SolidColorBrush brush)
+        private void DrawCircle(DrawingContext context, bool showLabels, CircleViewModel item, double width2, double height2, SolidColorBrush brush)
         {
             context.DrawEllipse(Brushes.Transparent, new Pen(brush, item.Thickness), new Point(width2, height2), item.Radius, item.Radius);
 
@@ -80,12 +80,12 @@ namespace CollimationCircles.Views
             }
         }
 
-        private void DrawCross(DrawingContext context, bool showLabels, ItemViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate)
+        private void DrawCross(DrawingContext context, bool showLabels, CrossViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate)
         {
             var pen = new Pen(brush, item.Thickness);
 
             double w = item.Radius;
-            var halfCrossSpacing = item.Spacing / 2;
+            var halfCrossSpacing = item.Size / 2;
             double centerX = width2 - halfCrossSpacing;
             double centerY = height2 - halfCrossSpacing;
 
@@ -93,8 +93,8 @@ namespace CollimationCircles.Views
 
             using (context.PushPreTransform(translate.Invert() * rotate * translate))
             {
-                context.DrawRectangle(pen, new Rect(centerX - w, centerY, 2 * w + item.Spacing, item.Spacing));
-                context.DrawRectangle(pen, new Rect(centerX, centerY - w, item.Spacing, 2 * w + item.Spacing));
+                context.DrawRectangle(pen, new Rect(centerX - w, centerY, 2 * w + item.Size, item.Size));
+                context.DrawRectangle(pen, new Rect(centerX, centerY - w, item.Size, 2 * w + item.Size));
 
                 if (showLabels)
                 {
@@ -111,29 +111,32 @@ namespace CollimationCircles.Views
             }
         }
 
-        private void DrawScrew(DrawingContext context, bool showLabels, ItemViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate, int numCirc, double screwRadius)
+        private void DrawScrew(DrawingContext context, bool showLabels, ScrewViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate, int numCirc)
         {
             double angle = 360 / numCirc;
 
-            for (int i = 0; i < numCirc; i++)
+            Matrix rotate2 = Matrix.CreateRotation(item.Rotation * Math.PI / 180);
+            using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
             {
-                Matrix rotate = Matrix.CreateRotation((angle * i) * Math.PI / 180);
-
-                using (context.PushPreTransform(translate.Invert() * rotate * translate))
+                for (int i = 0; i < numCirc; i++)
                 {
-                    context.DrawEllipse(Brushes.Transparent, new Pen(brush, item.Thickness), new Point(0, height2), screwRadius, screwRadius);
-                    
-                    if (showLabels)
+                    Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
+                    using (context.PushPreTransform(rotate * translate))
                     {
-                        var formattedText = new FormattedText(
-                            $"{item.Label} {i}",
-                            Typeface.Default,
-                            15,
-                            TextAlignment.Center,
-                            TextWrapping.NoWrap,
-                            new Size(Width, Bounds.Height));
+                        context.DrawEllipse(brush, new Pen(brush, item.Thickness), new Point(0, item.Radius), item.Size, item.Size);
 
-                        context.DrawText(brush, new Point(0, height2 - item.Radius), formattedText);
+                        if (showLabels)
+                        {
+                            var formattedText = new FormattedText(
+                                $"{item.Label} {i}",
+                                Typeface.Default,
+                                15,
+                                TextAlignment.Center,
+                                TextWrapping.NoWrap,
+                                new Size(10, 10 + height2 - item.Radius));
+
+                            context.DrawText(brush, new Point(0, item.Radius), formattedText);
+                        }
                     }
                 }
             }
