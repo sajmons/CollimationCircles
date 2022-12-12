@@ -180,6 +180,9 @@
   <data name="Scale" xml:space="preserve">
     <value>Scale</value>
   </data>
+  <data name="Screw" xml:space="preserve">
+    <value>Screw</value>
+  </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>

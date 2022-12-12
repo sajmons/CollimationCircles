@@ -250,6 +250,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Screw.
+        /// </summary>
+        public static string Screw {
+            get {
+                return ResourceManager.GetString("Screw", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {

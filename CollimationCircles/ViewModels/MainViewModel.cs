@@ -45,12 +45,16 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public ObservableCollection<string> colorList = new();
 
+        [ObservableProperty]
+        public ObservableCollection<string> typeList = new();
+
         public MainViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
 
             Title = Text.Settings;
             InitializeColors();
+            InitializeTypes();
             InitializeDefaults();
             InitializeMessages();
         }
@@ -61,7 +65,7 @@ namespace CollimationCircles.ViewModels
             {
                 var item = items.SingleOrDefault(x => x.Id == m.Value.id);
                 if (item != null)
-                {                    
+                {
                     item = m.Value;
                 }
 
@@ -73,19 +77,31 @@ namespace CollimationCircles.ViewModels
         {
             List<string> c = new()
             {
-                CColor.Orange,
-                CColor.LightBlue,
-                CColor.LightGreen,
-                CColor.Yellow,
-                CColor.Fuchsia,
-                CColor.Cyan,
-                CColor.Lime,
-                CColor.Tomato,
-                CColor.Gold,
-                CColor.White
+                ItemColor.Orange,
+                ItemColor.LightBlue,
+                ItemColor.LightGreen,
+                ItemColor.Yellow,
+                ItemColor.Fuchsia,
+                ItemColor.Cyan,
+                ItemColor.Lime,
+                ItemColor.Tomato,
+                ItemColor.Gold,
+                ItemColor.White
             };
 
             colorList = new ObservableCollection<string>(c);
+        }
+
+        private void InitializeTypes()
+        {
+            List<string> c = new()
+            {
+                ItemType.Circle,
+                ItemType.Cross,
+                ItemType.Screw
+            };
+
+            typeList = new ObservableCollection<string>(c);
         }
 
         private void InitializeDefaults()
@@ -93,14 +109,17 @@ namespace CollimationCircles.ViewModels
             List<ItemViewModel> list = new()
             {
                 // Circles
-                new() { Color = CColor.Orange, Radius = 10, Thickness = 1, Label = $"{Text.Circle} 1" },
-                new() { Color = CColor.LightGreen, Radius = 50, Thickness = 2, Label = $"{Text.Circle} 2" },
-                new() { Color = CColor.LightBlue, Radius = 100, Thickness = 3, Label = $"{Text.Circle} 3" },
-                new() { Color = CColor.Yellow, Radius = 200, Thickness = 4, Label = $"{Text.Circle} 4" },
-                new() { Color = CColor.Fuchsia, Radius = 300, Thickness = 5, Label = $"{Text.Circle} 5" },
+                new() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Type = ItemType.Circle, Label = $"{Text.Circle} 1" },
+                new() { Color = ItemColor.LightGreen, Radius = 50, Thickness = 2, Type= ItemType.Circle, Label = $"{Text.Circle} 2" },
+                new() { Color = ItemColor.LightBlue, Radius = 100, Thickness = 3, Type = ItemType.Circle, Label = $"{Text.Circle} 3" },
+                new() { Color = ItemColor.Yellow, Radius = 200, Thickness = 4, Type = ItemType.Circle, Label = $"{Text.Circle} 4" },
+                new() { Color = ItemColor.Fuchsia, Radius = 300, Thickness = 5, Type = ItemType.Circle, Label = $"{Text.Circle} 5" },
 
                 // Crosses
-                new() { Color = CColor.Cyan, Radius = 300, Thickness = 2, IsCross = true, Label = $"{Text.Cross} 1" }
+                new() { Color = ItemColor.Cyan, Radius = 300, Thickness = 2, Type = ItemType.Cross, Label = $"{Text.Cross} 1" },
+
+                // Screws
+                new() { Color = ItemColor.Cyan, Radius = 300, Thickness = 2, Type = ItemType.Screw, Label = $"{Text.Screw} 1" }
             };
 
             items.Clear();
@@ -129,7 +148,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void AddCircle()
         {
-            items.Add(new ItemViewModel() { Label = $"{Text.Circle} {Items.Count}" });
+            items.Add(new ItemViewModel() { Label = $"{Text.Circle}" });
         }
 
         [RelayCommand]

@@ -1,7 +1,5 @@
-﻿using CollimationCircles.Extensions;
-using CollimationCircles.Messages;
+﻿using CollimationCircles.Messages;
 using CollimationCircles.Models;
-using CollimationCircles.Resources.Strings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
@@ -16,7 +14,7 @@ namespace CollimationCircles.ViewModels
         public Guid id = Guid.NewGuid();
 
         [ObservableProperty]
-        public string color = CColor.Orange;
+        public string color = ItemColor.Orange;
 
         [ObservableProperty]
         [Range(1, 10)]
@@ -35,7 +33,10 @@ namespace CollimationCircles.ViewModels
         public double rotation = 45;
 
         [ObservableProperty]
-        public bool isCross = false;
+        public string type = ItemType.Circle;
+
+        [ObservableProperty]
+        public bool isCross;
 
         [ObservableProperty]
         public string label = string.Empty;
@@ -48,9 +49,9 @@ namespace CollimationCircles.ViewModels
             WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
         }
 
-        partial void OnIsCrossChanged(bool value)
+        partial void OnTypeChanged(string value)
         {
-            ToolTip = Text.ChangeTo.F(IsCross ? Text.Circle : Text.Cross);
+            IsCross = string.Equals(value, ItemType.Cross);
         }
     }
 }

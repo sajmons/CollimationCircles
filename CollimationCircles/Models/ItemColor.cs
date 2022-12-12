@@ -1,13 +1,8 @@
 ﻿using Avalonia.Media;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CollimationCircles.Models
 {
-    public class CColor
+    public class ItemColor
     {
         public static readonly string Orange = $"{Colors.Orange}";
         public static readonly string LightBlue = $"{Colors.LightBlue}";

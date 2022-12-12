@@ -46,7 +46,12 @@
                   <Image Source="/Resources/Images/ic_remove.png" />
                 </Button>
 
-                <CheckBox Name="IsCrossCheckBox" IsChecked="{Binding IsCross}" ToolTip.Tip="{Binding ToolTip}" />
+                <!--<CheckBox Name="IsCrossCheckBox" IsChecked="{Binding IsCross}" />-->
+                <ComboBox 
+                  SelectedItem="{Binding Type}"
+                  Name="IsCrossCheckBox"
+                  Items="{Binding $parent[ItemsRepeater].DataContext.TypeList}">                  
+                </ComboBox>
 
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"
@@ -75,7 +80,7 @@
               </StackPanel>
 
               <StackPanel 
-                IsVisible="{Binding ElementName=IsCrossCheckBox, Path=IsChecked}"
+                IsVisible="{Binding ElementName=IsCrossCheckBox, Path=IsCross}"
                 Orientation="Horizontal" Spacing="5" Margin="68,0,0,0">
 
                 <NumericUpDown Width="120"
