@@ -27,10 +27,10 @@ namespace CollimationCircles.ViewModels
         private readonly IDialogService dialogService;
 
         [ObservableProperty]
-        public double width = 600;
+        public double width = 650;
 
         [ObservableProperty]
-        public double height = 600;
+        public double height = 650;
 
         [ObservableProperty]
         [Range(0.0, 5.0)]
@@ -96,7 +96,7 @@ namespace CollimationCircles.ViewModels
                 // Circles
                 new CircleViewModel() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Label = Text.PrimaryCenter },
                 new CircleViewModel() { Color = ItemColor.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
-                new CircleViewModel() { Color = ItemColor.LightBlue, Radius = 300, Thickness = 3, Label = Text.PrimaryOuter },
+                new CircleViewModel() { Color = ItemColor.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
 
                 // Crosses
                 new CrossViewModel(),

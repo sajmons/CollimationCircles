@@ -1,5 +1,6 @@
 ﻿using CollimationCircles.Messages;
 using CollimationCircles.Models;
+using CollimationCircles.Resources.Strings;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
@@ -18,11 +19,11 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public string color = ItemColor.Red;        
         [ObservableProperty]
-        public string label = "Cross";
+        public string label = Text.Spider;
         [ObservableProperty]
         public int thickness = 1;
         [ObservableProperty]
-        public double radius = 300;
+        public double radius = 280;
         [ObservableProperty]
         public bool isVisible = true;
         [ObservableProperty]

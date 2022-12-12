@@ -144,6 +144,9 @@
   <data name="ItemType" xml:space="preserve">
     <value>Item type</value>
   </data>
+  <data name="ItemVisibility" xml:space="preserve">
+    <value>Item visibility</value>
+  </data>
   <data name="Json" xml:space="preserve">
     <value>json</value>
   </data>
@@ -168,6 +171,9 @@
   <data name="PrimaryOuter" xml:space="preserve">
     <value>Primary Outer</value>
   </data>
+  <data name="PrimaryScrew" xml:space="preserve">
+    <value>Primary Screw</value>
+  </data>
   <data name="Radius" xml:space="preserve">
     <value>Radius</value>
   </data>
@@ -189,9 +195,6 @@
   <data name="Scale" xml:space="preserve">
     <value>Scale</value>
   </data>
-  <data name="Screw" xml:space="preserve">
-    <value>Screw</value>
-  </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
@@ -203,6 +206,9 @@
   </data>
   <data name="Spacing" xml:space="preserve">
     <value>Spacing</value>
+  </data>
+  <data name="Spider" xml:space="preserve">
+    <value>Spider</value>
   </data>
   <data name="Thickness" xml:space="preserve">
     <value>Tickness</value>

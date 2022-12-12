@@ -46,7 +46,7 @@
                   <Image Source="/Resources/Images/ic_remove.png" />
                 </Button>
 
-                <CheckBox IsChecked="{Binding IsVisible}" />
+                <CheckBox IsChecked="{Binding IsVisible}" ToolTip.Tip="{x:Static res:Text.ItemVisibility}" />
 
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"
@@ -71,7 +71,7 @@
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
-                <TextBox IsVisible="{Binding IsEditable}" Width="80" Text="{Binding Label}" ToolTip.Tip="{x:Static res:Text.Label}" />
+                <TextBox IsVisible="{Binding IsEditable}" Width="140" Text="{Binding Label}" ToolTip.Tip="{x:Static res:Text.Label}" />
               </StackPanel>
 
               <StackPanel

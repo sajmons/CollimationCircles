@@ -142,6 +142,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item visibility.
+        /// </summary>
+        public static string ItemVisibility {
+            get {
+                return ResourceManager.GetString("ItemVisibility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to json.
         /// </summary>
         public static string Json {
@@ -214,6 +223,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Primary Screw.
+        /// </summary>
+        public static string PrimaryScrew {
+            get {
+                return ResourceManager.GetString("PrimaryScrew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Radius.
         /// </summary>
         public static string Radius {
@@ -277,15 +295,6 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Screw.
-        /// </summary>
-        public static string Screw {
-            get {
-                return ResourceManager.GetString("Screw", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {
@@ -318,6 +327,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string Spacing {
             get {
                 return ResourceManager.GetString("Spacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Spider.
+        /// </summary>
+        public static string Spider {
+            get {
+                return ResourceManager.GetString("Spider", resourceCulture);
             }
         }
         
