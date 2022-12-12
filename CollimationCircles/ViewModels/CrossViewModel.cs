@@ -16,7 +16,7 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public Guid id = Guid.NewGuid();
         [ObservableProperty]
-        public string color = ItemColor.Yellow;        
+        public string color = ItemColor.Red;        
         [ObservableProperty]
         public string label = "Cross";
         [ObservableProperty]
@@ -24,7 +24,7 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public double radius = 300;
         [ObservableProperty]
-        public bool visibility = true;
+        public bool isVisible = true;
         [ObservableProperty]
         public bool isRotatable = true;
         [ObservableProperty]

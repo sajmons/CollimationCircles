@@ -138,6 +138,9 @@
   <data name="Cross" xml:space="preserve">
     <value>Cross</value>
   </data>
+  <data name="Inner" xml:space="preserve">
+    <value>Inner</value>
+  </data>
   <data name="ItemType" xml:space="preserve">
     <value>Item type</value>
   </data>
@@ -158,6 +161,12 @@
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>
+  </data>
+  <data name="PrimaryCenter" xml:space="preserve">
+    <value>Primary Center</value>
+  </data>
+  <data name="PrimaryOuter" xml:space="preserve">
+    <value>Primary Outer</value>
   </data>
   <data name="Radius" xml:space="preserve">
     <value>Radius</value>

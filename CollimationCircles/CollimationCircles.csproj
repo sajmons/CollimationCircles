@@ -46,7 +46,6 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="0.10.18" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="1.4.1" />
-    <PackageReference Include="HarfBuzzSharp.NativeAssets.Linux" Version="2.8.2.3" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
 	<PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
   </ItemGroup>
@@ -74,13 +73,5 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Text.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Libs\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Libs\libSkiaSharp.so">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

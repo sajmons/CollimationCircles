@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
@@ -41,17 +40,17 @@ namespace CollimationCircles.ViewModels
         public bool showLabels = true;
 
         [ObservableProperty]
-        public ObservableCollection<ICollimationHelper> items = new();        
+        public ObservableCollection<ICollimationHelper> items = new();
 
         [ObservableProperty]
-        public ObservableCollection<string> colorList = new();        
+        public ObservableCollection<string> colorList = new();
 
         public MainViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
 
             Title = Text.Settings;
-            InitializeColors();            
+            InitializeColors();
             InitializeDefaults();
             InitializeMessages();
         }
@@ -82,22 +81,22 @@ namespace CollimationCircles.ViewModels
                 ItemColor.Fuchsia,
                 ItemColor.Cyan,
                 ItemColor.Lime,
-                ItemColor.Tomato,
+                ItemColor.Red,
                 ItemColor.Gold,
                 ItemColor.White
             };
 
             colorList = new ObservableCollection<string>(c);
-        }        
+        }
 
         private void InitializeDefaults()
         {
             List<ICollimationHelper> list = new()
             {
                 // Circles
-                new CircleViewModel() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Label = "Center" },
-                new CircleViewModel() { Color = ItemColor.LightGreen, Radius = 100, Thickness = 2, Label = "Inner" },
-                new CircleViewModel() { Color = ItemColor.LightBlue, Radius = 300, Thickness = 3, Label = "Outer" },                
+                new CircleViewModel() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Label = Text.PrimaryCenter },
+                new CircleViewModel() { Color = ItemColor.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
+                new CircleViewModel() { Color = ItemColor.LightBlue, Radius = 300, Thickness = 3, Label = Text.PrimaryOuter },
 
                 // Crosses
                 new CrossViewModel(),

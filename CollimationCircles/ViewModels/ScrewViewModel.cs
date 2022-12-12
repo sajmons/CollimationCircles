@@ -24,7 +24,7 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public double radius = 300;
         [ObservableProperty]
-        public bool visibility = true;
+        public bool isVisible = true;
         [ObservableProperty]
         public bool isRotatable = true;
         [ObservableProperty]

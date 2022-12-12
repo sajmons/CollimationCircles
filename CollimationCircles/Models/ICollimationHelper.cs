@@ -9,6 +9,6 @@ namespace CollimationCircles.Models
         public string Label { get; set; }
         public int Thickness { get; set; }        
         public double Radius { get; set; }
-        public bool Visibility { get; set; }
+        public bool IsVisible { get; set; }
     }
 }

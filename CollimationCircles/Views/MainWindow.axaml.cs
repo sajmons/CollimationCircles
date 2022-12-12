@@ -44,17 +44,17 @@ namespace CollimationCircles.Views
 
                 using (context.PushPreTransform(translate.Invert() * scale * translate))
                 {
-                    if (item is CrossViewModel)
+                    if (item is CrossViewModel && item.IsVisible)
                     {
                         DrawCross(context, vm.ShowLabels, (CrossViewModel)item, width2, height2, brush, translate);
                     }
 
-                    if (item is CircleViewModel)
+                    if (item is CircleViewModel && item.IsVisible)
                     {
                         DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);
                     }
 
-                    if (item is ScrewViewModel)
+                    if (item is ScrewViewModel && item.IsVisible)
                     {
                         DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate, 4);
                     }

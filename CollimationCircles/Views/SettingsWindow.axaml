@@ -44,7 +44,9 @@
                   VerticalAlignment="Center"
                   ToolTip.Tip="{x:Static res:Text.RemoveItem}">
                   <Image Source="/Resources/Images/ic_remove.png" />
-                </Button>                
+                </Button>
+
+                <CheckBox IsChecked="{Binding IsVisible}" />
 
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"

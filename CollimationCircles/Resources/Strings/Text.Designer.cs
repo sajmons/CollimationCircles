@@ -124,6 +124,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inner.
+        /// </summary>
+        public static string Inner {
+            get {
+                return ResourceManager.GetString("Inner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Item type.
         /// </summary>
         public static string ItemType {
@@ -183,6 +192,24 @@ namespace CollimationCircles.Resources.Strings {
         public static string OpenFile {
             get {
                 return ResourceManager.GetString("OpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Primary Center.
+        /// </summary>
+        public static string PrimaryCenter {
+            get {
+                return ResourceManager.GetString("PrimaryCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Primary Outer.
+        /// </summary>
+        public static string PrimaryOuter {
+            get {
+                return ResourceManager.GetString("PrimaryOuter", resourceCulture);
             }
         }
         
