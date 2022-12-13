@@ -33,6 +33,17 @@ cd ColiminationCircles/ColiminationCircles
 dotnet run
 ```
 
+# Building
+
+For more help see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
+
+## Linux ARM 64
+```
+dotnet publish --runtime linux-arm64 /p:PublishSingleFile=true --output ~/Home/CollimationCircle
+cd ~/Home/CollimationCircle
+./CollimationCircle
+```
+
 # Known issues
 
 - Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will fix that)
