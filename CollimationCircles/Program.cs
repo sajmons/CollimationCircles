@@ -25,6 +25,7 @@ namespace CollimationCircles
                         EnableMultitouch = true,
                     })
                 .UsePlatformDetect()
+                .UseSkia()
                 .LogToTrace();
     }
 }
