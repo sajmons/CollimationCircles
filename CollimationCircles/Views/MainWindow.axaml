@@ -11,8 +11,7 @@
 		    Background="{x:Null}"
         TransparencyBackgroundFallback="{x:Null}"
         Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}"
-        Topmost="True">
+        Height="{Binding Height, Mode=TwoWay}">
   <Grid RowDefinitions="64,*">
     <Button
       Grid.Row="0"

@@ -60,7 +60,7 @@ namespace CollimationCircles.Views
 
                             if (item is ScrewViewModel && item.IsVisible)
                             {
-                                DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate, 4);
+                                DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate);
                             }
                         }
                     }
@@ -116,14 +116,14 @@ namespace CollimationCircles.Views
             }
         }
 
-        private void DrawScrew(DrawingContext context, bool showLabels, ScrewViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate, int numCirc)
+        private void DrawScrew(DrawingContext context, bool showLabels, ScrewViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate)
         {
-            double angle = 360 / numCirc;
+            double angle = 360 / item.ScrewCount;
 
             Matrix rotate2 = Matrix.CreateRotation(item.Rotation * Math.PI / 180);
             using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
             {
-                for (int i = 0; i < numCirc; i++)
+                for (int i = 0; i < item.ScrewCount; i++)
                 {
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
                     using (context.PushPreTransform(rotate * translate))

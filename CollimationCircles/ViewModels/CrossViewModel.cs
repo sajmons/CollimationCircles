@@ -32,6 +32,8 @@ namespace CollimationCircles.ViewModels
         public bool isSizeable = true;
         [ObservableProperty]
         public bool isEditable = true;
+        [ObservableProperty]
+        public bool isCountable = false;
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {

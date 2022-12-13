@@ -5,19 +5,20 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class ScrewViewModel : ObservableValidator, IScrew
     {
         [ObservableProperty]
-        public double rotation;
+        public double rotation = 0;
         [ObservableProperty]
         public double size = 10;
         [ObservableProperty]
         public Guid id = Guid.NewGuid();
         [ObservableProperty]
-        public string color = ItemColor.Lime;        
+        public string color = ItemColor.Lime;
         [ObservableProperty]
         public string label = Text.PrimaryScrew;
         [ObservableProperty]
@@ -32,6 +33,11 @@ namespace CollimationCircles.ViewModels
         public bool isSizeable = true;
         [ObservableProperty]
         public bool isEditable = false;
+        [ObservableProperty]
+        public bool isCountable = true;
+        [ObservableProperty]
+        [Range(3, 10)]
+        public int screwCount = 4;
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {

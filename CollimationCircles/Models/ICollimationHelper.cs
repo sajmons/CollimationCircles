@@ -2,7 +2,7 @@
 
 namespace CollimationCircles.Models
 {
-    public interface ICollimationHelper : IRotatable, ISizeable, IEditable
+    public interface ICollimationHelper : IRotatable, ISizeable, IEditable, ICountable
     {
         public Guid Id { get; set; }        
         public string Color { get; set; }

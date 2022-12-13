@@ -135,6 +135,9 @@
   <data name="Color" xml:space="preserve">
     <value>Color</value>
   </data>
+  <data name="Count" xml:space="preserve">
+    <value>Count</value>
+  </data>
   <data name="Cross" xml:space="preserve">
     <value>Cross</value>
   </data>
