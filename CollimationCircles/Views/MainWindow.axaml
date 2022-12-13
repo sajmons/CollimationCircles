@@ -8,14 +8,28 @@
         x:Class="CollimationCircles.Views.MainWindow"
         Icon="/Resources/Images/ic_launcher.png"
         Title="{Binding Title}"
-		    Background="{x:Null}"        
+		    Background="{x:Null}"
         TransparencyBackgroundFallback="{x:Null}"
         Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}">
-  <Button
-    HorizontalAlignment="Right"
-    VerticalAlignment="Top"
-    Width="64" Command="{Binding SettingsButtonCommand}">
-    <Image Source="/Resources/Images/ic_settings.png" />
-  </Button>
+        Height="{Binding Height, Mode=TwoWay}"
+        Topmost="True">
+  <Grid RowDefinitions="64,*">
+    <Button
+      Grid.Row="0"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Top"
+      ToolTip.Tip="{x:Static res:Text.SettingsWindow}"
+      Width="64" Command="{Binding SettingsButtonCommand}">
+      <Image Source="/Resources/Images/ic_settings.png" />
+    </Button>
+    <Image
+      Grid.Row="1"
+      Margin="10" 
+      Opacity="0.2"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom"
+      Width="88"
+      ToolTip.Tip="{x:Static res:Text.MoveWindow}"
+      Source="/Resources/Images/arrow_keys.png"/>
+  </Grid>
 </Window>

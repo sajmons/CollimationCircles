@@ -196,6 +196,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use arrow keys to move window arround. Press shift key for larger movement step..
+        /// </summary>
+        public static string MoveWindow {
+            get {
+                return ResourceManager.GetString("MoveWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open file.
         /// </summary>
         public static string OpenFile {
@@ -300,6 +309,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open settings window.
+        /// </summary>
+        public static string SettingsWindow {
+            get {
+                return ResourceManager.GetString("SettingsWindow", resourceCulture);
             }
         }
         

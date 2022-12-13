@@ -162,6 +162,9 @@
   <data name="LoadList" xml:space="preserve">
     <value>Load list from JSON file</value>
   </data>
+  <data name="MoveWindow" xml:space="preserve">
+    <value>Use arrow keys to move window arround. Press shift key for larger movement step.</value>
+  </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>
   </data>
@@ -197,6 +200,9 @@
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="SettingsWindow" xml:space="preserve">
+    <value>Open settings window</value>
   </data>
   <data name="ShowLabels" xml:space="preserve">
     <value>Show Labels</value>

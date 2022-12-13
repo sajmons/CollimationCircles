@@ -23,8 +23,11 @@ using System.Threading.Tasks;
 namespace CollimationCircles.ViewModels
 {
     public partial class MainViewModel : BaseViewModel
-    {
-        private readonly IDialogService dialogService;
+    {        
+        private readonly IDialogService dialogService;        
+
+        [ObservableProperty]
+        public PixelPoint position = new (100, 100);
 
         [ObservableProperty]
         public double width = 650;

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using HanumanInstitute.MvvmDialogs;
 using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel;
 
 namespace CollimationCircles
 {
@@ -23,7 +24,59 @@ namespace CollimationCircles
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();                
+                desktop.MainWindow = new MainWindow();
+
+                var vm = Ioc.Default.GetService<MainViewModel>();
+
+                if (vm != null)
+                {
+                    desktop.MainWindow.Position = vm.Position;
+                }
+
+                desktop.MainWindow.KeyDown += (s, e) =>
+                {
+                    int x = desktop.MainWindow.Position.X;
+                    int y = desktop.MainWindow.Position.Y;
+                    int increment = 1;
+
+                    if (e.KeyModifiers == Avalonia.Input.KeyModifiers.Shift)
+                    {
+                        increment = 10;
+                    }
+                    else
+                    {
+                        increment = 1;
+                    }
+
+                    if (e.Key == Avalonia.Input.Key.Up)
+                    {
+                        y -= increment;
+                    }
+
+                    if (e.Key == Avalonia.Input.Key.Down)
+                    {
+                        y += increment;
+                    }
+
+                    if (e.Key == Avalonia.Input.Key.Left)
+                    {
+                        x -= increment;
+                    }
+
+                    if (e.Key == Avalonia.Input.Key.Right)
+                    {
+                        x += increment;
+                    }
+
+                    PixelPoint newP = new(x, y);
+
+                    desktop.MainWindow.Position = newP;
+
+                    if (vm != null)
+                    {
+                        vm.Position = newP;
+                    }
+                };
             }
 
             base.OnFrameworkInitializationCompleted();

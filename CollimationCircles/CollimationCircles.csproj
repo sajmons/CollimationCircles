@@ -14,6 +14,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
+    <None Remove="Resources\Images\arrow-keys.svg" />
+    <None Remove="Resources\Images\arrow_keys.png" />
     <None Remove="Resources\Images\ic_add.png" />
     <None Remove="Resources\Images\ic_file_download.png" />
     <None Remove="Resources\Images\ic_file_upload.png" />
@@ -24,6 +26,7 @@
     <None Remove="Resources\Images\ic_settings.png" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Resources\Images\arrow_keys.png" />
     <AvaloniaResource Include="Resources\Images\ic_add.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_download.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_upload.png" />
