@@ -15,10 +15,8 @@ Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate
 - transparent background
 - fully customizable shapes: radius, thickness, color, spacing, rotation, label
 - support for profile saving and loading (json files)
-- precise position control with keyboard **
+- precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
-
-** not yet implemented
 
 ![CollimationCircles](https://user-images.githubusercontent.com/7437280/206667602-65872b09-8ba2-4cd2-9bf1-e4a17e17602c.png)
 
