@@ -14,7 +14,16 @@ namespace CollimationCircles
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()                
+            => AppBuilder.Configure<App>()
+                .With(
+                    new X11PlatformOptions
+                    {
+                        EnableMultiTouch = true,
+                    })
+                    .With(new Win32PlatformOptions
+                    {
+                        EnableMultitouch = true,
+                    })
                 .UsePlatformDetect()
                 .LogToTrace();
     }
