@@ -26,6 +26,9 @@
       <NumericUpDown Width="130" Increment="0.01"
                   ToolTip.Tip="{x:Static res:Text.Scale}" Value="{Binding Scale}"
                   Minimum="0.0" Maximum="4.0" />
+      <NumericUpDown Width="130"
+                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding Rotation}"
+                  Minimum="0" Maximum="360" />
       <CheckBox IsChecked="{Binding ShowLabels}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
     </StackPanel>
     <Separator Height="1" Margin="5" Background="Silver" />

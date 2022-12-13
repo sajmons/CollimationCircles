@@ -37,6 +37,10 @@ namespace CollimationCircles.ViewModels
         public double scale = 1.0;
 
         [ObservableProperty]
+        [Range(0, 360)]
+        public double rotation = 0;
+
+        [ObservableProperty]
         public bool showLabels = true;
 
         [ObservableProperty]

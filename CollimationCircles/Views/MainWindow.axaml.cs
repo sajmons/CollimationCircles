@@ -40,9 +40,10 @@ namespace CollimationCircles.Views
                 var brush = new SolidColorBrush(Color.Parse(item.Color));
 
                 Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
+                Matrix rotation = Matrix.CreateRotation(vm.Rotation * Math.PI / 180);
                 Matrix translate = Matrix.CreateTranslation(width2, height2);
 
-                using (context.PushPreTransform(translate.Invert() * scale * translate))
+                using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
                 {
                     if (item is CrossViewModel && item.IsVisible)
                     {
