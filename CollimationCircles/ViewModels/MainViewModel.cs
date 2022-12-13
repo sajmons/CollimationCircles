@@ -23,11 +23,11 @@ using System.Threading.Tasks;
 namespace CollimationCircles.ViewModels
 {
     public partial class MainViewModel : BaseViewModel
-    {        
-        private readonly IDialogService dialogService;        
+    {
+        private readonly IDialogService dialogService;
 
         [ObservableProperty]
-        public PixelPoint position = new (100, 100);
+        public PixelPoint position = new(100, 100);
 
         [ObservableProperty]
         public double width = 650;
@@ -47,7 +47,7 @@ namespace CollimationCircles.ViewModels
         public bool showLabels = true;
 
         [ObservableProperty]
-        public ObservableCollection<ICollimationHelper> items = new();
+        public ObservableCollection<ICollimationHelper>? items = new();
 
         [ObservableProperty]
         public ObservableCollection<string> colorList = new();
@@ -66,7 +66,7 @@ namespace CollimationCircles.ViewModels
         {
             WeakReferenceMessenger.Default.Register<ItemChangedMessage>(this, (r, m) =>
             {
-                var item = items.SingleOrDefault(x => x.Id == m.Value.Id);
+                var item = Items?.SingleOrDefault(x => x.Id == m.Value.Id);
 
                 if (item != null)
                 {
@@ -93,7 +93,7 @@ namespace CollimationCircles.ViewModels
                 ItemColor.White
             };
 
-            colorList = new ObservableCollection<string>(c);
+            ColorList = new ObservableCollection<string>(c);
         }
 
         private void InitializeDefaults()
@@ -112,10 +112,13 @@ namespace CollimationCircles.ViewModels
                 new ScrewViewModel()
             };
 
-            Items.CollectionChanged += Items_CollectionChanged;
+            if (Items is not null)
+            {
+                Items.CollectionChanged += Items_CollectionChanged;
 
-            Items.Clear();
-            Items.AddRange(list);
+                Items.Clear();
+                Items.AddRange(list);
+            }
         }
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -132,31 +135,34 @@ namespace CollimationCircles.ViewModels
         private void SettingsButton()
         {
             var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-            new SettingsWindow().Show(mainWindow);
+            if (mainWindow != null)
+            {
+                new SettingsWindow().Show(mainWindow);
+            }
         }
 
         [RelayCommand]
         private void AddCircle()
         {
-            items.Add(new CircleViewModel());
+            Items?.Add(new CircleViewModel());
         }
 
         [RelayCommand]
         private void AddCross()
         {
-            items.Add(new CrossViewModel());
+            Items?.Add(new CrossViewModel());
         }
 
         [RelayCommand]
         private void AddScrew()
         {
-            items.Add(new ScrewViewModel());
+            Items?.Add(new ScrewViewModel());
         }
 
         [RelayCommand]
         private void RemoveItem(ICollimationHelper item)
         {
-            items.Remove(item);
+            Items?.Remove(item);
         }
 
         [RelayCommand]
@@ -168,7 +174,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private async Task SaveList()
         {
-            string jsonString = JsonSerializer.Serialize(items.ToList());
+            string jsonString = JsonSerializer.Serialize(Items?.ToList());
 
             var settings = new SaveFileDialogSettings
             {
@@ -183,9 +189,11 @@ namespace CollimationCircles.ViewModels
 
             var result = await dialogService.ShowSaveFileDialogAsync(this, settings);
 
-            if (!string.IsNullOrWhiteSpace(result))
+            var path = result?.Path?.LocalPath;
+
+            if (!string.IsNullOrWhiteSpace(path))
             {
-                File.WriteAllText(result, jsonString);
+                File.WriteAllText(path, jsonString, System.Text.Encoding.UTF8);
             }
         }
 
@@ -204,9 +212,11 @@ namespace CollimationCircles.ViewModels
 
             var result = await dialogService.ShowOpenFileDialogAsync(this, settings);
 
-            if (result != null)
+            string? path = result?.Path?.LocalPath;
+
+            if (!string.IsNullOrWhiteSpace(path))
             {
-                string content = File.ReadAllText(result);
+                string content = File.ReadAllText(path, System.Text.Encoding.UTF8);
 
                 if (!string.IsNullOrWhiteSpace(content))
                 {
@@ -214,8 +224,8 @@ namespace CollimationCircles.ViewModels
 
                     if (list != null)
                     {
-                        items.Clear();
-                        items.AddRange(list);
+                        Items?.Clear();
+                        Items?.AddRange(list);
                     }
                     else
                     {

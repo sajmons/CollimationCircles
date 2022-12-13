@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -27,39 +28,42 @@ namespace CollimationCircles.Views
 
         public override void Render(DrawingContext context)
         {
-            var vm = DataContext as MainViewModel;
+            var vm = Ioc.Default.GetService<MainViewModel>();
 
-            if (vm == null)
-                return;
-
-            foreach (ICollimationHelper item in vm.Items)
+            if (vm is not null)
             {
-                var width2 = Width / 2;
-                var height2 = Height / 2;
+                var it = vm?.Items;
 
-                var brush = new SolidColorBrush(Color.Parse(item.Color));
-
-                Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
-                Matrix rotation = Matrix.CreateRotation(vm.Rotation * Math.PI / 180);
-                Matrix translate = Matrix.CreateTranslation(width2, height2);
-
-                using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
-                {
-                    if (item is CrossViewModel && item.IsVisible)
+                if (it is not null)
+                    foreach (ICollimationHelper item in it)
                     {
-                        DrawCross(context, vm.ShowLabels, (CrossViewModel)item, width2, height2, brush, translate);
-                    }
+                        var width2 = Width / 2;
+                        var height2 = Height / 2;
 
-                    if (item is CircleViewModel && item.IsVisible)
-                    {
-                        DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);
-                    }
+                        var brush = new SolidColorBrush(Color.Parse(item.Color));
 
-                    if (item is ScrewViewModel && item.IsVisible)
-                    {
-                        DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate, 4);
+                        Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
+                        Matrix rotation = Matrix.CreateRotation(vm.Rotation * Math.PI / 180);
+                        Matrix translate = Matrix.CreateTranslation(width2, height2);
+
+                        using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
+                        {
+                            if (item is CrossViewModel && item.IsVisible)
+                            {
+                                DrawCross(context, vm.ShowLabels, (CrossViewModel)item, width2, height2, brush, translate);
+                            }
+
+                            if (item is CircleViewModel && item.IsVisible)
+                            {
+                                DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);
+                            }
+
+                            if (item is ScrewViewModel && item.IsVisible)
+                            {
+                                DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate, 4);
+                            }
+                        }
                     }
-                }
             }
         }
 
@@ -71,13 +75,13 @@ namespace CollimationCircles.Views
             {
                 var formattedText = new FormattedText(
                     item.Label,
+                    CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight,
                     Typeface.Default,
                     15,
-                    TextAlignment.Center,
-                    TextWrapping.NoWrap,
-                    new Size(Width, Bounds.Height));
+                    brush);
 
-                context.DrawText(brush, new Point(0, height2 - item.Radius), formattedText);
+                context.DrawText(formattedText, new Point(width2, height2 - item.Radius));
             }
         }
 
@@ -101,13 +105,13 @@ namespace CollimationCircles.Views
                 {
                     var formattedText = new FormattedText(
                         item.Label,
+                        CultureInfo.CurrentCulture,
+                        FlowDirection.LeftToRight,
                         Typeface.Default,
                         15,
-                        TextAlignment.Center,
-                        TextWrapping.NoWrap,
-                        new Size(Width, Bounds.Height));
+                        brush);
 
-                    context.DrawText(brush, new Point(0, height2 - item.Radius), formattedText);
+                    context.DrawText(formattedText, new Point(width2, height2 - item.Radius));
                 }
             }
         }
@@ -130,13 +134,13 @@ namespace CollimationCircles.Views
                         {
                             var formattedText = new FormattedText(
                                 $"{item.Label} {i}",
+                                CultureInfo.CurrentCulture,
+                                FlowDirection.LeftToRight,
                                 Typeface.Default,
                                 15,
-                                TextAlignment.Center,
-                                TextWrapping.NoWrap,
-                                new Size(10, 10 + height2 - item.Radius));
+                                brush);
 
-                            context.DrawText(brush, new Point(0, item.Radius), formattedText);
+                            context.DrawText(formattedText, new Point(item.Size, item.Radius));
                         }
                     }
                 }
