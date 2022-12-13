@@ -24,6 +24,7 @@ Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate
 
 - download and install .NET 6 https://dotnet.microsoft.com/en-us/download/dotnet/6.0
 - or use Install scripts https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
+- Raspberry Pi https://learn.microsoft.com/en-us/dotnet/iot/deployment
 
 Type following terminal commands:
 ```
