@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using HanumanInstitute.MvvmDialogs;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace CollimationCircles
 {
@@ -15,7 +14,7 @@ namespace CollimationCircles
     {
         public override void Initialize()
         {
-            AvaloniaXamlLoader.Load(this);            
+            AvaloniaXamlLoader.Load(this);
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -24,8 +23,8 @@ namespace CollimationCircles
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();
-            }            
+                desktop.MainWindow = new MainWindow();                
+            }
 
             base.OnFrameworkInitializationCompleted();
         }
@@ -39,6 +38,6 @@ namespace CollimationCircles
                     viewModelFactory: x => Ioc.Default.GetService(x)))
                 .AddSingleton<MainViewModel>()
                 .BuildServiceProvider());
-        }        
+        }
     }
 }

@@ -8,15 +8,14 @@
         x:Class="CollimationCircles.Views.MainWindow"
         Icon="/Resources/Images/ic_launcher.png"
         Title="{Binding Title}"
-        TransparencyBackgroundFallback="Transparent"
-        Background="{x:Null}"
-        TransparencyLevelHint="Transparent"        
+		    Background="{x:Null}"        
+        TransparencyBackgroundFallback="{x:Null}"
         Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}">  
-    <Button
-      HorizontalAlignment="Right"
-      VerticalAlignment="Top"
-      Width="64" Command="{Binding SettingsButtonCommand}">
-      <Image Source="/Resources/Images/ic_settings.png" />
-    </Button>  
+        Height="{Binding Height, Mode=TwoWay}">
+  <Button
+    HorizontalAlignment="Right"
+    VerticalAlignment="Top"
+    Width="64" Command="{Binding SettingsButtonCommand}">
+    <Image Source="/Resources/Images/ic_settings.png" />
+  </Button>
 </Window>

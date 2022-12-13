@@ -12,22 +12,23 @@
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
       <Button Padding="0" Command="{Binding AddCircleCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
-        <Image Source="/Resources/Images/ic_add.png" Width="30"/>
+        <Image Source="/Resources/Images/ic_add.png" Width="28"/>
       </Button>
       <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
-        <Image Source="/Resources/Images/ic_reset.png" Width="30"/>
+        <Image Source="/Resources/Images/ic_reset.png" Width="28"/>
       </Button>
       <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
-        <Image Source="/Resources/Images/ic_file_download.png" Width="30"/>
+        <Image Source="/Resources/Images/ic_file_download.png" Width="28"/>
       </Button>
       <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
-        <Image Source="/Resources/Images/ic_file_upload.png" Width="30"/>
+        <Image Source="/Resources/Images/ic_file_upload.png" Width="28"/>
       </Button>
-      <NumericUpDown Width="150" Increment="0.01"
+      <NumericUpDown Width="130" Increment="0.01"
                   ToolTip.Tip="{x:Static res:Text.Scale}" Value="{Binding Scale}"
                   Minimum="0.0" Maximum="4.0" />
       <CheckBox IsChecked="{Binding ShowLabels}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
     </StackPanel>
+    <Separator Height="1" Margin="5" Background="Silver" />
     <ScrollViewer HorizontalAlignment="Stretch" Height="400">
       <ItemsRepeater  Items="{Binding Items}">
         <ItemsRepeater.Layout>
@@ -52,7 +53,7 @@
                   ToolTip.Tip="{x:Static res:Text.Radius}" Value="{Binding Radius}"
                   Minimum="0" Maximum="2000" />
 
-                <NumericUpDown Width="100"
+                <NumericUpDown Width="110"
                   ToolTip.Tip="{x:Static res:Text.Thickness}" Value="{Binding Thickness}"
                   Minimum="1" Maximum="10"/>
 
@@ -75,14 +76,14 @@
               </StackPanel>
 
               <StackPanel
-                Orientation="Horizontal" Spacing="5" Margin="35,0,0,0">
+                Orientation="Horizontal" Spacing="5" Margin="68,0,0,0">
 
                 <NumericUpDown Width="120"
                   ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding Rotation}"
                   IsVisible="{Binding IsRotatable}"
                   Minimum="0" Maximum="90" />
 
-                <NumericUpDown Width="120"
+                <NumericUpDown Width="110"
                   ToolTip.Tip="{x:Static res:Text.Spacing}" Value="{Binding Size}"
                   IsVisible="{Binding IsSizeable}"
                   Minimum="1" Maximum="30"/>
