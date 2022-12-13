@@ -35,7 +35,7 @@ dotnet run
 
 # Building
 
-For more help see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
+For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
 
 ## Linux ARM 64
 ```
