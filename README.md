@@ -36,7 +36,3 @@ dotnet run
 # Known issues
 
 - Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will fix that)
-
-# Binnary packages
-
-Will be awailable soon
