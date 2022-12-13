@@ -11,11 +11,14 @@ Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate
 - support multiple shapes (circle, cross, screws)
 - user interface for managing list of shapes
 - scaling up or down of whole setup
+- rotating whole setup *
 - transparent background
 - fully customizable shapes: radius, thickness, color, spacing, rotation, label
-- support for profile saving and loading
-- precise position control with keyboard
+- support for profile saving and loading (json files)
+- precise position control with keyboard *
 - multiple platform support (Windows, Linux, macOS)
+
+* planned for future
 
 ![CollimationCircles](https://user-images.githubusercontent.com/7437280/206667602-65872b09-8ba2-4cd2-9bf1-e4a17e17602c.png)
 
