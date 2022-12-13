@@ -15,17 +15,16 @@ Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate
 - transparent background
 - fully customizable shapes: radius, thickness, color, spacing, rotation, label
 - support for profile saving and loading (json files)
-- precise position control with keyboard **
+- precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
 
-** not yet implemented
-
-![CollimationCircles](https://user-images.githubusercontent.com/7437280/206667602-65872b09-8ba2-4cd2-9bf1-e4a17e17602c.png)
+![image](https://user-images.githubusercontent.com/7437280/207387640-f0b2f880-c2d1-4462-a083-bab68d465b8d.png)
 
 # Instalation and running
 
 - download and install .NET 6 https://dotnet.microsoft.com/en-us/download/dotnet/6.0
 - or use Install scripts https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
+- Raspberry Pi https://learn.microsoft.com/en-us/dotnet/iot/deployment
 
 Type following terminal commands:
 ```
@@ -37,7 +36,3 @@ dotnet run
 # Known issues
 
 - Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will fix that)
-
-# Binnary packages
-
-Will be awailable soon
