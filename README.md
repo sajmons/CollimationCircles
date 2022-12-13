@@ -18,7 +18,7 @@ Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
 
-![image](https://user-images.githubusercontent.com/7437280/207386813-c7ff42f7-4169-4fbd-bcb9-4dc830ea56ab.png)
+![image](https://user-images.githubusercontent.com/7437280/207387640-f0b2f880-c2d1-4462-a083-bab68d465b8d.png)
 
 # Instalation and running
 
