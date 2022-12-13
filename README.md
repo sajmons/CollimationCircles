@@ -11,7 +11,7 @@ Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate
 - support multiple shapes (circle, cross, screws)
 - user interface for managing list of shapes
 - scaling up or down of whole setup
-- rotating whole setup **
+- rotation of whole setup
 - transparent background
 - fully customizable shapes: radius, thickness, color, spacing, rotation, label
 - support for profile saving and loading (json files)
