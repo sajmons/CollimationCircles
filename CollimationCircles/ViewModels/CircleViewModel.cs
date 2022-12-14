@@ -8,32 +8,12 @@ using System.ComponentModel;
 
 namespace CollimationCircles.ViewModels
 {
-    public partial class CircleViewModel : ObservableValidator, ICircle
+    public partial class CircleViewModel : CollimationHelper
     {
-        [ObservableProperty]
-        public Guid id = Guid.NewGuid();
-        [ObservableProperty]
-        public string color = ItemColor.Red;        
-        [ObservableProperty]
-        public string label = Text.Circle;
-        [ObservableProperty]
-        public int thickness = 1;
-        [ObservableProperty]
-        public double radius = 250;
-        [ObservableProperty]
-        public bool isVisible = true;
-        [ObservableProperty]
-        public bool isRotatable = false;
-        [ObservableProperty]
-        public bool isSizeable = false;
-        [ObservableProperty]
-        public bool isEditable = true;
-        [ObservableProperty]
-        public bool isCountable = false;
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
+        public CircleViewModel()
+        { 
+            Color = ItemColor.Red;
+            Label = Text.Circle;
         }
     }
 }

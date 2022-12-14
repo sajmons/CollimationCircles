@@ -9,14 +9,36 @@ namespace CollimationCircles
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
         // yet and stuff might break.
         [STAThread]
-        public static void Main(string[] args) => BuildAvaloniaApp()
-            .StartWithClassicDesktopLifetime(args);
+        public static void Main(string[] args)
+        {
+            try
+            {
+                BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+            }
+            catch
+            {
+                // here we can work with the exception, for example add it to our log file
+                //Log.Fatal(e, "Something very bad happened");
+                //var ds = Ioc.Default.GetService<IDialogService>();
+                //var vm = Ioc.Default.GetService<MainViewModel>();
+                //ds?.ShowMessageBoxAsync(vm, e.Message, "Error");
+                throw;
+            }
+            finally
+            {
+                // This block is optional. 
+                // Use the finally-block if you need to clean things up or similar
+                //Log.CloseAndFlush();
+            }
+        }
 
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
-            => AppBuilder.Configure<App>()                
+        {
+            return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .UseSkia()
                 .LogToTrace();
+        }
     }
 }

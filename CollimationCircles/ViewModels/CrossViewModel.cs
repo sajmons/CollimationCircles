@@ -8,36 +8,17 @@ using System.ComponentModel;
 
 namespace CollimationCircles.ViewModels
 {
-    public partial class CrossViewModel : ObservableValidator, ICross
+    public partial class CrossViewModel : CollimationHelper
     {
-        [ObservableProperty]
-        public double rotation = 45;
-        [ObservableProperty]
-        public double size = 4;
-        [ObservableProperty]
-        public Guid id = Guid.NewGuid();
-        [ObservableProperty]
-        public string color = ItemColor.Red;        
-        [ObservableProperty]
-        public string label = Text.Spider;
-        [ObservableProperty]
-        public int thickness = 1;
-        [ObservableProperty]
-        public double radius = 280;
-        [ObservableProperty]
-        public bool isVisible = true;
-        [ObservableProperty]
-        public bool isRotatable = true;
-        [ObservableProperty]
-        public bool isSizeable = true;
-        [ObservableProperty]
-        public bool isEditable = true;
-        [ObservableProperty]
-        public bool isCountable = false;
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        public CrossViewModel()
         {
-            WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
+            Rotation = 45;
+            Size = 4;
+            Color= ItemColor.Red;
+            Label = Text.Spider;
+            Radius= 200;
+            IsRotatable= true;
+            IsSizeable= true;
         }
     }
 }

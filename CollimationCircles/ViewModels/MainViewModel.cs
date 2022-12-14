@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
@@ -10,6 +9,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using DynamicData;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -17,38 +17,46 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public partial class MainViewModel : BaseViewModel
     {
         private readonly IDialogService dialogService;
 
+        [JsonProperty]
         [ObservableProperty]
         public PixelPoint position = new(100, 100);
 
+        [JsonProperty]
         [ObservableProperty]
         public double width = 650;
 
+        [JsonProperty]
         [ObservableProperty]
         public double height = 650;
 
+        [JsonProperty]
         [ObservableProperty]
         [Range(0.0, 5.0)]
         public double scale = 1.0;
 
+        [JsonProperty]
         [ObservableProperty]
         [Range(0, 360)]
         public double rotation = 0;
 
+        [JsonProperty]
         [ObservableProperty]
         public bool showLabels = true;
 
+        [JsonProperty]
         [ObservableProperty]
-        public ObservableCollection<ICollimationHelper>? items = new();
+        public ObservableCollection<CollimationHelper> items = new();
 
+        [JsonProperty]
         [ObservableProperty]
         public ObservableCollection<string> colorList = new();
 
@@ -98,7 +106,7 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeDefaults()
         {
-            List<ICollimationHelper> list = new()
+            List<CollimationHelper> list = new()
             {
                 // Circles
                 new CircleViewModel() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Label = Text.PrimaryCenter },
@@ -131,14 +139,10 @@ namespace CollimationCircles.ViewModels
             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
         }
 
-        [RelayCommand]
+        [RelayCommand]        
         private void SettingsButton()
-        {
-            var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-            if (mainWindow != null)
-            {
-                new SettingsWindow().Show(mainWindow);
-            }
+        {            
+            new SettingsWindow().Show();            
         }
 
         [RelayCommand]
@@ -160,7 +164,7 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        private void RemoveItem(ICollimationHelper item)
+        private void RemoveItem(CollimationHelper item)
         {
             Items?.Remove(item);
         }
@@ -174,7 +178,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private async Task SaveList()
         {
-            string jsonString = JsonSerializer.Serialize(Items?.ToList());
+            string jsonString = JsonConvert.SerializeObject(this);
 
             var settings = new SaveFileDialogSettings
             {
@@ -220,12 +224,26 @@ namespace CollimationCircles.ViewModels
 
                 if (!string.IsNullOrWhiteSpace(content))
                 {
-                    List<ICollimationHelper>? list = JsonSerializer.Deserialize<List<ICollimationHelper>>(content);
-
-                    if (list != null)
+                    var jss = new JsonSerializerSettings
                     {
+                        TypeNameHandling = TypeNameHandling.Auto,
+                        NullValueHandling = NullValueHandling.Ignore,
+                    };
+
+                    MainViewModel? vm = JsonConvert.DeserializeObject<MainViewModel>(content, jss);
+                    
+                    if (vm != null && vm.Items != null)
+                    {
+                        Position = vm.Position;
+                        Width = vm.Width;
+                        Height = vm.Height;
+                        Scale= vm.Scale;
+                        Rotation= vm.Rotation;
+                        ShowLabels= vm.ShowLabels;
+                        ColorList= vm.ColorList;
+
                         Items?.Clear();
-                        Items?.AddRange(list);
+                        Items?.AddRange(vm.Items);
                     }
                     else
                     {

@@ -20,7 +20,7 @@
       <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
         <Image Source="/Resources/Images/ic_file_download.png" Width="28"/>
       </Button>
-      <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
+      <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.LoadList}">
         <Image Source="/Resources/Images/ic_file_upload.png" Width="28"/>
       </Button>
       <NumericUpDown Width="130" Increment="0.01"
@@ -92,7 +92,7 @@
                   Minimum="1" Maximum="30"/>
 
                 <NumericUpDown Width="110" Increment="1"
-                ToolTip.Tip="{x:Static res:Text.Count}" Value="{Binding ScrewCount}"
+                ToolTip.Tip="{x:Static res:Text.Count}" Value="{Binding Count}"
                 IsVisible="{Binding IsCountable}"
                 Minimum="3" Maximum="10"/>
 

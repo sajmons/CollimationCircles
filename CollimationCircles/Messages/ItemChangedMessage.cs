@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace CollimationCircles.Messages
 {
-    public class ItemChangedMessage : ValueChangedMessage<ICollimationHelper>
+    public class ItemChangedMessage : ValueChangedMessage<CollimationHelper>
     {
-        public ItemChangedMessage(ICollimationHelper settings) : base(settings)
+        public ItemChangedMessage(CollimationHelper settings) : base(settings)
         {
         }
     }

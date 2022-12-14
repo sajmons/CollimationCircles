@@ -28,42 +28,51 @@ namespace CollimationCircles.Views
 
         public override void Render(DrawingContext context)
         {
-            var vm = Ioc.Default.GetService<MainViewModel>();
-
-            if (vm is not null)
+            try
             {
-                var it = vm?.Items;
+                var vm = Ioc.Default.GetService<MainViewModel>();
 
-                if (it is not null)
-                    foreach (ICollimationHelper item in it)
+                if (vm is not null)
+                {
+                    var it = vm?.Items;
+
+                    if (it is not null)
                     {
-                        var width2 = Width / 2;
-                        var height2 = Height / 2;
-
-                        var brush = new SolidColorBrush(Color.Parse(item.Color));
-
-                        Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
-                        Matrix rotation = Matrix.CreateRotation(vm.Rotation * Math.PI / 180);
-                        Matrix translate = Matrix.CreateTranslation(width2, height2);
-
-                        using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
+                        foreach (ICollimationHelper item in it)
                         {
-                            if (item is CrossViewModel && item.IsVisible)
-                            {
-                                DrawCross(context, vm.ShowLabels, (CrossViewModel)item, width2, height2, brush, translate);
-                            }
+                            var width2 = Width / 2;
+                            var height2 = Height / 2;
 
-                            if (item is CircleViewModel && item.IsVisible)
-                            {
-                                DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);
-                            }
+                            var brush = new SolidColorBrush(Color.Parse(item.Color));
 
-                            if (item is ScrewViewModel && item.IsVisible)
+                            Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
+                            Matrix rotation = Matrix.CreateRotation(vm.Rotation * Math.PI / 180);
+                            Matrix translate = Matrix.CreateTranslation(width2, height2);
+
+                            using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
                             {
-                                DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate);
+                                if (item is CrossViewModel && item.IsVisible)
+                                {
+                                    DrawCross(context, vm.ShowLabels, (CrossViewModel)item, width2, height2, brush, translate);
+                                }
+
+                                if (item is CircleViewModel && item.IsVisible)
+                                {
+                                    DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);
+                                }
+
+                                if (item is ScrewViewModel && item.IsVisible)
+                                {
+                                    DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate);
+                                }
                             }
                         }
                     }
+                }
+            }
+            catch
+            {
+                throw;                
             }
         }
 
@@ -118,12 +127,12 @@ namespace CollimationCircles.Views
 
         private void DrawScrew(DrawingContext context, bool showLabels, ScrewViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate)
         {
-            double angle = 360 / item.ScrewCount;
+            double angle = 360 / item.Count;
 
             Matrix rotate2 = Matrix.CreateRotation(item.Rotation * Math.PI / 180);
             using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
             {
-                for (int i = 0; i < item.ScrewCount; i++)
+                for (int i = 0; i < item.Count; i++)
                 {
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
                     using (context.PushPreTransform(rotate * translate))
