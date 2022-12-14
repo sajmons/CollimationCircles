@@ -22,7 +22,7 @@ Program was tested on Windows 11 and Linux (Raspberry PI OS Bullseye, Linux Mate
 
 # Instalation and running
 
-- download and install .NET 6 https://dotnet.microsoft.com/en-us/download/dotnet/6.0
+- download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download/dotnet
 - or use Install scripts https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
 - Raspberry Pi https://learn.microsoft.com/en-us/dotnet/iot/deployment
 
@@ -31,6 +31,17 @@ Type following terminal commands:
 git clone https://github.com/sajmons/CollimationCircles.git
 cd ColiminationCircles/ColiminationCircles
 dotnet run
+```
+
+# Building
+
+For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
+
+## Linux ARM 64
+```
+dotnet publish --runtime linux-arm64 /p:PublishSingleFile=true --output ~/Home/CollimationCircle
+cd ~/Home/CollimationCircle
+./CollimationCircle
 ```
 
 # Known issues
