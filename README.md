@@ -59,6 +59,7 @@ For collimation circles app to help you with collimation process you'll need thi
 - marked primary mirror center spot
 - reflective collimation cap
   - I made mine from 35mm film canister with hole in the center of the cap. Then I glued shinny washer to the bottom of the cap and glue everything back to canister
+  - ![image](https://user-images.githubusercontent.com/7437280/207800330-8a0efa3c-af8c-4e0c-8a25-434508111b99.png)
 
 I recomend you to read excelent [AstroBaby Collimation tutorial](https://www.astro-baby.com/astrobaby/help/collimation-guide-newtonian-reflector/). Images below are generated following procedure described in the tutorial.
 
