@@ -56,7 +56,7 @@ For collimation circles app to help you with collimation process you'll need thi
 - Collimation Circles app to overlay over live stream
 - screwdriver
 - sheet of paper to block primary mirror, and second colored (green in my case) sheet for better contrast
-- marked primary mirroc center spot
+- marked primary mirror center spot
 - reflective collimation cap
 
 I recomend you to read excelent [AstroBaby Collimation tutorial](https://www.astro-baby.com/astrobaby/help/collimation-guide-newtonian-reflector/). Images below are generated following procedure described in the tutorial.
