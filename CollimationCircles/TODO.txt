@@ -2,3 +2,5 @@
 - spider holder should also support 1 to n objects
 - app crashing after setting window close
 - ask to select helper type when adding new helper
+- fix serialization and deserialization
+  - dialog don't filter JSON files properly
