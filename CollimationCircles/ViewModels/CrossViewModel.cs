@@ -1,10 +1,6 @@
-﻿using CollimationCircles.Messages;
+﻿using Avalonia.Media;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Messaging;
-using System;
-using System.ComponentModel;
 
 namespace CollimationCircles.ViewModels
 {
@@ -14,7 +10,7 @@ namespace CollimationCircles.ViewModels
         {
             Rotation = 45;
             Size = 4;
-            Color= ItemColor.Red;
+            ItemColor = Colors.Red;
             Label = Text.Spider;
             Radius= 200;
             IsRotatable= true;

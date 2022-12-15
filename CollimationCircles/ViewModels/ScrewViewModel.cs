@@ -1,4 +1,5 @@
-﻿using CollimationCircles.Models;
+﻿using Avalonia.Media;
+using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
 
 namespace CollimationCircles.ViewModels
@@ -7,7 +8,7 @@ namespace CollimationCircles.ViewModels
     {
         public ScrewViewModel()
         {
-            Color = ItemColor.Lime;
+            ItemColor = Colors.Lime;
             Label = Text.PrimaryScrew;
             Radius = 270;
             IsRotatable = true;

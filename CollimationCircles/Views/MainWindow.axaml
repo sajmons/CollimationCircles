@@ -8,8 +8,8 @@
         x:Class="CollimationCircles.Views.MainWindow"
         Icon="/Resources/Images/ic_launcher.png"
         Title="{Binding Title}"
-		    Background="{x:Null}"
-        TransparencyBackgroundFallback="{x:Null}"
+		    Background="Transparent"
+        TransparencyBackgroundFallback="Transparent"
         Width="{Binding Width, Mode=TwoWay}"
         Height="{Binding Height, Mode=TwoWay}">
   <Grid RowDefinitions="64,*">

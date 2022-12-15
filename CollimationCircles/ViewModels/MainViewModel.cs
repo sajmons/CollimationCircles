@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Media;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
@@ -50,7 +51,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public bool showLabels = true;
+        public bool showLabels = true;        
 
         [JsonProperty]
         [ObservableProperty]
@@ -58,7 +59,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public ObservableCollection<string> colorList = new();
+        public ObservableCollection<Color> colorList = new();
 
         public MainViewModel(IDialogService dialogService)
         {
@@ -87,21 +88,24 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeColors()
         {
-            List<string> c = new()
+            List<Color> c = new()
             {
-                ItemColor.Orange,
-                ItemColor.LightBlue,
-                ItemColor.LightGreen,
-                ItemColor.Yellow,
-                ItemColor.Fuchsia,
-                ItemColor.Cyan,
-                ItemColor.Lime,
-                ItemColor.Red,
-                ItemColor.Gold,
-                ItemColor.White
+                Colors.Red,
+                Colors.Green,
+                Colors.Blue,
+                Colors.Orange,
+                Colors.LightBlue,
+                Colors.LightGreen,
+                Colors.Yellow,
+                Colors.Fuchsia,
+                Colors.Cyan,
+                Colors.Lime,
+                Colors.Gold,
+                Colors.White,
+                Colors.Black
             };
 
-            ColorList = new ObservableCollection<string>(c);
+            ColorList = new ObservableCollection<Color>(c);
         }
 
         private void InitializeDefaults()
@@ -109,9 +113,9 @@ namespace CollimationCircles.ViewModels
             List<CollimationHelper> list = new()
             {
                 // Circles
-                new CircleViewModel() { Color = ItemColor.Orange, Radius = 10, Thickness = 1, Label = Text.PrimaryCenter },
-                new CircleViewModel() { Color = ItemColor.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
-                new CircleViewModel() { Color = ItemColor.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
+                new CircleViewModel() { ItemColor = Colors.Orange, Radius = 10, Thickness = 1, Label = Text.PrimaryCenter },
+                new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
+                new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
 
                 // Crosses
                 new CrossViewModel(),
@@ -173,6 +177,12 @@ namespace CollimationCircles.ViewModels
         private void ResetList()
         {
             InitializeDefaults();
+        }
+
+        [RelayCommand]
+        private void ChangeColor()
+        { 
+            //Color = newColor
         }
 
         [RelayCommand]

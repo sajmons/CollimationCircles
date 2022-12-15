@@ -3,9 +3,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
-	<!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
-	<TrimMode>copyused</TrimMode>
-	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+    <TrimMode>copyused</TrimMode>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <LangVersion>10.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Models\ItemType.cs" />
@@ -36,11 +37,11 @@
     <AvaloniaResource Include="Resources\Images\ic_settings.png" />
   </ItemGroup>
   <ItemGroup>
-	<!--This helps with theme dll-s trimming.
+    <!--This helps with theme dll-s trimming.
 	If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
 	https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
-	<TrimmableAssembly Include="Avalonia.Themes.Fluent" />
-	<TrimmableAssembly Include="Avalonia.Themes.Default" />
+    <TrimmableAssembly Include="Avalonia.Themes.Fluent" />
+    <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.0-preview4" />
@@ -52,7 +53,7 @@
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.0.0-preview1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-	<PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\Strings.Designer.cs">

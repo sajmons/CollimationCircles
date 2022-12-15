@@ -4,22 +4,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="360"
         x:Class="CollimationCircles.Views.SettingsWindow"
         Title="{Binding Title}"
-        Width="620"
-        Height="400">
+        Width="560"
+        Height="360">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
       <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
         <SplitButton.Flyout>
-          <MenuFlyout Placement="Bottom">
+          <MenuFlyout Placement="BottomEdgeAlignedLeft">
             <MenuItem Header="Circle" Command="{Binding AddCircleCommand}" />
             <MenuItem Header="Cross" Command="{Binding AddCrossCommand}" />
             <MenuItem Header="Screw" Command="{Binding AddScrewCommand}" />
           </MenuFlyout>
         </SplitButton.Flyout>
-      </SplitButton>      
+      </SplitButton>
       <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
         <Image Source="/Resources/Images/ic_reset.png" Width="28"/>
       </Button>
@@ -67,20 +67,20 @@
                   Minimum="1" Maximum="10"/>
 
                 <ComboBox
-                  Width="120" ToolTip.Tip="{x:Static res:Text.Color}"
-                  SelectedItem="{Binding Color}"
+                  Width="65" ToolTip.Tip="{x:Static res:Text.Color}"
+                  SelectedItem="{Binding ItemColor}"
                   Items="{Binding $parent[ItemsRepeater].DataContext.ColorList}">
                   <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                      <StackPanel Orientation="Horizontal" Spacing="5">
-                        <Border BorderBrush="Black" BorderThickness="1" Width="14" Height="14">
-                          <TextBlock Background="{Binding .}" Width="12" Height="12" />
-                        </Border>
-                        <TextBlock Text="{Binding .}" />
-                      </StackPanel>
+                    <DataTemplate DataType="Color">
+                      <Border CornerRadius="4" Width="20" Height="20" BorderBrush="Gray" BorderThickness="1" >
+                        <Border.Background>
+                          <SolidColorBrush Color="{Binding}" />
+                        </Border.Background>
+                      </Border>
                     </DataTemplate>
                   </ComboBox.ItemTemplate>
                 </ComboBox>
+
                 <TextBox IsVisible="{Binding IsEditable}" Width="140" Text="{Binding Label}" ToolTip.Tip="{x:Static res:Text.Label}" />
               </StackPanel>
 

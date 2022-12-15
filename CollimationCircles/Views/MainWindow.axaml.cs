@@ -43,7 +43,7 @@ namespace CollimationCircles.Views
                             var width2 = Width / 2;
                             var height2 = Height / 2;
 
-                            var brush = new SolidColorBrush(Color.Parse(item.Color));
+                            var brush = new SolidColorBrush(item.ItemColor);
 
                             Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
                             Matrix rotation = Matrix.CreateRotation(vm.Rotation * Math.PI / 180);

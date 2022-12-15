@@ -1,4 +1,5 @@
-﻿using CollimationCircles.Messages;
+﻿using Avalonia.Media;
+using CollimationCircles.Messages;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
@@ -16,7 +17,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        private string color = ItemColor.Red;
+        private Color itemColor = Colors.Red;
 
         [JsonProperty]
         [ObservableProperty]

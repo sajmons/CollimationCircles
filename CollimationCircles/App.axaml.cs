@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using HanumanInstitute.MvvmDialogs;
 using Microsoft.Extensions.DependencyInjection;
-using System.ComponentModel;
 
 namespace CollimationCircles
 {
