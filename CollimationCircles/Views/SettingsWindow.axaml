@@ -33,7 +33,7 @@
                   ToolTip.Tip="{x:Static res:Text.Scale}" Value="{Binding Scale}"
                   Minimum="0.0" Maximum="4.0" />
       <NumericUpDown Width="130"
-                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding Rotation}"
+                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle}"
                   Minimum="-180" Maximum="180" />
       <CheckBox IsChecked="{Binding ShowLabels}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
     </StackPanel>
@@ -88,7 +88,7 @@
                 Orientation="Horizontal" Spacing="5" Margin="68,0,0,0">
 
                 <NumericUpDown Width="120" Increment="1"
-                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding Rotation}"
+                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle}"
                   IsVisible="{Binding IsRotatable}"
                   Minimum="-180" Maximum="180" />
 
