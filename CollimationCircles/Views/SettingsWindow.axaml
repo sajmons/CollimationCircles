@@ -14,9 +14,9 @@
       <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
         <SplitButton.Flyout>
           <MenuFlyout Placement="Bottom">
-            <MenuItem Header="Circle"  InputGesture="Ctrl+C" Command="{Binding AddCircleCommand}" />
-            <MenuItem Header="Cross"  InputGesture="Ctrl+R" Command="{Binding AddCrossCommand}" />
-            <MenuItem Header="Screw" InputGesture="Ctrl+S" Command="{Binding AddScrewCommand}" />
+            <MenuItem Header="Circle" Command="{Binding AddCircleCommand}" />
+            <MenuItem Header="Cross" Command="{Binding AddCrossCommand}" />
+            <MenuItem Header="Screw" Command="{Binding AddScrewCommand}" />
           </MenuFlyout>
         </SplitButton.Flyout>
       </SplitButton>      
