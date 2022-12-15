@@ -44,6 +44,17 @@ cd ~/Home/CollimationCircle
 ./CollimationCircle
 ```
 
+# Collimation process
+
+I recomend you to read excelect [AstroBaby Collimation tutorial](https://www.astro-baby.com/astrobaby/help/collimation-guide-newtonian-reflector/). Images below are generated following procedure described in the tutorial.
+
+## Centering secondary mirror under focuser
+
+![image](https://user-images.githubusercontent.com/7437280/207791142-3c5f99d5-98b9-4dd0-92c8-32a19a7d9906.png)
+
+In this stage our goal is to center secondary mirror to center of focuser tube.
+
+
 # Known issues
 
 - Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will fix that)
