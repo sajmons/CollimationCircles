@@ -30,7 +30,7 @@ namespace CollimationCircles.Views
         {
             try
             {
-                var vm = Ioc.Default.GetService<MainViewModel>();
+                MainViewModel? vm = Ioc.Default.GetService<MainViewModel>();
 
                 if (vm is not null)
                 {
@@ -40,13 +40,13 @@ namespace CollimationCircles.Views
                     {
                         foreach (ICollimationHelper item in it)
                         {
-                            var width2 = Width / 2;
-                            var height2 = Height / 2;
+                            double width2 = Width / 2;
+                            double height2 = Height / 2;
 
                             var brush = new SolidColorBrush(item.ItemColor);
 
                             Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
-                            Matrix rotation = Matrix.CreateRotation(vm.Rotation * Math.PI / 180);
+                            Matrix rotation = Matrix.CreateRotation(vm.RotationAngle * Math.PI / 180);
                             Matrix translate = Matrix.CreateTranslation(width2, height2);
 
                             using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
@@ -103,7 +103,7 @@ namespace CollimationCircles.Views
             double centerX = width2 - halfCrossSpacing;
             double centerY = height2 - halfCrossSpacing;
 
-            Matrix rotate = Matrix.CreateRotation(item.Rotation * Math.PI / 180);
+            Matrix rotate = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
 
             using (context.PushPreTransform(translate.Invert() * rotate * translate))
             {
@@ -129,7 +129,7 @@ namespace CollimationCircles.Views
         {
             double angle = 360 / item.Count;
 
-            Matrix rotate2 = Matrix.CreateRotation(item.Rotation * Math.PI / 180);
+            Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
             using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
             {
                 for (int i = 0; i < item.Count; i++)

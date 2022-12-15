@@ -46,8 +46,8 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(0, 360)]
-        public double rotation = 0;
+        [Range(-180, 180)]
+        public double rotationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
@@ -177,13 +177,7 @@ namespace CollimationCircles.ViewModels
         private void ResetList()
         {
             InitializeDefaults();
-        }
-
-        [RelayCommand]
-        private void ChangeColor()
-        { 
-            //Color = newColor
-        }
+        }        
 
         [RelayCommand]
         private async Task SaveList()
@@ -248,7 +242,7 @@ namespace CollimationCircles.ViewModels
                         Width = vm.Width;
                         Height = vm.Height;
                         Scale= vm.Scale;
-                        Rotation= vm.Rotation;
+                        RotationAngle = vm.RotationAngle;
                         ShowLabels= vm.ShowLabels;
                         ColorList= vm.ColorList;
 

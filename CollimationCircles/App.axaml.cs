@@ -7,6 +7,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using HanumanInstitute.MvvmDialogs;
 using Microsoft.Extensions.DependencyInjection;
+using Avalonia.Input;
+using Avalonia.Controls;
+using System;
 
 namespace CollimationCircles
 {
@@ -25,7 +28,7 @@ namespace CollimationCircles
             {
                 desktop.MainWindow = new MainWindow();
 
-                var vm = Ioc.Default.GetService<MainViewModel>();
+                MainViewModel? vm = Ioc.Default.GetService<MainViewModel>();
 
                 if (vm != null)
                 {
@@ -34,47 +37,9 @@ namespace CollimationCircles
 
                 desktop.MainWindow.KeyDown += (s, e) =>
                 {
-                    int x = desktop.MainWindow.Position.X;
-                    int y = desktop.MainWindow.Position.Y;
-                    int increment = 1;
-
-                    if (e.KeyModifiers == Avalonia.Input.KeyModifiers.Shift)
-                    {
-                        increment = 10;
-                    }
-                    else
-                    {
-                        increment = 1;
-                    }
-
-                    if (e.Key == Avalonia.Input.Key.Up)
-                    {
-                        y -= increment;
-                    }
-
-                    if (e.Key == Avalonia.Input.Key.Down)
-                    {
-                        y += increment;
-                    }
-
-                    if (e.Key == Avalonia.Input.Key.Left)
-                    {
-                        x -= increment;
-                    }
-
-                    if (e.Key == Avalonia.Input.Key.Right)
-                    {
-                        x += increment;
-                    }
-
-                    PixelPoint newP = new(x, y);
-
-                    desktop.MainWindow.Position = newP;
-
-                    if (vm != null)
-                    {
-                        vm.Position = newP;
-                    }
+                    HandleMovement(desktop.MainWindow, vm, e);
+                    HandleScale(vm, e);
+                    HandleRotation(vm, e);
                 };
             }
 
@@ -90,6 +55,100 @@ namespace CollimationCircles
                     viewModelFactory: x => Ioc.Default.GetService(x)))
                 .AddSingleton<MainViewModel>()
                 .BuildServiceProvider());
+        }
+
+        private void HandleMovement(Window window, MainViewModel? vm, KeyEventArgs e)
+        {
+            int x = window.Position.X;
+            int y = window.Position.Y;
+            int increment;
+
+            if (e.KeyModifiers == KeyModifiers.Control) return;
+            if (e.KeyModifiers == KeyModifiers.Alt) return;
+
+            if (e.KeyModifiers == KeyModifiers.Shift)
+            {
+                increment = 10;
+            }
+            else
+            {
+                increment = 1;
+            }
+
+            if (e.Key == Key.Up)
+            {
+                y -= increment;
+            }
+
+            if (e.Key == Key.Down)
+            {
+                y += increment;
+            }
+
+            if (e.Key == Key.Left)
+            {
+                x -= increment;
+            }
+
+            if (e.Key == Key.Right)
+            {
+                x += increment;
+            }
+
+            PixelPoint newP = new(x, y);
+
+            window.Position = newP;
+
+            if (vm != null)
+            {
+                vm.Position = newP;
+            }
+        }
+
+        private void HandleScale(MainViewModel? vm, KeyEventArgs e)
+        {
+            if (e.KeyModifiers == KeyModifiers.Shift) return;
+            if (e.KeyModifiers == KeyModifiers.Alt) return;
+
+            if (e.KeyModifiers == KeyModifiers.Control && vm != null)
+            {
+                double increment = vm.Scale;
+
+                if (e.Key == Key.Up)
+                {
+                    increment += 0.01;
+                }
+
+                if (e.Key == Key.Down)
+                {
+                    increment -= 0.01;
+                }
+
+                vm.Scale = increment;
+            }
+        }
+
+        private void HandleRotation(MainViewModel? vm, KeyEventArgs e)
+        {
+            if (e.KeyModifiers == KeyModifiers.Shift) return;
+            if (e.KeyModifiers == KeyModifiers.Control) return;
+
+            if (e.KeyModifiers == KeyModifiers.Alt && vm != null)
+            {
+                double rotation = vm.RotationAngle;
+
+                if (e.Key == Key.Up)
+                {
+                    rotation += 1;
+                }
+
+                if (e.Key == Key.Down)
+                {
+                    rotation -= 1;
+                }
+
+                vm.RotationAngle = rotation;
+            }
         }
     }
 }

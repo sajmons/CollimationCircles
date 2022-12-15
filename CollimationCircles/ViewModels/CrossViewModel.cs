@@ -8,7 +8,7 @@ namespace CollimationCircles.ViewModels
     {
         public CrossViewModel()
         {
-            Rotation = 45;
+            RotationAngle = 45;
             Size = 4;
             ItemColor = Colors.Red;
             Label = Text.Spider;

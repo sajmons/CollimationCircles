@@ -53,7 +53,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        private double rotation = 0;
+        private double rotationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
