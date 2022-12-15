@@ -73,9 +73,7 @@ After first step you will probably see something like this:
 
 ![image](https://user-images.githubusercontent.com/7437280/207792834-0d186ee0-675d-4599-b5ac-d83b58a2ab63.png)
 
-From that image you can see that secondary mirror and primary are not aligned. Great method to align secondary mirror is, to tilt it until you get all primary holder clips into view as shown on next image.
-
-![image](https://user-images.githubusercontent.com/7437280/207795153-d116db29-5a04-44dd-9b83-7c431a296a0a.png)
+From that image you can see that secondary mirror and primary are not aligned. Great method to align secondary mirror is, to tilt it until you get all primary holder clips into view (as shown in next step).
 
 Remember to tighten all the screws on secondary mirror and check live image again.
 
