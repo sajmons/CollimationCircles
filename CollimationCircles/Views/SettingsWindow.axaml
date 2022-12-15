@@ -11,9 +11,15 @@
         Height="400">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
-      <Button Padding="0" Command="{Binding AddCircleCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
-        <Image Source="/Resources/Images/ic_add.png" Width="28"/>
-      </Button>
+      <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
+        <SplitButton.Flyout>
+          <MenuFlyout Placement="Bottom">
+            <MenuItem Header="Circle"  InputGesture="Ctrl+C" Command="{Binding AddCircleCommand}" />
+            <MenuItem Header="Cross"  InputGesture="Ctrl+R" Command="{Binding AddCrossCommand}" />
+            <MenuItem Header="Screw" InputGesture="Ctrl+S" Command="{Binding AddScrewCommand}" />
+          </MenuFlyout>
+        </SplitButton.Flyout>
+      </SplitButton>      
       <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
         <Image Source="/Resources/Images/ic_reset.png" Width="28"/>
       </Button>
