@@ -46,13 +46,37 @@ cd ~/Home/CollimationCircle
 
 # Collimation process
 
-I recomend you to read excelect [AstroBaby Collimation tutorial](https://www.astro-baby.com/astrobaby/help/collimation-guide-newtonian-reflector/). Images below are generated following procedure described in the tutorial.
+## 1. Preparations
 
-## Centering secondary mirror under focuser
+For collimation circles app to help you with collimation process you'll need this:
+
+- some kind of web cam or phone attached to the focuser
+  - I was using phone, holder to attach phone to focuser, DroidCam app from Play Store to stream live view to computer browser
+- computer displaying live image from webcam or phone
+- Collimation Circles app to overlay over live stream
+- screwdriver
+- sheet of paper to block primarry mirror, and second colored (green in my case) sheet for better contrast
+
+I recomend you to read excelent [AstroBaby Collimation tutorial](https://www.astro-baby.com/astrobaby/help/collimation-guide-newtonian-reflector/). Images below are generated following procedure described in the tutorial.
+
+## 2. Align secondary mirror to center of focuser tube
 
 ![image](https://user-images.githubusercontent.com/7437280/207791142-3c5f99d5-98b9-4dd0-92c8-32a19a7d9906.png)
 
-In this stage our goal is to center secondary mirror to center of focuser tube.
+In this stage our goal is to center secondary mirror to center of focuser tube. Image shows that secondary mirror is not at exact center of focuser tube. In this stage it's very important to block primarry mirror reflection as described in tutorial.
+
+## 3. Align secondary mirror to primary mirror
+
+After first step you will probably see something like this:
+
+![image](https://user-images.githubusercontent.com/7437280/207792834-0d186ee0-675d-4599-b5ac-d83b58a2ab63.png)
+
+From that image you can see that secondary mirror and primary are not aligned. Great method to align secondary mirror is, to tilt it until you get all primarry holder clips into view as shown on next image.
+
+![image](https://user-images.githubusercontent.com/7437280/207795153-d116db29-5a04-44dd-9b83-7c431a296a0a.png)
+
+
+
 
 
 # Known issues
