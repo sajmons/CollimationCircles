@@ -1,3 +1,4 @@
 ﻿- fix main window title
 - spider holder should also support 1 to n objects
 - app crashing after setting window close
+- ask to select helper type when adding new helper
