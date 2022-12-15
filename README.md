@@ -90,7 +90,7 @@ In this step you unscrew locking screws of primary mirror and using collimation 
 
 ## 5. Star test
 
-All you can do at this stage is to perform star test (as described in tutorial) and make some final tunning of primary mirror.
+Final stage is to perform star test (as described in tutorial) and make some final tunning of primary mirror.
 
 # Known issues
 
