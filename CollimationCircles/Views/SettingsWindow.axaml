@@ -6,7 +6,7 @@
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
         mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="360"
         x:Class="CollimationCircles.Views.SettingsWindow"
-        Title="{Binding Title}"
+        Title="{x:Static res:Text.Settings}"
         Width="560"
         Height="430">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">

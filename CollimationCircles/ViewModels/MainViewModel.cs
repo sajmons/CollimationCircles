@@ -64,8 +64,7 @@ namespace CollimationCircles.ViewModels
         public MainViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-
-            Title = Text.CollimationCircles;
+            
             InitializeColors();
             InitializeDefaults();
             InitializeMessages();

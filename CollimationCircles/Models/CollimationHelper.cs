@@ -67,8 +67,6 @@ namespace CollimationCircles.Models
         [JsonProperty]
         [ObservableProperty]
         private int count = 4;
-
-
         public Bitmap? Image
         {
             get
