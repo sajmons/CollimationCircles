@@ -120,6 +120,9 @@
   <data name="AddNewItem" xml:space="preserve">
     <value>Add new item to list</value>
   </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>All Files</value>
+  </data>
   <data name="ChangeTo" xml:space="preserve">
     <value>Change to {0}</value>
   </data>
@@ -218,6 +221,9 @@
   </data>
   <data name="Spider" xml:space="preserve">
     <value>Spider</value>
+  </data>
+  <data name="StarChar" xml:space="preserve">
+    <value>*</value>
   </data>
   <data name="Thickness" xml:space="preserve">
     <value>Tickness</value>

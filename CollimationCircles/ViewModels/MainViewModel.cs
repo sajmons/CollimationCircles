@@ -51,7 +51,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public bool showLabels = true;        
+        public bool showLabels = true;
 
         [JsonProperty]
         [ObservableProperty]
@@ -143,10 +143,10 @@ namespace CollimationCircles.ViewModels
             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
         }
 
-        [RelayCommand]        
+        [RelayCommand]
         private void SettingsButton()
-        {            
-            new SettingsWindow().Show();            
+        {
+            new SettingsWindow().Show();
         }
 
         [RelayCommand]
@@ -177,20 +177,24 @@ namespace CollimationCircles.ViewModels
         private void ResetList()
         {
             InitializeDefaults();
-        }        
+        }
 
         [RelayCommand]
         private async Task SaveList()
         {
-            string jsonString = JsonConvert.SerializeObject(this);
+            string jsonString = JsonConvert.SerializeObject(this, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
 
             var settings = new SaveFileDialogSettings
             {
                 Title = Text.SaveFile,
-                InitialDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
+                InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter(Text.JSONDocuments, new[] { Text.Json }),
+                    new FileFilter(Text.JSONDocuments, Text.Json),
+                    new FileFilter(Text.AllFiles, Text.StarChar),
                 },
                 DefaultExtension = Text.Json
             };
@@ -211,10 +215,11 @@ namespace CollimationCircles.ViewModels
             var settings = new OpenFileDialogSettings
             {
                 Title = Text.OpenFile,
-                InitialDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!,
+                InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter(Text.JSONDocuments, new[] { Text.Json })
+                    new FileFilter(Text.JSONDocuments, Text.Json),
+                    new FileFilter(Text.AllFiles, Text.StarChar),
                 }
             };
 
@@ -235,16 +240,16 @@ namespace CollimationCircles.ViewModels
                     };
 
                     MainViewModel? vm = JsonConvert.DeserializeObject<MainViewModel>(content, jss);
-                    
+
                     if (vm != null && vm.Items != null)
                     {
                         Position = vm.Position;
                         Width = vm.Width;
                         Height = vm.Height;
-                        Scale= vm.Scale;
+                        Scale = vm.Scale;
                         RotationAngle = vm.RotationAngle;
-                        ShowLabels= vm.ShowLabels;
-                        ColorList= vm.ColorList;
+                        ShowLabels = vm.ShowLabels;
+                        ColorList = vm.ColorList;
 
                         Items?.Clear();
                         Items?.AddRange(vm.Items);

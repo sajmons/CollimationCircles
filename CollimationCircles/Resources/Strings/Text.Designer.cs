@@ -70,6 +70,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to All Files.
+        /// </summary>
+        public static string AllFiles {
+            get {
+                return ResourceManager.GetString("AllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change to {0}.
         /// </summary>
         public static string ChangeTo {
@@ -363,6 +372,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string Spider {
             get {
                 return ResourceManager.GetString("Spider", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *.
+        /// </summary>
+        public static string StarChar {
+            get {
+                return ResourceManager.GetString("StarChar", resourceCulture);
             }
         }
         
