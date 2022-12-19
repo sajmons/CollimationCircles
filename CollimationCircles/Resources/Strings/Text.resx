@@ -177,6 +177,9 @@
   <data name="PrimaryCenter" xml:space="preserve">
     <value>Primary Center</value>
   </data>
+  <data name="PrimaryClip" xml:space="preserve">
+    <value>Primary Clip</value>
+  </data>
   <data name="PrimaryOuter" xml:space="preserve">
     <value>Primary Outer</value>
   </data>

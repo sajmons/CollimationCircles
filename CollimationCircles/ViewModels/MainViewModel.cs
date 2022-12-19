@@ -121,7 +121,9 @@ namespace CollimationCircles.ViewModels
                 new CrossViewModel(),
 
                 // Screws
-                new ScrewViewModel()
+                new ScrewViewModel(),
+
+                new PrimaryClipViewModel()
             };
 
             if (Items is not null)

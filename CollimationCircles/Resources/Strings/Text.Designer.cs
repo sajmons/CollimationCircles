@@ -241,6 +241,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Primary Clip.
+        /// </summary>
+        public static string PrimaryClip {
+            get {
+                return ResourceManager.GetString("PrimaryClip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Primary Outer.
         /// </summary>
         public static string PrimaryOuter {

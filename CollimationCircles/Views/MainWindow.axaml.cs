@@ -65,6 +65,11 @@ namespace CollimationCircles.Views
                                 {
                                     DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate);
                                 }
+
+                                if (item is PrimaryClipViewModel && item.IsVisible)
+                                {
+                                    DrawPrimaryClip(context, vm.ShowLabels, (PrimaryClipViewModel)item, width2, height2, brush, translate);
+                                }
                             }
                         }
                     }
@@ -138,6 +143,37 @@ namespace CollimationCircles.Views
                     using (context.PushPreTransform(rotate * translate))
                     {
                         context.DrawEllipse(brush, new Pen(brush, item.Thickness), new Point(0, item.Radius), item.Size, item.Size);
+
+                        if (showLabels)
+                        {
+                            var formattedText = new FormattedText(
+                                $"{item.Label} {i}",
+                                CultureInfo.CurrentCulture,
+                                FlowDirection.LeftToRight,
+                                Typeface.Default,
+                                15,
+                                brush);
+
+                            context.DrawText(formattedText, new Point(item.Size, item.Radius));
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DrawPrimaryClip(DrawingContext context, bool showLabels, PrimaryClipViewModel item, double width2, double height2, SolidColorBrush brush, Matrix translate)
+        {
+            double angle = 360 / item.Count;
+
+            Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
+            using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
+            {
+                for (int i = 0; i < item.Count; i++)
+                {
+                    Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
+                    using (context.PushPreTransform(rotate * translate))
+                    {
+                        context.DrawRectangle(new Pen(brush, item.Thickness), new Rect(-item.Size / 2, item.Radius - item.Size / 2, item.Size, item.Size / 3));
 
                         if (showLabels)
                         {

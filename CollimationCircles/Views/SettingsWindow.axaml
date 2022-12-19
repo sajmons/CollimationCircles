@@ -95,7 +95,7 @@
                 <NumericUpDown Width="110" Increment="1"
                   ToolTip.Tip="{x:Static res:Text.Spacing}" Value="{Binding Size}"
                   IsVisible="{Binding IsSizeable}"
-                  Minimum="1" Maximum="30"/>
+                  Minimum="1" Maximum="50"/>
 
                 <NumericUpDown Width="110" Increment="1"
                 ToolTip.Tip="{x:Static res:Text.Count}" Value="{Binding Count}"
