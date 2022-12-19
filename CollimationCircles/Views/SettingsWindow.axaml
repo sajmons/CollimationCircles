@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="360"
         x:Class="CollimationCircles.Views.SettingsWindow"
         Title="{x:Static res:Text.Settings}"
-        Width="560"
+        Width="575"
         Height="430">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
