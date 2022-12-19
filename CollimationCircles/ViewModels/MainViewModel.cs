@@ -200,10 +200,10 @@ namespace CollimationCircles.ViewModels
                 InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter(Text.JSONDocuments, Text.Json),
-                    new FileFilter(Text.AllFiles, Text.StarChar),
+                    new FileFilter(Text.JSONDocuments, Text.StarJson),
+                    new FileFilter(Text.AllFiles, Text.StarChar)
                 },
-                DefaultExtension = Text.Json
+                DefaultExtension = Text.StarJson
             };
 
             var result = await dialogService.ShowSaveFileDialogAsync(this, settings);
@@ -225,7 +225,7 @@ namespace CollimationCircles.ViewModels
                 InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter(Text.JSONDocuments, Text.Json),
+                    new FileFilter(Text.JSONDocuments, Text.StarJson),
                     new FileFilter(Text.AllFiles, Text.StarChar),
                 }
             };

@@ -169,15 +169,6 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to json.
-        /// </summary>
-        public static string Json {
-            get {
-                return ResourceManager.GetString("Json", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to JSON Documents.
         /// </summary>
         public static string JSONDocuments {
@@ -390,6 +381,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string StarChar {
             get {
                 return ResourceManager.GetString("StarChar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to *.json.
+        /// </summary>
+        public static string StarJson {
+            get {
+                return ResourceManager.GetString("StarJson", resourceCulture);
             }
         }
         

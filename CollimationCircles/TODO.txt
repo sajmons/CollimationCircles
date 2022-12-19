@@ -1,3 +1,2 @@
 ﻿- spider holder should also support 1 to n objects
 - app crashing after setting window close
-- dialog don't filter JSON files properly

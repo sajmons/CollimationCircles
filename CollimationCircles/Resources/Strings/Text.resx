@@ -153,9 +153,6 @@
   <data name="ItemVisibility" xml:space="preserve">
     <value>Item visibility</value>
   </data>
-  <data name="Json" xml:space="preserve">
-    <value>json</value>
-  </data>
   <data name="JSONDocuments" xml:space="preserve">
     <value>JSON Documents</value>
   </data>
@@ -227,6 +224,9 @@
   </data>
   <data name="StarChar" xml:space="preserve">
     <value>*</value>
+  </data>
+  <data name="StarJson" xml:space="preserve">
+    <value>*.json</value>
   </data>
   <data name="Thickness" xml:space="preserve">
     <value>Tickness</value>
