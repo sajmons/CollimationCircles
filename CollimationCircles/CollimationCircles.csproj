@@ -17,17 +17,29 @@
     <None Remove=".gitignore" />
     <None Remove="Resources\Images\arrow-keys.svg" />
     <None Remove="Resources\Images\arrow_keys.png" />
+    <None Remove="Resources\Images\circle.png" />
+    <None Remove="Resources\Images\circle.svg" />
+    <None Remove="Resources\Images\clip.png" />
+    <None Remove="Resources\Images\cross.png" />
+    <None Remove="Resources\Images\cross.svg" />
     <None Remove="Resources\Images\ic_add.png" />
     <None Remove="Resources\Images\ic_file_download.png" />
     <None Remove="Resources\Images\ic_file_upload.png" />
     <None Remove="Resources\Images\ic_launcher.png" />
+    <None Remove="Resources\Images\ic_launcher.svg" />
     <None Remove="Resources\Images\ic_remove.png" />
     <None Remove="Resources\Images\ic_reset.png" />
+    <None Remove="Resources\Images\ic_reset.svg" />
     <None Remove="Resources\Images\ic_save.png" />
     <None Remove="Resources\Images\ic_settings.png" />
+    <None Remove="Resources\Images\rectangle.svg" />
+    <None Remove="Resources\Images\screw.png" />
+    <None Remove="Resources\Images\screw.svg" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Resources\Images\arrow_keys.png" />
+    <AvaloniaResource Include="Resources\Images\circle.png" />
+    <AvaloniaResource Include="Resources\Images\cross.png" />
     <AvaloniaResource Include="Resources\Images\ic_add.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_download.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_upload.png" />
@@ -35,6 +47,8 @@
     <AvaloniaResource Include="Resources\Images\ic_remove.png" />
     <AvaloniaResource Include="Resources\Images\ic_reset.png" />
     <AvaloniaResource Include="Resources\Images\ic_settings.png" />
+    <AvaloniaResource Include="Resources\Images\clip.png" />
+    <AvaloniaResource Include="Resources\Images\screw.png" />
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming.

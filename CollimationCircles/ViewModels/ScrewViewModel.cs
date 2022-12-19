@@ -13,7 +13,7 @@ namespace CollimationCircles.ViewModels
             Radius = 270;
             IsRotatable = true;
             IsSizeable= true;
-            IsEditable= false;
+            IsEditable= true;
             IsCountable= true;            
         }
     }

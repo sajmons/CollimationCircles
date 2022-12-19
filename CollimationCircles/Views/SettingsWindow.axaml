@@ -8,7 +8,7 @@
         x:Class="CollimationCircles.Views.SettingsWindow"
         Title="{Binding Title}"
         Width="560"
-        Height="360">
+        Height="430">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
       <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
@@ -17,6 +17,7 @@
             <MenuItem Header="Circle" Command="{Binding AddCircleCommand}" />
             <MenuItem Header="Cross" Command="{Binding AddCrossCommand}" />
             <MenuItem Header="Screw" Command="{Binding AddScrewCommand}" />
+            <MenuItem Header="Primary Clip" Command="{Binding AddClipCommand}" />
           </MenuFlyout>
         </SplitButton.Flyout>
       </SplitButton>
@@ -55,6 +56,8 @@
                   ToolTip.Tip="{x:Static res:Text.RemoveItem}">
                   <Image Source="/Resources/Images/ic_remove.png" />
                 </Button>
+                
+                <Image Width="16" Height="16" Source="{Binding Image}"/>                
 
                 <CheckBox IsChecked="{Binding IsVisible}" ToolTip.Tip="{x:Static res:Text.ItemVisibility}" />
 
@@ -104,7 +107,7 @@
 
               </StackPanel>
 
-              <Separator Height="1" Margin="5" Background="Silver" />
+              <Separator Height="1" Margin="5" Background="Silver" />              
 
             </StackPanel>
 

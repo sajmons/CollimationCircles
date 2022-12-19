@@ -1,10 +1,15 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using CollimationCircles.Messages;
+using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace CollimationCircles.Models
 {
@@ -62,6 +67,38 @@ namespace CollimationCircles.Models
         [JsonProperty]
         [ObservableProperty]
         private int count = 4;
+
+
+        public Bitmap? Image
+        {
+            get
+            {
+                string path = "Resources/Images/";
+
+                if (this is CircleViewModel)
+                    path += "circle";
+                else if (this is CrossViewModel)
+                    path += "cross";
+                else if (this is PrimaryClipViewModel)
+                    path += "clip";
+                else if (this is ScrewViewModel)
+                    path += "screw";
+                else
+                    path += string.Empty;
+
+                string assemblyName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
+
+                var uri = new Uri($"avares://{assemblyName}/{path}.png");
+
+                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+                var asset = assets?.Open(uri);
+
+                if (asset is null)
+                    return null;
+                else
+                    return new Bitmap(asset);
+            }
+        }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {

@@ -128,10 +128,10 @@ namespace CollimationCircles.ViewModels
 
             if (Items is not null)
             {
-                Items.CollectionChanged += Items_CollectionChanged;
-
                 Items.Clear();
                 Items.AddRange(list);
+
+                Items.CollectionChanged += Items_CollectionChanged;
             }
         }
 
@@ -167,6 +167,12 @@ namespace CollimationCircles.ViewModels
         private void AddScrew()
         {
             Items?.Add(new ScrewViewModel());
+        }
+
+        [RelayCommand]
+        private void AddClip()
+        {
+            Items?.Add(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
