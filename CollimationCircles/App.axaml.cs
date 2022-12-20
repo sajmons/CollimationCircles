@@ -27,9 +27,9 @@ namespace CollimationCircles
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainWindow();
+                desktop.MainWindow = new MainView();
 
-                MainViewModel? vm = Ioc.Default.GetService<MainViewModel>();
+                SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
                 if (vm != null)
                 {
@@ -54,14 +54,15 @@ namespace CollimationCircles
                 .AddSingleton<IDialogService>(new DialogService(
                     new DialogManager(
                         viewLocator: new ViewLocator(),
-                        dialogFactory: new DialogFactory().AddMessageBox()),
+                        dialogFactory: new DialogFactory()
+                            .AddMessageBox()),
                     viewModelFactory: x => Ioc.Default.GetService(x)))
-                .AddSingleton<MainViewModel>()
+                .AddSingleton<SettingsViewModel>()                
                 .AddTransient<IDrawHelperService, DrawHelperService>()
                 .BuildServiceProvider());
         }
 
-        private void HandleMovement(Window window, MainViewModel? vm, KeyEventArgs e)
+        private void HandleMovement(Window window, SettingsViewModel? vm, KeyEventArgs e)
         {
             int x = window.Position.X;
             int y = window.Position.Y;
@@ -109,7 +110,7 @@ namespace CollimationCircles
             }
         }
 
-        private void HandleScale(MainViewModel? vm, KeyEventArgs e)
+        private void HandleScale(SettingsViewModel? vm, KeyEventArgs e)
         {
             if (e.KeyModifiers == KeyModifiers.Shift) return;
             if (e.KeyModifiers == KeyModifiers.Alt) return;
@@ -132,7 +133,7 @@ namespace CollimationCircles
             }
         }
 
-        private void HandleRotation(MainViewModel? vm, KeyEventArgs e)
+        private void HandleRotation(SettingsViewModel? vm, KeyEventArgs e)
         {
             if (e.KeyModifiers == KeyModifiers.Shift) return;
             if (e.KeyModifiers == KeyModifiers.Control) return;

@@ -4,12 +4,12 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Views
 {
-    public partial class SettingsWindow : Window
+    public partial class SettingsView : Window
     {
-        public SettingsWindow()
+        public SettingsView()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<MainViewModel>();
+            DataContext = Ioc.Default.GetService<SettingsViewModel>();
         }
     }
 }

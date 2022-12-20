@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -12,15 +11,13 @@ using CommunityToolkit.Mvvm.Messaging;
 
 namespace CollimationCircles.Views
 {
-    public partial class MainWindow : Window
+    public partial class MainView : Window
     {
         IDrawHelperService? drawHelperService;
 
-        public MainWindow()
+        public MainView()
         {
             InitializeComponent();
-
-            DataContext = Ioc.Default.GetService<MainViewModel>();
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
@@ -35,7 +32,7 @@ namespace CollimationCircles.Views
         {
             try
             {
-                MainViewModel? vm = Ioc.Default.GetService<MainViewModel>();
+                SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
                 if (vm is not null)
                 {

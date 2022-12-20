@@ -67,6 +67,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview4" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview2" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.0.0-preview1" />
+    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.Fluent" Version="2.0.0-preview1" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0-preview1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
@@ -83,8 +84,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Text.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\SettingsWindow.axaml.cs">
-      <DependentUpon>SettingsWindow.axaml</DependentUpon>
+    <Compile Update="Views\MainView.axaml.cs">
+      <DependentUpon>MainView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\SettingsView.axaml.cs">
+      <DependentUpon>SettingsView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

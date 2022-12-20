@@ -1,0 +1,198 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:CollimationCircles.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
+        mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="480"
+        x:Class="CollimationCircles.Views.SettingsView"
+        Title="{x:Static res:Text.Settings}"
+        Width="700"
+        Height="480">
+  <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
+      <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
+        <SplitButton.Flyout>
+          <MenuFlyout Placement="BottomEdgeAlignedLeft">
+            <MenuItem Header="{x:Static res:Text.Circle}" Command="{Binding AddCircleCommand}" >
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/circleviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="{x:Static res:Text.Screw}" Command="{Binding AddScrewCommand}">
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/screwviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="{x:Static res:Text.PrimaryClip}" Command="{Binding AddClipCommand}">
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/primaryclipviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="{x:Static res:Text.Spider}" Command="{Binding AddSpiderCommand}">
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/spiderviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>
+          </MenuFlyout>
+        </SplitButton.Flyout>
+      </SplitButton>
+      <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
+        <Image Source="/Resources/Images/ic_reset.png" Width="28"/>
+      </Button>
+      <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
+        <Image Source="/Resources/Images/ic_file_download.png" Width="28"/>
+      </Button>
+      <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.LoadList}">
+        <Image Source="/Resources/Images/ic_file_upload.png" Width="28"/>
+      </Button>
+      <NumericUpDown Width="130" Increment="0.01"
+                  ToolTip.Tip="{x:Static res:Text.Scale}" Value="{Binding Scale, Mode=TwoWay}"
+                  Minimum="0.0" Maximum="4.0" />
+      <NumericUpDown Width="130"
+                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle, Mode=TwoWay}"
+                  Minimum="-180" Maximum="180" />
+      <CheckBox IsChecked="{Binding ShowLabels, Mode=TwoWay}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
+    </StackPanel>
+    <Separator Height="1" Margin="5" Background="Silver" />
+    <StackPanel Orientation="Horizontal" Spacing="20">
+      <ListBox
+        Name="list"
+        Width="200" Height="400"
+        Items="{Binding Items}"
+        SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+        SelectionMode="Single">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+
+            <RelativePanel
+              HorizontalAlignment="Stretch">
+
+              <CheckBox
+                Name="vis"
+                RelativePanel.AlignLeftWithPanel="True"
+                IsChecked="{Binding IsVisible}"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                ToolTip.Tip="{x:Static res:Text.ItemVisibility}" />
+
+              <Image
+                Name="img"
+                RelativePanel.RightOf="vis"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Width="16" Height="16" Source="{Binding Image}"/>
+
+              <TextBlock
+                RelativePanel.RightOf="img"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Text="{Binding Label}"
+                ToolTip.Tip="{x:Static res:Text.Label}" />
+
+              <Button
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Width="30" Padding="0" Margin="0"
+                Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
+                CommandParameter="{Binding .}"
+                ToolTip.Tip="{x:Static res:Text.RemoveItem}">
+                <Image Source="/Resources/Images/ic_remove.png" />
+              </Button>
+
+            </RelativePanel>
+
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <Grid RowDefinitions="30,5,30,5,30,5,30,5,30,5,30,5,30" ColumnDefinitions="70,*">
+
+        <TextBlock
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Color}" />
+        <ComboBox
+            VerticalAlignment="Center"
+            Grid.Column="1"
+            SelectedItem="{Binding #list.SelectedItem.ItemColor, Mode=TwoWay}"
+            Items="{Binding ColorList}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate DataType="Color">
+              <Border CornerRadius="4" Width="20" Height="20" BorderBrush="Gray" BorderThickness="1" >
+                <Border.Background>
+                  <SolidColorBrush Color="{Binding}" />
+                </Border.Background>
+              </Border>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+
+        <TextBlock
+          Grid.Row="2"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Radius}"/>
+        <NumericUpDown
+          Grid.Row="2"
+          Grid.Column="1"
+          Increment="1"
+          Value="{Binding #list.SelectedItem.Radius}"
+          Minimum="1" Maximum="2000" />
+
+        <TextBlock
+          Grid.Row="4"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Thickness}" />
+        <NumericUpDown
+          Grid.Row="4"
+          Grid.Column="1"
+          Increment="1"
+          Value="{Binding #list.SelectedItem.Thickness}"
+          Minimum="1" Maximum="10"/>
+
+        <TextBlock
+          Grid.Row="6"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Rotation}" />
+        <NumericUpDown
+          Grid.Row="6"
+          Grid.Column="1"
+          Increment="1"
+          Value="{Binding #list.SelectedItem.RotationAngle}"
+          IsEnabled="{Binding #list.SelectedItem.IsRotatable}"
+          Minimum="-180" Maximum="180" />
+
+        <TextBlock
+          Grid.Row="8"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Spacing}" />
+        <NumericUpDown
+          Grid.Row="8"
+          Grid.Column="1"
+          Increment="1"
+          Value="{Binding #list.SelectedItem.Size}"
+          IsEnabled="{Binding #list.SelectedItem.IsSizeable}"
+          Minimum="1" Maximum="50"/>
+
+        <TextBlock
+          Grid.Row="10"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Count}" />
+        <NumericUpDown
+          Grid.Row="10"
+          Grid.Column="1"
+          Increment="1"
+          Value="{Binding #list.SelectedItem.Count}"
+          IsEnabled="{Binding #list.SelectedItem.IsCountable}"
+          Minimum="1" Maximum="10"/>
+
+        <TextBlock
+          Grid.Row="12"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Label}" />
+        <TextBox
+          Grid.Row="12"
+          Grid.Column="1"
+          Text="{Binding #list.SelectedItem.Label}"
+          IsEnabled="{Binding #list.SelectedItem.IsEditable}" />
+
+      </Grid>
+    </StackPanel>
+  </StackPanel>
+</Window>

@@ -3,8 +3,10 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CollimationCircles.Messages;
+using CollimationCircles.Resources.Strings;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Newtonsoft.Json;
 using System;
@@ -26,7 +28,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        private string label = "Base Helper";
+        private string label = Text.Helper;
 
         [JsonProperty]
         [ObservableProperty]
@@ -67,6 +69,7 @@ namespace CollimationCircles.Models
         [JsonProperty]
         [ObservableProperty]
         private int count = 4;
+
         public Bitmap? Image
         {
             get

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="CollimationCircles.Views.MainWindow"
+        x:Class="CollimationCircles.Views.MainView"
         Icon="/Resources/Images/ic_launcher.png"
         Title="{x:Static res:Text.CollimationCircles}"
 		    Background="Transparent"
@@ -18,7 +18,7 @@
       HorizontalAlignment="Right"
       VerticalAlignment="Top"
       ToolTip.Tip="{x:Static res:Text.SettingsWindow}"
-      Width="64" Command="{Binding SettingsButtonCommand}">
+      Width="64" Command="{Binding ShowSettingsCommand}">
       <Image Source="/Resources/Images/ic_settings.png" />
     </Button>
     <Image

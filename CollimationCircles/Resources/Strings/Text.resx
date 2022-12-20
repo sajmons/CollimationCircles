@@ -141,6 +141,9 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="Helper" xml:space="preserve">
+    <value>Helper</value>
+  </data>
   <data name="Inner" xml:space="preserve">
     <value>Inner</value>
   </data>

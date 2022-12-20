@@ -1,10 +1,8 @@
 ﻿using Avalonia;
-using Avalonia.Logging;
 using Avalonia.Media;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
-using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -12,22 +10,22 @@ using DynamicData;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public partial class MainViewModel : BaseViewModel
+    public partial class SettingsViewModel : BaseViewModel, IViewLoaded, IViewClosed
     {
         private readonly IDialogService dialogService;
+
+        [ObservableProperty]
+        private INotifyPropertyChanged? dialogViewModel;
 
         [JsonProperty]
         [ObservableProperty]
@@ -61,7 +59,10 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public ObservableCollection<Color> colorList = new();
 
-        public MainViewModel(IDialogService dialogService)
+        [ObservableProperty]
+        public CollimationHelper selectedItem = new();
+
+        public SettingsViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
 
@@ -130,7 +131,9 @@ namespace CollimationCircles.ViewModels
                 Items.Clear();
                 Items.AddRange(list);
 
-                Items.CollectionChanged += Items_CollectionChanged;
+                Items.CollectionChanged += Items_CollectionChanged;                
+
+                SelectedItem = Items[0];
             }
 
             RotationAngle = 0;
@@ -149,16 +152,27 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void SettingsButton()
+        internal void ShowSettings()
         {
-            new SettingsWindow().Show();
+            if (DialogViewModel is null)
+            {
+                DialogViewModel = dialogService.CreateViewModel<SettingsViewModel>();
+                dialogService.Show(null, DialogViewModel);
+            }
+        }
+
+        [RelayCommand]
+        internal void CloseSettings()
+        {
+            dialogService.Close(DialogViewModel!);
+            DialogViewModel = null;
         }
 
         [RelayCommand]
         internal void AddCircle()
         {
             Items?.Add(new CircleViewModel());
-        }        
+        }
 
         [RelayCommand]
         internal void AddScrew()
@@ -252,7 +266,7 @@ namespace CollimationCircles.ViewModels
 
                     try
                     {
-                        MainViewModel? vm = JsonConvert.DeserializeObject<MainViewModel>(content, jss);
+                        SettingsViewModel? vm = JsonConvert.DeserializeObject<SettingsViewModel>(content, jss);
 
                         if (vm != null && vm.Items != null)
                         {
@@ -269,16 +283,26 @@ namespace CollimationCircles.ViewModels
                         }
                         else
                         {
-                            await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile);
+                            await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
                         }
                     }
                     catch// (Exception exc)
                     {
                         // TODO: log exception
                         await dialogService.ShowMessageBoxAsync(this, Text.UnableToParseJsonFile, Text.Error);
-                    }                    
+                    }
                 }
             }
+        }
+
+        public void OnLoaded()
+        {
+
+        }
+
+        public void OnClosed()
+        {
+            
         }
     }
 }
