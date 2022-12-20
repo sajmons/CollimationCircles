@@ -2,7 +2,7 @@
 
 This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
 
-Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10, 11 and Linux (Raspberry PI OS Bullseye, Linux Mate). I'm unable to test it on macOS, but it should work.
+Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland) and Raspberry PI OS Bullseye. I'm not able to test it on macOS, but it should work.
 
 Suggestions and contributions are welcome!
 
@@ -94,4 +94,4 @@ Final stage is to perform star test (as described in tutorial) and make some fin
 
 # Known issues
 
-- Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will make that easier to implement)
+- On some Linux distros main window is not transparent. I have succesfully tested it on Ubuntu that's using Wayland windowing system. I guess Gnome and X11 is no go, but I haven't tested that.
