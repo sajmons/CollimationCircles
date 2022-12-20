@@ -8,13 +8,13 @@ Suggestions and contributions are welcome!
 
 # Features
 
-- support multiple shapes (circle, cross, screws)
+- support multiple helper shapes (circle, spider, screw, clip)
 - user interface for managing list of shapes
 - scaling up or down of whole setup
 - rotation of whole setup
 - transparent background
 - fully customizable shapes: radius, thickness, color, spacing, rotation, label
-- support for profile saving and loading (json files)
+- support for profile saving and loading (JSON files)
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
 
