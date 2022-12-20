@@ -1,20 +1,20 @@
 # Collimation Circles
 
-This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Porpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
+This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
 
-Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM patern. Program was tested on Windows 10, 11 and Linux (Raspberry PI OS Bullseye, Linux Mate). I'm unable to test it on macOS, but it should work.
+Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland) and Raspberry PI OS Bullseye. I'm not able to test it on macOS, but it should work.
 
 Suggestions and contributions are welcome!
 
 # Features
 
-- support multiple shapes (circle, cross, screws)
+- support multiple helper shapes (circle, spider, screw, clip)
 - user interface for managing list of shapes
 - scaling up or down of whole setup
 - rotation of whole setup
 - transparent background
 - fully customizable shapes: radius, thickness, color, spacing, rotation, label
-- support for profile saving and loading (json files)
+- support for profile saving and loading (JSON files)
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
 
@@ -22,7 +22,7 @@ Suggestions and contributions are welcome!
 
 # Instalation and running
 
-- download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download/dotnet
+- download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download
 - or use Install scripts https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
 - Raspberry Pi https://learn.microsoft.com/en-us/dotnet/iot/deployment
 
@@ -94,4 +94,6 @@ Final stage is to perform star test (as described in tutorial) and make some fin
 
 # Known issues
 
-- Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will fix that)
+- Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window manager is Mutter which (I guess) don't support transparent windows yet.
+
+<img src="https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png" width="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208648981-e8783b3f-a811-4484-9812-91930643805a.png" width="200">
