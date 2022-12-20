@@ -94,4 +94,4 @@ Final stage is to perform star test (as described in tutorial) and make some fin
 
 # Known issues
 
-- Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will fix that)
+- Window is not transparent on Raspberry Pi OS Bullseye. Probably other Linux distros too. Unfortunatelly that's makes program unusable on Linux (I hope future versions of AvaloniaUI will make that easier to implement)
