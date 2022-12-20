@@ -106,15 +106,6 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Collimation Crosses.
-        /// </summary>
-        public static string CollimationCrosses {
-            get {
-                return ResourceManager.GetString("CollimationCrosses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Color.
         /// </summary>
         public static string Color {
@@ -133,11 +124,11 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cross.
+        ///   Looks up a localized string similar to Error.
         /// </summary>
-        public static string Cross {
+        public static string Error {
             get {
-                return ResourceManager.GetString("Cross", resourceCulture);
+                return ResourceManager.GetString("Error", resourceCulture);
             }
         }
         
@@ -205,7 +196,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use arrow keys to move window arround. Press shift key for larger movement step..
+        ///   Looks up a localized string similar to Use arrow keys to move window arround. SHIFT fast Move. ALT Rotation. CTRL Scale..
         /// </summary>
         public static string MoveWindow {
             get {
@@ -232,7 +223,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Primary Clip.
+        ///   Looks up a localized string similar to Clip.
         /// </summary>
         public static string PrimaryClip {
             get {
@@ -250,7 +241,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Primary Screw.
+        ///   Looks up a localized string similar to Screw.
         /// </summary>
         public static string PrimaryScrew {
             get {
@@ -417,6 +408,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string UnableToOpenFile {
             get {
                 return ResourceManager.GetString("UnableToOpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to parse JSON file.
+        /// </summary>
+        public static string UnableToParseJsonFile {
+            get {
+                return ResourceManager.GetString("UnableToParseJsonFile", resourceCulture);
             }
         }
     }

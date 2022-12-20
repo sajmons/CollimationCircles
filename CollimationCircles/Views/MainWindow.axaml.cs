@@ -56,11 +56,6 @@ namespace CollimationCircles.Views
 
                             using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
                             {
-                                if (item is CrossViewModel && item.IsVisible)
-                                {
-                                    drawHelperService?.DrawCross(context, vm.ShowLabels, (CrossViewModel)item, width2, height2, brush, translate);
-                                }
-
                                 if (item is CircleViewModel && item.IsVisible)
                                 {
                                     drawHelperService?.DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);

@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Logging;
 using Avalonia.Media;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
@@ -11,6 +12,7 @@ using DynamicData;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -41,12 +43,10 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(0.0, 5.0)]
         public double scale = 1.0;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(-180, 180)]
         public double rotationAngle = 0;
 
         [JsonProperty]
@@ -64,7 +64,7 @@ namespace CollimationCircles.ViewModels
         public MainViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-            
+
             InitializeColors();
             InitializeDefaults();
             InitializeMessages();
@@ -109,32 +109,33 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeDefaults()
         {
-            List<CollimationHelper> list = new()
-            {
-                // Circles
-                new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
-                new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
-
-                // Crosses
-                new CrossViewModel(),
-
-                // Screws
-                new ScrewViewModel(),
-
-                // Primarey clip
-                new PrimaryClipViewModel(),
-
-                // Spider
-                new SpiderViewModel()
-            };
-
             if (Items is not null)
             {
+                List<CollimationHelper> list = new()
+                {
+                    // Circles
+                    new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
+                    new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
+
+                    // Screws
+                    new ScrewViewModel(),
+
+                    // Primary Clip
+                    new PrimaryClipViewModel(),
+
+                    // Spider
+                    new SpiderViewModel()
+                };
+
                 Items.Clear();
                 Items.AddRange(list);
 
                 Items.CollectionChanged += Items_CollectionChanged;
             }
+
+            RotationAngle = 0;
+            Scale = 1;
+            ShowLabels = true;
         }
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -148,55 +149,49 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        private void SettingsButton()
+        internal void SettingsButton()
         {
             new SettingsWindow().Show();
         }
 
         [RelayCommand]
-        private void AddCircle()
+        internal void AddCircle()
         {
             Items?.Add(new CircleViewModel());
-        }
+        }        
 
         [RelayCommand]
-        private void AddCross()
-        {
-            Items?.Add(new CrossViewModel());
-        }
-
-        [RelayCommand]
-        private void AddScrew()
+        internal void AddScrew()
         {
             Items?.Add(new ScrewViewModel());
         }
 
         [RelayCommand]
-        private void AddClip()
+        internal void AddClip()
         {
             Items?.Add(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
-        private void AddSpider()
+        internal void AddSpider()
         {
             Items?.Add(new SpiderViewModel());
         }
 
         [RelayCommand]
-        private void RemoveItem(CollimationHelper item)
+        internal void RemoveItem(CollimationHelper item)
         {
             Items?.Remove(item);
         }
 
         [RelayCommand]
-        private void ResetList()
+        internal void ResetList()
         {
             InitializeDefaults();
         }
 
         [RelayCommand]
-        private async Task SaveList()
+        internal async Task SaveList()
         {
             string jsonString = JsonConvert.SerializeObject(this, new JsonSerializerSettings
             {
@@ -226,7 +221,7 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        private async Task LoadList()
+        internal async Task LoadList()
         {
             var settings = new OpenFileDialogSettings
             {
@@ -255,25 +250,33 @@ namespace CollimationCircles.ViewModels
                         NullValueHandling = NullValueHandling.Ignore,
                     };
 
-                    MainViewModel? vm = JsonConvert.DeserializeObject<MainViewModel>(content, jss);
-
-                    if (vm != null && vm.Items != null)
+                    try
                     {
-                        Position = vm.Position;
-                        Width = vm.Width;
-                        Height = vm.Height;
-                        Scale = vm.Scale;
-                        RotationAngle = vm.RotationAngle;
-                        ShowLabels = vm.ShowLabels;
-                        ColorList = vm.ColorList;
+                        MainViewModel? vm = JsonConvert.DeserializeObject<MainViewModel>(content, jss);
 
-                        Items?.Clear();
-                        Items?.AddRange(vm.Items);
+                        if (vm != null && vm.Items != null)
+                        {
+                            Position = vm.Position;
+                            Width = vm.Width;
+                            Height = vm.Height;
+                            Scale = vm.Scale;
+                            RotationAngle = vm.RotationAngle;
+                            ShowLabels = vm.ShowLabels;
+                            ColorList = vm.ColorList;
+
+                            Items?.Clear();
+                            Items?.AddRange(vm.Items);
+                        }
+                        else
+                        {
+                            await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile);
+                        }
                     }
-                    else
+                    catch// (Exception exc)
                     {
-                        await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile);
-                    }
+                        // TODO: log exception
+                        await dialogService.ShowMessageBoxAsync(this, Text.UnableToParseJsonFile, Text.Error);
+                    }                    
                 }
             }
         }

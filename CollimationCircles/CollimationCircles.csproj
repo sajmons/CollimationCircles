@@ -17,11 +17,9 @@
     <None Remove=".gitignore" />
     <None Remove="Resources\Images\arrow-keys.svg" />
     <None Remove="Resources\Images\arrow_keys.png" />
-    <None Remove="Resources\Images\circle.png" />
     <None Remove="Resources\Images\circle.svg" />
-    <None Remove="Resources\Images\clip.png" />
+    <None Remove="Resources\Images\circleviewmodel.png" />
     <None Remove="Resources\Images\clip.svg" />
-    <None Remove="Resources\Images\cross.png" />
     <None Remove="Resources\Images\cross.svg" />
     <None Remove="Resources\Images\ic_add.png" />
     <None Remove="Resources\Images\ic_file_download.png" />
@@ -33,16 +31,16 @@
     <None Remove="Resources\Images\ic_reset.svg" />
     <None Remove="Resources\Images\ic_save.png" />
     <None Remove="Resources\Images\ic_settings.png" />
+    <None Remove="Resources\Images\primaryclipviewmodel.png" />
     <None Remove="Resources\Images\rectangle.svg" />
-    <None Remove="Resources\Images\screw.png" />
     <None Remove="Resources\Images\screw.svg" />
-    <None Remove="Resources\Images\spider.png" />
+    <None Remove="Resources\Images\screwviewmodel.png" />
     <None Remove="Resources\Images\spider.svg" />
+    <None Remove="Resources\Images\spiderviewmodel.png" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Resources\Images\arrow_keys.png" />
-    <AvaloniaResource Include="Resources\Images\circle.png" />
-    <AvaloniaResource Include="Resources\Images\cross.png" />
+    <AvaloniaResource Include="Resources\Images\circleviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\ic_add.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_download.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_upload.png" />
@@ -50,9 +48,9 @@
     <AvaloniaResource Include="Resources\Images\ic_remove.png" />
     <AvaloniaResource Include="Resources\Images\ic_reset.png" />
     <AvaloniaResource Include="Resources\Images\ic_settings.png" />
-    <AvaloniaResource Include="Resources\Images\clip.png" />
-    <AvaloniaResource Include="Resources\Images\screw.png" />
-    <AvaloniaResource Include="Resources\Images\spider.png" />
+    <AvaloniaResource Include="Resources\Images\primaryclipviewmodel.png" />
+    <AvaloniaResource Include="Resources\Images\screwviewmodel.png" />
+    <AvaloniaResource Include="Resources\Images\spiderviewmodel.png" />
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming.
@@ -69,6 +67,7 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview4" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0-preview2" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.0.0-preview1" />
+    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0-preview1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />

@@ -52,7 +52,9 @@ namespace CollimationCircles
             Ioc.Default.ConfigureServices(
             new ServiceCollection()
                 .AddSingleton<IDialogService>(new DialogService(
-                    new DialogManager(viewLocator: new ViewLocator()),
+                    new DialogManager(
+                        viewLocator: new ViewLocator(),
+                        dialogFactory: new DialogFactory().AddMessageBox()),
                     viewModelFactory: x => Ioc.Default.GetService(x)))
                 .AddSingleton<MainViewModel>()
                 .AddTransient<IDrawHelperService, DrawHelperService>()

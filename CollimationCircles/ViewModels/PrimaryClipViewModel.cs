@@ -17,6 +17,7 @@ namespace CollimationCircles.ViewModels
             IsEditable = true;
             IsCountable = true;
             Count = 3;
+            RotationAngle = 30;
         }
     }
 }

@@ -4,21 +4,36 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
-        mc:Ignorable="d" d:DesignWidth="560" d:DesignHeight="360"
+        mc:Ignorable="d" d:DesignWidth="590" d:DesignHeight="480"
         x:Class="CollimationCircles.Views.SettingsWindow"
         Title="{x:Static res:Text.Settings}"
-        Width="575"
+        Width="590"
         Height="480">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
       <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
         <SplitButton.Flyout>
           <MenuFlyout Placement="BottomEdgeAlignedLeft">
-            <MenuItem Header="{x:Static res:Text.Circle}" Command="{Binding AddCircleCommand}" />
-            <MenuItem Header="{x:Static res:Text.Cross}" Command="{Binding AddCrossCommand}" />
-            <MenuItem Header="{x:Static res:Text.Screw}" Command="{Binding AddScrewCommand}" />
-            <MenuItem Header="{x:Static res:Text.PrimaryClip}" Command="{Binding AddClipCommand}" />
-            <MenuItem Header="{x:Static res:Text.Spider}" Command="{Binding AddSpiderCommand}" />
+            <MenuItem Header="{x:Static res:Text.Circle}" Command="{Binding AddCircleCommand}" >
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/circleviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>            
+            <MenuItem Header="{x:Static res:Text.Screw}" Command="{Binding AddScrewCommand}">
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/screwviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="{x:Static res:Text.PrimaryClip}" Command="{Binding AddClipCommand}">
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/primaryclipviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="{x:Static res:Text.Spider}" Command="{Binding AddSpiderCommand}">
+              <MenuItem.Icon>
+                <Image Source="/Resources/Images/spiderviewmodel.png"/>
+              </MenuItem.Icon>
+            </MenuItem>
           </MenuFlyout>
         </SplitButton.Flyout>
       </SplitButton>
@@ -32,12 +47,12 @@
         <Image Source="/Resources/Images/ic_file_upload.png" Width="28"/>
       </Button>
       <NumericUpDown Width="130" Increment="0.01"
-                  ToolTip.Tip="{x:Static res:Text.Scale}" Value="{Binding Scale}"
+                  ToolTip.Tip="{x:Static res:Text.Scale}" Value="{Binding Scale, Mode=TwoWay}"
                   Minimum="0.0" Maximum="4.0" />
       <NumericUpDown Width="130"
-                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle}"
+                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle, Mode=TwoWay}"
                   Minimum="-180" Maximum="180" />
-      <CheckBox IsChecked="{Binding ShowLabels}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
+      <CheckBox IsChecked="{Binding ShowLabels, Mode=TwoWay}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
     </StackPanel>
     <Separator Height="1" Margin="5" Background="Silver" />
     <ScrollViewer HorizontalAlignment="Stretch" Height="480">
@@ -51,7 +66,7 @@
             <StackPanel Orientation="Vertical">
               <StackPanel Orientation="Horizontal" Spacing="5">
                 <Button
-                  Width="30" Padding="0"
+                  Width="22" Padding="0"
                   Command="{Binding $parent[ItemsRepeater].DataContext.RemoveItemCommand}" CommandParameter="{Binding .}"
                   VerticalAlignment="Center"
                   ToolTip.Tip="{x:Static res:Text.RemoveItem}">
@@ -89,7 +104,7 @@
               </StackPanel>
 
               <StackPanel
-                Orientation="Horizontal" Spacing="5" Margin="89,0,0,0">
+                Orientation="Horizontal" Spacing="5" Margin="81,0,0,0">
 
                 <NumericUpDown Width="120" Increment="1"
                   ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle}"

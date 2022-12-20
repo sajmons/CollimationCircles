@@ -1,1 +1,3 @@
 ﻿- app crashing after setting window close
+- scale, rptation, show labels does not reset when default button is pressed
+- save window position in JSON and restore

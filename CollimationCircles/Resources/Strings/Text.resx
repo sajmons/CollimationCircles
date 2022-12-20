@@ -132,17 +132,14 @@
   <data name="CollimationCircles" xml:space="preserve">
     <value>Collimation Circles</value>
   </data>
-  <data name="CollimationCrosses" xml:space="preserve">
-    <value>Collimation Crosses</value>
-  </data>
   <data name="Color" xml:space="preserve">
     <value>Color</value>
   </data>
   <data name="Count" xml:space="preserve">
     <value>Count</value>
   </data>
-  <data name="Cross" xml:space="preserve">
-    <value>Cross</value>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
   </data>
   <data name="Inner" xml:space="preserve">
     <value>Inner</value>
@@ -166,7 +163,7 @@
     <value>Load list from JSON file</value>
   </data>
   <data name="MoveWindow" xml:space="preserve">
-    <value>Use arrow keys to move window arround. Press shift key for larger movement step.</value>
+    <value>Use arrow keys to move window arround. SHIFT fast Move. ALT Rotation. CTRL Scale.</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>
@@ -175,13 +172,13 @@
     <value>Primary Center</value>
   </data>
   <data name="PrimaryClip" xml:space="preserve">
-    <value>Primary Clip</value>
+    <value>Clip</value>
   </data>
   <data name="PrimaryOuter" xml:space="preserve">
     <value>Primary Outer</value>
   </data>
   <data name="PrimaryScrew" xml:space="preserve">
-    <value>Primary Screw</value>
+    <value>Screw</value>
   </data>
   <data name="Radius" xml:space="preserve">
     <value>Radius</value>
@@ -236,5 +233,8 @@
   </data>
   <data name="UnableToOpenFile" xml:space="preserve">
     <value>Unable to open file</value>
+  </data>
+  <data name="UnableToParseJsonFile" xml:space="preserve">
+    <value>Unable to parse JSON file</value>
   </data>
 </root>

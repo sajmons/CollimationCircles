@@ -74,15 +74,13 @@ namespace CollimationCircles.Models
                 string path = "Resources/Images/";
 
                 if (this is CircleViewModel)
-                    path += "circle";
-                else if (this is CrossViewModel)
-                    path += "cross";
+                    path += nameof(CircleViewModel).ToLower();
                 else if (this is PrimaryClipViewModel)
-                    path += "clip";
+                    path += nameof(PrimaryClipViewModel).ToLower();
                 else if (this is ScrewViewModel)
-                    path += "screw";
+                    path += nameof(ScrewViewModel).ToLower();
                 else if (this is SpiderViewModel)
-                    path += "spider";
+                    path += nameof(SpiderViewModel).ToLower();
                 else
                     path += string.Empty;
 

@@ -8,16 +8,16 @@ namespace CollimationCircles.ViewModels
     {
         public SpiderViewModel()
         {
-            ItemColor = Colors.Gold;
+            ItemColor = Colors.Red;
             Label = Text.Spider;
             Radius = 250;
-            RotationAngle = 90;
+            RotationAngle = 45;
             Size = 5;
             IsRotatable = true;
             IsSizeable = true;
             IsEditable = true;
             IsCountable = true;
-            Count = 3;
+            Count = 4;
         }
     }
 }
