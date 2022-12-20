@@ -35,7 +35,8 @@
      fill="#000"
      d="M256 23.05C127.5 23.05 23.05 127.5 23.05 256S127.5 488.9 256 488.9 488.9 384.5 488.9 256 384.5 23.05 256 23.05zm0 17.9c118.9 0 215.1 96.15 215.1 215.05S374.9 471.1 256 471.1c-118.9 0-215.05-96.2-215.05-215.1C40.95 137.1 137.1 40.95 256 40.95z"
      id="path2"
-     inkscape:export-filename="D:\Projekti\Sajmons\CollimationCircles\CollimationCircles\Resources\Images\circle.png"
-     inkscape:export-xdpi="26.377588"
-     inkscape:export-ydpi="26.377588" />
+     inkscape:export-filename="d:\Projekti\CollimationCircles\CollimationCircles\Resources\Images\circle.png"
+     inkscape:export-xdpi="24.780001"
+     inkscape:export-ydpi="24.780001"
+     style="stroke-width:30;stroke-miterlimit:4;stroke-dasharray:none;stroke:#000000;stroke-opacity:1" />
 </svg>
