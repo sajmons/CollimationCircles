@@ -1,6 +1,6 @@
 # Collimation Circles
 
-This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Porpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
+This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
 
 Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM patern. Program was tested on Windows 10, 11 and Linux (Raspberry PI OS Bullseye, Linux Mate). I'm unable to test it on macOS, but it should work.
 
