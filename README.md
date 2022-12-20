@@ -95,3 +95,6 @@ Final stage is to perform star test (as described in tutorial) and make some fin
 # Known issues
 
 - On some Linux distros main window is not transparent. I have succesfully tested it on Ubuntu that's using Wayland windowing system. I guess Gnome and X11 is no go, but I haven't tested that.
+
+![image](https://user-images.githubusercontent.com/7437280/208643565-70966182-d2fd-466b-8840-e63ee3ff6871.png)
+
