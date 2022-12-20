@@ -96,5 +96,6 @@ Final stage is to perform star test (as described in tutorial) and make some fin
 
 - Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window manager is Mutter which (I guess) don't support transparent windows yet.
 
-![image](https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png)
+![image](https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png) ![image](https://user-images.githubusercontent.com/7437280/208648981-e8783b3f-a811-4484-9812-91930643805a.png)
+
 
