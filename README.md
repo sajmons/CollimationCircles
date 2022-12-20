@@ -22,7 +22,7 @@ Suggestions and contributions are welcome!
 
 # Instalation and running
 
-- download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download/dotnet
+- download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download
 - or use Install scripts https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
 - Raspberry Pi https://learn.microsoft.com/en-us/dotnet/iot/deployment
 
