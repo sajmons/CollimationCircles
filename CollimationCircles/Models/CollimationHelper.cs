@@ -81,6 +81,8 @@ namespace CollimationCircles.Models
                     path += "clip";
                 else if (this is ScrewViewModel)
                     path += "screw";
+                else if (this is SpiderViewModel)
+                    path += "spider";
                 else
                     path += string.Empty;
 

@@ -112,7 +112,6 @@ namespace CollimationCircles.ViewModels
             List<CollimationHelper> list = new()
             {
                 // Circles
-                new CircleViewModel() { ItemColor = Colors.Orange, Radius = 10, Thickness = 1, Label = Text.PrimaryCenter },
                 new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
                 new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
 
@@ -122,7 +121,11 @@ namespace CollimationCircles.ViewModels
                 // Screws
                 new ScrewViewModel(),
 
-                new PrimaryClipViewModel()
+                // Primarey clip
+                new PrimaryClipViewModel(),
+
+                // Spider
+                new SpiderViewModel()
             };
 
             if (Items is not null)
@@ -172,6 +175,12 @@ namespace CollimationCircles.ViewModels
         private void AddClip()
         {
             Items?.Add(new PrimaryClipViewModel());
+        }
+
+        [RelayCommand]
+        private void AddSpider()
+        {
+            Items?.Add(new SpiderViewModel());
         }
 
         [RelayCommand]

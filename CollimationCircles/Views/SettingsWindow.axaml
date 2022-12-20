@@ -8,16 +8,17 @@
         x:Class="CollimationCircles.Views.SettingsWindow"
         Title="{x:Static res:Text.Settings}"
         Width="575"
-        Height="430">
+        Height="480">
   <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
       <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
         <SplitButton.Flyout>
           <MenuFlyout Placement="BottomEdgeAlignedLeft">
-            <MenuItem Header="Circle" Command="{Binding AddCircleCommand}" />
-            <MenuItem Header="Cross" Command="{Binding AddCrossCommand}" />
-            <MenuItem Header="Screw" Command="{Binding AddScrewCommand}" />
-            <MenuItem Header="Primary Clip" Command="{Binding AddClipCommand}" />
+            <MenuItem Header="{x:Static res:Text.Circle}" Command="{Binding AddCircleCommand}" />
+            <MenuItem Header="{x:Static res:Text.Cross}" Command="{Binding AddCrossCommand}" />
+            <MenuItem Header="{x:Static res:Text.Screw}" Command="{Binding AddScrewCommand}" />
+            <MenuItem Header="{x:Static res:Text.PrimaryClip}" Command="{Binding AddClipCommand}" />
+            <MenuItem Header="{x:Static res:Text.Spider}" Command="{Binding AddSpiderCommand}" />
           </MenuFlyout>
         </SplitButton.Flyout>
       </SplitButton>
@@ -39,7 +40,7 @@
       <CheckBox IsChecked="{Binding ShowLabels}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
     </StackPanel>
     <Separator Height="1" Margin="5" Background="Silver" />
-    <ScrollViewer HorizontalAlignment="Stretch" Height="400">
+    <ScrollViewer HorizontalAlignment="Stretch" Height="480">
       <ItemsRepeater  Items="{Binding Items}">
         <ItemsRepeater.Layout>
           <StackLayout Orientation="Vertical" />
@@ -88,7 +89,7 @@
               </StackPanel>
 
               <StackPanel
-                Orientation="Horizontal" Spacing="5" Margin="68,0,0,0">
+                Orientation="Horizontal" Spacing="5" Margin="89,0,0,0">
 
                 <NumericUpDown Width="120" Increment="1"
                   ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle}"
@@ -103,7 +104,7 @@
                 <NumericUpDown Width="110" Increment="1"
                 ToolTip.Tip="{x:Static res:Text.Count}" Value="{Binding Count}"
                 IsVisible="{Binding IsCountable}"
-                Minimum="3" Maximum="10"/>
+                Minimum="1" Maximum="10"/>
 
               </StackPanel>
 

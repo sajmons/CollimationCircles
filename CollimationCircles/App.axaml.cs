@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Avalonia.Input;
 using Avalonia.Controls;
 using System;
+using CollimationCircles.Services;
 
 namespace CollimationCircles
 {
@@ -54,6 +55,7 @@ namespace CollimationCircles
                     new DialogManager(viewLocator: new ViewLocator()),
                     viewModelFactory: x => Ioc.Default.GetService(x)))
                 .AddSingleton<MainViewModel>()
+                .AddTransient<IDrawHelperService, DrawHelperService>()
                 .BuildServiceProvider());
         }
 

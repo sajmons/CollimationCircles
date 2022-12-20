@@ -4,14 +4,15 @@ using CollimationCircles.Resources.Strings;
 
 namespace CollimationCircles.ViewModels
 {
-    public partial class PrimaryClipViewModel : CollimationHelper
+    public partial class SpiderViewModel : CollimationHelper
     {
-        public PrimaryClipViewModel()
+        public SpiderViewModel()
         {
-            ItemColor = Colors.White;
-            Label = Text.PrimaryClip;
-            Radius = 268;
-            Size = 50;   
+            ItemColor = Colors.Gold;
+            Label = Text.Spider;
+            Radius = 250;
+            RotationAngle = 90;
+            Size = 5;
             IsRotatable = true;
             IsSizeable = true;
             IsEditable = true;

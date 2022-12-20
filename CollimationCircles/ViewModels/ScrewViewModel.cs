@@ -10,11 +10,13 @@ namespace CollimationCircles.ViewModels
         {
             ItemColor = Colors.Lime;
             Label = Text.PrimaryScrew;
-            Radius = 270;
+            Radius = 230;
             IsRotatable = true;
-            IsSizeable= true;
-            IsEditable= true;
-            IsCountable= true;            
+            IsSizeable = true;
+            IsEditable = true;
+            IsCountable = true;
+            Count = 3;
+            RotationAngle = 60;
         }
     }
 }

@@ -20,6 +20,7 @@
     <None Remove="Resources\Images\circle.png" />
     <None Remove="Resources\Images\circle.svg" />
     <None Remove="Resources\Images\clip.png" />
+    <None Remove="Resources\Images\clip.svg" />
     <None Remove="Resources\Images\cross.png" />
     <None Remove="Resources\Images\cross.svg" />
     <None Remove="Resources\Images\ic_add.png" />
@@ -35,6 +36,8 @@
     <None Remove="Resources\Images\rectangle.svg" />
     <None Remove="Resources\Images\screw.png" />
     <None Remove="Resources\Images\screw.svg" />
+    <None Remove="Resources\Images\spider.png" />
+    <None Remove="Resources\Images\spider.svg" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Resources\Images\arrow_keys.png" />
@@ -49,6 +52,7 @@
     <AvaloniaResource Include="Resources\Images\ic_settings.png" />
     <AvaloniaResource Include="Resources\Images\clip.png" />
     <AvaloniaResource Include="Resources\Images\screw.png" />
+    <AvaloniaResource Include="Resources\Images\spider.png" />
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming.

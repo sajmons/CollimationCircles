@@ -25,8 +25,8 @@
    inkscape:pagecheckerboard="0"
    showgrid="false"
    inkscape:zoom="1.6816327"
-   inkscape:cx="244.70267"
-   inkscape:cy="244.70267"
+   inkscape:cx="244.70266"
+   inkscape:cy="244.70266"
    inkscape:window-width="1920"
    inkscape:window-height="1009"
    inkscape:window-x="-8"
@@ -36,9 +36,10 @@
 <polygon
    points="11.387,490 245,255.832 478.613,490 489.439,479.174 255.809,244.996 489.439,10.811 478.613,0 245,234.161   11.387,0 0.561,10.811 234.191,244.996 0.561,479.174 "
    id="polygon2"
-   inkscape:export-filename="D:\Projekti\Sajmons\CollimationCircles\CollimationCircles\Resources\Images\cross.png"
-   inkscape:export-xdpi="25.077551"
-   inkscape:export-ydpi="25.077551" />
+   inkscape:export-filename="d:\Projekti\CollimationCircles\CollimationCircles\Resources\Images\cross.png"
+   inkscape:export-xdpi="24.373795"
+   inkscape:export-ydpi="24.373795"
+   style="stroke:#000000;stroke-opacity:1;stroke-width:30;stroke-miterlimit:4;stroke-dasharray:none" />
 <g
    id="g4">
 </g>
