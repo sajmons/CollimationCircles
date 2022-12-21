@@ -58,52 +58,50 @@
     <StackPanel Orientation="Horizontal" Spacing="20">
       <ListBox
         Name="list"
-        Width="200" Height="400"
+        Width="250" Height="400"
         Items="{Binding Items}"
         SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
         SelectionMode="Single">
         <ListBox.ItemTemplate>
           <DataTemplate>
 
-            <RelativePanel
+            <Grid ColumnDefinitions="20,5,20,5,*,5,30"
               HorizontalAlignment="Stretch">
 
               <CheckBox
-                Name="vis"
-                RelativePanel.AlignLeftWithPanel="True"
                 IsChecked="{Binding IsVisible}"
-                RelativePanel.AlignVerticalCenterWithPanel="True"
                 ToolTip.Tip="{x:Static res:Text.ItemVisibility}" />
 
               <Image
-                Name="img"
-                RelativePanel.RightOf="vis"
-                RelativePanel.AlignVerticalCenterWithPanel="True"
-                Width="16" Height="16" Source="{Binding Image}"/>
+                Grid.Column="2"
+                Height="20"
+                Source="{Binding Image}"/>
 
               <TextBlock
-                RelativePanel.RightOf="img"
-                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Grid.Column="4"
                 Text="{Binding Label}"
+                VerticalAlignment="Center"
                 ToolTip.Tip="{x:Static res:Text.Label}" />
 
               <Button
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignVerticalCenterWithPanel="True"
-                Width="30" Padding="0" Margin="0"
+                Grid.Column="6"
+                Padding="0" Margin="0"
                 Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
                 CommandParameter="{Binding .}"
                 ToolTip.Tip="{x:Static res:Text.RemoveItem}">
                 <Image Source="/Resources/Images/ic_remove.png" />
               </Button>
 
-            </RelativePanel>
+            </Grid>
 
           </DataTemplate>
         </ListBox.ItemTemplate>
       </ListBox>
 
-      <Grid RowDefinitions="30,5,30,5,30,5,30,5,30,5,30,5,30" ColumnDefinitions="70,*">
+      <Grid
+        IsEnabled="{Binding IsSelectedItem}"
+        RowDefinitions="30,5,30,5,30,5,30,5,30,5,30,5,30"
+        ColumnDefinitions="70,*">
 
         <TextBlock
           VerticalAlignment="Center"

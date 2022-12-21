@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace CollimationCircles.ViewModels
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public partial class SettingsViewModel : BaseViewModel, IViewLoaded, IViewClosed
+    public partial class SettingsViewModel : BaseViewModel
     {
         private readonly IDialogService dialogService;
 
@@ -61,6 +61,9 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         public CollimationHelper selectedItem = new();
+
+        [ObservableProperty]
+        public bool isSelectedItem = false;
 
         public SettingsViewModel(IDialogService dialogService)
         {
@@ -118,14 +121,14 @@ namespace CollimationCircles.ViewModels
                     new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
                     new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
 
+                    // Spider
+                    new SpiderViewModel(),
+
                     // Screws
                     new ScrewViewModel(),
 
                     // Primary Clip
-                    new PrimaryClipViewModel(),
-
-                    // Spider
-                    new SpiderViewModel()
+                    new PrimaryClipViewModel()                    
                 };
 
                 Items.Clear();
@@ -295,14 +298,9 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        public void OnLoaded()
+        partial void OnSelectedItemChanged(CollimationHelper value)
         {
-
-        }
-
-        public void OnClosed()
-        {
-            
+            IsSelectedItem = SelectedItem is not null;
         }
     }
 }
