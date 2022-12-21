@@ -50,7 +50,7 @@ cd ~/Home/CollimationCircle
 
 For collimation circles app to help you with collimation process you'll need this:
 
-- some kind of web cam or phone attached to the focuser
+- camera (webcam, phone or CMOS) attached to the focuser
   - I was using phone, holder to attach phone to focuser, DroidCam app from Play Store to stream live view to computer browser
 - computer displaying live image from webcam or phone
 - Collimation Circles app to overlay over live stream
