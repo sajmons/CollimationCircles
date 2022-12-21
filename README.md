@@ -94,6 +94,16 @@ Final stage is to perform star test (as described in tutorial) and make some fin
 
 # Known issues
 
-- Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window manager is Mutter which (I guess) don't support transparent windows yet.
+Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But luckily there is workaround for that.
 
-<img src="https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png" width="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208648981-e8783b3f-a811-4484-9812-91930643805a.png" width="200">
+Open terminal and type this:
+```
+raspi-config
+```
+go to advanced settings and enable Compositor. Then run this command:
+```
+xcompmgr
+```
+and then run the CollimationCircles program again. Main Window should now be transparent!
+# Images
+<img src="https://user-images.githubusercontent.com/7437280/208867646-7b6d1bfe-7e5f-43b0-bfd7-6b0e3fa0c35d.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208879028-0598352c-82e1-4c58-b43b-262e6a011d21.png" height="200">
