@@ -94,7 +94,7 @@ Final stage is to perform star test (as described in tutorial) and make some fin
 
 # Known issues
 
-Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But there is workaround for that.
+Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But luckily there is workaround for that.
 
 Open terminal and type this:
 ```
