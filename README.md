@@ -106,6 +106,4 @@ xcompmgr
 ```
 and then run the CollimationCircles program again. Main Window should now be transparent!
 
-<img src="https://user-images.githubusercontent.com/7437280/208867646-7b6d1bfe-7e5f-43b0-bfd7-6b0e3fa0c35d.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png" height="200">
-
-
+<img src="https://user-images.githubusercontent.com/7437280/208867646-7b6d1bfe-7e5f-43b0-bfd7-6b0e3fa0c35d.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208879028-0598352c-82e1-4c58-b43b-262e6a011d21.png" height="200">
