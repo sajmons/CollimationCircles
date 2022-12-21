@@ -52,7 +52,7 @@ For collimation circles app to help you with collimation process you'll need thi
 
 - camera (webcam, phone or CMOS) attached to the focuser
   - I was using phone, holder to attach phone to focuser, DroidCam app from Play Store to stream live view to computer browser
-- computer displaying live image from webcam or phone
+- computer displaying live image from webcam, phone or CMOS
 - Collimation Circles app to overlay over live stream
 - screwdriver
 - sheet of paper to block primary mirror, and second colored (green in my case) sheet for better contrast
