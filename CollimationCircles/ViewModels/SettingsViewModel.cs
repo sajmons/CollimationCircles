@@ -78,13 +78,6 @@ namespace CollimationCircles.ViewModels
         {
             WeakReferenceMessenger.Default.Register<ItemChangedMessage>(this, (r, m) =>
             {
-                var item = Items?.SingleOrDefault(x => x.Id == m.Value.Id);
-
-                if (item != null)
-                {
-                    item = m.Value;
-                }
-
                 WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
             });
         }
