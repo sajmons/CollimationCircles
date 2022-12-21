@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 namespace CollimationCircles.ViewModels
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public partial class SettingsViewModel : BaseViewModel
+    public partial class SettingsViewModel : BaseViewModel, IViewClosed
     {
         private readonly IDialogService dialogService;
 
@@ -128,15 +128,15 @@ namespace CollimationCircles.ViewModels
                     new ScrewViewModel(),
 
                     // Primary Clip
-                    new PrimaryClipViewModel()                    
+                    new PrimaryClipViewModel()
                 };
 
                 Items.Clear();
                 Items.AddRange(list);
 
-                Items.CollectionChanged += Items_CollectionChanged;                
+                Items.CollectionChanged += Items_CollectionChanged;
 
-                SelectedItem = Items[0];
+                SelectedItem = Items?.FirstOrDefault()!;
             }
 
             RotationAngle = 0;
@@ -301,6 +301,11 @@ namespace CollimationCircles.ViewModels
         partial void OnSelectedItemChanged(CollimationHelper value)
         {
             IsSelectedItem = SelectedItem is not null;
+        }
+
+        public void OnClosed()
+        {
+            DialogViewModel = null;
         }
     }
 }

@@ -1,4 +1,2 @@
-﻿- app crashing after setting window close
-- scale, rptation, show labels does not reset when default button is pressed
-- save window position in JSON and restore
-- create viewmodelfor handling keydown events of MainWindow
+﻿- scale, rotation, show labels does not reset when default button is pressed
+- create viewmodel for handling keydown events of MainWindow

@@ -349,7 +349,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Show Labels.
+        ///   Looks up a localized string similar to Labels.
         /// </summary>
         public static string ShowLabels {
             get {

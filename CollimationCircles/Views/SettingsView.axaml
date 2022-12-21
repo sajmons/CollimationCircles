@@ -9,8 +9,10 @@
         Title="{x:Static res:Text.Settings}"
         Width="700"
         Height="480">
-  <StackPanel Orientation="Vertical" Margin="16" Spacing="5" HorizontalAlignment="Stretch">
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="10">
+  <StackPanel Orientation="Vertical" Margin="16" HorizontalAlignment="Stretch" Spacing="5">
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="5">
+
       <SplitButton Content="Add" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
         <SplitButton.Flyout>
           <MenuFlyout Placement="BottomEdgeAlignedLeft">
@@ -37,6 +39,7 @@
           </MenuFlyout>
         </SplitButton.Flyout>
       </SplitButton>
+
       <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
         <Image Source="/Resources/Images/ic_reset.png" Width="28"/>
       </Button>
@@ -46,15 +49,11 @@
       <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.LoadList}">
         <Image Source="/Resources/Images/ic_file_upload.png" Width="28"/>
       </Button>
-      <NumericUpDown Width="130" Increment="0.01"
-                  ToolTip.Tip="{x:Static res:Text.Scale}" Value="{Binding Scale, Mode=TwoWay}"
-                  Minimum="0.0" Maximum="4.0" />
-      <NumericUpDown Width="130"
-                  ToolTip.Tip="{x:Static res:Text.Rotation}" Value="{Binding RotationAngle, Mode=TwoWay}"
-                  Minimum="-180" Maximum="180" />
-      <CheckBox IsChecked="{Binding ShowLabels, Mode=TwoWay}" ToolTip.Tip="{x:Static res:Text.ShowLabels}" />
+
     </StackPanel>
-    <Separator Height="1" Margin="5" Background="Silver" />
+
+    <Separator Height="1" Background="Silver" />
+
     <StackPanel Orientation="Horizontal" Spacing="20">
       <ListBox
         Name="list"
@@ -80,8 +79,7 @@
               <TextBlock
                 Grid.Column="4"
                 Text="{Binding Label}"
-                VerticalAlignment="Center"
-                ToolTip.Tip="{x:Static res:Text.Label}" />
+                VerticalAlignment="Center" />
 
               <Button
                 Grid.Column="6"
@@ -185,10 +183,47 @@
           VerticalAlignment="Center"
           Text="{x:Static res:Text.Label}" />
         <TextBox
+          Name="labelLabel"
           Grid.Row="12"
           Grid.Column="1"
           Text="{Binding #list.SelectedItem.Label}"
           IsEnabled="{Binding #list.SelectedItem.IsEditable}" />
+
+      </Grid>
+
+      <Grid
+        IsEnabled="{Binding IsSelectedItem}"
+        RowDefinitions="30,5,30,5,30,5"
+        ColumnDefinitions="70,*">
+
+        <TextBlock
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Scale}" />
+        <NumericUpDown
+          Grid.Column="1"
+          Increment="0.01"
+          Value="{Binding Scale, Mode=TwoWay}"
+          Minimum="0.0" Maximum="4.0" />
+
+        <TextBlock
+          Grid.Row="2"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.Rotation}" />
+        <NumericUpDown
+          Grid.Row="2"
+          Grid.Column="1"
+          Width="130"
+          Value="{Binding RotationAngle, Mode=TwoWay}"
+          Minimum="-180" Maximum="180" />
+
+        <TextBlock
+          Grid.Row="4"
+          VerticalAlignment="Center"
+          Text="{x:Static res:Text.ShowLabels}" />
+        <CheckBox
+          Grid.Row="4"
+          Grid.Column="1"
+          IsChecked="{Binding ShowLabels, Mode=TwoWay}" />
 
       </Grid>
     </StackPanel>
