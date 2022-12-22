@@ -25,7 +25,7 @@ Suggestions and contributions are welcome!
 # Download
 
 ## Prerequisite
-You need to instal .NET Runtime before runing this app. Please see Instalation and running chapter.
+You need to instal .NET Runtime before runing this app. Please see "Instalation and running" chapter.
 
 ## ZIP File
 If you can't wait to test it, here is binarry file avaliable for you to download. https://sourceforge.net/projects/collimationcircles/files/CollimationCircles.zip/download
