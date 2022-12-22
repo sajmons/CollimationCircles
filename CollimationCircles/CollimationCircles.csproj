@@ -15,13 +15,7 @@
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>    
     <Copyright>Copyright © 2022</Copyright>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Optimize>True</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <Optimize>True</Optimize>
-  </PropertyGroup>
+  </PropertyGroup>  
   <ItemGroup>
     <Compile Remove="Models\ItemType.cs" />
     <Compile Remove="ViewModels\CollimationCrossViewModel.cs" />
