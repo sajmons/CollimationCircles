@@ -6,6 +6,7 @@ Main purpose of this program is to help you with aligning optical elements of yo
 
 Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland) and Raspberry PI OS Bullseye. I'm not able to test it on macOS, but it should work.
 
+Please be gentle. This app is still in beta stage, but It's suitable to be exposed to wider audience. Feel free to report any issues. 
 Suggestions and contributions are welcome!
 
 # Features
@@ -21,6 +22,19 @@ Suggestions and contributions are welcome!
 - multiple platform support (Windows, Linux, macOS)
 
 ![image](https://user-images.githubusercontent.com/7437280/207387640-f0b2f880-c2d1-4462-a083-bab68d465b8d.png)
+
+# Download
+
+## Prerequisite
+You need to instal .NET Runtime before runing this app. Please see "Instalation and running" chapter.
+
+## ZIP File
+If you can't wait to test it, here is binarry file avaliable for you to download. https://sourceforge.net/projects/collimationcircles/files/CollimationCircles.zip/download
+
+If main window is not transparent, when you run application, try runing it like this from terminal window:
+```
+dotnet .\CollimationCircles.dll
+```
 
 # Instalation and running
 
