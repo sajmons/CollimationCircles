@@ -6,6 +6,7 @@ Main purpose of this program is to help you with aligning optical elements of yo
 
 Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland) and Raspberry PI OS Bullseye. I'm not able to test it on macOS, but it should work.
 
+Please be gentle. This app is still in beta stage, but It's suitable to be exposed to wider audience. Feel free to report any issues. 
 Suggestions and contributions are welcome!
 
 # Features
