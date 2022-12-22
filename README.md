@@ -22,6 +22,19 @@ Suggestions and contributions are welcome!
 
 ![image](https://user-images.githubusercontent.com/7437280/207387640-f0b2f880-c2d1-4462-a083-bab68d465b8d.png)
 
+# Download
+
+## Prerequisite
+You need to instal .NET Runtime before runing this app. Please see Instalation and running chapter.
+
+## ZIP File
+If you can't wait to test it, here is binarry file avaliable for you to download. https://sourceforge.net/projects/collimationcircles/files/CollimationCircles.zip/download
+
+If main window is not transparent, when you run application, try runing it like this from terminal window:
+```
+dotnet .\CollimationCircles.dll
+```
+
 # Instalation and running
 
 - download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download
