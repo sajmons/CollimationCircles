@@ -2,6 +2,8 @@
 
 This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
 
+Main purpose of this program is to help you with aligning optical elements of your telescope such as secondary mirror, primary mirror, focuser, etc.
+
 Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland) and Raspberry PI OS Bullseye. I'm not able to test it on macOS, but it should work.
 
 Suggestions and contributions are welcome!
@@ -50,9 +52,9 @@ cd ~/Home/CollimationCircle
 
 For collimation circles app to help you with collimation process you'll need this:
 
-- some kind of web cam or phone attached to the focuser
+- camera (webcam, phone or CMOS) attached to the focuser
   - I was using phone, holder to attach phone to focuser, DroidCam app from Play Store to stream live view to computer browser
-- computer displaying live image from webcam or phone
+- computer displaying live image from webcam, phone or CMOS
 - Collimation Circles app to overlay over live stream
 - screwdriver
 - sheet of paper to block primary mirror, and second colored (green in my case) sheet for better contrast
