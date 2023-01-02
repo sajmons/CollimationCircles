@@ -1,5 +1,7 @@
 ﻿using Avalonia;
 using System;
+using System.Globalization;
+using System.Threading;
 
 namespace CollimationCircles
 {
@@ -14,7 +16,7 @@ namespace CollimationCircles
             try
             {
                 BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args);
+                .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
             }
             catch
             {
