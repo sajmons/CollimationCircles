@@ -9,7 +9,6 @@ using HanumanInstitute.MvvmDialogs;
 using Microsoft.Extensions.DependencyInjection;
 using Avalonia.Input;
 using Avalonia.Controls;
-using System;
 using CollimationCircles.Services;
 
 namespace CollimationCircles

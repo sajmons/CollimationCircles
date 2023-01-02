@@ -8,7 +8,6 @@ using CollimationCircles.Services;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using CollimationCircles.Resources.Strings;
 
 namespace CollimationCircles.Views
 {
