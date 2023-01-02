@@ -59,6 +59,7 @@ namespace CollimationCircles
                     viewModelFactory: x => Ioc.Default.GetService(x)))
                 .AddSingleton<SettingsViewModel>()                
                 .AddTransient<IDrawHelperService, DrawHelperService>()
+                .AddTransient<IAppService, AppService>()
                 .BuildServiceProvider());
         }
 
