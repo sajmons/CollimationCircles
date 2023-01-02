@@ -118,136 +118,136 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Add" xml:space="preserve">
-    <value>Add</value>
+    <value>Dodaj</value>
   </data>
   <data name="AddNewItem" xml:space="preserve">
-    <value>Add new item to list</value>
+    <value>Dodaj v seznam</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>All Files</value>
+    <value>Vse datoteke</value>
   </data>
   <data name="AllItemsControls" xml:space="preserve">
-    <value>Applied to all items</value>
+    <value>Velja za vse</value>
   </data>
   <data name="ChangeLanguage" xml:space="preserve">
-    <value>Change language</value>
+    <value>Spremeni jezik</value>
   </data>
   <data name="ChangeTo" xml:space="preserve">
-    <value>Change to {0}</value>
+    <value>Spremeni v {0}</value>
   </data>
   <data name="Circle" xml:space="preserve">
-    <value>Circle</value>
+    <value>Krog</value>
   </data>
   <data name="CollimationCircles" xml:space="preserve">
-    <value>Collimation Circles</value>
+    <value>Kolimacijski Krogi</value>
   </data>
   <data name="Color" xml:space="preserve">
-    <value>Color</value>
+    <value>Barva</value>
   </data>
   <data name="Count" xml:space="preserve">
-    <value>Count</value>
+    <value>Število</value>
   </data>
   <data name="English" xml:space="preserve">
-    <value>English</value>
+    <value>Angleški</value>
   </data>
   <data name="Error" xml:space="preserve">
-    <value>Error</value>
+    <value>Napaka</value>
   </data>
   <data name="Helper" xml:space="preserve">
-    <value>Helper</value>
+    <value>Pomočnik</value>
   </data>
   <data name="Inner" xml:space="preserve">
-    <value>Inner</value>
+    <value>Notranji</value>
   </data>
   <data name="ItemListTitle" xml:space="preserve">
-    <value>Select item to customize</value>
+    <value>Izberi zapis iz seznama</value>
   </data>
   <data name="ItemType" xml:space="preserve">
-    <value>Item type</value>
+    <value>Tip pomočnika</value>
   </data>
   <data name="ItemVisibility" xml:space="preserve">
-    <value>Item visibility</value>
+    <value>Vidnost pomočnika</value>
   </data>
   <data name="JSONDocuments" xml:space="preserve">
-    <value>JSON Documents</value>
+    <value>JSON Dokumenti</value>
   </data>
   <data name="Label" xml:space="preserve">
-    <value>Label</value>
+    <value>Opis</value>
   </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Jezik</value>
   </data>
   <data name="ListOfItems" xml:space="preserve">
-    <value>List of items</value>
+    <value>Seznam pomočnikov</value>
   </data>
   <data name="LoadList" xml:space="preserve">
-    <value>Load list from JSON file</value>
+    <value>Naloži seznam iz JSON datoteke</value>
   </data>
   <data name="MoveWindow" xml:space="preserve">
-    <value>Use arrow keys to move window arround. SHIFT fast Move. ALT Rotation. CTRL Scale.</value>
+    <value>Uporabite smerne tipke za premikanje okna. SHIFT hitro premikanje. ALT vrtenje. CTRL povečava.</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
-    <value>Open file</value>
+    <value>Odpri datoteko</value>
   </data>
   <data name="PrimaryCenter" xml:space="preserve">
-    <value>Primary Center</value>
+    <value>Center primarnega</value>
   </data>
   <data name="PrimaryClip" xml:space="preserve">
-    <value>Clip</value>
+    <value>Sponka</value>
   </data>
   <data name="PrimaryOuter" xml:space="preserve">
-    <value>Primary Outer</value>
+    <value>Zunanji rob prim.</value>
   </data>
   <data name="PrimaryScrew" xml:space="preserve">
-    <value>Screw</value>
+    <value>Vijak</value>
   </data>
   <data name="Radius" xml:space="preserve">
-    <value>Radius</value>
+    <value>Premer</value>
   </data>
   <data name="RemoveItem" xml:space="preserve">
-    <value>Remove item from list</value>
+    <value>Odstrani iz seznama</value>
   </data>
   <data name="ResetItems" xml:space="preserve">
-    <value>Reset list to default values</value>
+    <value>Ponastavi seznam na privzete vrednosti</value>
   </data>
   <data name="Rotation" xml:space="preserve">
-    <value>Rotation</value>
+    <value>Vrtenje</value>
   </data>
   <data name="SaveFile" xml:space="preserve">
-    <value>Save file</value>
+    <value>Shrani datoteko</value>
   </data>
   <data name="SaveList" xml:space="preserve">
-    <value>Save list to JSON file</value>
+    <value>Shrani seznam v JSON datoteko</value>
   </data>
   <data name="Scale" xml:space="preserve">
-    <value>Scale</value>
+    <value>Povečava</value>
   </data>
   <data name="Screw" xml:space="preserve">
-    <value>Screw</value>
+    <value>Vijak</value>
   </data>
   <data name="SelectedItemControls" xml:space="preserve">
-    <value>Applied to selected item only</value>
+    <value>Velja za izbran zapis</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>Nastavitve</value>
   </data>
   <data name="SettingsWindow" xml:space="preserve">
-    <value>Open settings window</value>
+    <value>Odpri okno z nastavitvami</value>
   </data>
   <data name="ShowLabels" xml:space="preserve">
-    <value>Labels</value>
+    <value>Opisi</value>
   </data>
   <data name="Size" xml:space="preserve">
-    <value>Size</value>
+    <value>Velikost</value>
   </data>
   <data name="Slovenian" xml:space="preserve">
-    <value>Slovenian</value>
+    <value>Slovenski</value>
   </data>
   <data name="Spacing" xml:space="preserve">
-    <value>Spacing</value>
+    <value>Širina</value>
   </data>
   <data name="Spider" xml:space="preserve">
-    <value>Spider</value>
+    <value>Pajek</value>
   </data>
   <data name="StarChar" xml:space="preserve">
     <value>*</value>
@@ -256,18 +256,18 @@
     <value>*.json</value>
   </data>
   <data name="Thickness" xml:space="preserve">
-    <value>Tickness</value>
+    <value>Debelina</value>
   </data>
   <data name="UnableToOpenFile" xml:space="preserve">
-    <value>Unable to open file</value>
+    <value>Odpiranje datoteke ni uspelo</value>
   </data>
   <data name="UnableToParseJsonFile" xml:space="preserve">
-    <value>Unable to parse JSON file</value>
+    <value>Branje JSON datoteke ni uspelo</value>
   </data>
   <data name="Version" xml:space="preserve">
-    <value>Version</value>
+    <value>Verzija</value>
   </data>
   <data name="WindowRestart" xml:space="preserve">
-    <value>Please close Settings window and reopen it for language change to take effect.</value>
+    <value>Zaprite okno nastavitev in ga ponovno odprite za uveljavitev spremembe jezika.</value>
   </data>
 </root>
