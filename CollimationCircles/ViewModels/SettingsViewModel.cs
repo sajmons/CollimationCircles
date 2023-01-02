@@ -3,6 +3,7 @@ using Avalonia.Media;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
+using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,8 +14,10 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
@@ -23,6 +26,7 @@ namespace CollimationCircles.ViewModels
     public partial class SettingsViewModel : BaseViewModel, IViewClosed
     {
         private readonly IDialogService dialogService;
+        private readonly IAppService appService;
 
         [ObservableProperty]
         private INotifyPropertyChanged? dialogViewModel;
@@ -65,13 +69,25 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public bool isSelectedItem = false;
 
-        public SettingsViewModel(IDialogService dialogService)
+        [ObservableProperty]
+        public ObservableCollection<KeyValuePair<string, string>> languageList = new();
+
+        [JsonProperty]
+        [ObservableProperty]
+        public KeyValuePair<string, string> selectedLanguage = new();
+
+        public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
+            this.appService= appService;
 
             InitializeColors();
             InitializeDefaults();
             InitializeMessages();
+            InitializeLanguages();
+
+            Title = $"{Text.Settings}";
+            MainTitle = $"{Text.CollimationCircles} - {Text.Version} {appService.GetAppVersion()}";
         }
 
         private void InitializeMessages()
@@ -129,12 +145,25 @@ namespace CollimationCircles.ViewModels
 
                 Items.CollectionChanged += Items_CollectionChanged;
 
-                SelectedItem = Items?.FirstOrDefault()!;
+                SelectedItem = Items?.FirstOrDefault()!;                
             }
 
             RotationAngle = 0;
             Scale = 1;
             ShowLabels = true;
+            SelectedLanguage = LanguageList.FirstOrDefault();
+        }
+
+        private void InitializeLanguages()
+        {
+            List<KeyValuePair<string, string>> l = new()
+            {
+                new KeyValuePair<string, string>(Text.English, "en-US"),
+                new KeyValuePair<string, string>(Text.Slovenian, "sl-SI")
+            };
+
+            LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
+            SelectedLanguage = LanguageList.FirstOrDefault();
         }
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -276,6 +305,8 @@ namespace CollimationCircles.ViewModels
 
                             Items?.Clear();
                             Items?.AddRange(vm.Items);
+
+                            SelectedLanguage = vm.SelectedLanguage;
                         }
                         else
                         {
@@ -294,6 +325,14 @@ namespace CollimationCircles.ViewModels
         partial void OnSelectedItemChanged(CollimationHelper value)
         {
             IsSelectedItem = SelectedItem is not null;
+        }
+
+        partial void OnSelectedLanguageChanged(KeyValuePair<string, string> value)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(value.Value);
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(value.Value);
+
+            dialogService.ShowMessageBoxAsync(this, Text.WindowRestart, Text.Error);            
         }
 
         public void OnClosed()

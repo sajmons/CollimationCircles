@@ -8,6 +8,7 @@ using CollimationCircles.Services;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using CollimationCircles.Resources.Strings;
 
 namespace CollimationCircles.Views
 {
@@ -19,13 +20,15 @@ namespace CollimationCircles.Views
         {
             InitializeComponent();
 
+            DataContext = Ioc.Default.GetService<SettingsViewModel>();
+
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
                 DataContext = m.Value;
                 InvalidateVisual();
             });
 
-            drawHelperService = Ioc.Default.GetService<IDrawHelperService>();
+            drawHelperService = Ioc.Default.GetService<IDrawHelperService>();            
         }
 
         public override void Render(DrawingContext context)
