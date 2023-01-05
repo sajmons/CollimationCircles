@@ -86,7 +86,7 @@ namespace CollimationCircles.ViewModels
             InitializeMessages();
             InitializeLanguages();
 
-            Title = $"{Text.Settings}";
+            Title = $"{Text.CollimationCircles} - {Text.Settings} - {Text.Version} {appService.GetAppVersion()}";
             MainTitle = $"{Text.CollimationCircles} - {Text.Version} {appService.GetAppVersion()}";
         }
 
