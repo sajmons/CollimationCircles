@@ -184,7 +184,7 @@
     <value>Load list from JSON file</value>
   </data>
   <data name="MoveWindow" xml:space="preserve">
-    <value>Use arrow keys to move window arround. SHIFT fast Move. ALT Rotation. CTRL Scale.</value>
+    <value>Use keys: arrows move window; 'r' or 'l' rotation; '+' or '-' scaling.</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>

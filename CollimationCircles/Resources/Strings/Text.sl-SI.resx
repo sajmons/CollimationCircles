@@ -184,7 +184,7 @@
     <value>Naloži seznam iz JSON datoteke</value>
   </data>
   <data name="MoveWindow" xml:space="preserve">
-    <value>Uporabite smerne tipke za premikanje okna. SHIFT hitro premikanje. ALT vrtenje. CTRL povečava.</value>
+    <value>Uporabite tipke: puščice premikanje okna; 'r' ali 'l' vrtenje; '+' or '-' povečava.</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Odpri datoteko</value>

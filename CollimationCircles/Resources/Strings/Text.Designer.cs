@@ -259,7 +259,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use arrow keys to move window arround. SHIFT fast Move. ALT Rotation. CTRL Scale..
+        ///   Looks up a localized string similar to Use keys: arrows move window; &apos;r&apos; or &apos;l&apos; rotation; &apos;+&apos; or &apos;-&apos; scaling..
         /// </summary>
         public static string MoveWindow {
             get {

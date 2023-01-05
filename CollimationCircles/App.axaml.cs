@@ -56,7 +56,7 @@ namespace CollimationCircles
                         dialogFactory: new DialogFactory()
                             .AddMessageBox()),
                     viewModelFactory: x => Ioc.Default.GetService(x)))
-                .AddSingleton<SettingsViewModel>()                
+                .AddSingleton<SettingsViewModel>()
                 .AddTransient<IDrawHelperService, DrawHelperService>()
                 .AddTransient<IAppService, AppService>()
                 .BuildServiceProvider());
@@ -64,95 +64,99 @@ namespace CollimationCircles
 
         private void HandleMovement(Window window, SettingsViewModel? vm, KeyEventArgs e)
         {
-            int x = window.Position.X;
-            int y = window.Position.Y;
-            int increment;
-
-            if (e.KeyModifiers == KeyModifiers.Control) return;
-            if (e.KeyModifiers == KeyModifiers.Alt) return;
-
-            if (e.KeyModifiers == KeyModifiers.Shift)
+            if (!e.Handled)
             {
-                increment = 10;
-            }
-            else
-            {
-                increment = 1;
-            }
+                int x = window.Position.X;
+                int y = window.Position.Y;
+                int increment = 1;                
 
-            if (e.Key == Key.Up)
-            {
-                y -= increment;
-            }
+                if (vm != null)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Up:
+                            y -= increment;
+                            e.Handled = true;
+                            break;
 
-            if (e.Key == Key.Down)
-            {
-                y += increment;
-            }
+                        case Key.Down:
+                            y += increment;
+                            e.Handled = true;
+                            break;
 
-            if (e.Key == Key.Left)
-            {
-                x -= increment;
-            }
+                        case Key.Left:
+                            x -= increment;
+                            e.Handled = true;
+                            break;
+                        case Key.Right:
+                            x += increment;
+                            e.Handled = true;
+                            break;
+                    }
 
-            if (e.Key == Key.Right)
-            {
-                x += increment;
-            }
+                    window.Position = new PixelPoint(x, y);
 
-            PixelPoint newP = new(x, y);
-
-            window.Position = newP;
-
-            if (vm != null)
-            {
-                vm.Position = newP;
+                    vm.Position = window.Position;
+                }
             }
         }
 
         private void HandleScale(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (e.KeyModifiers == KeyModifiers.Shift) return;
-            if (e.KeyModifiers == KeyModifiers.Alt) return;
-
-            if (e.KeyModifiers == KeyModifiers.Control && vm != null)
+            if (!e.Handled)
             {
-                double increment = vm.Scale;
-
-                if (e.Key == Key.Up)
+                if (vm != null)
                 {
-                    increment += 0.01;
-                }
+                    double increment = vm.Scale;
 
-                if (e.Key == Key.Down)
-                {
-                    increment -= 0.01;
-                }
+                    switch (e.Key)
+                    {
+                        case Key.Add:
+                        case Key.OemPlus:
+                            increment += 0.01;
+                            e.Handled = true;
+                            break;
 
-                vm.Scale = increment;
+                        case Key.Subtract:
+                        case Key.OemMinus:
+                            increment -= 0.01;
+                            e.Handled = true;
+                            break;
+                    }
+
+                    if (e.Handled)
+                    {
+                        vm.Scale = increment;
+                    }
+                }
             }
         }
 
         private void HandleRotation(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (e.KeyModifiers == KeyModifiers.Shift) return;
-            if (e.KeyModifiers == KeyModifiers.Control) return;
-
-            if (e.KeyModifiers == KeyModifiers.Alt && vm != null)
+            if (!e.Handled)
             {
-                double rotation = vm.RotationAngle;
-
-                if (e.Key == Key.Up)
+                if (vm != null)
                 {
-                    rotation += 1;
-                }
+                    double rotation = vm.RotationAngle;
 
-                if (e.Key == Key.Down)
-                {
-                    rotation -= 1;
-                }
+                    switch (e.Key)
+                    {
+                        case Key.R:
+                            rotation += 1;
+                            e.Handled = true;
+                            break;
+                        case Key.L:
+                            rotation -= 1;
+                            e.Handled = true;
+                            break;
+                    }
 
-                vm.RotationAngle = rotation;
+                    if (e.Handled)
+                    {
+                        vm.RotationAngle = rotation;
+                    }
+                }
             }
         }
     }
