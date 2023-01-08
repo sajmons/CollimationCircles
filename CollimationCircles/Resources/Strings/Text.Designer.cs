@@ -115,6 +115,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Check for new version on startup.
+        /// </summary>
+        public static string CheckForNewVersion {
+            get {
+                return ResourceManager.GetString("CheckForNewVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Circle.
         /// </summary>
         public static string Circle {
@@ -264,6 +273,24 @@ namespace CollimationCircles.Resources.Strings {
         public static string MoveWindow {
             get {
                 return ResourceManager.GetString("MoveWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Version.
+        /// </summary>
+        public static string NewVersion {
+            get {
+                return ResourceManager.GetString("NewVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New version {0} available! Would you like to download it?.
+        /// </summary>
+        public static string NewVersionDownload {
+            get {
+                return ResourceManager.GetString("NewVersionDownload", resourceCulture);
             }
         }
         
@@ -511,7 +538,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please close Settings window and reopen it for language change to take effect..
+        ///   Looks up a localized string similar to Application must be restarted. Close application now?.
         /// </summary>
         public static string WindowRestart {
             get {

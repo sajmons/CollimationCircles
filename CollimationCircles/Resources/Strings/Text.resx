@@ -135,6 +135,9 @@
   <data name="ChangeTo" xml:space="preserve">
     <value>Change to {0}</value>
   </data>
+  <data name="CheckForNewVersion" xml:space="preserve">
+    <value>Check for new version on startup</value>
+  </data>
   <data name="Circle" xml:space="preserve">
     <value>Circle</value>
   </data>
@@ -185,6 +188,12 @@
   </data>
   <data name="MoveWindow" xml:space="preserve">
     <value>Use keys: arrows move window; 'r' or 'l' rotation; '+' or '-' scaling.</value>
+  </data>
+  <data name="NewVersion" xml:space="preserve">
+    <value>New Version</value>
+  </data>
+  <data name="NewVersionDownload" xml:space="preserve">
+    <value>New version {0} available! Would you like to download it?</value>
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>
@@ -268,6 +277,6 @@
     <value>Version</value>
   </data>
   <data name="WindowRestart" xml:space="preserve">
-    <value>Please close Settings window and reopen it for language change to take effect.</value>
+    <value>Application must be restarted. Close application now?</value>
   </data>
 </root>

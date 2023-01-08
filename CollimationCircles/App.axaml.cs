@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Avalonia.Input;
 using Avalonia.Controls;
 using CollimationCircles.Services;
+using System.IO;
+
 
 namespace CollimationCircles
 {
@@ -26,9 +28,11 @@ namespace CollimationCircles
 
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                desktop.MainWindow = new MainView();
-
                 SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
+
+                vm?.LoadState();
+                
+                desktop.MainWindow = new MainView();
 
                 if (vm != null)
                 {
@@ -40,6 +44,11 @@ namespace CollimationCircles
                     HandleMovement(desktop.MainWindow, vm, e);
                     HandleScale(vm, e);
                     HandleRotation(vm, e);
+                };
+
+                desktop.MainWindow.Closing += (s, e) =>
+                {
+                    vm?.SaveState();
                 };
             }
 
@@ -68,7 +77,7 @@ namespace CollimationCircles
             {
                 int x = window.Position.X;
                 int y = window.Position.Y;
-                int increment = 1;                
+                int increment = 1;
 
                 if (vm != null)
                 {

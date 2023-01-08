@@ -4,11 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="570"
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
         Width="800"
-        Height="550">
+        Height="570">
   <StackPanel Orientation="Vertical" Margin="16" HorizontalAlignment="Stretch" Spacing="5">
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="5">
@@ -52,7 +52,8 @@
 
       <ComboBox
         Items="{Binding LanguageList}"
-        SelectedItem="{Binding SelectedLanguage}">
+        SelectedItem="{Binding SelectedLanguage}"
+        SelectedIndex="{Binding SelectedLanguageIndex}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <TextBlock Text="{Binding Key}" />
@@ -65,8 +66,8 @@
     <Separator Height="1" Background="Silver" />
 
     <StackPanel Orientation="Horizontal" Spacing="20">
-      <Border 
-        Padding="16" CornerRadius="4" 
+      <Border
+        Padding="16" CornerRadius="4"
         BorderBrush="Silver" BorderThickness="1"
         Background="Beige">
         <StackPanel Orientation="Vertical" Spacing="10">
@@ -261,5 +262,10 @@
         </StackPanel>
       </Border>
     </StackPanel>
+
+    <CheckBox
+      IsChecked="{Binding CheckForNewVersionOnStartup}"
+      Content="{x:Static res:Text.CheckForNewVersion}"/>    
+
   </StackPanel>
 </Window>

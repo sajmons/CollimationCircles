@@ -21,13 +21,23 @@ namespace CollimationCircles.Views
 
             DataContext = Ioc.Default.GetService<SettingsViewModel>();
 
+            CheckForUpdate(DataContext as SettingsViewModel);
+
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                DataContext = m.Value;
+                DataContext = m.Value;                
                 InvalidateVisual();
             });
 
-            drawHelperService = Ioc.Default.GetService<IDrawHelperService>();            
+            drawHelperService = Ioc.Default.GetService<IDrawHelperService>();
+        }
+
+        void CheckForUpdate(SettingsViewModel? vm)
+        {
+            if (vm?.CheckForNewVersionOnStartup is true)
+            {
+                vm.CheckForUpdateCommand.ExecuteAsync(null);
+            }
         }
 
         public override void Render(DrawingContext context)
@@ -81,8 +91,8 @@ namespace CollimationCircles.Views
             }
             catch
             {
-                throw;                
+                throw;
             }
-        }        
+        }
     }
 }

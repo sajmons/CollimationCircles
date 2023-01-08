@@ -1,5 +1,7 @@
 ﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
+using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Resources.Strings;
@@ -14,9 +16,10 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
-using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -76,18 +79,25 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public KeyValuePair<string, string> selectedLanguage = new();
 
+        [ObservableProperty]
+        public int selectedLanguageIndex = 0;
+
+        [JsonProperty]
+        [ObservableProperty]
+        public bool checkForNewVersionOnStartup = true;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
-            this.appService= appService;
+            this.appService = appService;
 
             InitializeColors();
             InitializeDefaults();
             InitializeMessages();
             InitializeLanguages();
 
-            Title = $"{Text.CollimationCircles} - {Text.Settings} - {Text.Version} {appService.GetAppVersion()}";
-            MainTitle = $"{Text.CollimationCircles} - {Text.Version} {appService.GetAppVersion()}";
+            Title = $"{Text.CollimationCircles} - {Text.Settings} - {Text.Version} {appService?.GetAppVersion()}";
+            MainTitle = $"{Text.CollimationCircles} - {Text.Version} {appService?.GetAppVersion()}";
         }
 
         private void InitializeMessages()
@@ -145,7 +155,7 @@ namespace CollimationCircles.ViewModels
 
                 Items.CollectionChanged += Items_CollectionChanged;
 
-                SelectedItem = Items?.FirstOrDefault()!;                
+                SelectedItem = Items?.FirstOrDefault()!;
             }
 
             RotationAngle = 0;
@@ -232,11 +242,6 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal async Task SaveList()
         {
-            string jsonString = JsonConvert.SerializeObject(this, new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.Auto
-            });
-
             var settings = new SaveFileDialogSettings
             {
                 Title = Text.SaveFile,
@@ -255,7 +260,7 @@ namespace CollimationCircles.ViewModels
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                File.WriteAllText(path, jsonString, System.Text.Encoding.UTF8);
+                appService.SaveState(this, path);
             }
         }
 
@@ -279,45 +284,9 @@ namespace CollimationCircles.ViewModels
 
             if (!string.IsNullOrWhiteSpace(path))
             {
-                string content = File.ReadAllText(path, System.Text.Encoding.UTF8);
-
-                if (!string.IsNullOrWhiteSpace(content))
+                if (!LoadState(path))
                 {
-                    var jss = new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto,
-                        NullValueHandling = NullValueHandling.Ignore,
-                    };
-
-                    try
-                    {
-                        SettingsViewModel? vm = JsonConvert.DeserializeObject<SettingsViewModel>(content, jss);
-
-                        if (vm != null && vm.Items != null)
-                        {
-                            Position = vm.Position;
-                            Width = vm.Width;
-                            Height = vm.Height;
-                            Scale = vm.Scale;
-                            RotationAngle = vm.RotationAngle;
-                            ShowLabels = vm.ShowLabels;
-                            ColorList = vm.ColorList;
-
-                            Items?.Clear();
-                            Items?.AddRange(vm.Items);
-
-                            SelectedLanguage = vm.SelectedLanguage;
-                        }
-                        else
-                        {
-                            await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
-                        }
-                    }
-                    catch// (Exception exc)
-                    {
-                        // TODO: log exception
-                        await dialogService.ShowMessageBoxAsync(this, Text.UnableToParseJsonFile, Text.Error);
-                    }
+                    await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
                 }
             }
         }
@@ -327,17 +296,113 @@ namespace CollimationCircles.ViewModels
             IsSelectedItem = SelectedItem is not null;
         }
 
-        partial void OnSelectedLanguageChanged(KeyValuePair<string, string> value)
+        partial void OnSelectedLanguageIndexChanged(int value)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(value.Value);
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(value.Value);
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
 
-            dialogService.ShowMessageBoxAsync(this, Text.WindowRestart, Text.Error);            
+            Task.Run(async () =>
+            {
+                var dialogResult = await dialogService.ShowMessageBoxAsync(this, Text.WindowRestart, Text.Error, MessageBoxButton.YesNo);
+                
+                if (dialogResult is true)
+                {
+                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                    {
+                        desktop.Shutdown();
+                    }
+                }
+            });
         }
 
         public void OnClosed()
         {
             DialogViewModel = null;
+        }
+
+        [RelayCommand]
+        internal async Task CheckForUpdate()
+        {
+            var (downloadUrl, newVersion) = await appService.DownloadUrl(appService.GetAppVersion());
+
+            if (!string.IsNullOrWhiteSpace(downloadUrl))
+            {
+                var dialogResult = await dialogService.ShowMessageBoxAsync(this, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
+
+                if (dialogResult is true)
+                {
+                    OpenUrl(downloadUrl);
+                }
+            }
+        }
+
+        private void OpenUrl(string url)
+        {
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        internal void SaveState()
+        {
+            appService.SaveState<SettingsViewModel>(this);
+        }
+
+        internal bool LoadState(string? path = null)
+        {
+            try
+            {
+                SettingsViewModel? vm = appService?.LoadState<SettingsViewModel>(path);
+
+                if (vm != null && vm.Items != null)
+                {
+                    Position = vm.Position;
+                    Width = vm.Width;
+                    Height = vm.Height;
+                    Scale = vm.Scale;
+                    RotationAngle = vm.RotationAngle;
+                    ShowLabels = vm.ShowLabels;
+                    ColorList = vm.ColorList;
+
+                    Items?.Clear();
+                    Items?.AddRange(vm.Items);
+
+                    SelectedLanguage = vm.SelectedLanguage;
+                    CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
+                }
+                else
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }
