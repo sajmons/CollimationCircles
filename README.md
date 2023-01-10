@@ -54,13 +54,6 @@ dotnet run
 
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
 
-## Linux ARM 64
-```
-dotnet publish --runtime linux-arm64 /p:PublishSingleFile=true --output ~/Home/CollimationCircle
-cd ~/Home/CollimationCircle
-./CollimationCircle
-```
-
 # Collimation process
 
 ## 1. Preparations
