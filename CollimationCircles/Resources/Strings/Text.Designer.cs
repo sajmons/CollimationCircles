@@ -160,15 +160,6 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to English.
-        /// </summary>
-        public static string English {
-            get {
-                return ResourceManager.GetString("English", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string Error {
@@ -412,7 +403,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Applied to selected item only.
+        ///   Looks up a localized string similar to Selected item properties.
         /// </summary>
         public static string SelectedItemControls {
             get {
@@ -453,15 +444,6 @@ namespace CollimationCircles.Resources.Strings {
         public static string Size {
             get {
                 return ResourceManager.GetString("Size", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Slovenian.
-        /// </summary>
-        public static string Slovenian {
-            get {
-                return ResourceManager.GetString("Slovenian", resourceCulture);
             }
         }
         

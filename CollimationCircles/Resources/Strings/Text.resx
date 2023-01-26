@@ -150,9 +150,6 @@
   <data name="Count" xml:space="preserve">
     <value>Count</value>
   </data>
-  <data name="English" xml:space="preserve">
-    <value>English</value>
-  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
@@ -235,7 +232,7 @@
     <value>Screw</value>
   </data>
   <data name="SelectedItemControls" xml:space="preserve">
-    <value>Applied to selected item only</value>
+    <value>Selected item properties</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>
@@ -248,9 +245,6 @@
   </data>
   <data name="Size" xml:space="preserve">
     <value>Size</value>
-  </data>
-  <data name="Slovenian" xml:space="preserve">
-    <value>Slovenian</value>
   </data>
   <data name="Spacing" xml:space="preserve">
     <value>Spacing</value>

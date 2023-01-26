@@ -86,15 +86,21 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public bool checkForNewVersionOnStartup = true;
 
+        [JsonProperty]
+        [ObservableProperty]
+        public string version;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
             this.appService = appService;
 
-            InitializeColors();
-            InitializeDefaults();
-            InitializeMessages();
-            InitializeLanguages();
+            if (this.appService is not null)
+            {
+                InitializeColors();
+                InitializeDefaults();
+                InitializeMessages();
+            }
 
             Title = $"{Text.CollimationCircles} - {Text.Settings} - {Text.Version} {appService?.GetAppVersion()}";
             MainTitle = $"{Text.CollimationCircles} - {Text.Version} {appService?.GetAppVersion()}";
@@ -132,9 +138,7 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeDefaults()
         {
-            if (Items is not null)
-            {
-                List<CollimationHelper> list = new()
+            List<CollimationHelper> list = new()
                 {
                     // Circles
                     new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
@@ -150,30 +154,28 @@ namespace CollimationCircles.ViewModels
                     new PrimaryClipViewModel()
                 };
 
-                Items.Clear();
-                Items.AddRange(list);
+            Items.Clear();
+            Items.AddRange(list);
 
-                Items.CollectionChanged += Items_CollectionChanged;
+            Items.CollectionChanged += Items_CollectionChanged;
 
-                SelectedItem = Items?.FirstOrDefault()!;
-            }
+            SelectedItem = Items.FirstOrDefault()!;
 
             RotationAngle = 0;
             Scale = 1;
             ShowLabels = true;
-            SelectedLanguage = LanguageList.FirstOrDefault();
-        }
 
-        private void InitializeLanguages()
-        {
+            // initialize languages
             List<KeyValuePair<string, string>> l = new()
             {
-                new KeyValuePair<string, string>(Text.English, "en-US"),
-                new KeyValuePair<string, string>(Text.Slovenian, "sl-SI")
+                new KeyValuePair<string, string>("English", "en-US"),
+                new KeyValuePair<string, string>("Slovenian", "sl-SI")
             };
 
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
             SelectedLanguage = LanguageList.FirstOrDefault();
+            SelectedLanguageIndex = 0;
+            Version = this.appService.GetAppVersion();
         }
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -206,31 +208,31 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void AddCircle()
         {
-            Items?.Add(new CircleViewModel());
+            Items.Add(new CircleViewModel());
         }
 
         [RelayCommand]
         internal void AddScrew()
         {
-            Items?.Add(new ScrewViewModel());
+            Items.Add(new ScrewViewModel());
         }
 
         [RelayCommand]
         internal void AddClip()
         {
-            Items?.Add(new PrimaryClipViewModel());
+            Items.Add(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
         internal void AddSpider()
         {
-            Items?.Add(new SpiderViewModel());
+            Items.Add(new SpiderViewModel());
         }
 
         [RelayCommand]
         internal void RemoveItem(CollimationHelper item)
         {
-            Items?.Remove(item);
+            Items.Remove(item);
         }
 
         [RelayCommand]
@@ -296,25 +298,6 @@ namespace CollimationCircles.ViewModels
             IsSelectedItem = SelectedItem is not null;
         }
 
-        partial void OnSelectedLanguageIndexChanged(int value)
-        {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
-
-            Task.Run(async () =>
-            {
-                var dialogResult = await dialogService.ShowMessageBoxAsync(this, Text.WindowRestart, Text.Error, MessageBoxButton.YesNo);
-                
-                if (dialogResult is true)
-                {
-                    if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                    {
-                        desktop.Shutdown();
-                    }
-                }
-            });
-        }
-
         public void OnClosed()
         {
             DialogViewModel = null;
@@ -367,14 +350,14 @@ namespace CollimationCircles.ViewModels
 
         internal void SaveState()
         {
-            appService.SaveState<SettingsViewModel>(this);
+            appService.SaveState(this);
         }
 
         internal bool LoadState(string? path = null)
         {
             try
             {
-                SettingsViewModel? vm = appService?.LoadState<SettingsViewModel>(path);
+                SettingsViewModel? vm = appService?.LoadState<SettingsViewModel>(path);                
 
                 if (vm != null && vm.Items != null)
                 {
@@ -386,11 +369,13 @@ namespace CollimationCircles.ViewModels
                     ShowLabels = vm.ShowLabels;
                     ColorList = vm.ColorList;
 
-                    Items?.Clear();
-                    Items?.AddRange(vm.Items);
+                    Items.Clear();
+                    Items.AddRange(vm.Items);
 
                     SelectedLanguage = vm.SelectedLanguage;
+                    SelectedLanguageIndex = LanguageList.IndexOf(vm.SelectedLanguage);
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
+                    Version = vm.Version ?? appService?.GetAppVersion();
                 }
                 else
                 {
@@ -403,6 +388,12 @@ namespace CollimationCircles.ViewModels
             {
                 return false;
             }
+        }
+
+        partial void OnSelectedLanguageChanged(KeyValuePair<string, string> value)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
         }
     }
 }

@@ -150,9 +150,6 @@
   <data name="Count" xml:space="preserve">
     <value>Število</value>
   </data>
-  <data name="English" xml:space="preserve">
-    <value>Angleški</value>
-  </data>
   <data name="Error" xml:space="preserve">
     <value>Napaka</value>
   </data>
@@ -235,7 +232,7 @@
     <value>Vijak</value>
   </data>
   <data name="SelectedItemControls" xml:space="preserve">
-    <value>Velja za izbran zapis</value>
+    <value>Lastnosti izbranega</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Nastavitve</value>
@@ -248,9 +245,6 @@
   </data>
   <data name="Size" xml:space="preserve">
     <value>Velikost</value>
-  </data>
-  <data name="Slovenian" xml:space="preserve">
-    <value>Slovenski</value>
   </data>
   <data name="Spacing" xml:space="preserve">
     <value>Širina</value>
