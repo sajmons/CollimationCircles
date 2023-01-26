@@ -12,12 +12,17 @@ public class AppService : IAppService
     private const string stateFile = "appstate.json";
     private readonly GitHubClient client = new(new ProductHeaderValue("CollimationCircles"));
     private readonly string owner = "sajmons";
-    private readonly string reponame = "CollimationCircles";    
+    private readonly string reponame = "CollimationCircles";
 
     public string GetAppVersion()
     {
         return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion ?? string.Empty;
-    }    
+    }
+
+    public bool SameVersion(string v1, string v2)
+    {
+        return new Version(v1) == new Version(v2);
+    }
 
     public T? Deserialize<T>(string jsonState)
     {
@@ -65,5 +70,5 @@ public class AppService : IAppService
             return (release.Assets[0].BrowserDownloadUrl, newVersion.ToString());
         else
             return (string.Empty, string.Empty);
-    }
+    }    
 }
