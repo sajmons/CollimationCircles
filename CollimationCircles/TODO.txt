@@ -1,4 +1,3 @@
 ﻿- scale, rotation, show labels does not reset when default button is pressed
-- create viewmodel for handling keydown events of MainWindow
 - editing label should refresh label value in list
-- moving window with arrow keys on Linux don't work
+- moving window with arrow keys on Linux don't work AvaloniaUI bug
