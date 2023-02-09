@@ -4,7 +4,7 @@ using System;
 
 namespace CollimationCircles
 {
-    public class ViewLocator : ViewLocatorBase, IDataTemplate
+    public class ViewLocator : ViewLocatorBase
     {
         protected override string GetViewName(object viewModel)
         {

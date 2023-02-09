@@ -169,7 +169,8 @@ namespace CollimationCircles.ViewModels
             List<KeyValuePair<string, string>> l = new()
             {
                 new KeyValuePair<string, string>("English", "en-US"),
-                new KeyValuePair<string, string>("Slovenian", "sl-SI")
+                new KeyValuePair<string, string>("Slovenian", "sl-SI"),
+                new KeyValuePair<string, string>("German", "de-DE")
             };
 
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);

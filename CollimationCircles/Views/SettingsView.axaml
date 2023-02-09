@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="505" d:DesignHeight="600"
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
-        Width="505"
+        Width="615"
         Height="600">
   <StackPanel Orientation="Vertical" Margin="16" HorizontalAlignment="Stretch" Spacing="5">
 
@@ -68,17 +68,15 @@
     <StackPanel Orientation="Horizontal" Spacing="5">
       <Border
         Padding="16" CornerRadius="4"
-        BorderBrush="Silver" BorderThickness="1"
-        Background="Beige">
+        BorderBrush="Silver" BorderThickness="1">
         <StackPanel Orientation="Vertical">
           <TextBlock Text="{x:Static res:Text.ItemListTitle}"></TextBlock>
-          <ListBox
+          <ListBox            
             Name="list"
-            Width="200" Height="400"
+            Width="260" Height="400"
             Items="{Binding Items}"
             SelectedItem="{Binding SelectedItem}"
-            SelectionMode="Single"
-            Background="Beige">
+            SelectionMode="Single">
             <ListBox.ItemTemplate>
               <DataTemplate>
 
@@ -119,8 +117,7 @@
       <StackPanel Orientation="Vertical" Spacing="5">
         <Border
           Padding="16" CornerRadius="4"
-          BorderBrush="Silver" BorderThickness="1"
-          Background="Beige">
+          BorderBrush="Silver" BorderThickness="1">
           <StackPanel Orientation="Vertical" Spacing="10">
             <TextBlock Text="{x:Static res:Text.SelectedItemControls}"></TextBlock>
             <Grid
@@ -224,11 +221,10 @@
         </Border>
 
         <!-- Settings for all -->
-        <Border Padding="16" CornerRadius="4" BorderBrush="Silver" BorderThickness="1" Background="AntiqueWhite">
+        <Border Padding="16" CornerRadius="4" BorderBrush="Silver" BorderThickness="1">
           <StackPanel Orientation="Vertical" Spacing="10">
             <TextBlock Text="{x:Static res:Text.AllItemsControls}"></TextBlock>
             <Grid
-              IsEnabled="{Binding IsSelectedItem}"
               RowDefinitions="30,5,30,5,30,5"
               ColumnDefinitions="70,*">
 
