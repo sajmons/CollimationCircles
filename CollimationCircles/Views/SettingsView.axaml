@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
-        mc:Ignorable="d" d:DesignWidth="505" d:DesignHeight="600"
+        mc:Ignorable="d" d:DesignWidth="615" d:DesignHeight="600"
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
         Width="615"
