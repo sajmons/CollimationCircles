@@ -60,10 +60,9 @@ For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dot
 
 For collimation circles app to help you with collimation process you'll need this:
 
-- camera (webcam, phone or CMOS) attached to the focuser
-  - I was using phone, holder to attach phone to focuser, DroidCam app from Play Store to stream live view to computer browser
-- computer displaying live image from webcam, phone or CMOS
-- Collimation Circles app to overlay over live stream
+- camera attached to the focuser; Raspbery Pi HQ Camera (imx477) with 6mm lens in my case
+- computer displaying live image from camera
+- Collimation Circles app running on your computer to overlay over live stream from camera
 - screwdriver
 - sheet of paper to block primary mirror, and second colored (green in my case) sheet for better contrast
 - marked primary mirror center spot
