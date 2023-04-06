@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
@@ -9,7 +8,6 @@ using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using DynamicData;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Newtonsoft.Json;
