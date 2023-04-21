@@ -1,8 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using CollimationCircles.ViewModels;
-using System.Globalization;
 using System;
+using System.Globalization;
 
 namespace CollimationCircles.Services
 {
@@ -24,7 +24,7 @@ namespace CollimationCircles.Services
 
                 context.DrawText(formattedText, new Point(width2, height2 - item.Radius));
             }
-        }        
+        }
 
         public void DrawScrew(DrawingContext context, bool showLabels, ScrewViewModel item, double width2, double height2, IBrush brush, Matrix translate)
         {

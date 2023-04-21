@@ -70,5 +70,5 @@ public class AppService : IAppService
             return (release.Assets[0].BrowserDownloadUrl, newVersion.ToString());
         else
             return (string.Empty, string.Empty);
-    }    
+    }
 }

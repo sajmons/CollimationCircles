@@ -11,7 +11,7 @@ namespace CollimationCircles.ViewModels
             ItemColor = Colors.White;
             Label = Text.PrimaryClip;
             Radius = 268;
-            Size = 50;   
+            Size = 50;
             IsRotatable = true;
             IsSizeable = true;
             IsEditable = true;

@@ -7,7 +7,7 @@ namespace CollimationCircles.ViewModels
     public partial class CircleViewModel : CollimationHelper
     {
         public CircleViewModel()
-        { 
+        {
             ItemColor = Colors.Red;
             Label = Text.Circle;
         }
