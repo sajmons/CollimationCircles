@@ -1,13 +1,13 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CollimationCircles.Services;
 using CollimationCircles.ViewModels;
 using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using HanumanInstitute.MvvmDialogs.Avalonia;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using CollimationCircles.Services;
 
 namespace CollimationCircles;
 public partial class App : Application
@@ -25,14 +25,7 @@ public partial class App : Application
         {
             SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
-            vm?.LoadState();
-            
             desktop.MainWindow = new MainView();
-
-            if (vm != null)
-            {
-                desktop.MainWindow.Position = vm.Position;
-            }
 
             MoveWindowService? mws = Ioc.Default.GetService<MoveWindowService>();
 
@@ -41,6 +34,13 @@ public partial class App : Application
                 mws?.HandleMovement(desktop.MainWindow, vm, e);
                 mws?.HandleScale(vm, e);
                 mws?.HandleRotation(vm, e);
+            };
+
+            desktop.MainWindow.Opened += (s, e) =>
+            {
+                vm?.LoadState();
+
+                desktop.MainWindow.Position = vm != null ? vm.Position : new PixelPoint();
             };
 
             desktop.MainWindow.Closing += (s, e) =>
@@ -52,7 +52,7 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    private void ConfigureServices()
+    private static void ConfigureServices()
     {
         Ioc.Default.ConfigureServices(
         new ServiceCollection()
@@ -67,5 +67,5 @@ public partial class App : Application
             .AddTransient<IAppService, AppService>()
             .AddSingleton<MoveWindowService>()
             .BuildServiceProvider());
-    }        
+    }
 }

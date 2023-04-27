@@ -356,7 +356,7 @@ namespace CollimationCircles.ViewModels
         {
             try
             {
-                SettingsViewModel? vm = appService?.LoadState<SettingsViewModel>(path);                
+                SettingsViewModel? vm = appService?.LoadState<SettingsViewModel>(path);
 
                 if (vm != null && vm.Items != null)
                 {

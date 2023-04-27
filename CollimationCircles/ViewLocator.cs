@@ -1,6 +1,4 @@
-using Avalonia.Controls.Templates;
 using HanumanInstitute.MvvmDialogs.Avalonia;
-using System;
 
 namespace CollimationCircles
 {

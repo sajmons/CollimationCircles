@@ -2,3 +2,4 @@
 - editing label should refresh label value in list
 - moving window with arrow keys on Linux don't work AvaloniaUI bug
 - saving main and settings window position and restire them on startup
+- camera video streaming support

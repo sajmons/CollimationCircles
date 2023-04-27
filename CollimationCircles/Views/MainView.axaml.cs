@@ -1,4 +1,3 @@
-using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
@@ -8,6 +7,7 @@ using CollimationCircles.Services;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using System;
 
 namespace CollimationCircles.Views
 {
@@ -25,7 +25,7 @@ namespace CollimationCircles.Views
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                DataContext = m.Value;                
+                DataContext = m.Value;
                 InvalidateVisual();
             });
 
