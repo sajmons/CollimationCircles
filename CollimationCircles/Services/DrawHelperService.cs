@@ -31,12 +31,12 @@ namespace CollimationCircles.Services
             double angle = 360 / item.Count;
 
             Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
-            using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
+            using (context.PushTransform(translate.Invert() * rotate2 * translate))
             {
                 for (int i = 0; i < item.Count; i++)
                 {
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
-                    using (context.PushPreTransform(rotate * translate))
+                    using (context.PushTransform(rotate * translate))
                     {
                         context.DrawEllipse(brush, new Pen(brush, item.Thickness), new Point(0, item.Radius), item.Size, item.Size);
 
@@ -61,12 +61,12 @@ namespace CollimationCircles.Services
             double angle = 360 / item.Count;
 
             Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
-            using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
+            using (context.PushTransform(translate.Invert() * rotate2 * translate))
             {
                 for (int i = 0; i < item.Count; i++)
                 {
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
-                    using (context.PushPreTransform(rotate * translate))
+                    using (context.PushTransform(rotate * translate))
                     {
                         context.DrawRectangle(new Pen(brush, item.Thickness), new Rect(-item.Size / 2, item.Radius - item.Size / 2, item.Size, item.Size / 3));
 
@@ -92,12 +92,12 @@ namespace CollimationCircles.Services
             double angle = 360 / item.Count;
 
             Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
-            using (context.PushPreTransform(translate.Invert() * rotate2 * translate))
+            using (context.PushTransform(translate.Invert() * rotate2 * translate))
             {
                 for (int i = 0; i < item.Count; i++)
                 {
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
-                    using (context.PushPreTransform(rotate * translate))
+                    using (context.PushTransform(rotate * translate))
                     {
                         context.DrawRectangle(new Pen(brush, item.Thickness), new Rect(-item.Size / 4, -item.Size / 4, item.Radius + item.Size / 4, item.Size / 2));
 
