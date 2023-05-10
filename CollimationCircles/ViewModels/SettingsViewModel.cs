@@ -26,8 +26,8 @@ namespace CollimationCircles.ViewModels
     [JsonObject(MemberSerialization.OptIn)]
     public partial class SettingsViewModel : BaseViewModel, IViewClosed
     {
-        private readonly IDialogService dialogService;
-        private readonly IAppService appService;
+        private readonly IDialogService? dialogService;
+        private readonly IAppService? appService;
 
         [ObservableProperty]
         private INotifyPropertyChanged? dialogViewModel;
@@ -86,7 +86,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public string version;
+        public string version = string.Empty;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -174,7 +174,7 @@ namespace CollimationCircles.ViewModels
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
             SelectedLanguage = LanguageList.FirstOrDefault();
             SelectedLanguageIndex = 0;
-            Version = this.appService.GetAppVersion();
+            Version = appService?.GetAppVersion() ?? "0.0.0";
         }
 
         private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -192,16 +192,23 @@ namespace CollimationCircles.ViewModels
         {
             if (DialogViewModel is null)
             {
-                DialogViewModel = dialogService.CreateViewModel<SettingsViewModel>();
-                dialogService.Show(null, DialogViewModel);
+                DialogViewModel = dialogService?.CreateViewModel<SettingsViewModel>();
+
+                if (DialogViewModel is not null)
+                {
+                    dialogService?.Show(null, DialogViewModel);
+                }
             }
         }
 
         [RelayCommand]
         internal void CloseSettings()
         {
-            dialogService.Close(DialogViewModel!);
-            DialogViewModel = null;
+            if (DialogViewModel is not null)
+            {
+                dialogService?.Close(DialogViewModel);
+                DialogViewModel = null;
+            }
         }
 
         [RelayCommand]
@@ -255,13 +262,16 @@ namespace CollimationCircles.ViewModels
                 DefaultExtension = Text.StarJson
             };
 
-            var result = await dialogService.ShowSaveFileDialogAsync(this, settings);
-
-            var path = result?.Path?.LocalPath;
-
-            if (!string.IsNullOrWhiteSpace(path))
+            if (dialogService is not null)
             {
-                appService.SaveState(this, path);
+                var result = await dialogService.ShowSaveFileDialogAsync(this, settings);
+
+                var path = result?.Path?.LocalPath;
+
+                if (!string.IsNullOrWhiteSpace(path))
+                {
+                    appService?.SaveState(this, path);
+                }
             }
         }
 
@@ -279,15 +289,18 @@ namespace CollimationCircles.ViewModels
                 }
             };
 
-            var result = await dialogService.ShowOpenFileDialogAsync(this, settings);
-
-            string? path = result?.Path?.LocalPath;
-
-            if (!string.IsNullOrWhiteSpace(path))
+            if (dialogService is not null)
             {
-                if (!LoadState(path))
+                var result = await dialogService.ShowOpenFileDialogAsync(this, settings);
+
+                string? path = result?.Path?.LocalPath;
+
+                if (!string.IsNullOrWhiteSpace(path))
                 {
-                    await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
+                    if (!LoadState(path))
+                    {
+                        await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
+                    }
                 }
             }
         }
@@ -305,20 +318,28 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal async Task CheckForUpdate()
         {
-            var (downloadUrl, newVersion) = await appService.DownloadUrl(appService.GetAppVersion());
+            string? appVersion = appService?.GetAppVersion();
 
-            if (!string.IsNullOrWhiteSpace(downloadUrl))
+            if (appVersion is not null)
             {
-                var dialogResult = await dialogService.ShowMessageBoxAsync(this, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
-
-                if (dialogResult is true)
+                if (appService is not null)
                 {
-                    OpenUrl(downloadUrl);
+                    var (downloadUrl, newVersion) = await appService.DownloadUrl(appVersion);
+
+                    if (downloadUrl is not null && dialogService is not null)
+                    {
+                        var dialogResult = await dialogService.ShowMessageBoxAsync(this, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
+
+                        if (dialogResult is true)
+                        {
+                            OpenUrl(downloadUrl);
+                        }
+                    }
                 }
             }
         }
 
-        private void OpenUrl(string url)
+        private static void OpenUrl(string url)
         {
             try
             {
@@ -348,8 +369,8 @@ namespace CollimationCircles.ViewModels
         }
 
         internal void SaveState()
-        {
-            appService.SaveState(this);
+        {            
+            appService?.SaveState(this);
         }
 
         internal bool LoadState(string? path = null)
@@ -374,7 +395,7 @@ namespace CollimationCircles.ViewModels
                     SelectedLanguage = vm.SelectedLanguage;
                     SelectedLanguageIndex = LanguageList.IndexOf(vm.SelectedLanguage);
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
-                    Version = vm.Version ?? appService?.GetAppVersion();
+                    Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
                 }
                 else
                 {

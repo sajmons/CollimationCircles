@@ -46,7 +46,7 @@ namespace CollimationCircles.Views
             {
                 SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
-                if (vm is not null)
+                if (vm != null)
                 {
                     var it = vm?.Items;
 
@@ -56,33 +56,37 @@ namespace CollimationCircles.Views
                         {
                             double width2 = Width / 2;
                             double height2 = Height / 2;
+                            double scaleOrDefault = vm?.Scale ?? 1.0;
+                            double rotAngleOrDefault = vm?.RotationAngle ?? 0;
 
                             var brush = new SolidColorBrush(item.ItemColor);
 
-                            Matrix scale = Matrix.CreateScale(vm.Scale, vm.Scale);
-                            Matrix rotation = Matrix.CreateRotation(vm.RotationAngle * Math.PI / 180);
-                            Matrix translate = Matrix.CreateTranslation(width2, height2);
+                            Matrix scaleMat = Matrix.CreateScale(scaleOrDefault, scaleOrDefault);
+                            Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
+                            Matrix translateMat = Matrix.CreateTranslation(width2, height2);
 
-                            using (context.PushPreTransform(translate.Invert() * scale * rotation * translate))
+                            using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
                             {
-                                if (item is CircleViewModel && item.IsVisible)
+                                bool showlabels = vm?.ShowLabels ?? false;
+
+                                if (item is CircleViewModel cModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawCircle(context, vm.ShowLabels, (CircleViewModel)item, width2, height2, brush);
+                                    drawHelperService?.DrawCircle(context, showlabels, cModel, width2, height2, brush);
                                 }
 
-                                if (item is ScrewViewModel && item.IsVisible)
+                                if (item is ScrewViewModel sModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawScrew(context, vm.ShowLabels, (ScrewViewModel)item, width2, height2, brush, translate);
+                                    drawHelperService?.DrawScrew(context, showlabels, sModel, width2, height2, brush, translateMat);
                                 }
 
-                                if (item is PrimaryClipViewModel && item.IsVisible)
+                                if (item is PrimaryClipViewModel pcModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawPrimaryClip(context, vm.ShowLabels, (PrimaryClipViewModel)item, width2, height2, brush, translate);
+                                    drawHelperService?.DrawPrimaryClip(context, showlabels, pcModel, width2, height2, brush, translateMat);
                                 }
 
-                                if (item is SpiderViewModel && item.IsVisible)
+                                if (item is SpiderViewModel spModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawSpider(context, vm.ShowLabels, (SpiderViewModel)item, width2, height2, brush, translate);
+                                    drawHelperService?.DrawSpider(context, showlabels, spModel, width2, height2, brush, translateMat);
                                 }
                             }
                         }
