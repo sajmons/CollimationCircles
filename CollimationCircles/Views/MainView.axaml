@@ -27,7 +27,7 @@
       Opacity="0.2"
       HorizontalAlignment="Right"
       VerticalAlignment="Bottom"
-      Width="88"
+      Width="64"
       ToolTip.Tip="{x:Static res:Text.MoveWindow}"
       Source="/Resources/Images/arrow_keys.png"/>
   </Grid>
