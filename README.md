@@ -54,6 +54,10 @@ dotnet run
 
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
 
+# How to use
+
+See this article https://saimons-astronomy.webador.com/software/collimation-circles
+
 # Known issues
 
 ## Window transparency issues on Linux
