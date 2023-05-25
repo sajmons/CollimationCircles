@@ -150,6 +150,9 @@
   <data name="Count" xml:space="preserve">
     <value>Število</value>
   </data>
+  <data name="DisplayHelp" xml:space="preserve">
+    <value>Odpri spletno stran z navodili kako uporabljati aplikacijo</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Napaka</value>
   </data>

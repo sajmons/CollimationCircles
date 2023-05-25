@@ -160,6 +160,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open web page with help how to use application.
+        /// </summary>
+        public static string DisplayHelp {
+            get {
+                return ResourceManager.GetString("DisplayHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error.
         /// </summary>
         public static string Error {

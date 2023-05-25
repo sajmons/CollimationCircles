@@ -59,7 +59,12 @@
             <TextBlock Text="{Binding Key}" />
           </DataTemplate>
         </ComboBox.ItemTemplate>
-      </ComboBox>
+      </ComboBox>      
+      
+      <Button Padding="0" Command="{Binding DisplayHelpCommand}"        
+        VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.DisplayHelp}">
+        <Image Source="/Resources/Images/ic_help_outline.png" Width="28"/>
+      </Button>
 
     </StackPanel>
 

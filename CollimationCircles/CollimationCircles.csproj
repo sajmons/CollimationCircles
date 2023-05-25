@@ -39,6 +39,7 @@
     <None Remove="Resources\Images\ic_reset.svg" />
     <None Remove="Resources\Images\ic_save.png" />
     <None Remove="Resources\Images\ic_settings.png" />
+    <None Remove="Resources\Images\ic_help_outline.png" />
     <None Remove="Resources\Images\primaryclipviewmodel.png" />
     <None Remove="Resources\Images\rectangle.svg" />
     <None Remove="Resources\Images\screw.svg" />
@@ -56,6 +57,7 @@
     <AvaloniaResource Include="Resources\Images\ic_remove.png" />
     <AvaloniaResource Include="Resources\Images\ic_reset.png" />
     <AvaloniaResource Include="Resources\Images\ic_settings.png" />
+    <AvaloniaResource Include="Resources\Images\ic_help_outline.png" />
     <AvaloniaResource Include="Resources\Images\primaryclipviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\screwviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\spiderviewmodel.png" />

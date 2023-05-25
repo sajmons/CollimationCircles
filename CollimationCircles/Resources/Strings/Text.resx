@@ -150,6 +150,9 @@
   <data name="Count" xml:space="preserve">
     <value>Count</value>
   </data>
+  <data name="DisplayHelp" xml:space="preserve">
+    <value>Open web page with help how to use application</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
