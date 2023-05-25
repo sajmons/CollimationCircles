@@ -1,5 +1,4 @@
 ﻿- scale, rotation, show labels does not reset when default button is pressed
-- editing label should refresh label value in list
 - moving window with arrow keys on Linux don't work AvaloniaUI bug
 - saving main and settings window position and restire them on startup
 - camera video streaming support

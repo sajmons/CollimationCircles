@@ -102,6 +102,7 @@ namespace CollimationCircles.Models
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
+            base.OnPropertyChanged(e);
             WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
         }
     }

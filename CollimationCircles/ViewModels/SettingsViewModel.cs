@@ -184,6 +184,7 @@ namespace CollimationCircles.ViewModels
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
+            base.OnPropertyChanged(e);
             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
         }
 
@@ -339,6 +340,13 @@ namespace CollimationCircles.ViewModels
             }
         }
 
+
+        [RelayCommand]
+        internal void DisplayHelp()
+        {
+            OpenUrl("https://saimons-astronomy.webador.com/1191504_eaa-telescope-collimation-with-collimation-circles-application");
+        }
+
         private static void OpenUrl(string url)
         {
             try
@@ -369,7 +377,7 @@ namespace CollimationCircles.ViewModels
         }
 
         internal void SaveState()
-        {            
+        {
             appService?.SaveState(this);
         }
 
