@@ -10,6 +10,6 @@ namespace CollimationCircles.Services
         string Serialize<T>(T obj);
         void SaveState<T>(T obj, string? fileName = null);
         T? LoadState<T>(string? fileName = null);
-        Task<(string, string)> DownloadUrl(string version);
+        Task<(bool, string, string)> DownloadUrl(string version);
     }
 }

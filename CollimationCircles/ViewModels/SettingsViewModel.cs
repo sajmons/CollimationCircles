@@ -315,16 +315,20 @@ namespace CollimationCircles.ViewModels
             {
                 if (appService is not null)
                 {
-                    var (downloadUrl, newVersion) = await appService.DownloadUrl(appVersion);
+                    var (success, result, newVersion) = await appService.DownloadUrl(appVersion);
 
-                    if (!string.IsNullOrWhiteSpace(downloadUrl))
+                    if (success && !string.IsNullOrWhiteSpace(result))
                     {
                         var dialogResult = await dialogService.ShowMessageBoxAsync(null, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
 
                         if (dialogResult is true)
                         {
-                            OpenUrl(downloadUrl);
+                            OpenUrl(result);
                         }
+                    }
+                    else if(!success)
+                    {
+                        await dialogService.ShowMessageBoxAsync(null, result, Text.Error);
                     }
                 }
             }

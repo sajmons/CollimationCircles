@@ -56,19 +56,26 @@ public class AppService : IAppService
         File.WriteAllText(fileName ?? stateFile, jsonState, System.Text.Encoding.UTF8);
     }
 
-    public async Task<(string, string)> DownloadUrl(string currentVersion)
+    public async Task<(bool, string, string)> DownloadUrl(string currentVersion)
     {
-        var release = await client.Repository.Release.GetLatest(owner, reponame);
+        try
+        {
+            var release = await client.Repository.Release.GetLatest(owner, reponame);
 
-        var gitHubVer = release.TagName.Split('-')[1];
+            var gitHubVer = release.TagName.Split('-')[1];
 
-        Version oldVersion = new Version(currentVersion);
+            Version oldVersion = new Version(currentVersion);
 
-        Version newVersion = new Version(gitHubVer);
+            Version newVersion = new Version(gitHubVer);
 
-        if (newVersion > oldVersion)
-            return (release.Assets[0].BrowserDownloadUrl, newVersion.ToString());
-        else
-            return (string.Empty, string.Empty);
+            if (newVersion > oldVersion)
+                return (true, release.Assets[0].BrowserDownloadUrl, newVersion.ToString());
+            else
+                return (true, string.Empty, string.Empty);
+        }
+        catch (Exception exc)
+        {
+            return (false, exc.Message, string.Empty);
+        }
     }
 }
