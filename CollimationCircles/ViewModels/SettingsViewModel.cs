@@ -137,6 +137,16 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeDefaults()
         {
+            // initialize languages
+            List<KeyValuePair<string, string>> l = new()
+            {
+                new KeyValuePair<string, string>("English", "en-US"),
+                new KeyValuePair<string, string>("Slovenian", "sl-SI"),
+                new KeyValuePair<string, string>("German", "de-DE")
+            };
+            LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
+            SelectedLanguage = LanguageList.FirstOrDefault();
+
             List<CollimationHelper> list = new()
                 {
                     // Circles
@@ -162,18 +172,8 @@ namespace CollimationCircles.ViewModels
 
             RotationAngle = 0;
             Scale = 1;
-            ShowLabels = true;
-
-            // initialize languages
-            List<KeyValuePair<string, string>> l = new()
-            {
-                new KeyValuePair<string, string>("English", "en-US"),
-                new KeyValuePair<string, string>("Slovenian", "sl-SI"),
-                new KeyValuePair<string, string>("German", "de-DE")
-            };
-
-            LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
-            SelectedLanguage = LanguageList.FirstOrDefault();
+            ShowLabels = true;            
+            
             Version = appService?.GetAppVersion() ?? "0.0.0";
         }
 
