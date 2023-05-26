@@ -21,7 +21,7 @@ Suggestions and contributions are welcome!
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
 
-![image](https://user-images.githubusercontent.com/7437280/207387640-f0b2f880-c2d1-4462-a083-bab68d465b8d.png)
+![image](https://github.com/sajmons/CollimationCircles/assets/7437280/ba8ada94-454c-4d6d-beaa-f90f1bf152a5)
 
 # Download
 
