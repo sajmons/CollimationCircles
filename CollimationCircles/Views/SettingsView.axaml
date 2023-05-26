@@ -53,7 +53,7 @@
       <ComboBox
         Items="{Binding LanguageList}"
         SelectedItem="{Binding SelectedLanguage}"
-        SelectedIndex="{Binding SelectedLanguageIndex}">
+        IsDropDownOpen="{Binding DropDownOpen, Mode=TwoWay}">
         <ComboBox.ItemTemplate>
           <DataTemplate>
             <TextBlock Text="{Binding Key}" />

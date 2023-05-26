@@ -65,7 +65,7 @@ namespace CollimationCircles.Views
                             Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
                             Matrix translateMat = Matrix.CreateTranslation(width2, height2);
 
-                            using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
+                            using (context.PushPreTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
                             {
                                 bool showlabels = vm?.ShowLabels ?? false;
 

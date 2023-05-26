@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
@@ -26,7 +27,7 @@ namespace CollimationCircles.ViewModels
     [JsonObject(MemberSerialization.OptIn)]
     public partial class SettingsViewModel : BaseViewModel, IViewClosed
     {
-        private readonly IDialogService? dialogService;
+        private readonly IDialogService dialogService;
         private readonly IAppService? appService;
 
         [ObservableProperty]
@@ -77,9 +78,6 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public KeyValuePair<string, string> selectedLanguage = new();
 
-        [ObservableProperty]
-        public int selectedLanguageIndex = 0;
-
         [JsonProperty]
         [ObservableProperty]
         public bool checkForNewVersionOnStartup = true;
@@ -87,6 +85,9 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         public string version = string.Empty;
+
+        [ObservableProperty]
+        public bool dropDownOpen = false;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -173,7 +174,6 @@ namespace CollimationCircles.ViewModels
 
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
             SelectedLanguage = LanguageList.FirstOrDefault();
-            SelectedLanguageIndex = 0;
             Version = appService?.GetAppVersion() ?? "0.0.0";
         }
 
@@ -263,16 +263,11 @@ namespace CollimationCircles.ViewModels
                 DefaultExtension = Text.StarJson
             };
 
-            if (dialogService is not null)
+            var path = await dialogService.ShowSaveFileDialogAsync(this, settings);
+
+            if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
-                var result = await dialogService.ShowSaveFileDialogAsync(this, settings);
-
-                var path = result?.Path?.LocalPath;
-
-                if (!string.IsNullOrWhiteSpace(path))
-                {
-                    appService?.SaveState(this, path);
-                }
+                appService?.SaveState(this, path?.Path?.LocalPath);
             }
         }
 
@@ -290,18 +285,13 @@ namespace CollimationCircles.ViewModels
                 }
             };
 
-            if (dialogService is not null)
+            var path = await dialogService.ShowOpenFileDialogAsync(this, settings);
+
+            if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
-                var result = await dialogService.ShowOpenFileDialogAsync(this, settings);
-
-                string? path = result?.Path?.LocalPath;
-
-                if (!string.IsNullOrWhiteSpace(path))
+                if (!LoadState(path?.Path?.LocalPath))
                 {
-                    if (!LoadState(path))
-                    {
-                        await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
-                    }
+                    await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
                 }
             }
         }
@@ -327,9 +317,9 @@ namespace CollimationCircles.ViewModels
                 {
                     var (downloadUrl, newVersion) = await appService.DownloadUrl(appVersion);
 
-                    if (downloadUrl is not null && dialogService is not null)
+                    if (downloadUrl is not null)
                     {
-                        var dialogResult = await dialogService.ShowMessageBoxAsync(this, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
+                        var dialogResult = await dialogService.ShowMessageBoxAsync(null, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
 
                         if (dialogResult is true)
                         {
@@ -401,7 +391,6 @@ namespace CollimationCircles.ViewModels
                     Items.AddRange(vm.Items);
 
                     SelectedLanguage = vm.SelectedLanguage;
-                    SelectedLanguageIndex = LanguageList.IndexOf(vm.SelectedLanguage);
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
                     Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
                 }
@@ -420,8 +409,30 @@ namespace CollimationCircles.ViewModels
 
         partial void OnSelectedLanguageChanged(KeyValuePair<string, string> value)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+            if (SelectedLanguage.Value is not null)
+            {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+            }
+        }
+
+        partial void OnDropDownOpenChanged(bool oldValue, bool newValue)
+        {
+            if (oldValue && !newValue)
+            {
+                Task.Run(async () =>
+                {
+                    var dr = await dialogService.ShowMessageBoxAsync(this, Text.WindowRestart, Text.ChangeLanguage, MessageBoxButton.YesNo);
+
+                    if (dr.Value)
+                    {
+                        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+                        {
+                            lifetime.Shutdown();
+                        }
+                    }
+                });
+            }
         }
     }
 }

@@ -25,6 +25,8 @@ public partial class App : Application
         {
             SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
+            vm?.LoadState();
+
             desktop.MainWindow = new MainView();
 
             MoveWindowService? mws = Ioc.Default.GetService<MoveWindowService>();
@@ -38,8 +40,6 @@ public partial class App : Application
 
             desktop.MainWindow.Opened += (s, e) =>
             {
-                vm?.LoadState();
-
                 desktop.MainWindow.Position = vm != null ? vm.Position : new PixelPoint();
             };
 
