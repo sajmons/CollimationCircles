@@ -317,7 +317,7 @@ namespace CollimationCircles.ViewModels
                 {
                     var (downloadUrl, newVersion) = await appService.DownloadUrl(appVersion);
 
-                    if (downloadUrl is not null)
+                    if (!string.IsNullOrWhiteSpace(downloadUrl))
                     {
                         var dialogResult = await dialogService.ShowMessageBoxAsync(null, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
 
