@@ -64,7 +64,11 @@ https://learn.microsoft.com/en-us/dotnet/core/install/macos
 After installing .NET Framework you type following terminal commands:
 ```
 git clone https://github.com/sajmons/CollimationCircles.git
+```
+```
 cd ColiminationCircles/ColiminationCircles
+```
+```
 dotnet run
 ```
 
