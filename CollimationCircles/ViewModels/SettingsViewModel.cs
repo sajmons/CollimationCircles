@@ -172,8 +172,8 @@ namespace CollimationCircles.ViewModels
 
             RotationAngle = 0;
             Scale = 1;
-            ShowLabels = true;            
-            
+            ShowLabels = true;
+
             Version = appService?.GetAppVersion() ?? "0.0.0";
         }
 
@@ -326,7 +326,7 @@ namespace CollimationCircles.ViewModels
                             OpenUrl(result);
                         }
                     }
-                    else if(!success)
+                    else if (!success)
                     {
                         await dialogService.ShowMessageBoxAsync(null, result, Text.Error);
                     }
