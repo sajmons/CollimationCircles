@@ -28,9 +28,11 @@ Suggestions and contributions are welcome!
 ## Prerequisite
 You need to instal .NET Runtime before runing this app. Please see "Instalation and running" chapter.
 
-## Binary files
-Here are binary files avaliable for you to download.
+# Prebuild binaries for Windows
+Here are binary files for Windows avaliable for you to download.
 https://github.com/sajmons/CollimationCircles/releases/
+
+Download latest release as ZIP file, extract it and run EXE.
 
 If main window is not transparent, when you run application, try runing it like this from terminal window:
 ```
@@ -72,8 +74,6 @@ cd ColiminationCircles/ColiminationCircles
 ```
 dotnet run
 ```
-# Prebuild binaries for Windows
-https://github.com/sajmons/CollimationCircles/releases
 
 # Building
 
