@@ -23,11 +23,6 @@ Suggestions and contributions are welcome!
 
 ![image](https://github.com/sajmons/CollimationCircles/assets/7437280/ba8ada94-454c-4d6d-beaa-f90f1bf152a5)
 
-# Download
-
-### Prerequisite
-You need to instal .NET Runtime before runing this app. Please see "Instalation and running" chapter.
-
 # Prebuild binaries for Windows
 Here are binary files for Windows avaliable for you to download.
 https://github.com/sajmons/CollimationCircles/releases/
