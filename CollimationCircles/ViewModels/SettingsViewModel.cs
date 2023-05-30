@@ -338,7 +338,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void DisplayHelp()
         {
-            OpenUrl("https://saimons-astronomy.webador.com/1191504_eaa-telescope-collimation-with-collimation-circles-application");
+            OpenUrl("https://saimons-astronomy.webador.com/software/collimation-circles");
         }
 
         private static void OpenUrl(string url)
