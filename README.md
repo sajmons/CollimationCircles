@@ -37,7 +37,7 @@ If main window is not transparent, when you run application, try runing it like 
 dotnet .\CollimationCircles.dll
 ```
 
-# Instalation and running
+# .NET Framework Instalation
 
 ## Windows 10 and above
 https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
@@ -61,6 +61,7 @@ apt-get update && sudo apt-get install -y dotnet-runtime-7.0
 ## macOS
 https://learn.microsoft.com/en-us/dotnet/core/install/macos
 
+# Download and running
 After installing .NET Framework you type following terminal commands:
 ```
 git clone https://github.com/sajmons/CollimationCircles.git
@@ -71,6 +72,8 @@ cd ColiminationCircles/ColiminationCircles
 ```
 dotnet run
 ```
+# Prebuild binaries for Windows
+https://github.com/sajmons/CollimationCircles/releases
 
 # Building
 
