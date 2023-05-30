@@ -2,3 +2,4 @@
 - moving window with arrow keys on Linux don't work AvaloniaUI bug
 - saving main and settings window position and restire them on startup
 - camera video streaming support
+- bahtinov mask helpers
