@@ -64,9 +64,9 @@ public class AppService : IAppService
 
             var gitHubVer = release.TagName.Split('-')[1];
 
-            Version oldVersion = new Version(currentVersion);
+            Version oldVersion = new(currentVersion);
 
-            Version newVersion = new Version(gitHubVer);
+            Version newVersion = new(gitHubVer);
 
             if (newVersion > oldVersion)
                 return (true, release.Assets[0].BrowserDownloadUrl, newVersion.ToString());
