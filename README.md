@@ -21,32 +21,61 @@ Suggestions and contributions are welcome!
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
 
-![image](https://user-images.githubusercontent.com/7437280/207387640-f0b2f880-c2d1-4462-a083-bab68d465b8d.png)
+![image](https://github.com/sajmons/CollimationCircles/assets/7437280/ba8ada94-454c-4d6d-beaa-f90f1bf152a5)
 
-# Download
+# .NET Framework Instalation
 
-## Prerequisite
-You need to instal .NET Runtime before runing this app. Please see "Instalation and running" chapter.
+### Windows 10 and above
+https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
 
-## Binary files
-Here are binary files avaliable for you to download.
+```
+winget install Microsoft.DotNet.SDK.7
+```
+
+### Ubuntu 22.04 and above
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+
+```
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
+```
+
+### Raspbian OS Bullseye
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
+```
+wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+```
+```
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
+```
+
+### macOS
+https://learn.microsoft.com/en-us/dotnet/core/install/macos
+
+# Prebuild binaries for Windows
+Here are binary files for Windows avaliable for you to download.
 https://github.com/sajmons/CollimationCircles/releases/
+
+Download latest release as ZIP file, extract it and run EXE.
 
 If main window is not transparent, when you run application, try runing it like this from terminal window:
 ```
 dotnet .\CollimationCircles.dll
 ```
 
-# Instalation and running
-
-- download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download
-- or use Install scripts https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
-- Raspberry Pi https://learn.microsoft.com/en-us/dotnet/iot/deployment
-
-Type following terminal commands:
+# Adwanced way of download and running (works on all platforms)
+After installing .NET Framework you type following terminal commands:
+```
+sudo apt-get install git
+```
 ```
 git clone https://github.com/sajmons/CollimationCircles.git
+```
+```
 cd ColiminationCircles/ColiminationCircles
+```
+```
 dotnet run
 ```
 
@@ -56,11 +85,13 @@ For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dot
 
 # How to use
 
-See this article https://saimons-astronomy.webador.com/software/collimation-circles
+Read my articles here:
+- https://saimons-astronomy.webador.com/software/collimation-circles
+- https://saimons-astronomy.webador.com/1191504_eaa-telescope-collimation-with-collimation-circles-application
 
 # Known issues
 
-## Window transparency issues on Linux
+### Window transparency issues on Linux
 
 Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But luckily there is workaround for that.
 
@@ -74,9 +105,9 @@ xcompmgr
 ```
 and then run the CollimationCircles program again. Main Window should now be transparent!
 
-## Moving window arround with arrow keys on Linux
+### Moving window arround with arrow keys on Linux
 It seams that moving window arround on Linux behaves differently zhan on Windoes. I'll try to fix that in the future.
 It seams that it's avaloniaUI bug, you can see opened issue here: https://github.com/AvaloniaUI/Avalonia/issues/9972
 
 # Images
-<img src="https://user-images.githubusercontent.com/7437280/208867646-7b6d1bfe-7e5f-43b0-bfd7-6b0e3fa0c35d.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208879028-0598352c-82e1-4c58-b43b-262e6a011d21.png" height="200">
+<img src="https://user-images.githubusercontent.com/7437280/208643785-17b1460f-667d-4dd6-9172-5b57da3a6d44.png" height="200">&nbsp;<img src="https://user-images.githubusercontent.com/7437280/208879028-0598352c-82e1-4c58-b43b-262e6a011d21.png" height="200">
