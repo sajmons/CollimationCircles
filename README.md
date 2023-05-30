@@ -61,6 +61,9 @@ dotnet .\CollimationCircles.dll
 # Adwanced way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
 ```
+sudo apt-get install git
+```
+```
 git clone https://github.com/sajmons/CollimationCircles.git
 ```
 ```
