@@ -23,17 +23,6 @@ Suggestions and contributions are welcome!
 
 ![image](https://github.com/sajmons/CollimationCircles/assets/7437280/ba8ada94-454c-4d6d-beaa-f90f1bf152a5)
 
-# Prebuild binaries for Windows
-Here are binary files for Windows avaliable for you to download.
-https://github.com/sajmons/CollimationCircles/releases/
-
-Download latest release as ZIP file, extract it and run EXE.
-
-If main window is not transparent, when you run application, try runing it like this from terminal window:
-```
-dotnet .\CollimationCircles.dll
-```
-
 # .NET Framework Instalation
 
 ### Windows 10 and above
@@ -58,7 +47,18 @@ apt-get update && sudo apt-get install -y dotnet-runtime-7.0
 ### macOS
 https://learn.microsoft.com/en-us/dotnet/core/install/macos
 
-# Download and running
+# Prebuild binaries for Windows
+Here are binary files for Windows avaliable for you to download.
+https://github.com/sajmons/CollimationCircles/releases/
+
+Download latest release as ZIP file, extract it and run EXE.
+
+If main window is not transparent, when you run application, try runing it like this from terminal window:
+```
+dotnet .\CollimationCircles.dll
+```
+
+# Alternative way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
 ```
 git clone https://github.com/sajmons/CollimationCircles.git
