@@ -58,7 +58,7 @@ If main window is not transparent, when you run application, try runing it like 
 dotnet .\CollimationCircles.dll
 ```
 
-# Alternative way of download and running (works on all platforms)
+# Adwanced way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
 ```
 git clone https://github.com/sajmons/CollimationCircles.git
