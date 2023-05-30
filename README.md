@@ -78,7 +78,9 @@ For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dot
 
 # How to use
 
-See this article https://saimons-astronomy.webador.com/software/collimation-circles
+Read my articles here:
+- https://saimons-astronomy.webador.com/software/collimation-circles
+- https://saimons-astronomy.webador.com/1191504_eaa-telescope-collimation-with-collimation-circles-application
 
 # Known issues
 
