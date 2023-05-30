@@ -44,6 +44,7 @@ https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
 
 ## Ubuntu 22.04 and above
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+
 ```apt-get update && sudo apt-get install -y dotnet-runtime-7.0```
 
 ## Raspbian OS Bullseye
