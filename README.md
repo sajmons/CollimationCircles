@@ -25,7 +25,7 @@ Suggestions and contributions are welcome!
 
 # Download
 
-## Prerequisite
+### Prerequisite
 You need to instal .NET Runtime before runing this app. Please see "Instalation and running" chapter.
 
 # Prebuild binaries for Windows
