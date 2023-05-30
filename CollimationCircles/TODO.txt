@@ -1,5 +1,8 @@
-﻿- scale, rotation, show labels does not reset when default button is pressed
-- moving window with arrow keys on Linux don't work AvaloniaUI bug
-- saving main and settings window position and restire them on startup
+﻿- moving window with arrow keys on Linux don't work AvaloniaUI bug
+- saving main and settings window position and reset them on startup
 - camera video streaming support
 - bahtinov mask helpers
+  - Tri bahtinow
+  - Tri bahtinow IS
+- add option to select between light and dark theme
+  - make resources for light and dark icons
