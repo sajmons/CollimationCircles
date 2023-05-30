@@ -41,15 +41,15 @@ dotnet .\CollimationCircles.dll
 
 # .NET Framework Instalation
 
-## Windows 10 and above
+### Windows 10 and above
 https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
 
-## Ubuntu 22.04 and above
+### Ubuntu 22.04 and above
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
 
 ```apt-get update && sudo apt-get install -y dotnet-runtime-7.0```
 
-## Raspbian OS Bullseye
+### Raspbian OS Bullseye
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
 ```
 wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
@@ -60,7 +60,7 @@ rm packages-microsoft-prod.deb
 apt-get update && sudo apt-get install -y dotnet-runtime-7.0
 ```
 
-## macOS
+### macOS
 https://learn.microsoft.com/en-us/dotnet/core/install/macos
 
 # Download and running
@@ -87,7 +87,7 @@ Read my articles here:
 
 # Known issues
 
-## Window transparency issues on Linux
+### Window transparency issues on Linux
 
 Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But luckily there is workaround for that.
 
