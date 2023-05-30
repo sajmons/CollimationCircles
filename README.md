@@ -96,7 +96,7 @@ xcompmgr
 ```
 and then run the CollimationCircles program again. Main Window should now be transparent!
 
-## Moving window arround with arrow keys on Linux
+### Moving window arround with arrow keys on Linux
 It seams that moving window arround on Linux behaves differently zhan on Windoes. I'll try to fix that in the future.
 It seams that it's avaloniaUI bug, you can see opened issue here: https://github.com/AvaloniaUI/Avalonia/issues/9972
 
