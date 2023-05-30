@@ -6,7 +6,7 @@
     <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>latest</LangVersion>
     <StartupObject>CollimationCircles.Program</StartupObject>    
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
