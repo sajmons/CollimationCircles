@@ -51,7 +51,7 @@
       </Button>
 
       <ComboBox
-        Items="{Binding LanguageList}"
+        ItemsSource="{Binding LanguageList}"
         SelectedItem="{Binding SelectedLanguage}"
         IsDropDownOpen="{Binding DropDownOpen, Mode=TwoWay}">
         <ComboBox.ItemTemplate>
@@ -79,7 +79,7 @@
           <ListBox            
             Name="list"
             Width="260" Height="400"
-            Items="{Binding Items}"
+            ItemsSource="{Binding Items}"
             SelectedItem="{Binding SelectedItem}"
             SelectionMode="Single">
             <ListBox.ItemTemplate>
@@ -137,7 +137,7 @@
                   VerticalAlignment="Center"
                   Grid.Column="1"
                   SelectedItem="{Binding #list.SelectedItem.ItemColor, Mode=TwoWay}"
-                  Items="{Binding ColorList}">
+                  ItemsSource="{Binding ColorList}">
                 <ComboBox.ItemTemplate>
                   <DataTemplate DataType="Color">
                     <Border CornerRadius="4" Width="20" Height="20" BorderBrush="Gray" BorderThickness="1" >
