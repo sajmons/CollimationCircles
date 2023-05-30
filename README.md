@@ -39,11 +39,26 @@ dotnet .\CollimationCircles.dll
 
 # Instalation and running
 
-- download and install latest .NET Framework https://dotnet.microsoft.com/en-us/download
-- or use Install scripts https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual#scripted-install
-- Raspberry Pi https://learn.microsoft.com/en-us/dotnet/iot/deployment
+## Windows 10 and above
+https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
 
-Type following terminal commands:
+## Ubuntu 22.04 and above
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+```apt-get update && sudo apt-get install -y dotnet-runtime-7.0```
+
+## Raspbian OS Bullseye
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
+```
+wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+apt-get update && sudo apt-get install -y dotnet-runtime-7.0
+```
+
+## macOS
+https://learn.microsoft.com/en-us/dotnet/core/install/macos
+
+After installing .NET Framework you type following terminal commands:
 ```
 git clone https://github.com/sajmons/CollimationCircles.git
 cd ColiminationCircles/ColiminationCircles
