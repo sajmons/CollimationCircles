@@ -67,9 +67,9 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         public CollimationHelper selectedItem = new();
-
+        
         [ObservableProperty]
-        public bool isSelectedItem = false;
+        public int selectedIndex = 0;
 
         [ObservableProperty]
         public ObservableCollection<KeyValuePair<string, string>> languageList = new();
@@ -168,7 +168,7 @@ namespace CollimationCircles.ViewModels
 
             Items.CollectionChanged += Items_CollectionChanged;
 
-            SelectedItem = Items.FirstOrDefault()!;
+            SelectedIndex = 0;
 
             RotationAngle = 0;
             Scale = 1;
@@ -294,12 +294,7 @@ namespace CollimationCircles.ViewModels
                     await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
                 }
             }
-        }
-
-        partial void OnSelectedItemChanged(CollimationHelper value)
-        {
-            IsSelectedItem = SelectedItem is not null;
-        }
+        }        
 
         public void OnClosed()
         {

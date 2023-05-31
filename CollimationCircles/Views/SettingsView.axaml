@@ -81,6 +81,7 @@
             Width="260" Height="400"
             ItemsSource="{Binding Items}"
             SelectedItem="{Binding SelectedItem}"
+            SelectedIndex="{Binding SelectedIndex}"
             SelectionMode="Single">
             <ListBox.ItemTemplate>
               <DataTemplate>
@@ -125,7 +126,8 @@
           BorderBrush="Silver" BorderThickness="1">
           <StackPanel Orientation="Vertical" Spacing="10">
             <TextBlock Text="{x:Static res:Text.SelectedItemControls}"></TextBlock>
-            <StackPanel Orientation="Vertical" Spacing="3">
+            <StackPanel              
+              Orientation="Vertical" Spacing="3">
               <StackPanel Orientation="Horizontal">
                 <TextBlock
                   Width="70"
