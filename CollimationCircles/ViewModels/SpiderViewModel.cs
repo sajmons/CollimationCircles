@@ -11,9 +11,10 @@ namespace CollimationCircles.ViewModels
             ItemColor = Colors.Red;
             Label = Text.Spider;
             Radius = 250;
-            RotationAngle = 45;
+            RotationAngle = 45;            
             Size = 5;
             IsRotatable = true;
+            IsInclinatable = false;
             IsSizeable = true;
             IsEditable = true;
             IsCountable = true;

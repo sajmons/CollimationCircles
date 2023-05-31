@@ -159,6 +159,9 @@
   <data name="Helper" xml:space="preserve">
     <value>Helfer</value>
   </data>
+  <data name="InclinationAngle" xml:space="preserve">
+    <value>Neigungswinkel</value>
+  </data>
   <data name="Inner" xml:space="preserve">
     <value>Innere</value>
   </data>

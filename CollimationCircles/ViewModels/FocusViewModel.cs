@@ -4,20 +4,21 @@ using CollimationCircles.Resources.Strings;
 
 namespace CollimationCircles.ViewModels
 {
-    public partial class ScrewViewModel : CollimationHelper
+    public partial class FocusViewModel : CollimationHelper
     {
-        public ScrewViewModel()
+        public FocusViewModel()
         {
             ItemColor = Colors.Lime;
             Label = Text.PrimaryScrew;
             Radius = 230;
             IsRotatable = true;
-            IsInclinatable = false;
+            IsInclinatable = true;
             IsSizeable = true;
             IsEditable = true;
             IsCountable = true;
             Count = 3;
             RotationAngle = 60;
+            InclinationAngle = 10;
         }
     }
 }

@@ -159,6 +159,9 @@
   <data name="Helper" xml:space="preserve">
     <value>Pomočnik</value>
   </data>
+  <data name="InclinationAngle" xml:space="preserve">
+    <value>Naklon</value>
+  </data>
   <data name="Inner" xml:space="preserve">
     <value>Notranji</value>
   </data>

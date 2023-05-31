@@ -59,9 +59,9 @@
             <TextBlock Text="{Binding Key}" />
           </DataTemplate>
         </ComboBox.ItemTemplate>
-      </ComboBox>      
-      
-      <Button Padding="0" Command="{Binding DisplayHelpCommand}"        
+      </ComboBox>
+
+      <Button Padding="0" Command="{Binding DisplayHelpCommand}"
         VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.DisplayHelp}">
         <Image Source="/Resources/Images/ic_help_outline.png" Width="28"/>
       </Button>
@@ -76,7 +76,7 @@
         BorderBrush="Silver" BorderThickness="1">
         <StackPanel Orientation="Vertical">
           <TextBlock Text="{x:Static res:Text.ItemListTitle}"></TextBlock>
-          <ListBox            
+          <ListBox
             Name="list"
             Width="260" Height="400"
             ItemsSource="{Binding Items}"
@@ -125,103 +125,117 @@
           BorderBrush="Silver" BorderThickness="1">
           <StackPanel Orientation="Vertical" Spacing="10">
             <TextBlock Text="{x:Static res:Text.SelectedItemControls}"></TextBlock>
-            <Grid
-              IsEnabled="{Binding IsSelectedItem}"
-              RowDefinitions="30,5,30,5,30,5,30,5,30,5,30,5,50"
-              ColumnDefinitions="70,*">
-
-              <TextBlock
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Color}" />
-              <ComboBox
+            <StackPanel Orientation="Vertical" Spacing="3">
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="70"
                   VerticalAlignment="Center"
-                  Grid.Column="1"
+                  Text="{x:Static res:Text.Color}" />
+                <ComboBox
+                  Width="130"
+                  VerticalAlignment="Center"
                   SelectedItem="{Binding #list.SelectedItem.ItemColor, Mode=TwoWay}"
                   ItemsSource="{Binding ColorList}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate DataType="Color">
-                    <Border CornerRadius="4" Width="20" Height="20" BorderBrush="Gray" BorderThickness="1" >
-                      <Border.Background>
-                        <SolidColorBrush Color="{Binding}" />
-                      </Border.Background>
-                    </Border>
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
-
-              <TextBlock
-                Grid.Row="2"
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Radius}"/>
-              <NumericUpDown
-                Grid.Row="2"
-                Grid.Column="1"
-                Increment="1"
-                Value="{Binding #list.SelectedItem.Radius}"
-                Minimum="1" Maximum="2000" />
-
-              <TextBlock
-                Grid.Row="4"
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Thickness}" />
-              <NumericUpDown
-                Grid.Row="4"
-                Grid.Column="1"
-                Increment="1"
-                Value="{Binding #list.SelectedItem.Thickness}"
-                Minimum="1" Maximum="10"/>
-
-              <TextBlock
-                Grid.Row="6"
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Rotation}" />
-              <NumericUpDown
-                Grid.Row="6"
-                Grid.Column="1"
-                Increment="1"
-                Value="{Binding #list.SelectedItem.RotationAngle}"
-                IsEnabled="{Binding #list.SelectedItem.IsRotatable}"
-                Minimum="-180" Maximum="180" />
-
-              <TextBlock
-                Grid.Row="8"
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Spacing}" />
-              <NumericUpDown
-                Grid.Row="8"
-                Grid.Column="1"
-                Increment="1"
-                Value="{Binding #list.SelectedItem.Size}"
-                IsEnabled="{Binding #list.SelectedItem.IsSizeable}"
-                Minimum="1" Maximum="100"/>
-
-              <TextBlock
-                Grid.Row="10"
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="Color">
+                      <Border CornerRadius="4" Width="20" Height="20" BorderBrush="Gray" BorderThickness="1" >
+                        <Border.Background>
+                          <SolidColorBrush Color="{Binding}" />
+                        </Border.Background>
+                      </Border>
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="70"
+                  VerticalAlignment="Center"
+                  Text="{x:Static res:Text.Radius}"/>
+                <NumericUpDown
+                  Width="130"
+                  Increment="1"
+                  Value="{Binding #list.SelectedItem.Radius}"
+                  Minimum="1" Maximum="2000" />
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                Width="70"
+                  VerticalAlignment="Center"
+                  Text="{x:Static res:Text.Thickness}" />
+                <NumericUpDown
+                Width="130"
+                  Increment="1"
+                  Value="{Binding #list.SelectedItem.Thickness}"
+                  Minimum="1" Maximum="10"/>
+              </StackPanel>
+              <StackPanel
+                Orientation="Horizontal"
+                IsVisible="{Binding #list.SelectedItem.IsRotatable}">
+                <TextBlock
+                Width="70"
+                  VerticalAlignment="Center"
+                  Text="{x:Static res:Text.Rotation}" />
+                <NumericUpDown
+                Width="130"
+                  Increment="1"
+                  Value="{Binding #list.SelectedItem.RotationAngle}"
+                  Minimum="-180" Maximum="180" />
+              </StackPanel>
+              <StackPanel
+                IsVisible="{Binding #list.SelectedItem.IsInclinatable}"
+                Orientation="Horizontal">
+                <TextBlock
+                Width="70"
+                  VerticalAlignment="Center"
+                  Text="{x:Static res:Text.InclinationAngle}" />
+                <NumericUpDown
+                Width="130"
+                  Increment="1"
+                  Value="{Binding #list.SelectedItem.InclinationAngle}"
+                  Minimum="-180" Maximum="180" />
+              </StackPanel>
+              <StackPanel
+                IsVisible="{Binding #list.SelectedItem.IsSizeable}"
+                Orientation="Horizontal">
+                <TextBlock
+                Width="70"
+                  VerticalAlignment="Center"
+                  Text="{x:Static res:Text.Spacing}" />
+                <NumericUpDown
+                Width="130"
+                  Increment="1"
+                  Value="{Binding #list.SelectedItem.Size}"
+                  Minimum="1" Maximum="100"/>
+              </StackPanel>
+              <StackPanel
+                IsVisible="{Binding #list.SelectedItem.IsCountable}"
+                Orientation="Horizontal">
+                <TextBlock
+                Width="70"
                 VerticalAlignment="Center"
                 Text="{x:Static res:Text.Count}" />
-              <NumericUpDown
-                Grid.Row="10"
-                Grid.Column="1"
+                <NumericUpDown
+                Width="130"
                 Increment="1"
                 Value="{Binding #list.SelectedItem.Count}"
-                IsEnabled="{Binding #list.SelectedItem.IsCountable}"
                 Minimum="1" Maximum="10"/>
-
-              <TextBlock
-                Grid.Row="12"
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Label}" />
-              <TextBox
-                Grid.Row="12"
-                TextWrapping="Wrap"
-                Width="130"
-                Height="45"
-                MaxLength="20"
-                Grid.Column="1"
-                Text="{Binding #list.SelectedItem.Label}"
-                IsEnabled="{Binding #list.SelectedItem.IsEditable}" />
-
-            </Grid>
+              </StackPanel>
+              <StackPanel
+                IsEnabled="{Binding #list.SelectedItem.IsEditable}"
+                Orientation="Horizontal">
+                <TextBlock
+                Width="70"
+                  VerticalAlignment="Center"
+                  Text="{x:Static res:Text.Label}" />
+                <TextBox
+                  TextWrapping="Wrap"
+                  Width="130"
+                  Height="45"
+                  MaxLength="20"
+                  Text="{Binding #list.SelectedItem.Label}"/>
+              </StackPanel>
+            </StackPanel>
           </StackPanel>
         </Border>
 

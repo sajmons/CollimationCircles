@@ -47,6 +47,10 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
+        private bool isInclinatable = false;
+
+        [JsonProperty]
+        [ObservableProperty]
         private bool isSizeable = false;
 
         [JsonProperty]
@@ -60,6 +64,10 @@ namespace CollimationCircles.Models
         [JsonProperty]
         [ObservableProperty]
         private double rotationAngle = 0;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private double inclinationAngle = 0;        
 
         [JsonProperty]
         [ObservableProperty]

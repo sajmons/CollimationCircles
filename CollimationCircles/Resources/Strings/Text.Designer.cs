@@ -187,6 +187,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inclination.
+        /// </summary>
+        public static string InclinationAngle {
+            get {
+                return ResourceManager.GetString("InclinationAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inner.
         /// </summary>
         public static string Inner {
