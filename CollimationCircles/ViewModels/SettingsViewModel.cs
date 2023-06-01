@@ -51,6 +51,10 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        public double labelSize = 10;
+
+        [JsonProperty]
+        [ObservableProperty]
         public double rotationAngle = 0;
 
         [JsonProperty]
@@ -144,6 +148,7 @@ namespace CollimationCircles.ViewModels
                 new KeyValuePair<string, string>("Slovenian", "sl-SI"),
                 new KeyValuePair<string, string>("German", "de-DE")
             };
+
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
             SelectedLanguage = LanguageList.FirstOrDefault();
 
@@ -160,7 +165,10 @@ namespace CollimationCircles.ViewModels
                     new ScrewViewModel(),
 
                     // Primary Clip
-                    new PrimaryClipViewModel()
+                    new PrimaryClipViewModel(),
+
+                    // Focus mask
+                    new BahtinovMaskViewModel()
                 };
 
             Items.Clear();
@@ -237,6 +245,12 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
+        internal void AddBahtinovMask()
+        {
+            Items.Add(new BahtinovMaskViewModel());
+        }        
+
+        [RelayCommand]
         internal void RemoveItem(CollimationHelper item)
         {
             Items.Remove(item);
@@ -294,7 +308,36 @@ namespace CollimationCircles.ViewModels
                     await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
                 }
             }
-        }        
+        }
+
+        [RelayCommand]
+        internal void Duplicate(int index)
+        {
+            var selected = Items[index];            
+            CollimationHelper? c = null;
+
+            switch (selected)
+            {
+                case CircleViewModel:
+                    c = new CircleViewModel();
+                    break;
+                case PrimaryClipViewModel:
+                    c = new PrimaryClipViewModel();
+                    break;
+                case ScrewViewModel:
+                    c = new ScrewViewModel();
+                    break;
+                case SpiderViewModel:
+                    c = new SpiderViewModel();
+                    break;
+                case BahtinovMaskViewModel:
+                    c = new BahtinovMaskViewModel();
+                    break;
+            }
+
+            if (c is not null)
+                Items.Add(c);
+        }
 
         public void OnClosed()
         {
@@ -385,6 +428,7 @@ namespace CollimationCircles.ViewModels
                     RotationAngle = vm.RotationAngle;
                     ShowLabels = vm.ShowLabels;
                     ColorList = vm.ColorList;
+                    LabelSize = vm.LabelSize;
 
                     Items.Clear();
                     Items.AddRange(vm.Items);

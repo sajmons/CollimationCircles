@@ -129,6 +129,9 @@
   <data name="AllItemsControls" xml:space="preserve">
     <value>Velja za vse</value>
   </data>
+  <data name="BahtinovMask" xml:space="preserve">
+    <value>Bahtinova maska</value>
+  </data>
   <data name="ChangeLanguage" xml:space="preserve">
     <value>Spremeni jezik</value>
   </data>
@@ -152,6 +155,9 @@
   </data>
   <data name="DisplayHelp" xml:space="preserve">
     <value>Odpri spletno stran z navodili kako uporabljati aplikacijo</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Ustvari dvojnik</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Napaka</value>
@@ -179,6 +185,9 @@
   </data>
   <data name="Label" xml:space="preserve">
     <value>Opis</value>
+  </data>
+  <data name="LabelSize" xml:space="preserve">
+    <value>Velikost pisave</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Jezik</value>

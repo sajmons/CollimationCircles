@@ -129,6 +129,9 @@
   <data name="AllItemsControls" xml:space="preserve">
     <value>Applied to all items</value>
   </data>
+  <data name="BahtinovMask" xml:space="preserve">
+    <value>Bahtinov mask</value>
+  </data>
   <data name="ChangeLanguage" xml:space="preserve">
     <value>Change language</value>
   </data>
@@ -152,6 +155,9 @@
   </data>
   <data name="DisplayHelp" xml:space="preserve">
     <value>Open web page with help how to use application</value>
+  </data>
+  <data name="Duplicate" xml:space="preserve">
+    <value>Create duplicate</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
@@ -179,6 +185,9 @@
   </data>
   <data name="Label" xml:space="preserve">
     <value>Label</value>
+  </data>
+  <data name="LabelSize" xml:space="preserve">
+    <value>Label size</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>

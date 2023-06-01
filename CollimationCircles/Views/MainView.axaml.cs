@@ -13,7 +13,7 @@ namespace CollimationCircles.Views
 {
     public partial class MainView : Window
     {
-        IDrawHelperService? drawHelperService;
+        readonly IDrawHelperService? drawHelperService;
 
         public MainView()
         {
@@ -32,7 +32,7 @@ namespace CollimationCircles.Views
             drawHelperService = Ioc.Default.GetService<IDrawHelperService>();
         }
 
-        void CheckForUpdate(SettingsViewModel? vm)
+        static void CheckForUpdate(SettingsViewModel? vm)
         {
             if (vm?.CheckForNewVersionOnStartup is true)
             {
@@ -65,28 +65,34 @@ namespace CollimationCircles.Views
                             Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
                             Matrix translateMat = Matrix.CreateTranslation(width2, height2);
 
-                            using (context.PushPreTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
+                            using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
                             {
                                 bool showlabels = vm?.ShowLabels ?? false;
+                                double labelSize = vm?.LabelSize ?? 15;
 
                                 if (item is CircleViewModel cModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawCircle(context, showlabels, cModel, width2, height2, brush);
+                                    drawHelperService?.DrawCircle(context, showlabels, cModel, width2, height2, brush, labelSize);
                                 }
 
                                 if (item is ScrewViewModel sModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawScrew(context, showlabels, sModel, width2, height2, brush, translateMat);
+                                    drawHelperService?.DrawScrew(context, showlabels, sModel, width2, height2, brush, translateMat, labelSize);
                                 }
 
                                 if (item is PrimaryClipViewModel pcModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawPrimaryClip(context, showlabels, pcModel, width2, height2, brush, translateMat);
+                                    drawHelperService?.DrawPrimaryClip(context, showlabels, pcModel, width2, height2, brush, translateMat, labelSize);
                                 }
 
                                 if (item is SpiderViewModel spModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawSpider(context, showlabels, spModel, width2, height2, brush, translateMat);
+                                    drawHelperService?.DrawSpider(context, showlabels, spModel, width2, height2, brush, translateMat, labelSize);
+                                }
+
+                                if (item is BahtinovMaskViewModel foModel && item.IsVisible)
+                                {
+                                    drawHelperService?.DrawBahtinovMask(context, showlabels, foModel, width2, height2, brush, translateMat, labelSize);
                                 }
                             }
                         }

@@ -25,6 +25,7 @@
     <None Remove=".gitignore" />
     <None Remove="Resources\Images\arrow-keys.svg" />
     <None Remove="Resources\Images\arrow_keys.png" />
+    <None Remove="Resources\Images\bahtinovmaskviewmodel.png" />
     <None Remove="Resources\Images\circle.svg" />
     <None Remove="Resources\Images\circleviewmodel.png" />
     <None Remove="Resources\Images\clip.svg" />
@@ -39,7 +40,8 @@
     <None Remove="Resources\Images\ic_reset.svg" />
     <None Remove="Resources\Images\ic_save.png" />
     <None Remove="Resources\Images\ic_settings.png" />
-    <None Remove="Resources\Images\ic_help_outline.png" />
+    <None Remove="Resources\Images\ic_duplicate.png" />
+    <None Remove="Resources\Images\ic_help.png" />
     <None Remove="Resources\Images\primaryclipviewmodel.png" />
     <None Remove="Resources\Images\rectangle.svg" />
     <None Remove="Resources\Images\screw.svg" />
@@ -50,17 +52,18 @@
   <ItemGroup>
     <AvaloniaResource Include="Resources\Images\arrow_keys.png" />
     <AvaloniaResource Include="Resources\Images\circleviewmodel.png" />
-    <AvaloniaResource Include="Resources\Images\ic_add.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_download.png" />
     <AvaloniaResource Include="Resources\Images\ic_file_upload.png" />
     <AvaloniaResource Include="Resources\Images\ic_launcher.png" />
     <AvaloniaResource Include="Resources\Images\ic_remove.png" />
     <AvaloniaResource Include="Resources\Images\ic_reset.png" />
     <AvaloniaResource Include="Resources\Images\ic_settings.png" />
-    <AvaloniaResource Include="Resources\Images\ic_help_outline.png" />
+    <AvaloniaResource Include="Resources\Images\ic_duplicate.png" />
+    <AvaloniaResource Include="Resources\Images\ic_help.png" />
     <AvaloniaResource Include="Resources\Images\primaryclipviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\screwviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\spiderviewmodel.png" />
+    <AvaloniaResource Include="Resources\Images\bahtinovmaskviewmodel.png" />
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming.
@@ -109,5 +112,10 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Text.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appstate.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

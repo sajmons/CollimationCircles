@@ -97,6 +97,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bahtinov mask.
+        /// </summary>
+        public static string BahtinovMask {
+            get {
+                return ResourceManager.GetString("BahtinovMask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Change language.
         /// </summary>
         public static string ChangeLanguage {
@@ -165,6 +174,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string DisplayHelp {
             get {
                 return ResourceManager.GetString("DisplayHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create duplicate.
+        /// </summary>
+        public static string Duplicate {
+            get {
+                return ResourceManager.GetString("Duplicate", resourceCulture);
             }
         }
         
@@ -246,6 +264,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string Label {
             get {
                 return ResourceManager.GetString("Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Label size.
+        /// </summary>
+        public static string LabelSize {
+            get {
+                return ResourceManager.GetString("LabelSize", resourceCulture);
             }
         }
         

@@ -18,17 +18,23 @@
       HorizontalAlignment="Right"
       VerticalAlignment="Top"
       ToolTip.Tip="{x:Static res:Text.SettingsWindow}"
-      Width="64" Command="{Binding ShowSettingsCommand}">
+      Width="64"
+      Height="64"
+      Command="{Binding ShowSettingsCommand}">
       <Image Source="/Resources/Images/ic_settings.png" />
     </Button>
-    <Image
+    <Border
       Grid.Row="1"
-      Margin="10" 
-      Opacity="0.2"
       HorizontalAlignment="Right"
       VerticalAlignment="Bottom"
+      Background="Silver"
+      CornerRadius="3"
+      Opacity="0.3"
+      Padding="5"
       Width="64"
-      ToolTip.Tip="{x:Static res:Text.MoveWindow}"
-      Source="/Resources/Images/arrow_keys.png"/>
+      Height="64"
+      ToolTip.Tip="{x:Static res:Text.MoveWindow}">
+      <Image Source="/Resources/Images/arrow_keys.png" />
+    </Border>
   </Grid>
 </Window>

@@ -39,6 +39,14 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
+        private double rotationIncrement = 1;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private double inclinationIncrement = 0.1;
+
+        [JsonProperty]
+        [ObservableProperty]
         private bool isVisible = true;
 
         [JsonProperty]
@@ -91,6 +99,8 @@ namespace CollimationCircles.Models
                     path += nameof(ScrewViewModel).ToLower();
                 else if (this is SpiderViewModel)
                     path += nameof(SpiderViewModel).ToLower();
+                else if (this is BahtinovMaskViewModel)
+                    path += nameof(BahtinovMaskViewModel).ToLower();
                 else
                     path += string.Empty;
 
