@@ -39,15 +39,41 @@ https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
 sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
 ```
 
-### Raspbian OS Bullseye
+### Raspbian OS Bullseye x64
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
 ```
 wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+```
+```
 sudo dpkg -i packages-microsoft-prod.deb
+```
+```
 rm packages-microsoft-prod.deb
 ```
 ```
 sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
+```
+
+### Raspbian OS Bullseye ARM
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
+```
+wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+```
+```
+sudo chmod +x ./dotnet-install.sh
+```
+```
+sudo ./dotnet-install.sh --channel 7.0 --install-dir /opt/dotnet/
+```
+```
+echo 'export DOTNET_ROOT=/opt/dotnet/' >> ~/.bashrc
+echo 'export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools' >> ~/.bashrc
+```
+```
+sudo reboot
+```
+```
+dotnet --info
 ```
 
 ### macOS
@@ -58,11 +84,6 @@ Here are binary files for Windows avaliable for you to download.
 https://github.com/sajmons/CollimationCircles/releases/
 
 Download latest release as ZIP file, extract it and run EXE.
-
-If main window is not transparent, when you run application, try runing it like this from terminal window:
-```
-dotnet .\CollimationCircles.dll
-```
 
 # Adwanced way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
