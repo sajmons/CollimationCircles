@@ -85,11 +85,6 @@ https://github.com/sajmons/CollimationCircles/releases/
 
 Download latest release as ZIP file, extract it and run EXE.
 
-If main window is not transparent, when you run application, try runing it like this from terminal window:
-```
-dotnet .\CollimationCircles.dll
-```
-
 # Adwanced way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
 ```
