@@ -63,7 +63,7 @@ wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
 sudo chmod +x ./dotnet-install.sh
 ```
 ```
-sudo ./dotnet-install.sh --version latest --install-dir /opt/dotnet/
+sudo ./dotnet-install.sh --channel 7.0 --install-dir /opt/dotnet/
 ```
 ```
 echo 'export DOTNET_ROOT=/opt/dotnet/' >> ~/.bashrc
