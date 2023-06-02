@@ -169,15 +169,6 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open web page with help how to use application.
-        /// </summary>
-        public static string DisplayHelp {
-            get {
-                return ResourceManager.GetString("DisplayHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Create duplicate.
         /// </summary>
         public static string Duplicate {
@@ -336,6 +327,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string OpenFile {
             get {
                 return ResourceManager.GetString("OpenFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open web site.
+        /// </summary>
+        public static string OpenWebSite {
+            get {
+                return ResourceManager.GetString("OpenWebSite", resourceCulture);
             }
         }
         

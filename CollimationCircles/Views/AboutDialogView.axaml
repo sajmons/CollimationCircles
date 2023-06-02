@@ -10,8 +10,9 @@
   <StackPanel Orientation="Vertical" Margin="30">
     <TextBlock Text="{Binding Author}" />
     <StackPanel Orientation="Horizontal" Margin="0,20" Spacing="20">
-      <Button Command="{Binding CloseCommand}">CLOSE</Button>
-      <Button Command="{Binding OpenWebSiteCommand}">OPEN WEBSITE</Button>
+      <Button
+        Command="{Binding OpenWebSiteCommand}"
+        Text="{x:Static res:Text.OpenWebSite}"/>
     </StackPanel>
   </StackPanel>
 </Window>

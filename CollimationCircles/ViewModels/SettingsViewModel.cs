@@ -376,7 +376,7 @@ namespace CollimationCircles.ViewModels
 
 
         [RelayCommand]
-        internal async Task DisplayAbout()
+        internal void DisplayAbout()
         {
             if (AboutDialogViewModelHandler is null)
             {

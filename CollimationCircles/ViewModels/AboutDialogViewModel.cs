@@ -29,11 +29,5 @@ namespace CollimationCircles.ViewModels
         {
             OpenUrl(WebSite);
         }
-
-        [RelayCommand]
-        internal void Close()
-        {
-            
-        }
     }
 }

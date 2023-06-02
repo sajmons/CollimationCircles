@@ -153,9 +153,6 @@
   <data name="Count" xml:space="preserve">
     <value>Count</value>
   </data>
-  <data name="DisplayHelp" xml:space="preserve">
-    <value>Open web page with help how to use application</value>
-  </data>
   <data name="Duplicate" xml:space="preserve">
     <value>Create duplicate</value>
   </data>
@@ -209,6 +206,9 @@
   </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>
+  </data>
+  <data name="OpenWebSite" xml:space="preserve">
+    <value>Open web site</value>
   </data>
   <data name="PrimaryCenter" xml:space="preserve">
     <value>Primary Center</value>
