@@ -15,10 +15,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,6 +30,9 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         private INotifyPropertyChanged? dialogViewModel;
+
+        [ObservableProperty]
+        private INotifyPropertyChanged? aboutDialogViewModelHandler;
 
         [JsonProperty]
         [ObservableProperty]
@@ -71,7 +72,7 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         public CollimationHelper selectedItem = new();
-        
+
         [ObservableProperty]
         public int selectedIndex = 0;
 
@@ -248,7 +249,7 @@ namespace CollimationCircles.ViewModels
         internal void AddBahtinovMask()
         {
             Items.Add(new BahtinovMaskViewModel());
-        }        
+        }
 
         [RelayCommand]
         internal void RemoveItem(CollimationHelper item)
@@ -313,7 +314,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void Duplicate(int index)
         {
-            var selected = Items[index];            
+            var selected = Items[index];
             CollimationHelper? c = null;
 
             switch (selected)
@@ -342,6 +343,7 @@ namespace CollimationCircles.ViewModels
         public void OnClosed()
         {
             DialogViewModel = null;
+            AboutDialogViewModelHandler = null;
         }
 
         [RelayCommand]
@@ -374,39 +376,18 @@ namespace CollimationCircles.ViewModels
 
 
         [RelayCommand]
-        internal void DisplayHelp()
+        internal async Task DisplayAbout()
         {
-            OpenUrl("https://saimons-astronomy.webador.com/software/collimation-circles");
-        }
+            if (AboutDialogViewModelHandler is null)
+            {
+                AboutDialogViewModelHandler = dialogService?.CreateViewModel<AboutDialogViewModel>();                
+            }
 
-        private static void OpenUrl(string url)
-        {
-            try
+            if (AboutDialogViewModelHandler is not null)
             {
-                Process.Start(url);
+                dialogService?.Show(null, AboutDialogViewModelHandler);
             }
-            catch
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                {
-                    Process.Start("xdg-open", url);
-                }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
+        }        
 
         internal void SaveState()
         {

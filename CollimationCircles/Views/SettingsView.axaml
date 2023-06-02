@@ -62,7 +62,7 @@
         ToolTip.Tip="{x:Static res:Text.Duplicate}">
         <Image Source="/Resources/Images/ic_duplicate.png" Width="28"/>
       </Button>
-      <Button Padding="0" Command="{Binding DisplayHelpCommand}"
+      <Button Padding="0" Command="{Binding DisplayAboutCommand}"
         VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.DisplayHelp}">
         <Image Source="/Resources/Images/ic_help.png" Width="28"/>
       </Button>
