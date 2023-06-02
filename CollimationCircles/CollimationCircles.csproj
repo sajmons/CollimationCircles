@@ -42,6 +42,8 @@
     <None Remove="Resources\Images\ic_settings.png" />
     <None Remove="Resources\Images\ic_duplicate.png" />
     <None Remove="Resources\Images\ic_help.png" />
+    <None Remove="Resources\Images\ic_web.png" />
+    <None Remove="Resources\Images\ic_email.png" />
     <None Remove="Resources\Images\primaryclipviewmodel.png" />
     <None Remove="Resources\Images\rectangle.svg" />
     <None Remove="Resources\Images\screw.svg" />
@@ -60,15 +62,15 @@
     <AvaloniaResource Include="Resources\Images\ic_settings.png" />
     <AvaloniaResource Include="Resources\Images\ic_duplicate.png" />
     <AvaloniaResource Include="Resources\Images\ic_help.png" />
+    <AvaloniaResource Include="Resources\Images\ic_web.png" />
+    <AvaloniaResource Include="Resources\Images\ic_email.png" />
     <AvaloniaResource Include="Resources\Images\primaryclipviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\screwviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\spiderviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\bahtinovmaskviewmodel.png" />
   </ItemGroup>
   <ItemGroup>
-    <!--This helps with theme dll-s trimming.
-	If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
-	https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
+    <!--This helps with theme dll-s trimming. If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa. https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
     <TrimmableAssembly Include="Avalonia.Themes.Fluent" />
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>

@@ -14,6 +14,9 @@ public class AppService : IAppService
     private readonly string owner = "sajmons";
     private readonly string reponame = "CollimationCircles";
 
+    public string WebPage => "https://saimons-astronomy.webador.com/software/collimation-circles";
+    public string ContactPage => "https://saimons-astronomy.webador.com/about";
+
     public string GetAppVersion()
     {
         return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion ?? string.Empty;

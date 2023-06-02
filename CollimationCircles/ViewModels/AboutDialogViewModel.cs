@@ -1,33 +1,37 @@
-﻿using Avalonia.Controls;
+﻿using CollimationCircles.Resources.Strings;
+using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.Avalonia;
-using MessageBox.Avalonia.Extensions;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class AboutDialogViewModel : BaseViewModel, IModalDialogViewModel
     {
         [ObservableProperty]
-        public string author = "Collimation Circles\nAuthor: Simon Šander";
-
-        [ObservableProperty]
-        public string webSite = "https://saimons-astronomy.webador.com/software/collimation-circles";
+        public string appDescription;        
 
         public bool? DialogResult => true;
 
-        public AboutDialogViewModel()
+        private readonly IAppService appService;
+
+        public AboutDialogViewModel(IAppService appService)
         {
-            Title = "About";
+            this.appService = appService;
+            Title = $"{Text.About} {Text.CollimationCircles} {appService.GetAppVersion()}";
+            AppDescription = $"{Text.AppDescription}\n{Text.Author} {Text.Copyright}";
         }
 
         [RelayCommand]
         internal void OpenWebSite()
         {
-            OpenUrl(WebSite);
+            OpenUrl(appService.WebPage);
+        }
+
+        [RelayCommand]
+        internal void OpenContactWebPage()
+        {
+            OpenUrl(appService.ContactPage);
         }
     }
 }

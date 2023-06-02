@@ -8,7 +8,8 @@
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
         Width="600"
-        Height="650">
+        Height="650"
+        CanResize="False">
   <StackPanel Orientation="Vertical" Margin="16" HorizontalAlignment="Stretch" Spacing="5">
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="5">
@@ -63,7 +64,7 @@
         <Image Source="/Resources/Images/ic_duplicate.png" Width="28"/>
       </Button>
       <Button Padding="0" Command="{Binding DisplayAboutCommand}"
-        VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.DisplayHelp}">
+        VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.OpenAboutDialog}">
         <Image Source="/Resources/Images/ic_help.png" Width="28"/>
       </Button>
       <ComboBox

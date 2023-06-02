@@ -4,6 +4,8 @@ namespace CollimationCircles.Services
 {
     public interface IAppService
     {
+        string WebPage { get; }
+        string ContactPage { get; }
         string GetAppVersion();
         bool SameVersion(string v1, string v2);
         T? Deserialize<T>(string jsonState);

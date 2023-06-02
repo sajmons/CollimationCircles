@@ -61,6 +61,15 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        public static string About {
+            get {
+                return ResourceManager.GetString("About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add.
         /// </summary>
         public static string Add {
@@ -93,6 +102,24 @@ namespace CollimationCircles.Resources.Strings {
         public static string AllItemsControls {
             get {
                 return ResourceManager.GetString("AllItemsControls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application for electronicaly asisted telescope collimation.
+        /// </summary>
+        public static string AppDescription {
+            get {
+                return ResourceManager.GetString("AppDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Simon Šander.
+        /// </summary>
+        public static string Author {
+            get {
+                return ResourceManager.GetString("Author", resourceCulture);
             }
         }
         
@@ -156,6 +183,24 @@ namespace CollimationCircles.Resources.Strings {
         public static string Color {
             get {
                 return ResourceManager.GetString("Color", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contact.
+        /// </summary>
+        public static string Contact {
+            get {
+                return ResourceManager.GetString("Contact", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to © 2023.
+        /// </summary>
+        public static string Copyright {
+            get {
+                return ResourceManager.GetString("Copyright", resourceCulture);
             }
         }
         
@@ -318,6 +363,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string NewVersionDownload {
             get {
                 return ResourceManager.GetString("NewVersionDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open about dialog.
+        /// </summary>
+        public static string OpenAboutDialog {
+            get {
+                return ResourceManager.GetString("OpenAboutDialog", resourceCulture);
             }
         }
         
@@ -529,7 +583,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tickness.
+        ///   Looks up a localized string similar to Thickness.
         /// </summary>
         public static string Thickness {
             get {
