@@ -66,7 +66,6 @@ public partial class App : Application
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddTransient<IAppService, AppService>()
             .AddSingleton<MoveWindowService>()
-            .AddTransient<AboutDialogViewModel>()
             .BuildServiceProvider());
     }
 }
