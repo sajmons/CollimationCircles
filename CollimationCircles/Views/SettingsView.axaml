@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
-        mc:Ignorable="d" d:DesignWidth="535" d:DesignHeight="600"
+        mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="600"
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
-        Width="535"
+        Width="540"
         Height="600">
   <ScrollViewer>
     <TabControl>
@@ -19,11 +19,17 @@
         </TabItem.Header>
         <WrapPanel>
           <Border
-            Padding="16" CornerRadius="4"
-            BorderBrush="Silver" BorderThickness="1">
+            Padding="16"
+            CornerRadius="4"
+            BorderBrush="Silver"
+            BorderThickness="1"
+            Margin="0,0,5,0">
             <StackPanel Orientation="Vertical">
-              <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="5">
+              <StackPanel 
+                Orientation="Horizontal"                
+                Spacing="2">
 
+                <!--#region ADDItemMenu -->
                 <SplitButton Content="{x:Static res:Text.Add}" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
                   <SplitButton.Flyout>
                     <MenuFlyout Placement="BottomEdgeAlignedLeft">
@@ -55,7 +61,9 @@
                     </MenuFlyout>
                   </SplitButton.Flyout>
                 </SplitButton>
+                <!--#endregion-->
 
+                <!--#region ToolbarButtons-->
                 <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
                   <Image Source="/Resources/Images/ic_reset_dark.png" Width="28"/>
                 </Button>
@@ -73,6 +81,7 @@
                   ToolTip.Tip="{x:Static res:Text.Duplicate}">
                   <Image Source="/Resources/Images/ic_duplicate_dark.png" Width="28"/>
                 </Button>
+                <!--#endregion-->
 
               </StackPanel>
               <TextBlock Text="{x:Static res:Text.ItemListTitle}" Padding="0,10,0,5" />
