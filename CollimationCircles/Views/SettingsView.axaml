@@ -4,309 +4,372 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
-        mc:Ignorable="d" d:DesignWidth="615" d:DesignHeight="600"
+        mc:Ignorable="d" d:DesignWidth="535" d:DesignHeight="600"
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
-        Width="600"
-        Height="650"
-        CanResize="False">
-  <StackPanel Orientation="Vertical" Margin="16" HorizontalAlignment="Stretch" Spacing="5">
+        Width="535"
+        Height="600">
+  <ScrollViewer>
+    <TabControl>
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
+            Text="{x:Static res:Text.Properties}" />
+        </TabItem.Header>
+        <WrapPanel>
+          <Border
+            Padding="16" CornerRadius="4"
+            BorderBrush="Silver" BorderThickness="1">
+            <StackPanel Orientation="Vertical">
+              <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="5">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Spacing="5">
+                <SplitButton Content="{x:Static res:Text.Add}" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
+                  <SplitButton.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                      <MenuItem Header="{x:Static res:Text.Circle}" Command="{Binding AddCircleCommand}" >
+                        <MenuItem.Icon>
+                          <Image Source="/Resources/Images/circleviewmodel.png"/>
+                        </MenuItem.Icon>
+                      </MenuItem>
+                      <MenuItem Header="{x:Static res:Text.Screw}" Command="{Binding AddScrewCommand}">
+                        <MenuItem.Icon>
+                          <Image Source="/Resources/Images/screwviewmodel.png"/>
+                        </MenuItem.Icon>
+                      </MenuItem>
+                      <MenuItem Header="{x:Static res:Text.PrimaryClip}" Command="{Binding AddClipCommand}">
+                        <MenuItem.Icon>
+                          <Image Source="/Resources/Images/primaryclipviewmodel.png"/>
+                        </MenuItem.Icon>
+                      </MenuItem>
+                      <MenuItem Header="{x:Static res:Text.Spider}" Command="{Binding AddSpiderCommand}">
+                        <MenuItem.Icon>
+                          <Image Source="/Resources/Images/spiderviewmodel.png"/>
+                        </MenuItem.Icon>
+                      </MenuItem>
+                      <MenuItem Header="{x:Static res:Text.BahtinovMask}" Command="{Binding AddBahtinovMaskCommand}">
+                        <MenuItem.Icon>
+                          <Image Source="/Resources/Images/bahtinovmaskviewmodel.png"/>
+                        </MenuItem.Icon>
+                      </MenuItem>
+                    </MenuFlyout>
+                  </SplitButton.Flyout>
+                </SplitButton>
 
-      <SplitButton Content="{x:Static res:Text.Add}" ToolTip.Tip="{x:Static res:Text.AddNewItem}">
-        <SplitButton.Flyout>
-          <MenuFlyout Placement="BottomEdgeAlignedLeft">
-            <MenuItem Header="{x:Static res:Text.Circle}" Command="{Binding AddCircleCommand}" >
-              <MenuItem.Icon>
-                <Image Source="/Resources/Images/circleviewmodel.png"/>
-              </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Header="{x:Static res:Text.Screw}" Command="{Binding AddScrewCommand}">
-              <MenuItem.Icon>
-                <Image Source="/Resources/Images/screwviewmodel.png"/>
-              </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Header="{x:Static res:Text.PrimaryClip}" Command="{Binding AddClipCommand}">
-              <MenuItem.Icon>
-                <Image Source="/Resources/Images/primaryclipviewmodel.png"/>
-              </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Header="{x:Static res:Text.Spider}" Command="{Binding AddSpiderCommand}">
-              <MenuItem.Icon>
-                <Image Source="/Resources/Images/spiderviewmodel.png"/>
-              </MenuItem.Icon>
-            </MenuItem>
-            <MenuItem Header="{x:Static res:Text.BahtinovMask}" Command="{Binding AddBahtinovMaskCommand}">
-              <MenuItem.Icon>
-                <Image Source="/Resources/Images/bahtinovmaskviewmodel.png"/>
-              </MenuItem.Icon>
-            </MenuItem>
-          </MenuFlyout>
-        </SplitButton.Flyout>
-      </SplitButton>
+                <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
+                  <Image Source="/Resources/Images/ic_reset_dark.png" Width="28"/>
+                </Button>
+                <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
+                  <Image Source="/Resources/Images/ic_save_dark.png" Width="28"/>
+                </Button>
+                <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.LoadList}">
+                  <Image Source="/Resources/Images/ic_load_dark.png" Width="28"/>
+                </Button>
+                <Button
+                  Padding="0"
+                  Command="{Binding DuplicateCommand}"
+                  CommandParameter="{Binding SelectedIndex}"
+                  VerticalAlignment="Center"
+                  ToolTip.Tip="{x:Static res:Text.Duplicate}">
+                  <Image Source="/Resources/Images/ic_duplicate_dark.png" Width="28"/>
+                </Button>
 
-      <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.ResetItems}">
-        <Image Source="/Resources/Images/ic_reset.png" Width="28"/>
-      </Button>
-      <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.SaveList}">
-        <Image Source="/Resources/Images/ic_file_download.png" Width="28"/>
-      </Button>
-      <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.LoadList}">
-        <Image Source="/Resources/Images/ic_file_upload.png" Width="28"/>
-      </Button>
-      <Button 
-        Padding="0"
-        Command="{Binding DuplicateCommand}"
-        CommandParameter="{Binding SelectedIndex}"
-        VerticalAlignment="Center"
-        ToolTip.Tip="{x:Static res:Text.Duplicate}">
-        <Image Source="/Resources/Images/ic_duplicate.png" Width="28"/>
-      </Button>
-      <Button Padding="0" Command="{Binding DisplayAboutCommand}"
-        VerticalAlignment="Center" ToolTip.Tip="{x:Static res:Text.OpenAboutDialog}">
-        <Image Source="/Resources/Images/ic_help.png" Width="28"/>
-      </Button>
-      <ComboBox
-        ItemsSource="{Binding LanguageList}"
-        SelectedItem="{Binding SelectedLanguage}"
-        IsDropDownOpen="{Binding DropDownOpen, Mode=TwoWay}">
-        <ComboBox.ItemTemplate>
-          <DataTemplate>
-            <TextBlock Text="{Binding Key}" />
-          </DataTemplate>
-        </ComboBox.ItemTemplate>
-      </ComboBox>
+              </StackPanel>
+              <TextBlock Text="{x:Static res:Text.ItemListTitle}" Padding="0,10,0,5" />
+              <ListBox
+                Name="list"
+                Width="220"
+                ItemsSource="{Binding Items}"
+                SelectedItem="{Binding SelectedItem}"
+                SelectedIndex="{Binding SelectedIndex}"
+                SelectionMode="Single">
+                <ListBox.ItemTemplate>
+                  <DataTemplate>
 
-    </StackPanel>
+                    <Grid ColumnDefinitions="20,5,20,5,*,5,30"
+                      HorizontalAlignment="Stretch">
 
-    <Separator Height="1" Background="Silver" />
+                      <CheckBox
+                        IsChecked="{Binding IsVisible}"
+                        ToolTip.Tip="{x:Static res:Text.ItemVisibility}" />
 
-    <StackPanel Orientation="Horizontal" Spacing="5">
-      <Border
-        Padding="16" CornerRadius="4"
-        BorderBrush="Silver" BorderThickness="1">
-        <StackPanel Orientation="Vertical">
-          <TextBlock Text="{x:Static res:Text.ItemListTitle}"></TextBlock>
-          <ListBox
-            Name="list"
-            Width="260" Height="440"
-            ItemsSource="{Binding Items}"
-            SelectedItem="{Binding SelectedItem}"
-            SelectedIndex="{Binding SelectedIndex}"
-            SelectionMode="Single">
-            <ListBox.ItemTemplate>
-              <DataTemplate>
+                      <Image
+                        Grid.Column="2"
+                        Height="20"
+                        Source="{Binding Image}"/>
 
-                <Grid ColumnDefinitions="20,5,20,5,*,5,30"
-                  HorizontalAlignment="Stretch">
+                      <TextBlock
+                        Background="{Binding SelectedItem.ItemColor}"
+                        Grid.Column="4"
+                        Text="{Binding Label}"
+                        VerticalAlignment="Center" />
 
-                  <CheckBox
-                    IsChecked="{Binding IsVisible}"
-                    ToolTip.Tip="{x:Static res:Text.ItemVisibility}" />
+                      <Button
+                        Grid.Column="6"
+                        Padding="0" Margin="0"
+                        Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
+                        CommandParameter="{Binding .}"
+                        ToolTip.Tip="{x:Static res:Text.RemoveItem}">
+                        <Image Width="28" Source="/Resources/Images/ic_remove_dark.png" />
+                      </Button>
 
-                  <Image
-                    Grid.Column="2"
-                    Height="20"
-                    Source="{Binding Image}"/>
+                    </Grid>
 
+                  </DataTemplate>
+                </ListBox.ItemTemplate>
+              </ListBox>
+            </StackPanel>
+          </Border>
+
+          <StackPanel Orientation="Vertical" Spacing="5">
+            <Border
+              Padding="16" CornerRadius="4"
+              BorderBrush="Silver" BorderThickness="1">
+              <StackPanel
+                Orientation="Vertical"
+                Spacing="10"
+                Width="220">
+                <TextBlock Text="{x:Static res:Text.SelectedItemControls}" />
+                <StackPanel
+                  Orientation="Vertical" Spacing="5">
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                      Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.Color}" />
+                    <ComboBox
+                      Width="95"
+                      VerticalAlignment="Center"
+                      SelectedItem="{Binding #list.SelectedItem.ItemColor, Mode=TwoWay}"
+                      ItemsSource="{Binding ColorList}">
+                      <ComboBox.ItemTemplate>
+                        <DataTemplate DataType="Color">
+                          <Border
+                            HorizontalAlignment="Left"
+                            CornerRadius="4"
+                            Width="20"
+                            Height="20"
+                            BorderBrush="Gray"
+                            BorderThickness="1" >
+                            <Border.Background>
+                              <SolidColorBrush Color="{Binding}" />
+                            </Border.Background>
+                          </Border>
+                        </DataTemplate>
+                      </ComboBox.ItemTemplate>
+                    </ComboBox>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                      Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.Radius}"/>
+                    <NumericUpDown
+                      Width="130"
+                      Increment="1"
+                      Value="{Binding #list.SelectedItem.Radius}"
+                      Minimum="1" Maximum="2000" />
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock
+                    Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.Thickness}" />
+                    <NumericUpDown
+                    Width="130"
+                      Increment="1"
+                      Value="{Binding #list.SelectedItem.Thickness}"
+                      Minimum="1" Maximum="10"/>
+                  </StackPanel>
+                  <StackPanel
+                    Orientation="Horizontal"
+                    IsVisible="{Binding #list.SelectedItem.IsRotatable}">
+                    <TextBlock
+                    Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.Rotation}" />
+                    <NumericUpDown
+                    Width="130"
+                      Increment="{Binding #list.SelectedItem.RotationIncrement}"
+                      Value="{Binding #list.SelectedItem.RotationAngle}"
+                      Minimum="-180" Maximum="180" />
+                  </StackPanel>
+                  <StackPanel
+                    IsVisible="{Binding #list.SelectedItem.IsInclinatable}"
+                    Orientation="Horizontal">
+                    <TextBlock
+                    Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.InclinationAngle}" />
+                    <NumericUpDown
+                    Width="130"
+                      Increment="{Binding #list.SelectedItem.InclinationIncrement}"
+                      Value="{Binding #list.SelectedItem.InclinationAngle}"
+                      Minimum="-180" Maximum="180" />
+                  </StackPanel>
+                  <StackPanel
+                    IsVisible="{Binding #list.SelectedItem.IsSizeable}"
+                    Orientation="Horizontal">
+                    <TextBlock
+                    Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.Spacing}" />
+                    <NumericUpDown
+                    Width="130"
+                      Increment="1"
+                      Value="{Binding #list.SelectedItem.Size}"
+                      Minimum="1" Maximum="100"/>
+                  </StackPanel>
+                  <StackPanel
+                    IsVisible="{Binding #list.SelectedItem.IsCountable}"
+                    Orientation="Horizontal">
+                    <TextBlock
+                    Width="70"
+                    VerticalAlignment="Center"
+                    Text="{x:Static res:Text.Count}" />
+                    <NumericUpDown
+                    Width="130"
+                    Increment="1"
+                    Value="{Binding #list.SelectedItem.Count}"
+                    Minimum="1" Maximum="10"/>
+                  </StackPanel>
+                  <StackPanel
+                    IsEnabled="{Binding #list.SelectedItem.IsEditable}"
+                    Orientation="Horizontal">
+                    <TextBlock
+                      Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.Label}" />
+                    <TextBox
+                      TextWrapping="Wrap"
+                      Width="130"
+                      Height="45"
+                      MaxLength="20"
+                      Watermark="{x:Static res:Text.HelperName}"
+                      Text="{Binding #list.SelectedItem.Label}"/>
+                  </StackPanel>
+                </StackPanel>
+              </StackPanel>
+            </Border>
+
+            <!-- Settings for all -->
+            <Border Padding="16" CornerRadius="4" BorderBrush="Silver" BorderThickness="1">
+              <StackPanel Orientation="Vertical" Spacing="5">
+                <TextBlock Text="{x:Static res:Text.AllItemsControls}"></TextBlock>
+                <StackPanel Orientation="Horizontal">
                   <TextBlock
-                    Background="{Binding SelectedItem.ItemColor}"
-                    Grid.Column="4"
-                    Text="{Binding Label}"                    
-                    VerticalAlignment="Center" />
-
-                  <Button
-                    Grid.Column="6"
-                    Padding="0" Margin="0"
-                    Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
-                    CommandParameter="{Binding .}"
-                    ToolTip.Tip="{x:Static res:Text.RemoveItem}">
-                    <Image Width="28" Source="/Resources/Images/ic_remove.png" />
-                  </Button>
-
-                </Grid>
-
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-        </StackPanel>
-      </Border>
-
-      <StackPanel Orientation="Vertical" Spacing="5">
+                    Width="70"
+                    VerticalAlignment="Center"
+                    Text="{x:Static res:Text.Scale}" />
+                  <NumericUpDown
+                    Width="130"
+                    Increment="0.01"
+                    Value="{Binding Scale}"
+                    Minimum="0.0" Maximum="4.0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                      Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.Rotation}" />
+                  <NumericUpDown
+                    Width="130"
+                    Value="{Binding RotationAngle}"
+                    Minimum="-180" Maximum="180" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                      Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.LabelSize}" />
+                  <NumericUpDown
+                    Width="130"
+                    Value="{Binding LabelSize}"
+                    Minimum="5" Maximum="20" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                      Width="70"
+                      VerticalAlignment="Center"
+                      Text="{x:Static res:Text.ShowLabels}" />
+                  <CheckBox
+                    Width="130"
+                    IsChecked="{Binding ShowLabels}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </StackPanel>
+        </WrapPanel>
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
+            Text="{x:Static res:Text.Settings}" />
+        </TabItem.Header>
         <Border
-          Padding="16" CornerRadius="4"
-          BorderBrush="Silver" BorderThickness="1">
-          <StackPanel Orientation="Vertical" Spacing="10">
-            <TextBlock Text="{x:Static res:Text.SelectedItemControls}"></TextBlock>
+              Padding="16" CornerRadius="4"
+              BorderBrush="Silver" BorderThickness="1">
+          <StackPanel Orientation="Vertical">
+            <TextBlock Text="{x:Static res:Text.UserInterfaceLanguage}"></TextBlock>
+            <ComboBox
+              ItemsSource="{Binding LanguageList}"
+              SelectedItem="{Binding SelectedLanguage}"
+              IsDropDownOpen="{Binding DropDownOpen, Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Key}" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <CheckBox
+            IsChecked="{Binding CheckForNewVersionOnStartup}"
+            Content="{x:Static res:Text.CheckForNewVersion}"/>
+          </StackPanel>
+        </Border>
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
+            Text="{x:Static res:Text.About}" />
+        </TabItem.Header>
+        <Border
+              Padding="16" CornerRadius="4"
+              BorderBrush="Silver" BorderThickness="1">
+          <StackPanel Orientation="Vertical">
             <StackPanel
-              Orientation="Vertical" Spacing="3">
-              <StackPanel Orientation="Horizontal">
-                <TextBlock
-                  Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.Color}" />
-                <ComboBox
-                  Width="130"
-                  VerticalAlignment="Center"
-                  SelectedItem="{Binding #list.SelectedItem.ItemColor, Mode=TwoWay}"
-                  ItemsSource="{Binding ColorList}">
-                  <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="Color">
-                      <Border CornerRadius="4" Width="20" Height="20" BorderBrush="Gray" BorderThickness="1" >
-                        <Border.Background>
-                          <SolidColorBrush Color="{Binding}" />
-                        </Border.Background>
-                      </Border>
-                    </DataTemplate>
-                  </ComboBox.ItemTemplate>
-                </ComboBox>
-              </StackPanel>
-              <StackPanel Orientation="Horizontal">
-                <TextBlock
-                  Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.Radius}"/>
-                <NumericUpDown
-                  Width="130"
-                  Increment="1"
-                  Value="{Binding #list.SelectedItem.Radius}"
-                  Minimum="1" Maximum="2000" />
-              </StackPanel>
-              <StackPanel Orientation="Horizontal">
-                <TextBlock
-                Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.Thickness}" />
-                <NumericUpDown
-                Width="130"
-                  Increment="1"
-                  Value="{Binding #list.SelectedItem.Thickness}"
-                  Minimum="1" Maximum="10"/>
-              </StackPanel>
-              <StackPanel
-                Orientation="Horizontal"
-                IsVisible="{Binding #list.SelectedItem.IsRotatable}">
-                <TextBlock
-                Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.Rotation}" />
-                <NumericUpDown
-                Width="130"
-                  Increment="{Binding #list.SelectedItem.RotationIncrement}"
-                  Value="{Binding #list.SelectedItem.RotationAngle}"
-                  Minimum="-180" Maximum="180" />
-              </StackPanel>
-              <StackPanel
-                IsVisible="{Binding #list.SelectedItem.IsInclinatable}"
-                Orientation="Horizontal">
-                <TextBlock
-                Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.InclinationAngle}" />
-                <NumericUpDown
-                Width="130"
-                  Increment="{Binding #list.SelectedItem.InclinationIncrement}"
-                  Value="{Binding #list.SelectedItem.InclinationAngle}"
-                  Minimum="-180" Maximum="180" />
-              </StackPanel>
-              <StackPanel
-                IsVisible="{Binding #list.SelectedItem.IsSizeable}"
-                Orientation="Horizontal">
-                <TextBlock
-                Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.Spacing}" />
-                <NumericUpDown
-                Width="130"
-                  Increment="1"
-                  Value="{Binding #list.SelectedItem.Size}"
-                  Minimum="1" Maximum="100"/>
-              </StackPanel>
-              <StackPanel
-                IsVisible="{Binding #list.SelectedItem.IsCountable}"
-                Orientation="Horizontal">
-                <TextBlock
-                Width="70"
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Count}" />
-                <NumericUpDown
-                Width="130"
-                Increment="1"
-                Value="{Binding #list.SelectedItem.Count}"
-                Minimum="1" Maximum="10"/>
-              </StackPanel>
-              <StackPanel
-                IsEnabled="{Binding #list.SelectedItem.IsEditable}"
-                Orientation="Horizontal">
-                <TextBlock
-                Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.Label}" />
-                <TextBox
-                  TextWrapping="Wrap"
-                  Width="130"
-                  Height="45"
-                  MaxLength="20"
-                  Text="{Binding #list.SelectedItem.Label}"/>
-              </StackPanel>
+              Spacing="10"
+              Orientation="Horizontal"
+              Height="64"
+              VerticalAlignment="Top">
+              <Image
+                Source="/Resources/Images/ic_launcher.png"
+                Width="32" />
+              <TextBlock
+                Text="{Binding AppDescription}" VerticalAlignment="Center" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="20">
+              <Button
+                VerticalAlignment="Bottom"
+                Command="{Binding OpenWebSiteCommand}">
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="/Resources/Images/ic_help_dark.png" Height="32" />
+                  <TextBlock Text="{x:Static res:Text.OpenWebSite}" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
+              <Button
+                VerticalAlignment="Bottom"
+                Command="{Binding OpenContactWebPageCommand}">
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="/Resources/Images/ic_email_dark.png" Height="32" />
+                  <TextBlock Text="{x:Static res:Text.Contact}" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
             </StackPanel>
           </StackPanel>
         </Border>
-
-        <!-- Settings for all -->
-        <Border Padding="16" CornerRadius="4" BorderBrush="Silver" BorderThickness="1">
-          <StackPanel Orientation="Vertical" Spacing="10">
-            <TextBlock Text="{x:Static res:Text.AllItemsControls}"></TextBlock>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock
-                Width="70"
-                VerticalAlignment="Center"
-                Text="{x:Static res:Text.Scale}" />
-              <NumericUpDown
-                Width="130"
-                Increment="0.01"
-                Value="{Binding Scale}"
-                Minimum="0.0" Maximum="4.0" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock
-                  Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.Rotation}" />
-              <NumericUpDown
-                Width="130"
-                Value="{Binding RotationAngle}"
-                Minimum="-180" Maximum="180" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock
-                  Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.LabelSize}" />
-              <NumericUpDown
-                Width="130"
-                Value="{Binding LabelSize}"
-                Minimum="5" Maximum="20" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-              <TextBlock
-                  Width="70"
-                  VerticalAlignment="Center"
-                  Text="{x:Static res:Text.ShowLabels}" />
-              <CheckBox
-                Width="130"
-                IsChecked="{Binding ShowLabels}" />
-            </StackPanel>
-          </StackPanel>
-        </Border>
-      </StackPanel>
-
-    </StackPanel>
-
-    <CheckBox
-      IsChecked="{Binding CheckForNewVersionOnStartup}"
-      Content="{x:Static res:Text.CheckForNewVersion}"/>
-
-  </StackPanel>
+      </TabItem>
+    </TabControl>
+  </ScrollViewer>
 </Window>

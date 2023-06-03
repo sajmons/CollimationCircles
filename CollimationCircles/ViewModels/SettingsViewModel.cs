@@ -94,6 +94,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public bool dropDownOpen = false;
 
+        [ObservableProperty]
+        public string appDescription;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
@@ -108,6 +111,7 @@ namespace CollimationCircles.ViewModels
 
             Title = $"{Text.CollimationCircles} - {Text.Settings} - {Text.Version} {appService?.GetAppVersion()}";
             MainTitle = $"{Text.CollimationCircles} - {Text.Version} {appService?.GetAppVersion()}";
+            AppDescription = $"{Text.AppDescription}\n{Text.Copyright} {Text.Author}";
         }
 
         private void InitializeMessages()
@@ -224,37 +228,44 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void AddCircle()
         {
-            Items.Add(new CircleViewModel());
+            AddItem(new CircleViewModel());
         }
 
         [RelayCommand]
         internal void AddScrew()
         {
-            Items.Add(new ScrewViewModel());
+            AddItem(new ScrewViewModel());
         }
 
         [RelayCommand]
         internal void AddClip()
         {
-            Items.Add(new PrimaryClipViewModel());
+            AddItem(new PrimaryClipViewModel());            
         }
 
         [RelayCommand]
         internal void AddSpider()
         {
-            Items.Add(new SpiderViewModel());
+            AddItem(new SpiderViewModel());            
         }
 
         [RelayCommand]
         internal void AddBahtinovMask()
         {
-            Items.Add(new BahtinovMaskViewModel());
+            AddItem(new BahtinovMaskViewModel());
         }
 
         [RelayCommand]
         internal void RemoveItem(CollimationHelper item)
         {
             Items.Remove(item);
+            SelectedIndex = Items.Count - 1;
+        }
+
+        private void AddItem(CollimationHelper item)
+        {
+            Items.Add(item);
+            SelectedIndex = Items.Count - 1;
         }
 
         [RelayCommand]
@@ -338,6 +349,8 @@ namespace CollimationCircles.ViewModels
 
             if (c is not null)
                 Items.Add(c);
+
+            SelectedIndex = Items.Count - 1;
         }
 
         public void OnClosed()
@@ -371,21 +384,6 @@ namespace CollimationCircles.ViewModels
                         await dialogService.ShowMessageBoxAsync(null, result, Text.Error);
                     }
                 }
-            }
-        }
-
-
-        [RelayCommand]
-        internal void DisplayAbout()
-        {
-            if (AboutDialogViewModelHandler is null)
-            {
-                AboutDialogViewModelHandler = dialogService?.CreateViewModel<AboutDialogViewModel>();                
-            }
-
-            if (AboutDialogViewModelHandler is not null)
-            {
-                dialogService?.Show(null, AboutDialogViewModelHandler);
             }
         }        
 
@@ -457,6 +455,18 @@ namespace CollimationCircles.ViewModels
                     }
                 });
             }
+        }
+
+        [RelayCommand]
+        internal void OpenWebSite()
+        {
+            OpenUrl(appService.WebPage);
+        }
+
+        [RelayCommand]
+        internal void OpenContactWebPage()
+        {
+            OpenUrl(appService.ContactPage);
         }
     }
 }

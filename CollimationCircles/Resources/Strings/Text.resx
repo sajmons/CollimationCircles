@@ -163,7 +163,7 @@
     <value>Contact</value>
   </data>
   <data name="Copyright" xml:space="preserve">
-    <value>© 2023</value>
+    <value>© 2023 by</value>
   </data>
   <data name="Count" xml:space="preserve">
     <value>Count</value>
@@ -176,6 +176,9 @@
   </data>
   <data name="Helper" xml:space="preserve">
     <value>Helper</value>
+  </data>
+  <data name="HelperName" xml:space="preserve">
+    <value>Enter item name</value>
   </data>
   <data name="InclinationAngle" xml:space="preserve">
     <value>Inclination</value>
@@ -201,9 +204,6 @@
   <data name="LabelSize" xml:space="preserve">
     <value>Label size</value>
   </data>
-  <data name="Language" xml:space="preserve">
-    <value>Language</value>
-  </data>
   <data name="ListOfItems" xml:space="preserve">
     <value>List of items</value>
   </data>
@@ -219,14 +219,11 @@
   <data name="NewVersionDownload" xml:space="preserve">
     <value>New version {0} available! Would you like to download it?</value>
   </data>
-  <data name="OpenAboutDialog" xml:space="preserve">
-    <value>Open about dialog</value>
-  </data>
   <data name="OpenFile" xml:space="preserve">
     <value>Open file</value>
   </data>
   <data name="OpenWebSite" xml:space="preserve">
-    <value>Open web site</value>
+    <value>Online Help</value>
   </data>
   <data name="PrimaryCenter" xml:space="preserve">
     <value>Primary Center</value>
@@ -239,6 +236,9 @@
   </data>
   <data name="PrimaryScrew" xml:space="preserve">
     <value>Screw</value>
+  </data>
+  <data name="Properties" xml:space="preserve">
+    <value>Properties</value>
   </data>
   <data name="Radius" xml:space="preserve">
     <value>Radius</value>
@@ -299,6 +299,9 @@
   </data>
   <data name="UnableToParseJsonFile" xml:space="preserve">
     <value>Unable to parse JSON file</value>
+  </data>
+  <data name="UserInterfaceLanguage" xml:space="preserve">
+    <value>User interface language</value>
   </data>
   <data name="Version" xml:space="preserve">
     <value>Version</value>

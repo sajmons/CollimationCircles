@@ -196,7 +196,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to © 2023.
+        ///   Looks up a localized string similar to © 2023 by.
         /// </summary>
         public static string Copyright {
             get {
@@ -237,6 +237,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string Helper {
             get {
                 return ResourceManager.GetString("Helper", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter item name.
+        /// </summary>
+        public static string HelperName {
+            get {
+                return ResourceManager.GetString("HelperName", resourceCulture);
             }
         }
         
@@ -313,15 +322,6 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Language.
-        /// </summary>
-        public static string Language {
-            get {
-                return ResourceManager.GetString("Language", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to List of items.
         /// </summary>
         public static string ListOfItems {
@@ -367,15 +367,6 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open about dialog.
-        /// </summary>
-        public static string OpenAboutDialog {
-            get {
-                return ResourceManager.GetString("OpenAboutDialog", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open file.
         /// </summary>
         public static string OpenFile {
@@ -385,7 +376,7 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open web site.
+        ///   Looks up a localized string similar to Online Help.
         /// </summary>
         public static string OpenWebSite {
             get {
@@ -426,6 +417,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string PrimaryScrew {
             get {
                 return ResourceManager.GetString("PrimaryScrew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Properties.
+        /// </summary>
+        public static string Properties {
+            get {
+                return ResourceManager.GetString("Properties", resourceCulture);
             }
         }
         
@@ -606,6 +606,15 @@ namespace CollimationCircles.Resources.Strings {
         public static string UnableToParseJsonFile {
             get {
                 return ResourceManager.GetString("UnableToParseJsonFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User interface language.
+        /// </summary>
+        public static string UserInterfaceLanguage {
+            get {
+                return ResourceManager.GetString("UserInterfaceLanguage", resourceCulture);
             }
         }
         
