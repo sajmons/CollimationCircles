@@ -85,7 +85,7 @@ https://github.com/sajmons/CollimationCircles/releases/
 
 Download latest release as ZIP file, extract it and run EXE.
 
-# Adwanced way of download and running (works on all platforms)
+# Advanced way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
 ```
 sudo apt-get install git
