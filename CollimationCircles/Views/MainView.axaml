@@ -21,15 +21,14 @@
       Width="64"
       Height="64"
       Command="{Binding ShowSettingsCommand}">
-      <Image Source="/Resources/Images/ic_settings.png" />
+      <Image Source="/Resources/Images/ic_settings_dark.png" />
     </Button>
     <Border
       Grid.Row="1"
       HorizontalAlignment="Right"
       VerticalAlignment="Bottom"
-      Background="Silver"
-      CornerRadius="3"
-      Opacity="0.3"
+      Background="#2AEDEDED"
+      CornerRadius="3"      
       Padding="5"
       Width="64"
       Height="64"

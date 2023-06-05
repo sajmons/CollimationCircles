@@ -34,8 +34,13 @@ public partial class App : Application
             desktop.MainWindow.KeyDown += (s, e) =>
             {
                 mws?.HandleMovement(desktop.MainWindow, vm, e);
-                mws?.HandleScale(vm, e);
-                mws?.HandleRotation(vm, e);
+                mws?.HandleGlobalScale(vm, e);
+                mws?.HandleHelperRadius(vm, e);
+                mws?.HandleGlobalRotation(vm, e);
+                mws?.HandleHelperRotation(vm, e);
+                mws?.HandleHelperCount(vm, e);
+                mws?.HandleHelperThickness(vm, e);
+                mws?.HandleHelperSpacing(vm, e);
             };
 
             desktop.MainWindow.Opened += (s, e) =>

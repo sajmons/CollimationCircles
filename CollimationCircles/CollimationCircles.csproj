@@ -35,7 +35,7 @@
     <None Remove="Resources\Images\ic_save.png" />
     <None Remove="Resources\Images\ic_remove_dark.png" />
     <None Remove="Resources\Images\ic_save_dark.png" />
-    <None Remove="Resources\Images\ic_settings.png" />
+    <None Remove="Resources\Images\ic_settings_dark.png" />
     <None Remove="Resources\Images\ic_help.png" />
     <None Remove="Resources\Images\primaryclipviewmodel.png" />
     <None Remove="Resources\Images\screwviewmodel.png" />
@@ -48,7 +48,7 @@
     <AvaloniaResource Include="Resources\Images\ic_load_dark.png" />
     <AvaloniaResource Include="Resources\Images\ic_launcher.png" />
     <AvaloniaResource Include="Resources\Images\ic_reset_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_settings.png" />
+    <AvaloniaResource Include="Resources\Images\ic_settings_dark.png" />
     <AvaloniaResource Include="Resources\Images\ic_duplicate_dark.png" />
     <AvaloniaResource Include="Resources\Images\ic_email_dark.png" />
     <AvaloniaResource Include="Resources\Images\ic_remove_dark.png" />

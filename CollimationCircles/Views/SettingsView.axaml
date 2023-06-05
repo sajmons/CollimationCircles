@@ -25,8 +25,8 @@
             BorderThickness="1"
             Margin="0,0,5,0">
             <StackPanel Orientation="Vertical">
-              <StackPanel 
-                Orientation="Horizontal"                
+              <StackPanel
+                Orientation="Horizontal"
                 Spacing="2">
 
                 <!--#region ADDItemMenu -->
@@ -320,20 +320,167 @@
               Padding="16" CornerRadius="4"
               BorderBrush="Silver" BorderThickness="1">
           <StackPanel Orientation="Vertical">
-            <TextBlock Text="{x:Static res:Text.UserInterfaceLanguage}"></TextBlock>
-            <ComboBox
-              ItemsSource="{Binding LanguageList}"
-              SelectedItem="{Binding SelectedLanguage}"
-              IsDropDownOpen="{Binding DropDownOpen, Mode=TwoWay}">
-              <ComboBox.ItemTemplate>
-                <DataTemplate>
-                  <TextBlock Text="{Binding Key}" />
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-            <CheckBox
-            IsChecked="{Binding CheckForNewVersionOnStartup}"
-            Content="{x:Static res:Text.CheckForNewVersion}"/>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock
+                Width="220"
+                Text="{x:Static res:Text.UserInterfaceLanguage}"
+                VerticalAlignment="Center"/>
+              <ComboBox
+                ItemsSource="{Binding LanguageList}"
+                SelectedItem="{Binding SelectedLanguage}"
+                IsDropDownOpen="{Binding DropDownOpen, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding Key}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock
+                Width="220"
+                Text="{x:Static res:Text.CheckForNewVersion}"
+                VerticalAlignment="Center"/>
+              <CheckBox
+                IsChecked="{Binding CheckForNewVersionOnStartup}" />
+            </StackPanel>
+            <Border
+              Padding="16" CornerRadius="4"
+              BorderBrush="Silver" BorderThickness="1">
+              <StackPanel
+                Orientation="Vertical">
+                <TextBlock
+                      Text="Shortcuts:"
+                      VerticalAlignment="Center"/>
+                <Separator Margin="0,5,0,10"/>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Global rotation clockwise:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="R"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Global rotation counterclockwise:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="F"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Global scale up:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="+"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Global scale down:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="-"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Rotate helper clockwise:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="Q"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Rotate helper counterclockwise:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="A"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Increase helper radius:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="W"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Decrease helper radius:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="S"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Increase helper count:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="T"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Decrease helper count:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="G"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Increase helper spacing:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="Z"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Decrease helper spacing:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="H"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Increase item thichness:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="E"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock
+                    Width="220"
+                    Text="Decrease item thickness:"
+                    VerticalAlignment="Center"/>
+                  <TextBlock
+                    Text="D"
+                    VerticalAlignment="Center"/>
+                </StackPanel>
+              </StackPanel>
+            </Border>
           </StackPanel>
         </Border>
       </TabItem>

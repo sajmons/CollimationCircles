@@ -46,7 +46,7 @@ namespace CollimationCircles.Services
             }
         }
 
-        public void HandleRotation(SettingsViewModel? vm, KeyEventArgs e)
+        public void HandleGlobalRotation(SettingsViewModel? vm, KeyEventArgs e)
         {
             if (!e.Handled)
             {
@@ -60,7 +60,7 @@ namespace CollimationCircles.Services
                             rotation += 1;
                             e.Handled = true;
                             break;
-                        case Key.L:
+                        case Key.F:
                             rotation -= 1;
                             e.Handled = true;
                             break;
@@ -74,7 +74,7 @@ namespace CollimationCircles.Services
             }
         }
 
-        public void HandleScale(SettingsViewModel? vm, KeyEventArgs e)
+        public void HandleGlobalScale(SettingsViewModel? vm, KeyEventArgs e)
         {
             if (!e.Handled)
             {
@@ -101,6 +101,116 @@ namespace CollimationCircles.Services
                     {
                         vm.Scale = increment;
                     }
+                }
+            }
+        }
+
+        public void HandleHelperRadius(SettingsViewModel? vm, KeyEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                if (vm != null)
+                {
+                    switch (e.Key)
+                    {                        
+                        case Key.W:
+                            vm.SelectedItem.Radius += 1;
+                            e.Handled = true;
+                            break;
+                        
+                        case Key.S:
+                            vm.SelectedItem.Radius -= 1;
+                            e.Handled = true;
+                            break;
+                    }
+                }
+            }
+        }
+
+        public void HandleHelperRotation(SettingsViewModel? vm, KeyEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                if (vm != null)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Q:
+                            vm.SelectedItem.RotationAngle -= 1;
+                            e.Handled = true;
+                            break;
+
+                        case Key.A:
+                            vm.SelectedItem.RotationAngle += 1;
+                            e.Handled = true;
+                            break;
+                    }                    
+                }
+            }
+        }
+
+        public void HandleHelperCount(SettingsViewModel? vm, KeyEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                if (vm != null)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.T:
+                            vm.SelectedItem.Count -= 1;
+                            e.Handled = true;
+                            break;
+
+                        case Key.G:
+                            vm.SelectedItem.Count += 1;
+                            e.Handled = true;
+                            break;
+                    }
+                }
+            }
+        }
+
+        public void HandleHelperSpacing(SettingsViewModel? vm, KeyEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                if (vm != null)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.Z:
+                            vm.SelectedItem.Size += 1;
+                            e.Handled = true;
+                            break;
+
+                        case Key.H:
+                            vm.SelectedItem.Size -= 1;
+                            e.Handled = true;
+                            break;
+                    }
+                }
+            }
+        }
+
+        public void HandleHelperThickness(SettingsViewModel? vm, KeyEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                if (vm != null)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.E:
+                            vm.SelectedItem.Thickness += 1;
+                            e.Handled = true;
+                            break;
+
+                        case Key.D:
+                            vm.SelectedItem.Thickness -= 1;
+                            e.Handled = true;
+                            break;
+                    }                    
                 }
             }
         }
