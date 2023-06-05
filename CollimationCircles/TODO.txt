@@ -1,8 +1,6 @@
 ﻿- moving window with arrow keys on Linux don't work AvaloniaUI bug
-- saving main and settings window position and reset them on startup
 - camera video streaming support
-- bahtinov mask helpers
-  - Tri bahtinow
-  - Tri bahtinow IS
 - add option to select between light and dark theme
   - make resources for light and dark icons
+- add German and Slovenian translation of keyboard shortcuts
+- add Range validators error messages in resource files
