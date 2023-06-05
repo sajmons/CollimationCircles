@@ -29,7 +29,7 @@ public partial class App : Application
 
             desktop.MainWindow = new MainView();
 
-            MoveWindowService? mws = Ioc.Default.GetService<MoveWindowService>();
+            KeyHandlingService? mws = Ioc.Default.GetService<KeyHandlingService>();
 
             desktop.MainWindow.KeyDown += (s, e) =>
             {
@@ -70,7 +70,7 @@ public partial class App : Application
             .AddSingleton<SettingsViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddTransient<IAppService, AppService>()
-            .AddSingleton<MoveWindowService>()
+            .AddSingleton<KeyHandlingService>()
             .BuildServiceProvider());
     }
 }

@@ -4,7 +4,7 @@ using CollimationCircles.ViewModels;
 
 namespace CollimationCircles.Services;
 
-public interface IMoveWindowService
+public interface IKeyHandlingService
 {    
     void HandleMovement(Window window, SettingsViewModel? vm, KeyEventArgs e);
     void HandleGlobalRotation(SettingsViewModel? vm, KeyEventArgs e);

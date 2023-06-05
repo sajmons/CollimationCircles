@@ -5,7 +5,7 @@ using CollimationCircles.ViewModels;
 
 namespace CollimationCircles.Services
 {
-    public class MoveWindowService : IMoveWindowService
+    public class KeyHandlingService : IKeyHandlingService
     {
         public void HandleMovement(Window window, SettingsViewModel? vm, KeyEventArgs e)
         {
