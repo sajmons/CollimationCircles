@@ -89,6 +89,8 @@ namespace CollimationCircles.Services
 
         public void DrawSpider(DrawingContext context, bool showLabels, SpiderViewModel item, double width2, double height2, IBrush brush, Matrix translate, double labelSize)
         {
+            if (item.Count < 1) return;
+
             double angle = 360 / item.Count;
 
             Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);

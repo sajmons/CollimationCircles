@@ -7,9 +7,11 @@ using CollimationCircles.Resources.Strings;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
+using HanumanInstitute.MvvmDialogs.Avalonia;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace CollimationCircles.Models
@@ -31,10 +33,14 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
+        [Range(1, 10)]
+        [NotifyDataErrorInfo]
         private int thickness = 1;
 
         [JsonProperty]
         [ObservableProperty]
+        [Range(1, 2000)]
+        [NotifyDataErrorInfo]
         private double radius = 300;
 
         [JsonProperty]
@@ -71,18 +77,26 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
+        [Range(-180, 180)]
+        [NotifyDataErrorInfo]
         private double rotationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
-        private double inclinationAngle = 0;        
+        [Range(-90, 90)]
+        [NotifyDataErrorInfo]
+        private double inclinationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
+        [Range(1, 100)]
+        [NotifyDataErrorInfo]
         private double size = 10;
 
         [JsonProperty]
         [ObservableProperty]
+        [Range(1, 10)]
+        [NotifyDataErrorInfo]
         private int count = 4;
 
         public Bitmap? Image
@@ -121,7 +135,11 @@ namespace CollimationCircles.Models
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
-            WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
+
+            if (!HasErrors)
+            {
+                WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
+            }
         }
     }
 }

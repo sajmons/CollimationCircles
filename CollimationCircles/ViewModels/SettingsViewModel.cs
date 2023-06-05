@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -48,6 +49,8 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        [Range(0, 4)]
+        [NotifyDataErrorInfo]
         public double scale = 1.0;
 
         [JsonProperty]
@@ -56,6 +59,8 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        [Range(-180, 180)]
+        [NotifyDataErrorInfo]
         public double rotationAngle = 0;
 
         [JsonProperty]
@@ -198,7 +203,11 @@ namespace CollimationCircles.ViewModels
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
-            WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
+
+            if (!HasErrors)
+            {
+                WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
+            }            
         }
 
         [RelayCommand]
@@ -460,13 +469,19 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void OpenWebSite()
         {
-            OpenUrl(appService.WebPage);
+            if (appService is not null)
+            {
+                OpenUrl(appService.WebPage);
+            }
         }
 
         [RelayCommand]
         internal void OpenContactWebPage()
         {
-            OpenUrl(appService.ContactPage);
+            if (appService is not null)
+            {
+                OpenUrl(appService.ContactPage);
+            }
         }
     }
 }
