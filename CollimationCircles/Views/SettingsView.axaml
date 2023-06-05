@@ -336,6 +336,7 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
             </StackPanel>
+
             <StackPanel Orientation="Horizontal">
               <TextBlock
                 Width="220"
@@ -344,143 +345,140 @@
               <CheckBox
                 IsChecked="{Binding CheckForNewVersionOnStartup}" />
             </StackPanel>
-            <Border
-              Padding="16" CornerRadius="4"
-              BorderBrush="Silver" BorderThickness="1">
-              <StackPanel
-                Orientation="Vertical">
+
+            <StackPanel Orientation="Vertical">
+              <TextBlock
+                Text="Shortcuts:"
+                VerticalAlignment="Center"/>
+              <Separator Margin="0,5,0,10"/>
+              <StackPanel Orientation="Horizontal">
                 <TextBlock
-                      Text="Shortcuts:"
-                      VerticalAlignment="Center"/>
-                <Separator Margin="0,5,0,10"/>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Global rotation clockwise:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="R"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Global rotation counterclockwise:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="F"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Global scale up:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="+"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Global scale down:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="-"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Rotate helper clockwise:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="Q"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Rotate helper counterclockwise:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="A"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Increase helper radius:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="W"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Decrease helper radius:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="S"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Increase helper count:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="T"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Decrease helper count:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="G"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Increase helper spacing:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="Z"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Decrease helper spacing:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="H"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Increase item thichness:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="E"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock
-                    Width="220"
-                    Text="Decrease item thickness:"
-                    VerticalAlignment="Center"/>
-                  <TextBlock
-                    Text="D"
-                    VerticalAlignment="Center"/>
-                </StackPanel>
+                  Width="220"
+                  Text="{x:Static res:Text.GlobalRotationCW}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="R"
+                  VerticalAlignment="Center"/>
               </StackPanel>
-            </Border>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.GlobalRotationCCW}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="F"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.GlobalScaleUp}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="+"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.GlobalScaleDown}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="-"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.RotateHelperCW}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="Q"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.RotateHelperCCW}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="A"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.IncreaseHelperRadius}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="W"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.DecreaseHelperRadius}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="S"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.IncreaseHelperCount}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="T"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.DecreaseHelperCount}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="G"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.IncreaseHelperSpacing}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="Z"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.DecreaseHelperSpacing}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="H"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.IncreaseItemThichness}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="E"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock
+                  Width="220"
+                  Text="{x:Static res:Text.DecreaseItemThickness}"
+                  VerticalAlignment="Center"/>
+                <TextBlock
+                  Text="D"
+                  VerticalAlignment="Center"/>
+              </StackPanel>
+            </StackPanel>
+
           </StackPanel>
         </Border>
       </TabItem>

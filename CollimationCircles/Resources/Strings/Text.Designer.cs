@@ -214,6 +214,42 @@ namespace CollimationCircles.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Decrease helper count:.
+        /// </summary>
+        public static string DecreaseHelperCount {
+            get {
+                return ResourceManager.GetString("DecreaseHelperCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease helper radius:.
+        /// </summary>
+        public static string DecreaseHelperRadius {
+            get {
+                return ResourceManager.GetString("DecreaseHelperRadius", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease helper spacing:.
+        /// </summary>
+        public static string DecreaseHelperSpacing {
+            get {
+                return ResourceManager.GetString("DecreaseHelperSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decrease helper thickness:.
+        /// </summary>
+        public static string DecreaseItemThickness {
+            get {
+                return ResourceManager.GetString("DecreaseItemThickness", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create duplicate.
         /// </summary>
         public static string Duplicate {
@@ -228,6 +264,42 @@ namespace CollimationCircles.Resources.Strings {
         public static string Error {
             get {
                 return ResourceManager.GetString("Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global rotation counterclockwise:.
+        /// </summary>
+        public static string GlobalRotationCCW {
+            get {
+                return ResourceManager.GetString("GlobalRotationCCW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global rotation clockwise:.
+        /// </summary>
+        public static string GlobalRotationCW {
+            get {
+                return ResourceManager.GetString("GlobalRotationCW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global scale down:.
+        /// </summary>
+        public static string GlobalScaleDown {
+            get {
+                return ResourceManager.GetString("GlobalScaleDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Global scale up:.
+        /// </summary>
+        public static string GlobalScaleUp {
+            get {
+                return ResourceManager.GetString("GlobalScaleUp", resourceCulture);
             }
         }
         
@@ -255,6 +327,42 @@ namespace CollimationCircles.Resources.Strings {
         public static string InclinationAngle {
             get {
                 return ResourceManager.GetString("InclinationAngle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase helper count:.
+        /// </summary>
+        public static string IncreaseHelperCount {
+            get {
+                return ResourceManager.GetString("IncreaseHelperCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase helper radius:.
+        /// </summary>
+        public static string IncreaseHelperRadius {
+            get {
+                return ResourceManager.GetString("IncreaseHelperRadius", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase helper spacing:.
+        /// </summary>
+        public static string IncreaseHelperSpacing {
+            get {
+                return ResourceManager.GetString("IncreaseHelperSpacing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Increase helper thichness:.
+        /// </summary>
+        public static string IncreaseItemThichness {
+            get {
+                return ResourceManager.GetString("IncreaseItemThichness", resourceCulture);
             }
         }
         
@@ -453,6 +561,24 @@ namespace CollimationCircles.Resources.Strings {
         public static string ResetItems {
             get {
                 return ResourceManager.GetString("ResetItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate helper counterclockwise:.
+        /// </summary>
+        public static string RotateHelperCCW {
+            get {
+                return ResourceManager.GetString("RotateHelperCCW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate helper clockwise:.
+        /// </summary>
+        public static string RotateHelperCW {
+            get {
+                return ResourceManager.GetString("RotateHelperCW", resourceCulture);
             }
         }
         

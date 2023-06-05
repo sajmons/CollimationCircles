@@ -168,11 +168,35 @@
   <data name="Count" xml:space="preserve">
     <value>Count</value>
   </data>
+  <data name="DecreaseHelperCount" xml:space="preserve">
+    <value>Decrease helper count:</value>
+  </data>
+  <data name="DecreaseHelperRadius" xml:space="preserve">
+    <value>Decrease helper radius:</value>
+  </data>
+  <data name="DecreaseHelperSpacing" xml:space="preserve">
+    <value>Decrease helper spacing:</value>
+  </data>
+  <data name="DecreaseItemThickness" xml:space="preserve">
+    <value>Decrease helper thickness:</value>
+  </data>
   <data name="Duplicate" xml:space="preserve">
     <value>Create duplicate</value>
   </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="GlobalRotationCCW" xml:space="preserve">
+    <value>Global rotation counterclockwise:</value>
+  </data>
+  <data name="GlobalRotationCW" xml:space="preserve">
+    <value>Global rotation clockwise:</value>
+  </data>
+  <data name="GlobalScaleDown" xml:space="preserve">
+    <value>Global scale down:</value>
+  </data>
+  <data name="GlobalScaleUp" xml:space="preserve">
+    <value>Global scale up:</value>
   </data>
   <data name="Helper" xml:space="preserve">
     <value>Helper</value>
@@ -182,6 +206,18 @@
   </data>
   <data name="InclinationAngle" xml:space="preserve">
     <value>Inclination</value>
+  </data>
+  <data name="IncreaseHelperCount" xml:space="preserve">
+    <value>Increase helper count:</value>
+  </data>
+  <data name="IncreaseHelperRadius" xml:space="preserve">
+    <value>Increase helper radius:</value>
+  </data>
+  <data name="IncreaseHelperSpacing" xml:space="preserve">
+    <value>Increase helper spacing:</value>
+  </data>
+  <data name="IncreaseItemThichness" xml:space="preserve">
+    <value>Increase helper thichness:</value>
   </data>
   <data name="Inner" xml:space="preserve">
     <value>Inner</value>
@@ -248,6 +284,12 @@
   </data>
   <data name="ResetItems" xml:space="preserve">
     <value>Reset list to default values</value>
+  </data>
+  <data name="RotateHelperCCW" xml:space="preserve">
+    <value>Rotate helper counterclockwise:</value>
+  </data>
+  <data name="RotateHelperCW" xml:space="preserve">
+    <value>Rotate helper clockwise:</value>
   </data>
   <data name="Rotation" xml:space="preserve">
     <value>Rotation</value>
