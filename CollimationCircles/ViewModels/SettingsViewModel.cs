@@ -114,8 +114,7 @@ namespace CollimationCircles.ViewModels
                 InitializeMessages();
             }
 
-            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Settings")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
-            MainTitle = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
             AppDescription = $"{DynRes.TryGetString("AppDescription")}\n{DynRes.TryGetString("Copyright")} {DynRes.TryGetString("Author")}";
         }
 
