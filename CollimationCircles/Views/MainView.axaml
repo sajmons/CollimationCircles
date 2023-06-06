@@ -17,7 +17,7 @@
       Grid.Row="0"
       HorizontalAlignment="Right"
       VerticalAlignment="Top"
-      ToolTip.Tip="{x:Static res:Text.SettingsWindow}"
+      ToolTip.Tip="{DynamicResource Text.SettingsWindow}"
       Width="64"
       Height="64"
       Command="{Binding ShowSettingsCommand}">
@@ -32,7 +32,7 @@
       Padding="5"
       Width="64"
       Height="64"
-      ToolTip.Tip="{x:Static res:Text.MoveWindow}">
+      ToolTip.Tip="{DynamicResource Text.MoveWindow}">
       <Image Source="/Resources/Images/arrow_keys.png" />
     </Border>
   </Grid>

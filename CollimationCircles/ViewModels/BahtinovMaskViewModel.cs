@@ -1,6 +1,7 @@
-﻿using Avalonia.Media;
+﻿using Avalonia;
+using Avalonia.Media;
+using CollimationCircles.Helper;
 using CollimationCircles.Models;
-using CollimationCircles.Resources.Strings;
 
 namespace CollimationCircles.ViewModels
 {
@@ -9,7 +10,7 @@ namespace CollimationCircles.ViewModels
         public BahtinovMaskViewModel()
         {
             ItemColor = Colors.Blue;
-            Label = Text.BahtinovMask;
+            Label = DynRes.TryGetString("BahtinovMask");
             Radius = 230;
             IsRotatable = true;
             IsInclinatable = true;

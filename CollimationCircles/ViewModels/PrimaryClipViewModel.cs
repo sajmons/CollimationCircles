@@ -1,6 +1,6 @@
 ﻿using Avalonia.Media;
+using CollimationCircles.Helper;
 using CollimationCircles.Models;
-using CollimationCircles.Resources.Strings;
 
 namespace CollimationCircles.ViewModels
 {
@@ -9,7 +9,7 @@ namespace CollimationCircles.ViewModels
         public PrimaryClipViewModel()
         {
             ItemColor = Colors.White;
-            Label = Text.PrimaryClip;
+            Label = DynRes.TryGetString("PrimaryClip");
             Radius = 268;
             Size = 50;
             IsRotatable = true;

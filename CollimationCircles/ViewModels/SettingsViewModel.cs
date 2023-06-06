@@ -2,9 +2,9 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using CollimationCircles.Extensions;
+using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
-using CollimationCircles.Resources.Strings;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,9 +16,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
@@ -94,10 +92,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public string version = string.Empty;
-
-        [ObservableProperty]
-        public bool dropDownOpen = false;
+        public string version = string.Empty;        
 
         [ObservableProperty]
         public string appDescription;
@@ -114,9 +109,9 @@ namespace CollimationCircles.ViewModels
                 InitializeMessages();
             }
 
-            Title = $"{Text.CollimationCircles} - {Text.Settings} - {Text.Version} {appService?.GetAppVersion()}";
-            MainTitle = $"{Text.CollimationCircles} - {Text.Version} {appService?.GetAppVersion()}";
-            AppDescription = $"{Text.AppDescription}\n{Text.Copyright} {Text.Author}";
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Settings")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
+            MainTitle = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
+            AppDescription = $"{DynRes.TryGetString("AppDescription")}\n{DynRes.TryGetString("Copyright")} {DynRes.TryGetString("Author")}";
         }
 
         private void InitializeMessages()
@@ -165,8 +160,8 @@ namespace CollimationCircles.ViewModels
             List<CollimationHelper> list = new()
                 {
                     // Circles
-                    new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = Text.Inner },
-                    new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = Text.PrimaryOuter },
+                    new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = DynRes.TryGetString("Inner") },
+                    new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = DynRes.TryGetString("PrimaryOuter") },
 
                     // Spider
                     new SpiderViewModel(),
@@ -206,7 +201,7 @@ namespace CollimationCircles.ViewModels
             {
                 base.OnPropertyChanged(e);
                 WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
-            }            
+            }
         }
 
         [RelayCommand]
@@ -248,13 +243,13 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void AddClip()
         {
-            AddItem(new PrimaryClipViewModel());            
+            AddItem(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
         internal void AddSpider()
         {
-            AddItem(new SpiderViewModel());            
+            AddItem(new SpiderViewModel());
         }
 
         [RelayCommand]
@@ -287,14 +282,14 @@ namespace CollimationCircles.ViewModels
         {
             var settings = new SaveFileDialogSettings
             {
-                Title = Text.SaveFile,
+                Title = DynRes.TryGetString("SaveFile"),
                 InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter(Text.JSONDocuments, Text.StarJson),
-                    new FileFilter(Text.AllFiles, Text.StarChar)
+                    new FileFilter(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
+                    new FileFilter(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar"))
                 },
-                DefaultExtension = Text.StarJson
+                DefaultExtension = DynRes.TryGetString("StarJson")
             };
 
             var path = await dialogService.ShowSaveFileDialogAsync(this, settings);
@@ -310,12 +305,12 @@ namespace CollimationCircles.ViewModels
         {
             var settings = new OpenFileDialogSettings
             {
-                Title = Text.OpenFile,
+                Title = DynRes.TryGetString("OpenFile"),
                 InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
                 Filters = new List<FileFilter>()
                 {
-                    new FileFilter(Text.JSONDocuments, Text.StarJson),
-                    new FileFilter(Text.AllFiles, Text.StarChar),
+                    new FileFilter(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
+                    new FileFilter(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar")),
                 }
             };
 
@@ -325,7 +320,7 @@ namespace CollimationCircles.ViewModels
             {
                 if (!LoadState(path?.Path?.LocalPath))
                 {
-                    await dialogService.ShowMessageBoxAsync(this, Text.UnableToOpenFile, Text.Error);
+                    await dialogService.ShowMessageBoxAsync(this, DynRes.TryGetString("UnableToOpenFile"), DynRes.TryGetString("Error"));
                 }
             }
         }
@@ -380,7 +375,8 @@ namespace CollimationCircles.ViewModels
 
                     if (success && !string.IsNullOrWhiteSpace(result))
                     {
-                        var dialogResult = await dialogService.ShowMessageBoxAsync(null, Text.NewVersionDownload.F(newVersion), Text.NewVersion, MessageBoxButton.YesNo);
+                        var dialogResult = await dialogService.ShowMessageBoxAsync(null,
+                            DynRes.TryGetString("NewVersionDownload").F(newVersion), DynRes.TryGetString("NewVersion"), MessageBoxButton.YesNo);
 
                         if (dialogResult is true)
                         {
@@ -389,11 +385,11 @@ namespace CollimationCircles.ViewModels
                     }
                     else if (!success)
                     {
-                        await dialogService.ShowMessageBoxAsync(null, result, Text.Error);
+                        await dialogService.ShowMessageBoxAsync(null, result, DynRes.TryGetString("Error"));
                     }
                 }
             }
-        }        
+        }
 
         internal void SaveState()
         {
@@ -441,28 +437,7 @@ namespace CollimationCircles.ViewModels
         {
             if (SelectedLanguage.Value is not null)
             {
-                //Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
-                //Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
                 Translate(SelectedLanguage.Value);
-            }
-        }
-
-        partial void OnDropDownOpenChanged(bool oldValue, bool newValue)
-        {
-            if (oldValue && !newValue)
-            {
-                Task.Run(async () =>
-                {
-                    var dr = await dialogService.ShowMessageBoxAsync(this, Text.WindowRestart, Text.ChangeLanguage, MessageBoxButton.YesNo);
-
-                    if (dr.Value)
-                    {
-                        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
-                        {
-                            lifetime.Shutdown();
-                        }
-                    }
-                });
             }
         }
 

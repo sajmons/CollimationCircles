@@ -2,8 +2,8 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using CollimationCircles.Helper;
 using CollimationCircles.Messages;
-using CollimationCircles.Resources.Strings;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
@@ -28,7 +28,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        private string label = Text.Helper;
+        private string label = DynRes.TryGetString("Helper");
 
         [JsonProperty]
         [ObservableProperty]

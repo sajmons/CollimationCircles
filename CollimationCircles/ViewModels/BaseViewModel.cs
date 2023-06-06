@@ -1,4 +1,5 @@
-﻿using Avalonia.Markup.Xaml.Styling;
+﻿using Avalonia;
+using Avalonia.Markup.Xaml.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -67,6 +68,6 @@ namespace CollimationCircles.ViewModels
                     }
                 );
             }
-        }
+        }        
     }
 }
