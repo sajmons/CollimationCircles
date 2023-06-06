@@ -8,7 +8,9 @@
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
         Width="542"
-        Height="600">
+        Height="600"
+        MinWidth="285"
+        MinHeight="473">
   <ScrollViewer>
     <TabControl>
       <TabItem>
@@ -95,38 +97,38 @@
                 SelectionMode="Single">
                 <ListBox.ItemTemplate>
                   <DataTemplate>
-                    
-                      <Grid ColumnDefinitions="25,25,*,30">
 
-                        <CheckBox                          
-                          IsChecked="{Binding IsVisible}"                          
-                          ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
+                    <Grid ColumnDefinitions="25,25,*,30">
 
-                        <Image                          
-                          Grid.Column="1"
-                          Margin="0,0,5,0"
-                          Height="20"
-                          Source="{Binding Image}"/>
+                      <CheckBox
+                        IsChecked="{Binding IsVisible}"
+                        ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
 
-                        <TextBlock
-                          TextWrapping="Wrap"
-                          Grid.Column="2"
-                          HorizontalAlignment="Stretch"
-                          Background="{Binding SelectedItem.ItemColor}"
-                          Text="{Binding Label}"
-                          VerticalAlignment="Center" />
+                      <Image
+                        Grid.Column="1"
+                        Margin="0,0,5,0"
+                        Height="20"
+                        Source="{Binding Image}"/>
 
-                        <Button
-                          Grid.Column="3"
-                          Padding="0"                          
-                          Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
-                          CommandParameter="{Binding .}"
-                          ToolTip.Tip="{DynamicResource Text.RemoveItem}">
-                          <Image Width="30" Source="/Resources/Images/ic_remove_dark.png" />
-                        </Button>
+                      <TextBlock
+                        TextWrapping="Wrap"
+                        Grid.Column="2"
+                        HorizontalAlignment="Stretch"
+                        Background="{Binding SelectedItem.ItemColor}"
+                        Text="{Binding Label}"
+                        VerticalAlignment="Center" />
 
-                      </Grid>
-                    
+                      <Button
+                        Grid.Column="3"
+                        Padding="0"
+                        Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
+                        CommandParameter="{Binding .}"
+                        ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+                        <Image Width="30" Source="/Resources/Images/ic_remove_dark.png" />
+                      </Button>
+
+                    </Grid>
+
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
@@ -142,20 +144,19 @@
                 Margin="0,0,5,5">
               <StackPanel
                 Orientation="Vertical"
-                Spacing="10"
+                Spacing="2"
                 Width="220">
                 <TextBlock Text="{DynamicResource Text.SelectedItemProperties}" />
 
                 <UniformGrid Columns="2">
-
                   <TextBlock
                     VerticalAlignment="Center"
                     Text="{DynamicResource Text.Color}" />
                   <ComboBox
                     VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
                     SelectedItem="{Binding #list.SelectedItem.ItemColor, Mode=TwoWay}"
-                    ItemsSource="{Binding ColorList}"
-                    Margin="0,0,0,5">
+                    ItemsSource="{Binding ColorList}">
                     <ComboBox.ItemTemplate>
                       <DataTemplate DataType="Color">
                         <Border
@@ -172,25 +173,29 @@
                       </DataTemplate>
                     </ComboBox.ItemTemplate>
                   </ComboBox>
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     VerticalAlignment="Center"
                     Text="{DynamicResource Text.Radius}"/>
                   <NumericUpDown
                     Increment="1"
                     Value="{Binding #list.SelectedItem.Radius}"
-                    Minimum="1" Maximum="2000"
-                    Margin="0,0,0,5"/>
+                    Minimum="1" Maximum="2000"/>
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     VerticalAlignment="Center"
                     Text="{DynamicResource Text.Thickness}" />
                   <NumericUpDown
                     Increment="1"
                     Value="{Binding #list.SelectedItem.Thickness}"
-                    Minimum="1" Maximum="10"
-                    Margin="0,0,0,5"/>
+                    Minimum="1" Maximum="10"/>
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     IsVisible="{Binding #list.SelectedItem.IsRotatable}"
                     VerticalAlignment="Center"
@@ -199,9 +204,10 @@
                     IsVisible="{Binding #list.SelectedItem.IsRotatable}"
                     Increment="{Binding #list.SelectedItem.RotationIncrement}"
                     Value="{Binding #list.SelectedItem.RotationAngle}"
-                    Minimum="-180" Maximum="180"
-                    Margin="0,0,0,5"/>
+                    Minimum="-180" Maximum="180"/>
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     IsVisible="{Binding #list.SelectedItem.IsInclinatable}"
                     VerticalAlignment="Center"
@@ -210,9 +216,10 @@
                     IsVisible="{Binding #list.SelectedItem.IsInclinatable}"
                     Increment="{Binding #list.SelectedItem.InclinationIncrement}"
                     Value="{Binding #list.SelectedItem.InclinationAngle}"
-                    Minimum="-180" Maximum="180"
-                    Margin="0,0,0,5"/>
+                    Minimum="-180" Maximum="180"/>
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     IsVisible="{Binding #list.SelectedItem.IsSizeable}"
                     VerticalAlignment="Center"
@@ -221,9 +228,10 @@
                     IsVisible="{Binding #list.SelectedItem.IsSizeable}"
                     Increment="1"
                     Value="{Binding #list.SelectedItem.Size}"
-                    Minimum="1" Maximum="100"
-                    Margin="0,0,0,5"/>
+                    Minimum="1" Maximum="100"/>
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     IsVisible="{Binding #list.SelectedItem.IsCountable}"
                     VerticalAlignment="Center"
@@ -232,21 +240,23 @@
                     IsVisible="{Binding #list.SelectedItem.IsCountable}"
                     Increment="1"
                     Value="{Binding #list.SelectedItem.Count}"
-                    Minimum="1" Maximum="10"
-                    Margin="0,0,0,5"/>
+                    Minimum="1" Maximum="10"/>
+                </UniformGrid>
 
+                <StackPanel Orientation="Vertical">
                   <TextBlock
-                    IsEnabled="{Binding #list.SelectedItem.IsEditable}"
-                    VerticalAlignment="Center"
-                    Text="{DynamicResource Text.Label}" />
+                      IsEnabled="{Binding #list.SelectedItem.IsEditable}"
+                      VerticalAlignment="Center"
+                      Text="{DynamicResource Text.Label}" />
                   <TextBox
+                    HorizontalAlignment="Stretch"
                     IsEnabled="{Binding #list.SelectedItem.IsEditable}"
                     TextWrapping="Wrap"
                     MaxLength="20"
                     Watermark="{DynamicResource Text.HelperName}"
                     Text="{Binding #list.SelectedItem.Label}"/>
+                </StackPanel>
 
-                </UniformGrid>
               </StackPanel>
             </Border>
 
@@ -256,42 +266,46 @@
               BorderBrush="Silver"
               BorderThickness="1"
               Margin="0,0,5,5">
-              <StackPanel Orientation="Vertical">
+              <StackPanel
+                Orientation="Vertical"
+                Spacing="2"
+                Width="220">
                 <TextBlock Text="{DynamicResource Text.AllItemsControls}"></TextBlock>
 
                 <UniformGrid Columns="2">
-
                   <TextBlock
                     VerticalAlignment="Center"
                     Text="{DynamicResource Text.Scale}"/>
                   <NumericUpDown
                     Increment="0.01"
                     Value="{Binding Scale}"
-                    Minimum="0.0" Maximum="4.0"
-                    Margin="0,0,0,5" />
+                    Minimum="0.0" Maximum="4.0" />
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     VerticalAlignment="Center"
                     Text="{DynamicResource Text.Rotation}"/>
                   <NumericUpDown
                     Value="{Binding RotationAngle}"
-                    Minimum="-180" Maximum="180"
-                    Margin="0,0,0,5" />
+                    Minimum="-180" Maximum="180" />
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     VerticalAlignment="Center"
                     Text="{DynamicResource Text.LabelSize}" />
                   <NumericUpDown
                     Value="{Binding LabelSize}"
-                    Minimum="5" Maximum="20"
-                    Margin="0,0,0,5"/>
+                    Minimum="5" Maximum="20"/>
+                </UniformGrid>
 
+                <UniformGrid Columns="2">
                   <TextBlock
                     VerticalAlignment="Center"
                     Text="{DynamicResource Text.ShowLabels}" />
                   <CheckBox
                     IsChecked="{Binding ShowLabels}"/>
-
                 </UniformGrid>
 
               </StackPanel>
@@ -314,8 +328,9 @@
 
             <UniformGrid Columns="2">
               <TextBlock
-                  Text="{DynamicResource Text.UserInterfaceLanguage}"
-                  VerticalAlignment="Center"/>
+                TextWrapping="WrapWithOverflow"
+                Text="{DynamicResource Text.UserInterfaceLanguage}"
+                VerticalAlignment="Center"/>
               <ComboBox
                 ItemsSource="{Binding LanguageList}"
                 SelectedItem="{Binding SelectedLanguage}">
@@ -326,7 +341,7 @@
                 </ComboBox.ItemTemplate>
               </ComboBox>
               <TextBlock
-                TextWrapping="Wrap"
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.CheckForNewVersion}"
                 VerticalAlignment="Center"/>
               <CheckBox
@@ -338,84 +353,124 @@
             </StackPanel>
             <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.GlobalRotationCW}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="R"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.GlobalRotationCCW}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="F"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.GlobalScaleUp}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="+"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.GlobalScaleDown}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="-"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.RotateHelperCW}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="Q"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.RotateHelperCCW}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="A"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.IncreaseHelperRadius}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="W"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.DecreaseHelperRadius}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="S"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.IncreaseHelperCount}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="T"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.DecreaseHelperCount}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="G"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.IncreaseHelperSpacing}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="Z"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.DecreaseHelperSpacing}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="H"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.IncreaseItemThichness}"
                 VerticalAlignment="Center"/>
               <TextBlock
                 Text="E"
                 VerticalAlignment="Center"/>
+            </UniformGrid>
+            <UniformGrid Columns="2">
               <TextBlock
+                TextWrapping="WrapWithOverflow"
                 Text="{DynamicResource Text.DecreaseItemThickness}"
                 VerticalAlignment="Center"/>
               <TextBlock
@@ -432,22 +487,22 @@
             Text="{DynamicResource Text.About}" />
         </TabItem.Header>
         <Border
-              Padding="16" CornerRadius="4"
-              BorderBrush="Silver" BorderThickness="1">
+            Padding="16" CornerRadius="4"
+            BorderBrush="Silver" BorderThickness="1">
           <StackPanel Orientation="Vertical">
-            <StackPanel
-              Spacing="10"
-              Orientation="Horizontal"
-              Height="64"
-              VerticalAlignment="Top">
+            <WrapPanel>
               <Image
+                Margin="0,0,10,10"
                 Source="/Resources/Images/ic_launcher.png"
                 Width="32" />
               <TextBlock
-                Text="{Binding AppDescription}" VerticalAlignment="Center" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="20">
+                Margin="0,0,10,10"
+                HorizontalAlignment="Stretch"
+                TextWrapping="WrapWithOverflow"
+                Text="{Binding AppDescription}"
+                VerticalAlignment="Center" />
               <Button
+                Margin="0,0,10,10"
                 VerticalAlignment="Bottom"
                 Command="{Binding OpenWebSiteCommand}">
                 <StackPanel Orientation="Horizontal">
@@ -456,6 +511,7 @@
                 </StackPanel>
               </Button>
               <Button
+                Margin="0,0,10,10"
                 VerticalAlignment="Bottom"
                 Command="{Binding OpenContactWebPageCommand}">
                 <StackPanel Orientation="Horizontal">
@@ -463,7 +519,7 @@
                   <TextBlock Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>
                 </StackPanel>
               </Button>
-            </StackPanel>
+            </WrapPanel>
           </StackPanel>
         </Border>
       </TabItem>

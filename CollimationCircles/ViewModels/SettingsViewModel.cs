@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media;
 using CollimationCircles.Extensions;
 using CollimationCircles.Helper;
@@ -92,18 +91,24 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public string version = string.Empty;        
+        public string version = string.Empty;
 
         [ObservableProperty]
-        public string appDescription;
+        public string? appDescription;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
             this.appService = appService;
 
+            Initialize();
+        }
+
+        public void Initialize()
+        {
             if (this.appService is not null)
             {
+                InitializeLanguage();
                 InitializeColors();
                 InitializeDefaults();
                 InitializeMessages();
@@ -112,6 +117,22 @@ namespace CollimationCircles.ViewModels
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Settings")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
             MainTitle = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
             AppDescription = $"{DynRes.TryGetString("AppDescription")}\n{DynRes.TryGetString("Copyright")} {DynRes.TryGetString("Author")}";
+        }
+
+        private void InitializeLanguage()
+        {
+            // initialize languages
+            List<KeyValuePair<string, string>> l = new()
+            {
+                new KeyValuePair<string, string>("English", "en-US"),
+                new KeyValuePair<string, string>("Slovenian", "sl-SI"),
+                new KeyValuePair<string, string>("German", "de-DE")
+            };
+
+            LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
+            SelectedLanguage = LanguageList.FirstOrDefault();
+
+            Translate(SelectedLanguage.Value);
         }
 
         private void InitializeMessages()
@@ -146,22 +167,11 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeDefaults()
         {
-            // initialize languages
-            List<KeyValuePair<string, string>> l = new()
-            {
-                new KeyValuePair<string, string>("English", "en-US"),
-                new KeyValuePair<string, string>("Slovenian", "sl-SI"),
-                new KeyValuePair<string, string>("German", "de-DE")
-            };
-
-            LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
-            SelectedLanguage = LanguageList.FirstOrDefault();
-
             List<CollimationHelper> list = new()
                 {
                     // Circles
-                    new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = DynRes.TryGetString("Inner") },
-                    new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = DynRes.TryGetString("PrimaryOuter") },
+                    new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = DynRes.TryGetString("Secondary") },
+                    new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = DynRes.TryGetString("FocuserTube") },
 
                     // Spider
                     new SpiderViewModel(),

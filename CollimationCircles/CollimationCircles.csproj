@@ -22,43 +22,10 @@
     <Compile Remove="ViewModels\ItemViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove=".gitignore" />
-    <None Remove="Resources\Images\arrow_keys.png" />
-    <None Remove="Resources\Images\bahtinovmaskviewmodel.png" />
-    <None Remove="Resources\Images\circleviewmodel.png" />
-    <None Remove="Resources\Images\ic_add.png" />
-    <None Remove="Resources\Images\ic_duplicate_dark.png" />
-    <None Remove="Resources\Images\ic_email_dark.png" />
-    <None Remove="Resources\Images\ic_launcher.png" />
-    <None Remove="Resources\Images\ic_load_dark.png" />
-    <None Remove="Resources\Images\ic_reset_dark.png" />
-    <None Remove="Resources\Images\ic_save.png" />
-    <None Remove="Resources\Images\ic_remove_dark.png" />
-    <None Remove="Resources\Images\ic_save_dark.png" />
-    <None Remove="Resources\Images\ic_settings_dark.png" />
-    <None Remove="Resources\Images\ic_help.png" />
-    <None Remove="Resources\Images\primaryclipviewmodel.png" />
-    <None Remove="Resources\Images\screwviewmodel.png" />
-    <None Remove="Resources\Images\spiderviewmodel.png" />
+    <None Remove=".gitignore" />    
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Include="Resources\Lang\**" />
-    <AvaloniaXaml Remove="Resources\Lang\sl-SI.axaml" />
-    <AvaloniaResource Include="Resources\Images\arrow_keys.png" />
-    <AvaloniaResource Include="Resources\Images\circleviewmodel.png" />
-    <AvaloniaResource Include="Resources\Images\ic_save_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_load_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_launcher.png" />
-    <AvaloniaResource Include="Resources\Images\ic_reset_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_settings_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_duplicate_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_email_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_remove_dark.png" />
-    <AvaloniaResource Include="Resources\Images\ic_help_dark.png" />
-    <AvaloniaResource Include="Resources\Images\primaryclipviewmodel.png" />
-    <AvaloniaResource Include="Resources\Images\screwviewmodel.png" />
-    <AvaloniaResource Include="Resources\Images\spiderviewmodel.png" />
-    <AvaloniaResource Include="Resources\Images\bahtinovmaskviewmodel.png" />
+    <AvaloniaResource Include="Resources\**" />    
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming. If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa. https://github.com/AvaloniaUI/Avalonia/issues/5593 -->

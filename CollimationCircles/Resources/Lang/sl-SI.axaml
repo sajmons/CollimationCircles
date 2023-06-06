@@ -1,7 +1,7 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
-  <system:String x:Key="Text.About">O tem</system:String>
+  <system:String x:Key="Text.About">O programu</system:String>
   <system:String x:Key="Text.Add">Dodaj</system:String>
   <system:String x:Key="Text.AddNewItem">Dodaj v seznam</system:String>
   <system:String x:Key="Text.AllFiles">Vse datoteke</system:String>
