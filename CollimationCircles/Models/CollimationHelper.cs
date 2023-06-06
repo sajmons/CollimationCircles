@@ -7,7 +7,6 @@ using CollimationCircles.Resources.Strings;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
-using HanumanInstitute.MvvmDialogs.Avalonia;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -134,10 +133,9 @@ namespace CollimationCircles.Models
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            base.OnPropertyChanged(e);
-
             if (!HasErrors)
             {
+                base.OnPropertyChanged(e);
                 WeakReferenceMessenger.Default.Send(new ItemChangedMessage(this));
             }
         }

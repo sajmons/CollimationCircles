@@ -202,10 +202,9 @@ namespace CollimationCircles.ViewModels
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            base.OnPropertyChanged(e);
-
             if (!HasErrors)
             {
+                base.OnPropertyChanged(e);
                 WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
             }            
         }
@@ -442,8 +441,9 @@ namespace CollimationCircles.ViewModels
         {
             if (SelectedLanguage.Value is not null)
             {
-                Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
-                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+                //Thread.CurrentThread.CurrentCulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+                //Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(SelectedLanguage.Value);
+                Translate(SelectedLanguage.Value);
             }
         }
 
