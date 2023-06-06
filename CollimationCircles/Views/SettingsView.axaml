@@ -86,6 +86,7 @@
 
               </StackPanel>
               <TextBlock Text="{DynamicResource Text.ItemListTitle}" Padding="0,10,0,5" />
+
               <ListBox
                 Name="list"
                 ItemsSource="{Binding Items}"
@@ -94,42 +95,44 @@
                 SelectionMode="Single">
                 <ListBox.ItemTemplate>
                   <DataTemplate>
+                    
+                      <Grid ColumnDefinitions="25,25,*,30">
 
-                    <UniformGrid Columns="4" HorizontalAlignment="Stretch">
+                        <CheckBox                          
+                          IsChecked="{Binding IsVisible}"                          
+                          ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
 
-                      <CheckBox
-                        HorizontalAlignment="Left"
-                        IsChecked="{Binding IsVisible}"
-                        ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
+                        <Image                          
+                          Grid.Column="1"
+                          Margin="0,0,5,0"
+                          Height="20"
+                          Source="{Binding Image}"/>
 
-                      <Image
-                        HorizontalAlignment="Left"
-                        Height="20"
-                        Source="{Binding Image}"/>
+                        <TextBlock
+                          TextWrapping="Wrap"
+                          Grid.Column="2"
+                          HorizontalAlignment="Stretch"
+                          Background="{Binding SelectedItem.ItemColor}"
+                          Text="{Binding Label}"
+                          VerticalAlignment="Center" />
 
-                      <TextBlock
-                        HorizontalAlignment="Left"
-                        Background="{Binding SelectedItem.ItemColor}"
-                        Text="{Binding Label}"
-                        VerticalAlignment="Center" />
+                        <Button
+                          Grid.Column="3"
+                          Padding="0"                          
+                          Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
+                          CommandParameter="{Binding .}"
+                          ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+                          <Image Width="30" Source="/Resources/Images/ic_remove_dark.png" />
+                        </Button>
 
-                      <Button
-                        HorizontalAlignment="Right"
-                        Padding="0" Margin="0"
-                        Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
-                        CommandParameter="{Binding .}"
-                        ToolTip.Tip="{DynamicResource Text.RemoveItem}">
-                        <Image Width="30" Source="/Resources/Images/ic_remove_dark.png" />
-                      </Button>
-
-                    </UniformGrid>
-
+                      </Grid>
+                    
                   </DataTemplate>
                 </ListBox.ItemTemplate>
               </ListBox>
             </StackPanel>
           </Border>
-          
+
           <StackPanel Orientation="Vertical">
             <Border
                 Padding="16"

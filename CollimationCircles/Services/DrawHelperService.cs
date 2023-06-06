@@ -15,7 +15,7 @@ namespace CollimationCircles.Services
             if (showLabels)
             {
                 var formattedText = new FormattedText(
-                    item.Label,
+                    item?.Label ?? "Undefined",
                     CultureInfo.CurrentCulture,
                     FlowDirection.LeftToRight,
                     Typeface.Default,

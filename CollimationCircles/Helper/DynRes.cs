@@ -1,4 +1,8 @@
 ﻿using Avalonia;
+using Avalonia.Markup.Xaml.Styling;
+using Avalonia.Styling;
+using System;
+using System.Linq;
 
 namespace CollimationCircles.Helper
 {
@@ -6,15 +10,24 @@ namespace CollimationCircles.Helper
     {
         public static string TryGetString(string resourceKey)
         {
-            try
-            {
-                string? value = Application.Current?.Resources[resourceKey] as string;
+            var translations = Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>()
+                .FirstOrDefault(x => x.Source?.OriginalString?.Contains("/Lang/") ?? false);
 
-                return value ?? "Undefined";
-            }
-            catch
+            if (translations is null)
             {
-                return "Undefined";
+                throw new Exception("Missing resource");
+            }
+
+            if (translations.TryGetResource($"Text.{resourceKey}", ThemeVariant.Dark, out object? value))
+            {
+                if (value is null)
+                    throw new Exception($"Resource key '{resourceKey}' not found.");                
+
+                return (string)value;
+            }
+            else
+            {
+                throw new Exception($"Resource key '{resourceKey}' not found.");
             }
         }
     }

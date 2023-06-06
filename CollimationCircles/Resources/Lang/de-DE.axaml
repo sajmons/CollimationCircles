@@ -7,16 +7,13 @@
   <system:String x:Key="Text.AllFiles">Alle Dateien</system:String>
   <system:String x:Key="Text.AllItemsControls">Gilt für alle Artikel</system:String>
   <system:String x:Key="Text.AppDescription">Anwendung für elektronisch unterstützte Teleskopkollimation</system:String>
-  <system:String x:Key="Text.Author">Simon Šander</system:String>
   <system:String x:Key="Text.BahtinovMask">Bahtinov-Maske</system:String>
   <system:String x:Key="Text.ChangeLanguage">Sprache ändern</system:String>
   <system:String x:Key="Text.ChangeTo">In {0} ändern</system:String>
   <system:String x:Key="Text.CheckForNewVersion">Beim Start nach einer neuen Version suchen</system:String>
   <system:String x:Key="Text.Circle">Kreis</system:String>
-  <system:String x:Key="Text.CollimationCircles">Kollimationskreise</system:String>
   <system:String x:Key="Text.Color">Farbe</system:String>
   <system:String x:Key="Text.Contact">Kontakt</system:String>
-  <system:String x:Key="Text.Copyright">© 2023 by</system:String>
   <system:String x:Key="Text.Count">Zählung</system:String>
   <system:String x:Key="Text.DecreaseHelperCount">Anzahl verringern:</system:String>
   <system:String x:Key="Text.DecreaseHelperRadius">Radius verkleinern:</system:String>
@@ -41,7 +38,7 @@
   <system:String x:Key="Text.ItemVisibility">Sichtbarkeit des Artikels</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON-Dokumente</system:String>
   <system:String x:Key="Text.Label">Etikett</system:String>
-  <system:String x:Key="Text.LabelSize">Beschriftungstextgröße</system:String>
+  <system:String x:Key="Text.LabelSize">Textgröße</system:String>
   <system:String x:Key="Text.ListOfItems">Liste der Artikel</system:String>
   <system:String x:Key="Text.LoadList">Liste aus JSON-Datei laden</system:String>
   <system:String x:Key="Text.MoveWindow">Benutze die Tasten: Pfeiltasten bewegen das Fenster; 'R' oder 'L' drehen; '+' oder '-' skalieren.</system:String>
@@ -64,7 +61,7 @@
   <system:String x:Key="Text.SaveList">Liste in JSON-Datei speichern</system:String>
   <system:String x:Key="Text.Scale">Skala</system:String>
   <system:String x:Key="Text.Screw">Schraube</system:String>
-  <system:String x:Key="Text.SelectedItemProperties">Eigenschaften ausgewählter Artikel</system:String>
+  <system:String x:Key="Text.SelectedItemProperties">Hilfseigenschaften</system:String>
   <system:String x:Key="Text.Settings">Einstellungen</system:String>
   <system:String x:Key="Text.SettingsWindow">Einstellungsfenster öffnen</system:String>
   <system:String x:Key="Text.ShowLabels">Titel</system:String>
@@ -79,4 +76,6 @@
   <system:String x:Key="Text.UserInterfaceLanguage">Sprache der Benutzeroberfläche</system:String>
   <system:String x:Key="Text.Version">Ausführung</system:String>
   <system:String x:Key="Text.ItemColor">Farbe</system:String>
+  <system:String x:Key="Text.Secondary">Sekundär</system:String>
+  <system:String x:Key="Text.FocuserTube">Fokussierrohr</system:String>
 </ResourceDictionary>

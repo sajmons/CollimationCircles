@@ -5,18 +5,15 @@
   <system:String x:Key="Text.Add">Add</system:String>
   <system:String x:Key="Text.AddNewItem">Add new item to list</system:String>
   <system:String x:Key="Text.AllFiles">All Files</system:String>
-  <system:String x:Key="Text.AllItemsControls">Applied to all items</system:String>
+  <system:String x:Key="Text.AllItemsControls">Global properties</system:String>
   <system:String x:Key="Text.AppDescription">Application for electronicaly asisted telescope collimation</system:String>
-  <system:String x:Key="Text.Author">Simon Šander</system:String>
   <system:String x:Key="Text.BahtinovMask">Bahtinov mask</system:String>
   <system:String x:Key="Text.ChangeLanguage">Change language</system:String>
   <system:String x:Key="Text.ChangeTo">Change to {0}</system:String>
   <system:String x:Key="Text.CheckForNewVersion">Check for new version on startup</system:String>
   <system:String x:Key="Text.Circle">Circle</system:String>
-  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>
   <system:String x:Key="Text.Color">Color</system:String>
   <system:String x:Key="Text.Contact">Contact</system:String>
-  <system:String x:Key="Text.Copyright">© 2023 by</system:String>
   <system:String x:Key="Text.Count">Count</system:String>
   <system:String x:Key="Text.DecreaseHelperCount">Decrease count:</system:String>
   <system:String x:Key="Text.DecreaseHelperRadius">Decrease radius:</system:String>
@@ -64,7 +61,7 @@
   <system:String x:Key="Text.SaveList">Save list to JSON file</system:String>
   <system:String x:Key="Text.Scale">Scale</system:String>
   <system:String x:Key="Text.Screw">Screw</system:String>
-  <system:String x:Key="Text.SelectedItemProperties">Selected item properties</system:String>
+  <system:String x:Key="Text.SelectedItemProperties">Helper properties</system:String>
   <system:String x:Key="Text.Settings">Settings</system:String>
   <system:String x:Key="Text.SettingsWindow">Open settings window</system:String>
   <system:String x:Key="Text.ShowLabels">Labels</system:String>
@@ -78,5 +75,10 @@
   <system:String x:Key="Text.UnableToParseJsonFile">Unable to parse JSON file</system:String>
   <system:String x:Key="Text.UserInterfaceLanguage">User interface language</system:String>
   <system:String x:Key="Text.Version">Version</system:String>
-  <system:String x:Key="Text.ItemColor">Color</system:String>  
+  <system:String x:Key="Text.ItemColor">Color</system:String>
+  <system:String x:Key="Text.Secondary">Secondary</system:String>
+  <system:String x:Key="Text.FocuserTube">Focuser tube</system:String>
+  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>
+  <system:String x:Key="Text.Copyright">© 2023</system:String>
+  <system:String x:Key="Text.Author">Simon Šander</system:String>
 </ResourceDictionary>

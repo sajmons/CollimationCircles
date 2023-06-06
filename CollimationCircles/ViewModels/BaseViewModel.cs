@@ -13,10 +13,10 @@ namespace CollimationCircles.ViewModels
     public partial class BaseViewModel : ObservableValidator
     {
         [ObservableProperty]
-        public string mainTitle = string.Empty;
+        public string title = string.Empty;
 
         [ObservableProperty]
-        public string title = string.Empty;
+        public string mainTitle = string.Empty;
 
         public static void OpenUrl(string url)
         {
@@ -48,12 +48,12 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        public void Translate(string targetLanguage)
+        public static void Translate(string targetLanguage)
         {
-            var translations = Avalonia.Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>().FirstOrDefault(x => x.Source?.OriginalString?.Contains("/Lang/") ?? false);
+            var translations = Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>().FirstOrDefault(x => x.Source?.OriginalString?.Contains("/Lang/") ?? false);
 
             if (translations != null)
-                Avalonia.Application.Current?.Resources.MergedDictionaries.Remove(translations);
+                Application.Current?.Resources.MergedDictionaries.Remove(translations);
 
             string? assemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
 
@@ -61,7 +61,7 @@ namespace CollimationCircles.ViewModels
             {
                 var uri = new Uri($"avares://{assemblyName}/Resources/Lang/{targetLanguage}.axaml");
 
-                Avalonia.Application.Current?.Resources.MergedDictionaries.Add(
+                Application.Current?.Resources.MergedDictionaries.Add(
                     new ResourceInclude(uri)
                     {
                         Source = uri

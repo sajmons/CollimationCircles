@@ -5,18 +5,15 @@
   <system:String x:Key="Text.Add">Dodaj</system:String>
   <system:String x:Key="Text.AddNewItem">Dodaj v seznam</system:String>
   <system:String x:Key="Text.AllFiles">Vse datoteke</system:String>
-  <system:String x:Key="Text.AllItemsControls">Velja za vse</system:String>
+  <system:String x:Key="Text.AllItemsControls">Lastnosti vseh</system:String>
   <system:String x:Key="Text.AppDescription">Aplikacija za elektronsko podprto kolimacijo teleskopa</system:String>
-  <system:String x:Key="Text.Author">Simon Šander</system:String>
   <system:String x:Key="Text.BahtinovMask">Bahtinova maska</system:String>
   <system:String x:Key="Text.ChangeLanguage">Spremeni jezik</system:String>
   <system:String x:Key="Text.ChangeTo">Spremeni v {0}</system:String>
   <system:String x:Key="Text.CheckForNewVersion">Ob zagonu preveri ali je na voljo nova verzija</system:String>
   <system:String x:Key="Text.Circle">Krog</system:String>
-  <system:String x:Key="Text.CollimationCircles">Kolimacijski Krogi</system:String>
   <system:String x:Key="Text.Color">Barva</system:String>
   <system:String x:Key="Text.Contact">Kontakt</system:String>
-  <system:String x:Key="Text.Copyright">© 2023 by</system:String>
   <system:String x:Key="Text.Count">Število</system:String>
   <system:String x:Key="Text.DecreaseHelperCount">Zmanjšaj število:</system:String>
   <system:String x:Key="Text.DecreaseHelperRadius">Zmanjšaj premer:</system:String>
@@ -79,4 +76,6 @@
   <system:String x:Key="Text.UserInterfaceLanguage">Jezik uporabniškega vmesnika</system:String>
   <system:String x:Key="Text.Version">Verzija</system:String>
   <system:String x:Key="Text.ItemColor">Barva</system:String>
+  <system:String x:Key="Text.Secondary">Sekundarni</system:String>
+  <system:String x:Key="Text.FocuserTube">Fokuser</system:String>
 </ResourceDictionary>
