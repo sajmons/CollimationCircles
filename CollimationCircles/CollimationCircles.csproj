@@ -42,6 +42,8 @@
     <None Remove="Resources\Images\spiderviewmodel.png" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Include="Resources\Lang\**" />
+    <AvaloniaXaml Remove="Resources\Lang\sl-SI.axaml" />
     <AvaloniaResource Include="Resources\Images\arrow_keys.png" />
     <AvaloniaResource Include="Resources\Images\circleviewmodel.png" />
     <AvaloniaResource Include="Resources\Images\ic_save_dark.png" />

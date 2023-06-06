@@ -1,5 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Markup.Xaml.Styling;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace CollimationCircles.ViewModels
@@ -38,6 +43,29 @@ namespace CollimationCircles.ViewModels
                 {
                     throw;
                 }
+            }
+        }
+
+        [RelayCommand]
+        public void Translate(string targetLanguage)
+        {
+            var translations = Avalonia.Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>().FirstOrDefault(x => x.Source?.OriginalString?.Contains("/Lang/") ?? false);
+
+            if (translations != null)
+                Avalonia.Application.Current?.Resources.MergedDictionaries.Remove(translations);
+
+            string? assemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
+
+            if (assemblyName is not null)
+            {
+                var uri = new Uri($"avares://{assemblyName}/Resources/Lang/{targetLanguage}.axaml");
+
+                Avalonia.Application.Current?.Resources.MergedDictionaries.Add(
+                    new ResourceInclude(uri)
+                    {
+                        Source = uri
+                    }
+                );
             }
         }
     }
