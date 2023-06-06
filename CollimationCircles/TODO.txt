@@ -2,5 +2,4 @@
 - camera video streaming support
 - add option to select between light and dark theme
   - make resources for light and dark icons
-- add German and Slovenian translation of keyboard shortcuts
 - add Range validators error messages in resource files
