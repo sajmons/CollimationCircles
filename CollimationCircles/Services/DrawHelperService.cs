@@ -22,7 +22,10 @@ namespace CollimationCircles.Services
                     labelSize,
                     brush);
 
-                context.DrawText(formattedText, new Point(width2 - item.Size * formattedText.Width / labelSize, height2 - item.Radius - item.Size * 2));
+                if (item is not null)
+                {
+                    context.DrawText(formattedText, new Point(width2 - item.Size * formattedText.Width / labelSize, height2 - item.Radius - item.Size * 2));
+                }
             }
         }
 
