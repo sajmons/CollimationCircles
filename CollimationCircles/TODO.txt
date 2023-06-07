@@ -1,4 +1,3 @@
-﻿- moving window with arrow keys on Linux don't work AvaloniaUI bug
-- camera video streaming support
+﻿- camera video streaming support
 - add option to select between light and dark theme
   - make resources for light and dark icons
