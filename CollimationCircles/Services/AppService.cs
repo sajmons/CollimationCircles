@@ -19,7 +19,11 @@ public class AppService : IAppService
 
     public string GetAppVersion()
     {
-        return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion ?? string.Empty;
+        var entryAssembly = Assembly.GetEntryAssembly();
+
+        string version = entryAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+
+        return version;
     }
 
     public bool SameVersion(string v1, string v2)
