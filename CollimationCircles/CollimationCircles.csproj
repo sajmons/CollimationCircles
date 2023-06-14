@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>2.0.0-beta</Version>
+    <Version>2.0.0</Version>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>    
     <Copyright>Copyright © 2023</Copyright>
@@ -33,15 +33,15 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview8" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-rc1.1" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-preview8" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview8">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-rc1.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-rc1.1">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
-    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0-preview8" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-preview.4.23259.5" />
+    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0-rc1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-preview.5.23280.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Octokit" Version="6.0.0" />    
   </ItemGroup>

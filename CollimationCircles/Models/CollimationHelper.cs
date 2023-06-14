@@ -119,9 +119,8 @@ namespace CollimationCircles.Models
                 string assemblyName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
 
                 var uri = new Uri($"avares://{assemblyName}/{path}.png");
-
-                var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-                var asset = assets?.Open(uri);
+                
+                var asset = AssetLoader.Open(uri);
 
                 if (asset is null)
                     return null;
