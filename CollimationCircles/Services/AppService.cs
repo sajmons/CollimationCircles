@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using Avalonia.Platform;
+using Avalonia;
+using Newtonsoft.Json;
 using Octokit;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace CollimationCircles.Services;
 public class AppService : IAppService
@@ -71,12 +74,26 @@ public class AppService : IAppService
 
             var gitHubVer = release.TagName.Split('-')[1];
 
-            Version oldVersion = new(currentVersion);
+            var osa = GetOSAndArch();
 
-            Version newVersion = new(gitHubVer);
+            if (osa is not null)
+            {
+                Version oldVersion = new(currentVersion);
 
-            if (newVersion > oldVersion)
-                return (true, release.Assets[0].BrowserDownloadUrl, newVersion.ToString());
+                Version newVersion = new(gitHubVer);
+
+                var asset = release.Assets.FirstOrDefault(x => x.Name.Contains(osa));
+
+                if (asset is not null)
+                {
+                    if (newVersion > oldVersion)
+                        return (true, asset.BrowserDownloadUrl, newVersion.ToString());
+                    else
+                        return (true, string.Empty, string.Empty);
+                }
+                else
+                    return (true, string.Empty, string.Empty);
+            }
             else
                 return (true, string.Empty, string.Empty);
         }
@@ -84,5 +101,21 @@ public class AppService : IAppService
         {
             return (false, exc.Message, string.Empty);
         }
+    }
+
+    public static string? GetOSAndArch()
+    {
+        string? os = null;
+
+        if (OperatingSystem.IsLinux())
+            os = "linux";
+        else
+        if (OperatingSystem.IsWindows())
+            os = "win";
+        else
+        if (OperatingSystem.IsMacOS())
+            os = "osx";
+
+        return $"{os}-{System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture}".ToLower() ?? null;
     }
 }
