@@ -79,11 +79,11 @@ dotnet --info
 ### macOS
 https://learn.microsoft.com/en-us/dotnet/core/install/macos
 
-# Prebuild binaries for Windows
-Here are binary files for Windows avaliable for you to download.
+# Prebuild binaries for win-x64, linux-x64 and linux-arm64
+Here are binary files avaliable for you to download.
 https://github.com/sajmons/CollimationCircles/releases/
 
-Download latest release as ZIP file, extract it and run EXE.
+Download latest release as ZIP file, extract it and run executable.
 
 # Advanced way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
@@ -94,7 +94,7 @@ sudo apt-get install git
 git clone https://github.com/sajmons/CollimationCircles.git
 ```
 ```
-cd ColiminationCircles/ColiminationCircles
+cd ColliminationCircles/ColliminationCircles
 ```
 ```
 dotnet run
