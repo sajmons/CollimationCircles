@@ -3,3 +3,4 @@
   - make resources for light and dark icons
 - add option to make settings window sticxy
 - add option to make settings window component inside main window
+- add always on top option
