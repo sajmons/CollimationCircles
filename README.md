@@ -94,7 +94,7 @@ sudo apt-get install git
 git clone https://github.com/sajmons/CollimationCircles.git
 ```
 ```
-cd ColliminationCircles/ColliminationCircles
+cd CollimationCircles/CollimationCircles
 ```
 ```
 dotnet run
