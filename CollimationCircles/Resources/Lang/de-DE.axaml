@@ -23,7 +23,7 @@
   <system:String x:Key="Text.Error">Fehler</system:String>
   <system:String x:Key="Text.GlobalRotationCCW">Alles gegen den Uhrzeigersinn drehen:</system:String>
   <system:String x:Key="Text.GlobalRotationCW">Alles im Uhrzeigersinn drehen:</system:String>
-  <system:String x:Key="Text.GlobalScaleDown">Maßstab verringern:</system:String>
+  <system:String x:Key="Text.GlobalScaleDown">Maßstverringern:</system:String>
   <system:String x:Key="Text.GlobalScaleUp">Maßstab vergrößern:</system:String>
   <system:String x:Key="Text.Helper">Helfer</system:String>
   <system:String x:Key="Text.HelperName">Name eingeben</system:String>
@@ -78,4 +78,5 @@
   <system:String x:Key="Text.ItemColor">Farbe</system:String>
   <system:String x:Key="Text.Secondary">Sekundär</system:String>
   <system:String x:Key="Text.FocuserTube">Fokussierrohr</system:String>
+  <system:String x:Key="Text.StayOnTop">Das Fenster bleibt immer oben</system:String>  
 </ResourceDictionary>

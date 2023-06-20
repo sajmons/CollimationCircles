@@ -78,4 +78,5 @@
   <system:String x:Key="Text.ItemColor">Barva</system:String>
   <system:String x:Key="Text.Secondary">Sekundarni</system:String>
   <system:String x:Key="Text.FocuserTube">Fokuser</system:String>
+  <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
 </ResourceDictionary>

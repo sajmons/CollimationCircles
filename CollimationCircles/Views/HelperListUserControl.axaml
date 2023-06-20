@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CollimationCircles.Views.HelperListUserControl">
+  <StackPanel Orientation="Vertical">    
+    <TextBlock Text="{DynamicResource Text.ItemListTitle}" Padding="0,10,0,5" />
+
+    <ListBox
+      Name="list"
+      ItemsSource="{Binding Items}"
+      SelectedItem="{Binding SelectedItem}"
+      SelectedIndex="{Binding SelectedIndex}"
+      SelectionMode="Single">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+
+          <Grid ColumnDefinitions="25,25,*,30">
+
+            <CheckBox
+              IsChecked="{Binding IsVisible}"
+              ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
+
+            <Image
+              Grid.Column="1"
+              Margin="0,0,5,0"
+              Height="20"
+              Source="{Binding Image}"/>
+
+            <TextBlock
+              TextWrapping="Wrap"
+              Grid.Column="2"
+              HorizontalAlignment="Stretch"
+              Background="{Binding SelectedItem.ItemColor}"
+              Text="{Binding Label}"
+              VerticalAlignment="Center" />
+
+            <Button
+              Grid.Column="3"
+              Padding="0"
+              Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
+              CommandParameter="{Binding .}"
+              ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+              <Image Width="30" Source="/Resources/Images/ic_remove_dark.png" />
+            </Button>
+
+          </Grid>
+
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </StackPanel>
+</UserControl>

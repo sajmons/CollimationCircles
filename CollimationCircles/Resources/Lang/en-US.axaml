@@ -81,4 +81,5 @@
   <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>
   <system:String x:Key="Text.Copyright">© 2023</system:String>
   <system:String x:Key="Text.Author">Simon Šander</system:String>
+  <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>  
 </ResourceDictionary>

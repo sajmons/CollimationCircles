@@ -1,6 +1,8 @@
 using Avalonia.Controls;
+using CollimationCircles.Messages;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace CollimationCircles.Views
 {
@@ -10,6 +12,11 @@ namespace CollimationCircles.Views
         {            
             InitializeComponent();
             DataContext = Ioc.Default.GetService<SettingsViewModel>();
+
+            WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
+            {
+                Topmost = m.Value.AlwaysOnTop;                
+            });
         }
     }
 }

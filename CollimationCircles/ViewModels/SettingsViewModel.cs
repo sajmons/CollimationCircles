@@ -91,6 +91,10 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        public bool alwaysOnTop = true;
+
+        [JsonProperty]
+        [ObservableProperty]
         public string version = string.Empty;
 
         [ObservableProperty]
@@ -420,13 +424,14 @@ namespace CollimationCircles.ViewModels
                     RotationAngle = vm.RotationAngle;
                     ShowLabels = vm.ShowLabels;
                     ColorList = vm.ColorList;
-                    LabelSize = vm.LabelSize;
+                    LabelSize = vm.LabelSize;                    
 
                     Items.Clear();
                     Items.AddRange(vm.Items);
 
                     SelectedLanguage = vm.SelectedLanguage;
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
+                    AlwaysOnTop = vm.AlwaysOnTop;
                     Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
                 }
                 else
