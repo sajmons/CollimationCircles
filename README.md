@@ -9,17 +9,23 @@ Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM
 Please be gentle. This app is still in beta stage, but It's suitable to be exposed to wider audience. Feel free to report any issues. 
 Suggestions and contributions are welcome!
 
+Home page
+https://saimons-astronomy.webador.com/software/collimation-circles
+
 # Features
 
-- support multiple helper shapes (circle, spider, screw, clip)
+- support multiple helper shapes (circle, spider, screw, clip, bahtimov mask)
 - user interface for managing list of shapes
 - scaling up or down of whole setup
 - rotation of whole setup
 - transparent background
-- fully customizable shapes: radius, thickness, color, spacing, rotation, label
+- fully customizable shapes: radius, thickness, color, spacing, rotation, label, inclination
 - support for profile saving and loading (JSON files)
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
+- multilanguage (Endglis, Slovenian, German)
+- always on top option
+- up to date online help available
 
 ![image](https://github.com/sajmons/CollimationCircles/assets/7437280/c8e03980-4a89-4894-8799-8e73ddcad045)
 
