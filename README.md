@@ -21,7 +21,7 @@ Suggestions and contributions are welcome!
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
 
-![image](https://github.com/sajmons/CollimationCircles/assets/7437280/ba8ada94-454c-4d6d-beaa-f90f1bf152a5)
+![image](https://github.com/sajmons/CollimationCircles/assets/7437280/c8e03980-4a89-4894-8799-8e73ddcad045)
 
 # .NET Framework Instalation
 
