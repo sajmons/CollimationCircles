@@ -9,7 +9,7 @@ Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM
 Please be gentle. This app is still in beta stage, but It's suitable to be exposed to wider audience. Feel free to report any issues. 
 Suggestions and contributions are welcome!
 
-Home page
+# Home page
 https://saimons-astronomy.webador.com/software/collimation-circles
 
 # Features
