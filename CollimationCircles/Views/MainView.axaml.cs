@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Styling;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
@@ -47,15 +48,16 @@ namespace CollimationCircles.Views
             {
                 SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
-                if (vm != null)
+                if (vm is not null)
                 {
-                    var it = vm?.Items;
+                    var it = vm?.Items;                    
+                    int dockedWidth = vm.DockInMainWindow ? vm.SettingsMinWidth / 2 : 0;
 
                     if (it is not null)
                     {
                         foreach (ICollimationHelper item in it)
                         {
-                            double width2 = Width / 2;
+                            double width2 = Width / 2 - dockedWidth;
                             double height2 = Height / 2;
                             double scaleOrDefault = vm?.Scale ?? 1.0;
                             double rotAngleOrDefault = vm?.RotationAngle ?? 0;
@@ -69,7 +71,7 @@ namespace CollimationCircles.Views
                             using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
                             {
                                 bool showlabels = vm?.ShowLabels ?? false;
-                                double labelSize = vm?.LabelSize ?? 15;
+                                double labelSize = vm?.LabelSize ?? 15;                                
 
                                 if (item is CircleViewModel cModel && item.IsVisible)
                                 {

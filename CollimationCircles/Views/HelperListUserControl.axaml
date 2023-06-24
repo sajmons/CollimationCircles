@@ -2,53 +2,196 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:views="clr-namespace:CollimationCircles.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CollimationCircles.Views.HelperListUserControl">
-  <StackPanel Orientation="Vertical">    
-    <TextBlock Text="{DynamicResource Text.ItemListTitle}" Padding="0,10,0,5" />
 
-    <ListBox
-      Name="list"
-      ItemsSource="{Binding Items}"
-      SelectedItem="{Binding SelectedItem}"
-      SelectedIndex="{Binding SelectedIndex}"
-      SelectionMode="Single">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
+  <WrapPanel>
+    <Border
+   Padding="16"
+   CornerRadius="4"
+   BorderBrush="Silver"
+   BorderThickness="1"
+   Margin="0,0,5,5">
+      <StackPanel Orientation="Vertical" Width="220" Spacing="5">
+        <TextBlock Text="{DynamicResource Text.ItemListTitle}" />
 
-          <Grid ColumnDefinitions="25,25,*,30">
+        <views:ToolbarUserControl/>
 
-            <CheckBox
-              IsChecked="{Binding IsVisible}"
-              ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
+        <ListBox
+          Name="list"
+          ItemsSource="{Binding Items}"
+          SelectedItem="{Binding SelectedItem}"
+          SelectedIndex="{Binding SelectedIndex}"
+          SelectionMode="Single">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
 
-            <Image
-              Grid.Column="1"
-              Margin="0,0,5,0"
-              Height="20"
-              Source="{Binding Image}"/>
+              <Grid ColumnDefinitions="25,25,*,30">
 
+                <CheckBox
+                  IsChecked="{Binding IsVisible}"
+                  ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
+
+                <Image
+                  Grid.Column="1"
+                  Margin="0,0,5,0"
+                  Height="20"
+                  Source="{Binding Image}"/>
+
+                <TextBlock
+                  TextWrapping="Wrap"
+                  Grid.Column="2"
+                  HorizontalAlignment="Stretch"
+                  Background="{Binding SelectedItem.ItemColor}"
+                  Text="{Binding Label}"
+                  VerticalAlignment="Center" />
+
+                <Button
+                  Grid.Column="3"
+                  Padding="0"
+                  Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
+                  CommandParameter="{Binding .}"
+                  ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+                  <Image Width="30" Source="/Resources/Images/ic_remove_dark.png" />
+                </Button>
+
+              </Grid>
+
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </StackPanel>
+    </Border>
+
+    <StackPanel Orientation="Vertical">
+      <Border
+    Padding="16"
+    CornerRadius="4"
+    BorderBrush="Silver"
+    BorderThickness="1"
+    Margin="0,0,5,5">
+        <StackPanel
+          Orientation="Vertical"
+          Spacing="2"
+          Width="220">
+          <TextBlock Text="{DynamicResource Text.SelectedItemProperties}" />
+
+          <UniformGrid Columns="2">
             <TextBlock
-              TextWrapping="Wrap"
-              Grid.Column="2"
+              VerticalAlignment="Center"
+              Text="{DynamicResource Text.Color}" />
+            <ComboBox
+              VerticalAlignment="Center"
+              HorizontalAlignment="Right"
+              SelectedItem="{Binding #list.SelectedItem.ItemColor, Mode=TwoWay}"
+              ItemsSource="{Binding ColorList}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate DataType="Color">
+                  <Border
+                    HorizontalAlignment="Left"
+                    CornerRadius="4"
+                    Width="20"
+                    Height="20"
+                    BorderBrush="Gray"
+                    BorderThickness="1" >
+                    <Border.Background>
+                      <SolidColorBrush Color="{Binding}" />
+                    </Border.Background>
+                  </Border>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </UniformGrid>
+
+          <UniformGrid Columns="2">
+            <TextBlock
+              VerticalAlignment="Center"
+              Text="{DynamicResource Text.Radius}"/>
+            <NumericUpDown
+              Increment="1"
+              Value="{Binding #list.SelectedItem.Radius}"
+              Minimum="1" Maximum="2000"/>
+          </UniformGrid>
+
+          <UniformGrid Columns="2">
+            <TextBlock
+              VerticalAlignment="Center"
+              Text="{DynamicResource Text.Thickness}" />
+            <NumericUpDown
+              Increment="1"
+              Value="{Binding #list.SelectedItem.Thickness}"
+              Minimum="1" Maximum="10"/>
+          </UniformGrid>
+
+          <UniformGrid Columns="2">
+            <TextBlock
+              IsVisible="{Binding #list.SelectedItem.IsRotatable}"
+              VerticalAlignment="Center"
+              Text="{DynamicResource Text.Rotation}" />
+            <NumericUpDown
+              IsVisible="{Binding #list.SelectedItem.IsRotatable}"
+              Increment="{Binding #list.SelectedItem.RotationIncrement}"
+              Value="{Binding #list.SelectedItem.RotationAngle}"
+              Minimum="-180" Maximum="180"/>
+          </UniformGrid>
+
+          <UniformGrid Columns="2">
+            <TextBlock
+              IsVisible="{Binding #list.SelectedItem.IsInclinatable}"
+              VerticalAlignment="Center"
+              Text="{DynamicResource Text.InclinationAngle}" />
+            <NumericUpDown
+              IsVisible="{Binding #list.SelectedItem.IsInclinatable}"
+              Increment="{Binding #list.SelectedItem.InclinationIncrement}"
+              Value="{Binding #list.SelectedItem.InclinationAngle}"
+              Minimum="-180" Maximum="180"/>
+          </UniformGrid>
+
+          <UniformGrid Columns="2">
+            <TextBlock
+              IsVisible="{Binding #list.SelectedItem.IsSizeable}"
+              VerticalAlignment="Center"
+              Text="{DynamicResource Text.Spacing}" />
+            <NumericUpDown
+              IsVisible="{Binding #list.SelectedItem.IsSizeable}"
+              Increment="1"
+              Value="{Binding #list.SelectedItem.Size}"
+              Minimum="1" Maximum="100"/>
+          </UniformGrid>
+
+          <UniformGrid Columns="2">
+            <TextBlock
+              IsVisible="{Binding #list.SelectedItem.IsCountable}"
+              VerticalAlignment="Center"
+              Text="{DynamicResource Text.Count}" />
+            <NumericUpDown
+              IsVisible="{Binding #list.SelectedItem.IsCountable}"
+              Increment="1"
+              Value="{Binding #list.SelectedItem.Count}"
+              Minimum="1" Maximum="10"/>
+          </UniformGrid>
+
+          <StackPanel Orientation="Vertical">
+            <TextBlock
+                IsEnabled="{Binding #list.SelectedItem.IsEditable}"
+                VerticalAlignment="Center"
+                Text="{DynamicResource Text.Label}" />
+            <TextBox
               HorizontalAlignment="Stretch"
-              Background="{Binding SelectedItem.ItemColor}"
-              Text="{Binding Label}"
-              VerticalAlignment="Center" />
+              IsEnabled="{Binding #list.SelectedItem.IsEditable}"
+              TextWrapping="Wrap"
+              MaxLength="20"
+              Watermark="{DynamicResource Text.HelperName}"
+              Text="{Binding #list.SelectedItem.Label}"/>
+          </StackPanel>
 
-            <Button
-              Grid.Column="3"
-              Padding="0"
-              Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
-              CommandParameter="{Binding .}"
-              ToolTip.Tip="{DynamicResource Text.RemoveItem}">
-              <Image Width="30" Source="/Resources/Images/ic_remove_dark.png" />
-            </Button>
+        </StackPanel>
+      </Border>
+      <views:GlobalPropertiesUserControl/>
+    </StackPanel>
 
-          </Grid>
+  </WrapPanel>
 
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
-  </StackPanel>
+  
 </UserControl>

@@ -41,7 +41,6 @@
   <system:String x:Key="Text.LabelSize">Label size</system:String>
   <system:String x:Key="Text.ListOfItems">List of items</system:String>
   <system:String x:Key="Text.LoadList">Load list from JSON file</system:String>
-  <system:String x:Key="Text.MoveWindow">Use keys: arrows move window; 'R' or 'F' rotation; '+' or '-' scaling.</system:String>
   <system:String x:Key="Text.NewVersion">New Version</system:String>
   <system:String x:Key="Text.NewVersionDownload">New version {0} available! Would you like to download it?</system:String>
   <system:String x:Key="Text.OpenFile">Open file</system:String>
@@ -63,7 +62,7 @@
   <system:String x:Key="Text.Screw">Screw</system:String>
   <system:String x:Key="Text.SelectedItemProperties">Helper properties</system:String>
   <system:String x:Key="Text.Settings">Settings</system:String>
-  <system:String x:Key="Text.SettingsWindow">Open settings window</system:String>
+  <system:String x:Key="Text.SettingsWindow">Undock settings from main window</system:String>
   <system:String x:Key="Text.ShowLabels">Labels</system:String>
   <system:String x:Key="Text.Size">Size</system:String>
   <system:String x:Key="Text.Spacing">Spacing</system:String>
@@ -81,5 +80,6 @@
   <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>
   <system:String x:Key="Text.Copyright">© 2023</system:String>
   <system:String x:Key="Text.Author">Simon Šander</system:String>
-  <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>  
+  <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>
+  <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>  
 </ResourceDictionary>

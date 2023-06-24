@@ -27,11 +27,8 @@ namespace CollimationCircles.ViewModels
         private readonly IAppService? appService;
 
         [ObservableProperty]
-        private INotifyPropertyChanged? dialogViewModel;
-
-        [ObservableProperty]
-        private INotifyPropertyChanged? aboutDialogViewModelHandler;
-
+        private INotifyPropertyChanged? settingsDialogViewModel;
+                
         [JsonProperty]
         [ObservableProperty]
         public PixelPoint position = new(100, 100);
@@ -95,10 +92,17 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        public bool dockInMainWindow = true;        
+
+        [JsonProperty]
+        [ObservableProperty]
         public string version = string.Empty;
 
         [ObservableProperty]
-        public string? appDescription;
+        public int settingsMinWidth = 280;
+
+        [ObservableProperty]
+        public string? appDescription;        
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -220,26 +224,18 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void ShowSettings()
         {
-            if (DialogViewModel is null)
+            if (SettingsDialogViewModel is null)
             {
-                DialogViewModel = dialogService?.CreateViewModel<SettingsViewModel>();
+                SettingsDialogViewModel = dialogService?.CreateViewModel<SettingsViewModel>();
 
-                if (DialogViewModel is not null)
+                if (SettingsDialogViewModel is not null)
                 {
-                    dialogService?.Show(null, DialogViewModel);
+                    dialogService?.Show(null, SettingsDialogViewModel);
                 }
-            }
-        }
 
-        [RelayCommand]
-        internal void CloseSettings()
-        {
-            if (DialogViewModel is not null)
-            {
-                dialogService?.Close(DialogViewModel);
-                DialogViewModel = null;
+                DockInMainWindow = false;
             }
-        }
+        }        
 
         [RelayCommand]
         internal void AddCircle()
@@ -371,8 +367,9 @@ namespace CollimationCircles.ViewModels
 
         public void OnClosed()
         {
-            DialogViewModel = null;
-            AboutDialogViewModelHandler = null;
+            SettingsDialogViewModel = null;
+
+            DockInMainWindow = true;
         }
 
         [RelayCommand]
@@ -424,7 +421,7 @@ namespace CollimationCircles.ViewModels
                     RotationAngle = vm.RotationAngle;
                     ShowLabels = vm.ShowLabels;
                     ColorList = vm.ColorList;
-                    LabelSize = vm.LabelSize;                    
+                    LabelSize = vm.LabelSize;
 
                     Items.Clear();
                     Items.AddRange(vm.Items);

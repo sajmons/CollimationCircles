@@ -3,6 +3,7 @@
         xmlns:vm="using:CollimationCircles.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:CollimationCircles.Views"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CollimationCircles.Views.MainView"
@@ -12,28 +13,26 @@
         TransparencyBackgroundFallback="Transparent"
         Width="{Binding Width, Mode=TwoWay}"
         Height="{Binding Height, Mode=TwoWay}">
-  <Grid RowDefinitions="64,*">
+  <RelativePanel>
+    <views:SettingsUserControl
+      Width="{Binding SettingsMinWidth}"
+      Height="{Binding Height}"
+      RelativePanel.AlignRightWithPanel="True"        
+      Background="Black"
+      IsVisible="{Binding DockInMainWindow}"/>
+
     <Button
-      Grid.Row="0"
+      RelativePanel.AlignRightWithPanel="True"
+      RelativePanel.AlignTopWithPanel="True"
       HorizontalAlignment="Right"
       VerticalAlignment="Top"
       ToolTip.Tip="{DynamicResource Text.SettingsWindow}"
-      Width="64"
-      Height="64"
-      Command="{Binding ShowSettingsCommand}">
+      Width="48"
+      Height="48"
+      Command="{Binding ShowSettingsCommand}"
+      IsVisible="{Binding DockInMainWindow}">
       <Image Source="/Resources/Images/ic_settings_dark.png" />
-    </Button>
-    <Border
-      Grid.Row="1"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Bottom"
-      Background="#2AEDEDED"
-      CornerRadius="3"      
-      Padding="5"
-      Width="64"
-      Height="64"
-      ToolTip.Tip="{DynamicResource Text.MoveWindow}">
-      <Image Source="/Resources/Images/arrow_keys.png" />
-    </Border>
-  </Grid>
+    </Button>    
+  </RelativePanel>
+  
 </Window>

@@ -41,7 +41,6 @@
   <system:String x:Key="Text.LabelSize">Velikost pisave</system:String>
   <system:String x:Key="Text.ListOfItems">Seznam pomočnikov</system:String>
   <system:String x:Key="Text.LoadList">Naloži seznam iz JSON datoteke</system:String>
-  <system:String x:Key="Text.MoveWindow">Uporabite tipke: puščice premikanje okna; 'R' ali 'F' vrtenje; '+' or '-' povečava.</system:String>
   <system:String x:Key="Text.NewVersion">Nova verzija</system:String>
   <system:String x:Key="Text.NewVersionDownload">Na voljo je nova verzija {0}! Jo želite prenesti?</system:String>
   <system:String x:Key="Text.OpenFile">Odpri datoteko</system:String>
@@ -63,7 +62,7 @@
   <system:String x:Key="Text.Screw">Vijak</system:String>
   <system:String x:Key="Text.SelectedItemProperties">Lastnosti izbranega</system:String>
   <system:String x:Key="Text.Settings">Nastavitve</system:String>
-  <system:String x:Key="Text.SettingsWindow">Odpri okno z nastavitvami</system:String>
+  <system:String x:Key="Text.SettingsWindow">Odklopi nastavitve iz glavnega okna</system:String>
   <system:String x:Key="Text.ShowLabels">Opisi</system:String>
   <system:String x:Key="Text.Size">Velikost</system:String>
   <system:String x:Key="Text.Spacing">Širina</system:String>
@@ -79,4 +78,5 @@
   <system:String x:Key="Text.Secondary">Sekundarni</system:String>
   <system:String x:Key="Text.FocuserTube">Fokuser</system:String>
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
+  <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
 </ResourceDictionary>

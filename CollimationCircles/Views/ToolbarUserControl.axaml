@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CollimationCircles.Views.ToolbarUserControl">
+  <StackPanel
+                Orientation="Horizontal"
+                Spacing="2">
+
+    <!--#region ADDItemMenu -->
+    <SplitButton Content="{DynamicResource Text.Add}" ToolTip.Tip="{DynamicResource Text.AddNewItem}">
+      <SplitButton.Flyout>
+        <MenuFlyout Placement="BottomEdgeAlignedLeft">
+          <MenuItem Header="{DynamicResource Text.Circle}" Command="{Binding AddCircleCommand}" >
+            <MenuItem.Icon>
+              <Image Source="/Resources/Images/circleviewmodel.png"/>
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Header="{DynamicResource Text.Screw}" Command="{Binding AddScrewCommand}">
+            <MenuItem.Icon>
+              <Image Source="/Resources/Images/screwviewmodel.png"/>
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Header="{DynamicResource Text.PrimaryClip}" Command="{Binding AddClipCommand}">
+            <MenuItem.Icon>
+              <Image Source="/Resources/Images/primaryclipviewmodel.png"/>
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Header="{DynamicResource Text.Spider}" Command="{Binding AddSpiderCommand}">
+            <MenuItem.Icon>
+              <Image Source="/Resources/Images/spiderviewmodel.png"/>
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Header="{DynamicResource Text.BahtinovMask}" Command="{Binding AddBahtinovMaskCommand}">
+            <MenuItem.Icon>
+              <Image Source="/Resources/Images/bahtinovmaskviewmodel.png"/>
+            </MenuItem.Icon>
+          </MenuItem>
+        </MenuFlyout>
+      </SplitButton.Flyout>
+    </SplitButton>
+    <!--#endregion-->
+
+    <!--#region ToolbarButtons-->
+    <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.ResetItems}">
+      <Image Source="/Resources/Images/ic_reset_dark.png" Width="30"/>
+    </Button>
+    <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.SaveList}">
+      <Image Source="/Resources/Images/ic_save_dark.png" Width="30"/>
+    </Button>
+    <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.LoadList}">
+      <Image Source="/Resources/Images/ic_load_dark.png" Width="30"/>
+    </Button>
+    <Button
+      Padding="0"
+      Command="{Binding DuplicateCommand}"
+      CommandParameter="{Binding SelectedIndex}"
+      VerticalAlignment="Center"
+      ToolTip.Tip="{DynamicResource Text.Duplicate}">
+      <Image Source="/Resources/Images/ic_duplicate_dark.png" Width="30"/>
+    </Button>
+    <!--#endregion-->
+
+  </StackPanel>
+</UserControl>

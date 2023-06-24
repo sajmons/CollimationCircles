@@ -41,7 +41,6 @@
   <system:String x:Key="Text.LabelSize">Textgröße</system:String>
   <system:String x:Key="Text.ListOfItems">Liste der Artikel</system:String>
   <system:String x:Key="Text.LoadList">Liste aus JSON-Datei laden</system:String>
-  <system:String x:Key="Text.MoveWindow">Benutze die Tasten: Pfeiltasten bewegen das Fenster; 'R' oder 'L' drehen; '+' oder '-' skalieren.</system:String>
   <system:String x:Key="Text.NewVersion">Neue Version</system:String>
   <system:String x:Key="Text.NewVersionDownload">Neue Version {0} verfügbar! Möchtest du es herunterladen?</system:String>
   <system:String x:Key="Text.OpenFile">Datei öffnen</system:String>
@@ -63,7 +62,7 @@
   <system:String x:Key="Text.Screw">Schraube</system:String>
   <system:String x:Key="Text.SelectedItemProperties">Hilfseigenschaften</system:String>
   <system:String x:Key="Text.Settings">Einstellungen</system:String>
-  <system:String x:Key="Text.SettingsWindow">Einstellungsfenster öffnen</system:String>
+  <system:String x:Key="Text.SettingsWindow">Einstellungen vom Hauptfenster abdocken</system:String>
   <system:String x:Key="Text.ShowLabels">Titel</system:String>
   <system:String x:Key="Text.Size">Größe</system:String>
   <system:String x:Key="Text.Spacing">Abstand</system:String>
@@ -78,5 +77,6 @@
   <system:String x:Key="Text.ItemColor">Farbe</system:String>
   <system:String x:Key="Text.Secondary">Sekundär</system:String>
   <system:String x:Key="Text.FocuserTube">Fokussierrohr</system:String>
-  <system:String x:Key="Text.StayOnTop">Das Fenster bleibt immer oben</system:String>  
+  <system:String x:Key="Text.StayOnTop">Das Fenster bleibt immer oben</system:String>
+  <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>  
 </ResourceDictionary>
