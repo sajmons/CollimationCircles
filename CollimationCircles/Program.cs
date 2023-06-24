@@ -38,6 +38,9 @@ namespace CollimationCircles
         {
             return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
+                .With(new Win32PlatformOptions { AllowEglInitialization = true })
+                .With(new X11PlatformOptions { UseGpu = true, UseEGL = true })
+                .With(new AvaloniaNativePlatformOptions { UseGpu = true })
                 .LogToTrace();
         }
     }
