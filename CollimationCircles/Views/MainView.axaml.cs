@@ -73,27 +73,32 @@ namespace CollimationCircles.Views
 
                                 if (item is CircleViewModel cModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawCircle(context, showlabels, cModel, width2, height2, brush, labelSize);
+                                    var selected = vm?.SelectedItem == cModel;
+                                    drawHelperService?.DrawCircle(context, showlabels, selected, cModel, width2, height2, brush, labelSize);
                                 }
 
                                 if (item is ScrewViewModel sModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawScrew(context, showlabels, sModel, width2, height2, brush, translateMat, labelSize);
+                                    var selected = vm?.SelectedItem == sModel;
+                                    drawHelperService?.DrawScrew(context, showlabels, selected, sModel, width2, height2, brush, translateMat, labelSize);
                                 }
 
                                 if (item is PrimaryClipViewModel pcModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawPrimaryClip(context, showlabels, pcModel, width2, height2, brush, translateMat, labelSize);
+                                    var selected = vm?.SelectedItem == pcModel;
+                                    drawHelperService?.DrawPrimaryClip(context, showlabels, selected, pcModel, width2, height2, brush, translateMat, labelSize);
                                 }
 
                                 if (item is SpiderViewModel spModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawSpider(context, showlabels, spModel, width2, height2, brush, translateMat, labelSize);
+                                    var selected = vm?.SelectedItem == spModel;
+                                    drawHelperService?.DrawSpider(context, showlabels, selected, spModel, width2, height2, brush, translateMat, labelSize);
                                 }
 
                                 if (item is BahtinovMaskViewModel foModel && item.IsVisible)
                                 {
-                                    drawHelperService?.DrawBahtinovMask(context, showlabels, foModel, width2, height2, brush, translateMat, labelSize);
+                                    var selected = vm?.SelectedItem == foModel;
+                                    drawHelperService?.DrawBahtinovMask(context, showlabels, selected, foModel, width2, height2, brush, translateMat, labelSize);
                                 }
                             }
                         }
