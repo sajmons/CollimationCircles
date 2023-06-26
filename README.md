@@ -29,6 +29,10 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - always on top option
 - up to date online help available
 
+# Prebuild binaries
+Here are prebuild binary files avaliable for you to download (win-x64, linux-x64 and linux-arm64).
+https://github.com/sajmons/CollimationCircles/releases/
+
 # .NET Framework Instalation
 
 ### Windows 10 and above
@@ -84,10 +88,6 @@ dotnet --info
 
 ### macOS
 https://learn.microsoft.com/en-us/dotnet/core/install/macos
-
-# Prebuild binaries
-Here are prebuild binary files avaliable for you to download (win-x64, linux-x64 and linux-arm64).
-https://github.com/sajmons/CollimationCircles/releases/
 
 Download latest release as ZIP file, extract it and run executable.
 
