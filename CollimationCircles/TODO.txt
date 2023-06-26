@@ -1,5 +1,4 @@
 ﻿- camera video streaming support
 - add option to select between light and dark theme
   - make resources for light and dark icons
-- add option to mark selected helper in main window
 - add trimming when publish application
