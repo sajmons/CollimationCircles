@@ -25,7 +25,7 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - support for profile saving and loading (JSON files)
 - precise position control with keyboard
 - multiple platform support (Windows, Linux, macOS)
-- multilanguage (Endglis, Slovenian, German)
+- multilanguage (English, Slovenian, German)
 - always on top option
 - up to date online help available
 
