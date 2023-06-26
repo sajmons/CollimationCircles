@@ -115,7 +115,7 @@ I'm using these commands to make prebuild binaries.
 dotnet restore .\CollimationCircles.sln -r win-x64
 ```
 ```
-dotnet publish -c Release -f net7.0 -r win-x64 -o D:\Projekti\Publish\cc\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
+dotnet publish -c Release -f net7.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
 ```
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
 
