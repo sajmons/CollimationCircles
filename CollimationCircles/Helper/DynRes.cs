@@ -21,7 +21,7 @@ namespace CollimationCircles.Helper
             if (translations.TryGetResource($"Text.{resourceKey}", ThemeVariant.Dark, out object? value))
             {
                 if (value is null)
-                    throw new Exception($"Resource key '{resourceKey}' not found.");                
+                    throw new Exception($"Resource key '{resourceKey}' not found.");
 
                 return (string)value;
             }

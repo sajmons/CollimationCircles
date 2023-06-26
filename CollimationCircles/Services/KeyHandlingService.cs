@@ -112,12 +112,12 @@ namespace CollimationCircles.Services
                 if (vm != null)
                 {
                     switch (e.Key)
-                    {                        
+                    {
                         case Key.W:
                             vm.SelectedItem.Radius += 1;
                             e.Handled = true;
                             break;
-                        
+
                         case Key.S:
                             vm.SelectedItem.Radius -= 1;
                             e.Handled = true;
@@ -144,7 +144,7 @@ namespace CollimationCircles.Services
                             vm.SelectedItem.RotationAngle += 1;
                             e.Handled = true;
                             break;
-                    }                    
+                    }
                 }
             }
         }
@@ -210,7 +210,7 @@ namespace CollimationCircles.Services
                             vm.SelectedItem.Thickness -= 1;
                             e.Handled = true;
                             break;
-                    }                    
+                    }
                 }
             }
         }

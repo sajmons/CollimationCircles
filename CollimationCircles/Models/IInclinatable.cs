@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
-
-namespace CollimationCircles.Models
+﻿namespace CollimationCircles.Models
 {
     public interface IInclinatable
     {

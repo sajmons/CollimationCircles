@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CollimationCircles.Messages;
@@ -119,7 +118,7 @@ namespace CollimationCircles.Models
                 string assemblyName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
 
                 var uri = new Uri($"avares://{assemblyName}/{path}.png");
-                
+
                 var asset = AssetLoader.Open(uri);
 
                 if (asset is null)

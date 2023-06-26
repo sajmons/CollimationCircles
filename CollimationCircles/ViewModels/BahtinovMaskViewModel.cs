@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using CollimationCircles.Helper;
 using CollimationCircles.Models;
 

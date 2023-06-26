@@ -1,13 +1,10 @@
-﻿using Avalonia.Platform;
-using Avalonia;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Octokit;
 using System;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace CollimationCircles.Services;
 public class AppService : IAppService
