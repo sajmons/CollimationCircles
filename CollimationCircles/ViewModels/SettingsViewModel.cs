@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Media;
 using CollimationCircles.Extensions;
 using CollimationCircles.Helper;
@@ -35,11 +36,11 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public double width = 650;
+        public double width = 900;
 
         [JsonProperty]
         [ObservableProperty]
-        public double height = 650;
+        public double height = 700;
 
         [JsonProperty]
         [ObservableProperty]
@@ -334,7 +335,7 @@ namespace CollimationCircles.ViewModels
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
-                if (!LoadState(path?.Path?.LocalPath))
+                if (!LoadState(path: path?.Path?.LocalPath))
                 {
                     await dialogService.ShowMessageBoxAsync(this, DynRes.TryGetString("UnableToOpenFile"), DynRes.TryGetString("Error"));
                 }
@@ -408,12 +409,13 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        internal void SaveState()
+        internal void SaveState(Window window)
         {
+            Position= window.Position;
             appService?.SaveState(this);
         }
 
-        internal bool LoadState(string? path = null)
+        internal bool LoadState(string? path = null, Window? window = null)
         {
             try
             {
@@ -421,7 +423,12 @@ namespace CollimationCircles.ViewModels
 
                 if (vm != null && vm.Items != null)
                 {
-                    Position = vm.Position;
+                    if (window is not null)
+                    {
+                        window.Position = Position;
+                    }
+
+                    Position = vm.Position;                    
                     Width = vm.Width;
                     Height = vm.Height;
                     Scale = vm.Scale;

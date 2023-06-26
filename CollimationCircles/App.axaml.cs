@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Principal;
 
 namespace CollimationCircles;
 public partial class App : Application
@@ -25,9 +26,9 @@ public partial class App : Application
         {
             SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
-            vm?.LoadState();
-
             desktop.MainWindow = new MainView();
+
+            vm?.LoadState(window: desktop.MainWindow);
 
             KeyHandlingService? mws = Ioc.Default.GetService<KeyHandlingService>();
 
@@ -50,7 +51,7 @@ public partial class App : Application
 
             desktop.MainWindow.Closing += (s, e) =>
             {
-                vm?.SaveState();
+                vm?.SaveState(desktop.MainWindow);
             };
         }
 
