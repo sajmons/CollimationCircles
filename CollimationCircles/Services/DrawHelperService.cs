@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
+using CollimationCircles.Models;
 using CollimationCircles.ViewModels;
 using System;
 using System.Globalization;
@@ -8,7 +9,7 @@ namespace CollimationCircles.Services
 {
     internal class DrawHelperService : IDrawHelperService
     {
-        FormattedText selectedMark = new FormattedText(
+        readonly FormattedText selectedMark = new(
                         "▲",
                         CultureInfo.CurrentCulture,
                         FlowDirection.LeftToRight,
@@ -16,33 +17,60 @@ namespace CollimationCircles.Services
                         18,
                         Brushes.Yellow);
 
-        public void DrawCircle(DrawingContext context, bool showLabels, bool selected, CircleViewModel item, double width2, double height2, IBrush brush, double labelSize)
+        public void DrawMask<T>(DrawingContext context, SettingsViewModel? vm, T item, double width2, double height2, IBrush brush, Matrix translate)
+        {
+            if (item is not ICollimationHelper helper || !helper.IsVisible) return;
+
+            if (vm is not null)
+            {
+                switch (item)
+                {
+                    case CircleViewModel civm:
+                        DrawCircle(context, vm, civm, width2, height2, brush);
+                        break;
+                    case ScrewViewModel scvm:
+                        DrawScrew(context, vm, scvm, brush, translate);
+                        break;
+                    case PrimaryClipViewModel pcvm:
+                        DrawPrimaryClip(context, vm, pcvm, brush, translate);
+                        break;
+                    case SpiderViewModel spvm:
+                        DrawSpider(context, vm, spvm, width2, height2, brush, translate);
+                        break;
+                    case BahtinovMaskViewModel bmvm:
+                        DrawBahtinovMask(context, vm, bmvm, width2, height2, brush, translate);
+                        break;
+                }
+            }
+        }
+
+        private void DrawCircle(DrawingContext context, SettingsViewModel vm, CircleViewModel item, double width2, double height2, IBrush brush)
         {
             context.DrawEllipse(Brushes.Transparent, new Pen(brush, item.Thickness), new Point(width2, height2), item.Radius, item.Radius);
 
-            if (showLabels)
+            if (vm.ShowLabels)
             {
                 var formattedText = new FormattedText(
                     item?.Label ?? "Undefined",
                     CultureInfo.CurrentCulture,
                     FlowDirection.LeftToRight,
                     Typeface.Default,
-                    labelSize,
+                    vm.LabelSize,
                     brush);
 
                 if (item is not null)
                 {
-                    context.DrawText(formattedText, new Point(width2 - item.Size * formattedText.Width / labelSize, height2 - item.Radius - item.Size * 2));
+                    context.DrawText(formattedText, new Point(width2 - item.Size * formattedText.Width / vm.LabelSize, height2 - item.Radius - item.Size * 2));
                 }
             }
 
-            if (selected)
+            if (vm.SelectedItem is CircleViewModel && vm.ShowMarkAtSelectedItem && item is not null)
             {
                 context.DrawText(selectedMark, new Point(width2 - item.Size, height2 - item.Radius));
             }
         }
 
-        public void DrawScrew(DrawingContext context, bool showLabels, bool selected, ScrewViewModel item, double width2, double height2, IBrush brush, Matrix translate, double labelSize)
+        private void DrawScrew(DrawingContext context, SettingsViewModel vm, ScrewViewModel item, IBrush brush, Matrix translate)
         {
             double angle = 360 / item.Count;
 
@@ -56,20 +84,20 @@ namespace CollimationCircles.Services
                     {
                         context.DrawEllipse(brush, new Pen(brush, item.Thickness), new Point(0, item.Radius), item.Size, item.Size);
 
-                        if (showLabels)
+                        if (vm.ShowLabels)
                         {
                             var formattedText = new FormattedText(
                                 $"{item.Label} {i}",
                                 CultureInfo.CurrentCulture,
                                 FlowDirection.LeftToRight,
                                 Typeface.Default,
-                                labelSize,
+                                vm.LabelSize,
                                 brush);
 
-                            context.DrawText(formattedText, new Point(-item.Size - (formattedText.Width / labelSize), item.Radius + item.Size));
+                            context.DrawText(formattedText, new Point(-item.Size - (formattedText.Width / vm.LabelSize), item.Radius + item.Size));
                         }
 
-                        if (selected && i == 0)
+                        if (vm.SelectedItem is ScrewViewModel && i == 0 && vm.ShowMarkAtSelectedItem)
                         {
                             context.DrawText(selectedMark, new Point(-item.Size, item.Radius + item.Size));
                         }
@@ -77,7 +105,8 @@ namespace CollimationCircles.Services
                 }
             }
         }
-        public void DrawPrimaryClip(DrawingContext context, bool showLabels, bool selected, PrimaryClipViewModel item, double width2, double height2, IBrush brush, Matrix translate, double labelSize)
+
+        private void DrawPrimaryClip(DrawingContext context, SettingsViewModel vm, PrimaryClipViewModel item, IBrush brush, Matrix translate)
         {
             double angle = 360 / item.Count;
 
@@ -91,29 +120,29 @@ namespace CollimationCircles.Services
                     {
                         context.DrawRectangle(new Pen(brush, item.Thickness), new Rect(-item.Size / 2, item.Radius - item.Size / 2, item.Size, item.Size / 3));
 
-                        if (showLabels)
+                        if (vm.ShowLabels)
                         {
                             var formattedText = new FormattedText(
                                 $"{item.Label} {i}",
                                 CultureInfo.CurrentCulture,
                                 FlowDirection.LeftToRight,
                                 Typeface.Default,
-                                labelSize,
+                                vm.LabelSize,
                                 brush);
 
-                            context.DrawText(formattedText, new Point((-item.Size / 2 - (formattedText.Width / labelSize)) / 2, item.Radius));
+                            context.DrawText(formattedText, new Point((-item.Size / 2 - (formattedText.Width / vm.LabelSize)) / 2, item.Radius));
                         }
 
-                        if (selected && i == 0)
+                        if (vm.SelectedItem is PrimaryClipViewModel && i == 0 && vm.ShowMarkAtSelectedItem)
                         {
                             context.DrawText(selectedMark, new Point((-item.Size / 2) / 2, item.Radius));
                         }
-                    }                    
-                }                
+                    }
+                }
             }
         }
 
-        public void DrawSpider(DrawingContext context, bool showLabels, bool selected, SpiderViewModel item, double width2, double height2, IBrush brush, Matrix translate, double labelSize)
+        private void DrawSpider(DrawingContext context, SettingsViewModel vm, SpiderViewModel item, double width2, double height2, IBrush brush, Matrix translate)
         {
             if (item.Count < 1) return;
 
@@ -131,27 +160,27 @@ namespace CollimationCircles.Services
                     }
                 }
 
-                if (showLabels)
+                if (vm.ShowLabels)
                 {
                     var formattedText = new FormattedText(
                         $"{item.Label}",
                         CultureInfo.CurrentCulture,
                         FlowDirection.LeftToRight,
                         Typeface.Default,
-                        labelSize,
+                        vm.LabelSize,
                         brush);
 
                     context.DrawText(formattedText, new Point(width2 - item.Radius, height2 - item.Size / 2));
                 }
 
-                if (selected)
+                if (vm.SelectedItem is SpiderViewModel && vm.ShowMarkAtSelectedItem)
                 {
                     context.DrawText(selectedMark, new Point(width2 - item.Radius, height2 - item.Size / 2));
                 }
             }
         }
 
-        public void DrawBahtinovMask(DrawingContext context, bool showLabels, bool selected, BahtinovMaskViewModel item, double width2, double height2, IBrush brush, Matrix translate, double labelSize)
+        private void DrawBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, double width2, double height2, IBrush brush, Matrix translate)
         {
             double angle = item.InclinationAngle;
 
@@ -167,21 +196,21 @@ namespace CollimationCircles.Services
                     }
                 }
 
-                if (showLabels)
+                if (vm.ShowLabels)
                 {
                     var formattedText = new FormattedText(
                         $"{item.Label}",
                         CultureInfo.CurrentCulture,
                         FlowDirection.LeftToRight,
                         Typeface.Default,
-                        labelSize,
+                        vm.LabelSize,
                         brush);
 
-                    context.DrawText(formattedText, new Point(width2 - item.Radius, height2 - item.Size + labelSize));
+                    context.DrawText(formattedText, new Point(width2 - item.Radius, height2 - item.Size + vm.LabelSize));
                 }
 
-                if (selected)
-                {                    
+                if (vm.SelectedItem is BahtinovMaskViewModel && vm.ShowMarkAtSelectedItem)
+                {
                     context.DrawText(selectedMark, new Point(width2 - item.Radius, height2 - item.Size));
                 }
             }

@@ -1,7 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
-using Avalonia.Styling;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
@@ -14,7 +13,7 @@ namespace CollimationCircles.Views
 {
     public partial class MainView : Window
     {
-        readonly IDrawHelperService? drawHelperService;
+        readonly IDrawHelperService? dhs;
 
         public MainView()
         {
@@ -31,7 +30,7 @@ namespace CollimationCircles.Views
                 InvalidateVisual();
             });
 
-            drawHelperService = Ioc.Default.GetService<IDrawHelperService>();
+            dhs = Ioc.Default.GetService<IDrawHelperService>();
         }
 
         static void CheckForUpdate(SettingsViewModel? vm)
@@ -50,12 +49,12 @@ namespace CollimationCircles.Views
 
                 if (vm is not null)
                 {
-                    var it = vm?.Items;                    
                     int dockedWidth = vm.DockInMainWindow ? vm.SettingsMinWidth / 2 : 0;
+                    var items = vm?.Items;
 
-                    if (it is not null)
+                    if (items is not null)
                     {
-                        foreach (ICollimationHelper item in it)
+                        foreach (ICollimationHelper item in items)
                         {
                             double width2 = Width / 2 - dockedWidth;
                             double height2 = Height / 2;
@@ -70,38 +69,24 @@ namespace CollimationCircles.Views
 
                             using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
                             {
-                                bool showlabels = vm?.ShowLabels ?? false;
-                                double labelSize = vm?.LabelSize ?? 15;                                
-
-                                if (item is CircleViewModel cModel && item.IsVisible)
+                                switch (item)
                                 {
-                                    var selected = vm?.SelectedItem == cModel;
-                                    drawHelperService?.DrawCircle(context, showlabels, selected, cModel, width2, height2, brush, labelSize);
-                                }
-
-                                if (item is ScrewViewModel sModel && item.IsVisible)
-                                {
-                                    var selected = vm?.SelectedItem == sModel;
-                                    drawHelperService?.DrawScrew(context, showlabels, selected, sModel, width2, height2, brush, translateMat, labelSize);
-                                }
-
-                                if (item is PrimaryClipViewModel pcModel && item.IsVisible)
-                                {
-                                    var selected = vm?.SelectedItem == pcModel;
-                                    drawHelperService?.DrawPrimaryClip(context, showlabels, selected, pcModel, width2, height2, brush, translateMat, labelSize);
-                                }
-
-                                if (item is SpiderViewModel spModel && item.IsVisible)
-                                {
-                                    var selected = vm?.SelectedItem == spModel;
-                                    drawHelperService?.DrawSpider(context, showlabels, selected, spModel, width2, height2, brush, translateMat, labelSize);
-                                }
-
-                                if (item is BahtinovMaskViewModel foModel && item.IsVisible)
-                                {
-                                    var selected = vm?.SelectedItem == foModel;
-                                    drawHelperService?.DrawBahtinovMask(context, showlabels, selected, foModel, width2, height2, brush, translateMat, labelSize);
-                                }
+                                    case CircleViewModel civm:
+                                        dhs?.DrawMask(context, vm, civm, width2, height2, brush, translateMat);
+                                        break;
+                                    case ScrewViewModel scvm:
+                                        dhs?.DrawMask(context, vm, scvm, width2, height2, brush, translateMat);
+                                        break;
+                                    case PrimaryClipViewModel pcvm:
+                                        dhs?.DrawMask(context, vm, pcvm, width2, height2, brush, translateMat);
+                                        break;
+                                    case SpiderViewModel spvm:
+                                        dhs?.DrawMask(context, vm, spvm, width2, height2, brush, translateMat);
+                                        break;
+                                    case BahtinovMaskViewModel bmvm:
+                                        dhs?.DrawMask(context, vm, bmvm, width2, height2, brush, translateMat);
+                                        break;
+                                };
                             }
                         }
                     }
