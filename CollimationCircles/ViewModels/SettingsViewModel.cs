@@ -97,8 +97,7 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         public bool showMarkAtSelectedItem = true;
-
-        [JsonProperty]
+                
         [ObservableProperty]
         public string version = string.Empty;
 
