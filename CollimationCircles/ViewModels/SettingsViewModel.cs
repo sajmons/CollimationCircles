@@ -28,7 +28,7 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
-                
+
         [JsonProperty]
         [ObservableProperty]
         public PixelPoint position = new(100, 100);
@@ -92,7 +92,11 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public bool dockInMainWindow = true;        
+        public bool dockInMainWindow = true;
+
+        [JsonProperty]
+        [ObservableProperty]
+        public bool showMarkAtSelectedItem = true;
 
         [JsonProperty]
         [ObservableProperty]
@@ -102,7 +106,7 @@ namespace CollimationCircles.ViewModels
         public int settingsMinWidth = 280;
 
         [ObservableProperty]
-        public string? appDescription;        
+        public string? appDescription;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -203,6 +207,10 @@ namespace CollimationCircles.ViewModels
             RotationAngle = 0;
             Scale = 1;
             ShowLabels = true;
+            CheckForNewVersionOnStartup = true;
+            AlwaysOnTop = true;
+            DockInMainWindow = true;
+            ShowMarkAtSelectedItem = true;
 
             Version = appService?.GetAppVersion() ?? "0.0.0";
         }
@@ -235,7 +243,7 @@ namespace CollimationCircles.ViewModels
 
                 DockInMainWindow = false;
             }
-        }        
+        }
 
         [RelayCommand]
         internal void AddCircle()
@@ -429,6 +437,8 @@ namespace CollimationCircles.ViewModels
                     SelectedLanguage = vm.SelectedLanguage;
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
                     AlwaysOnTop = vm.AlwaysOnTop;
+                    DockInMainWindow = vm.DockInMainWindow;
+                    ShowMarkAtSelectedItem = vm.ShowMarkAtSelectedItem;
                     Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
                 }
                 else

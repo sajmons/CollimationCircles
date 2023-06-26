@@ -35,7 +35,13 @@
           Text="{DynamicResource Text.StayOnTop}"
           VerticalAlignment="Center"/>
         <CheckBox
-          IsChecked="{Binding AlwaysOnTop}" />        
+          IsChecked="{Binding AlwaysOnTop}" />
+        <TextBlock
+          TextWrapping="WrapWithOverflow"
+          Text="{DynamicResource Text.ShowMarkAtSelectedItem}"
+          VerticalAlignment="Center"/>
+        <CheckBox
+          IsChecked="{Binding ShowMarkAtSelectedItem}" />
       </UniformGrid>
       <StackPanel Orientation="Vertical">
         <Separator Margin="0,10,0,10" />

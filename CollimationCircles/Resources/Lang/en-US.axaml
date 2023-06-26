@@ -81,5 +81,6 @@
   <system:String x:Key="Text.Copyright">© 2023</system:String>
   <system:String x:Key="Text.Author">Simon Šander</system:String>
   <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>
-  <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>  
+  <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>
+  <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected item</system:String>  
 </ResourceDictionary>
