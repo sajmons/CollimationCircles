@@ -62,7 +62,7 @@
   <system:String x:Key="Text.Screw">Vijak</system:String>
   <system:String x:Key="Text.SelectedItemProperties">Lastnosti izbranega</system:String>
   <system:String x:Key="Text.Settings">Nastavitve</system:String>
-  <system:String x:Key="Text.SettingsWindow">Odklopi nastavitve iz glavnega okna</system:String>
+  <system:String x:Key="Text.SettingsWindow">Odpni v ločeno okno</system:String>
   <system:String x:Key="Text.ShowLabels">Opisi</system:String>
   <system:String x:Key="Text.Size">Velikost</system:String>
   <system:String x:Key="Text.Spacing">Širina</system:String>

@@ -31,7 +31,7 @@
       Height="48"
       Command="{Binding ShowSettingsCommand}"
       IsVisible="{Binding DockInMainWindow}">
-      <Image Source="/Resources/Images/ic_settings_dark.png" />
+      <Image Source="/Resources/Images/ic_undock.png" />
     </Button>    
   </RelativePanel>
   

@@ -62,7 +62,7 @@
   <system:String x:Key="Text.Screw">Screw</system:String>
   <system:String x:Key="Text.SelectedItemProperties">Helper properties</system:String>
   <system:String x:Key="Text.Settings">Settings</system:String>
-  <system:String x:Key="Text.SettingsWindow">Undock settings from main window</system:String>
+  <system:String x:Key="Text.SettingsWindow">Undock to separate window</system:String>
   <system:String x:Key="Text.ShowLabels">Labels</system:String>
   <system:String x:Key="Text.Size">Size</system:String>
   <system:String x:Key="Text.Spacing">Spacing</system:String>

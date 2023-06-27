@@ -62,7 +62,7 @@
   <system:String x:Key="Text.Screw">Schraube</system:String>
   <system:String x:Key="Text.SelectedItemProperties">Hilfseigenschaften</system:String>
   <system:String x:Key="Text.Settings">Einstellungen</system:String>
-  <system:String x:Key="Text.SettingsWindow">Einstellungen vom Hauptfenster abdocken</system:String>
+  <system:String x:Key="Text.SettingsWindow">Zum separaten Fenster abdocken</system:String>
   <system:String x:Key="Text.ShowLabels">Titel</system:String>
   <system:String x:Key="Text.Size">Größe</system:String>
   <system:String x:Key="Text.Spacing">Abstand</system:String>
