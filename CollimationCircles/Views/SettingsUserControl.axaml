@@ -22,7 +22,9 @@
           FontSize="14"
           Text="{DynamicResource Text.Settings}" />
       </TabItem.Header>
-      <views:SettingsTabUserControl />
+      <ScrollViewer>
+        <views:SettingsTabUserControl />
+      </ScrollViewer>
     </TabItem>
     <TabItem>
       <TabItem.Header>
