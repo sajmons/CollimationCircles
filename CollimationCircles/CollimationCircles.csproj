@@ -29,6 +29,7 @@
     <AvaloniaResource Include="Resources\**" />    
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Remove="Resources\Icons\Icons.axaml" />
     <AvaloniaResource Remove="Resources\Themes\Dark.axaml" />
     <AvaloniaResource Remove="Resources\Themes\Light.axaml" />
     <AvaloniaResource Remove="Resources\Themes\Night.axaml" />

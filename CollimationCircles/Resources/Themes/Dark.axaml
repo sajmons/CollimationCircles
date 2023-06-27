@@ -4,6 +4,8 @@
   <ResourceDictionary.ThemeDictionaries>
 
     <ResourceDictionary x:Key="Dark">
+      <Color x:Key="Red2">Silver</Color>
+
       <!-- Dark colors -->
       <SolidColorBrush x:Key="TextControlForeground">#E4E3DD</SolidColorBrush >
       <SolidColorBrush x:Key="ThemeBackgroundBrush">#171717</SolidColorBrush >

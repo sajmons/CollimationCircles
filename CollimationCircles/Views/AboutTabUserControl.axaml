@@ -9,12 +9,13 @@
             BorderThickness="1">
     <StackPanel Orientation="Vertical">
       <WrapPanel>
-        <Image
-          Margin="0,0,10,10"
-          Source="/Resources/Images/ic_launcher.png"
-          Width="32" />
+        <PathIcon
+          Width="24" Height="24" 
+          HorizontalAlignment="Center" VerticalAlignment="Center"
+          Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Launcher}" />
         <TextBlock
           Margin="0,0,10,10"
+          Padding="8,0,0,0"
           HorizontalAlignment="Stretch"
           TextWrapping="WrapWithOverflow"
           Text="{Binding AppDescription}"
@@ -25,8 +26,8 @@
           VerticalAlignment="Bottom"
           Command="{Binding OpenWebSiteCommand}">
           <StackPanel Orientation="Horizontal">
-            <Image Source="/Resources/Images/ic_help_dark.png" Height="32" />
-            <TextBlock Text="{DynamicResource Text.OpenWebSite}" VerticalAlignment="Center"/>
+            <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Help}" />
+            <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.OpenWebSite}" VerticalAlignment="Center"/>
           </StackPanel>
         </Button>
         <Button
@@ -35,8 +36,8 @@
           VerticalAlignment="Bottom"
           Command="{Binding OpenGitHubPageCommand}">
           <StackPanel Orientation="Horizontal">
-            <Image Source="/Resources/Images/ic_github.png" Height="32" />
-            <TextBlock Text="{DynamicResource Text.GitHub}" VerticalAlignment="Center"/>
+            <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.GitHub}" />
+            <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.GitHub}" VerticalAlignment="Center"/>
           </StackPanel>
         </Button>
         <Button
@@ -45,8 +46,8 @@
           VerticalAlignment="Bottom"
           Command="{Binding OpenContactWebPageCommand}">
           <StackPanel Orientation="Horizontal">
-            <Image Source="/Resources/Images/ic_email_dark.png" Height="32" />
-            <TextBlock Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>
+            <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Email}" />
+            <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>
           </StackPanel>
         </Button>        
       </WrapPanel>

@@ -31,7 +31,7 @@
       Height="48"
       Command="{Binding ShowSettingsCommand}"
       IsVisible="{Binding DockInMainWindow}">
-      <Image Source="/Resources/Images/ic_undock.png" />
+      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Undock}"/>
     </Button>    
   </RelativePanel>
   

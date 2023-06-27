@@ -14,27 +14,27 @@
         <MenuFlyout Placement="BottomEdgeAlignedLeft">
           <MenuItem Header="{DynamicResource Text.Circle}" Command="{Binding AddCircleCommand}" >
             <MenuItem.Icon>
-              <Image Source="/Resources/Images/circleviewmodel.png"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Circle}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.Screw}" Command="{Binding AddScrewCommand}">
             <MenuItem.Icon>
-              <Image Source="/Resources/Images/screwviewmodel.png"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Screw}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.PrimaryClip}" Command="{Binding AddClipCommand}">
             <MenuItem.Icon>
-              <Image Source="/Resources/Images/primaryclipviewmodel.png"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Clip}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.Spider}" Command="{Binding AddSpiderCommand}">
             <MenuItem.Icon>
-              <Image Source="/Resources/Images/spiderviewmodel.png"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Spider}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.BahtinovMask}" Command="{Binding AddBahtinovMaskCommand}">
             <MenuItem.Icon>
-              <Image Source="/Resources/Images/bahtinovmaskviewmodel.png"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.BahtinovMask}"/>
             </MenuItem.Icon>
           </MenuItem>
         </MenuFlyout>
@@ -43,22 +43,18 @@
     <!--#endregion-->
 
     <!--#region ToolbarButtons-->
-    <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.ResetItems}">
-      <Image Source="/Resources/Images/ic_reset_dark.png" Width="30"/>
+    <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.ResetItems}" Width="30" Height="30">
+      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Reset}"/>
     </Button>
-    <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.SaveList}">
-      <Image Source="/Resources/Images/ic_save_dark.png" Width="30"/>
+    <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.SaveList}" Width="30" Height="30">
+      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Save}"/>
     </Button>
-    <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.LoadList}">
-      <Image Source="/Resources/Images/ic_load_dark.png" Width="30"/>
+    <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.LoadList}" Width="30" Height="30">
+      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Load}"/>
     </Button>
-    <Button
-      Padding="0"
-      Command="{Binding DuplicateCommand}"
-      CommandParameter="{Binding SelectedIndex}"
-      VerticalAlignment="Center"
-      ToolTip.Tip="{DynamicResource Text.Duplicate}">
-      <Image Source="/Resources/Images/ic_duplicate_dark.png" Width="30"/>
+    <Button Padding="0" Command="{Binding DuplicateCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.Duplicate}" Width="30" Height="30"
+      CommandParameter="{Binding SelectedIndex}">
+      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Duplicate}"/>
     </Button>
     <!--#endregion-->
 

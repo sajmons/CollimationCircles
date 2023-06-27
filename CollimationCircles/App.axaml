@@ -13,6 +13,7 @@
         <ResourceInclude Source="/Resources/Themes/Light.axaml" />
         <ResourceInclude Source="/Resources/Themes/Dark.axaml" />
         <ResourceInclude Source="/Resources/Themes/Night.axaml" />
+        <ResourceInclude Source="/Resources/Icons/Icons.axaml" />
       </ResourceDictionary.MergedDictionaries>      
     </ResourceDictionary>
 
