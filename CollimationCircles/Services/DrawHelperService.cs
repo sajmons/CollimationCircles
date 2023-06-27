@@ -64,7 +64,7 @@ namespace CollimationCircles.Services
                 }
             }
 
-            if (vm.SelectedItem is CircleViewModel && vm.ShowMarkAtSelectedItem && item is not null)
+            if (vm.SelectedItem is CircleViewModel && vm.ShowMarkAtSelectedItem && item is not null && vm.SelectedItem == item)
             {
                 context.DrawText(selectedMark, new Point(width2 - item.Size, height2 - item.Radius));
             }
@@ -97,7 +97,7 @@ namespace CollimationCircles.Services
                             context.DrawText(formattedText, new Point(-item.Size - (formattedText.Width / vm.LabelSize), item.Radius + item.Size));
                         }
 
-                        if (vm.SelectedItem is ScrewViewModel && i == 0 && vm.ShowMarkAtSelectedItem)
+                        if (vm.SelectedItem is ScrewViewModel && i == 0 && vm.ShowMarkAtSelectedItem && vm.SelectedItem == item)
                         {
                             context.DrawText(selectedMark, new Point(-item.Size, item.Radius + item.Size));
                         }
@@ -133,7 +133,7 @@ namespace CollimationCircles.Services
                             context.DrawText(formattedText, new Point((-item.Size / 2 - (formattedText.Width / vm.LabelSize)) / 2, item.Radius));
                         }
 
-                        if (vm.SelectedItem is PrimaryClipViewModel && i == 0 && vm.ShowMarkAtSelectedItem)
+                        if (vm.SelectedItem is PrimaryClipViewModel && i == 0 && vm.ShowMarkAtSelectedItem && vm.SelectedItem == item)
                         {
                             context.DrawText(selectedMark, new Point((-item.Size / 2) / 2, item.Radius));
                         }
@@ -173,7 +173,7 @@ namespace CollimationCircles.Services
                     context.DrawText(formattedText, new Point(width2 - item.Radius, height2 - item.Size / 2));
                 }
 
-                if (vm.SelectedItem is SpiderViewModel && vm.ShowMarkAtSelectedItem)
+                if (vm.SelectedItem is SpiderViewModel && vm.ShowMarkAtSelectedItem && vm.SelectedItem == item)
                 {
                     context.DrawText(selectedMark, new Point(width2 - item.Radius, height2 - item.Size / 2));
                 }
@@ -209,7 +209,7 @@ namespace CollimationCircles.Services
                     context.DrawText(formattedText, new Point(width2 - item.Radius, height2 - item.Size + vm.LabelSize));
                 }
 
-                if (vm.SelectedItem is BahtinovMaskViewModel && vm.ShowMarkAtSelectedItem)
+                if (vm.SelectedItem is BahtinovMaskViewModel && vm.ShowMarkAtSelectedItem && vm.SelectedItem == item)
                 {
                     context.DrawText(selectedMark, new Point(width2 - item.Radius, height2 - item.Size));
                 }
