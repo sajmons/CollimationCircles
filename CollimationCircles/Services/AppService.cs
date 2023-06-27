@@ -16,6 +16,7 @@ public class AppService : IAppService
 
     public string WebPage => "https://saimons-astronomy.webador.com/software/collimation-circles";
     public string ContactPage => "https://saimons-astronomy.webador.com/about";
+    public string GitHubPage => "https://github.com/sajmons/CollimationCircles";
 
     public string GetAppVersion()
     {

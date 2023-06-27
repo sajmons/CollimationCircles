@@ -488,5 +488,14 @@ namespace CollimationCircles.ViewModels
                 OpenUrl(appService.ContactPage);
             }
         }
+
+        [RelayCommand]
+        internal void OpenGitHubPage()
+        {
+            if (appService is not null)
+            {
+                OpenUrl(appService.GitHubPage);
+            }
+        }        
     }
 }

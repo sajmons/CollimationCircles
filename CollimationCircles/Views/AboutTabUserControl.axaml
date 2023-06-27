@@ -21,6 +21,7 @@
           VerticalAlignment="Center" />
         <Button
           Margin="0,0,10,10"
+          Width="130"
           VerticalAlignment="Bottom"
           Command="{Binding OpenWebSiteCommand}">
           <StackPanel Orientation="Horizontal">
@@ -30,13 +31,24 @@
         </Button>
         <Button
           Margin="0,0,10,10"
+          Width="130"
+          VerticalAlignment="Bottom"
+          Command="{Binding OpenGitHubPageCommand}">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="/Resources/Images/ic_github.png" Height="32" />
+            <TextBlock Text="{DynamicResource Text.GitHub}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button
+          Margin="0,0,10,10"
+          Width="130"
           VerticalAlignment="Bottom"
           Command="{Binding OpenContactWebPageCommand}">
           <StackPanel Orientation="Horizontal">
             <Image Source="/Resources/Images/ic_email_dark.png" Height="32" />
             <TextBlock Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>
           </StackPanel>
-        </Button>
+        </Button>        
       </WrapPanel>
     </StackPanel>
   </Border>
