@@ -84,4 +84,5 @@
   <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected item</system:String>
   <system:String x:Key="Text.GitHub">GitHub</system:String>
+  <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
 </ResourceDictionary>

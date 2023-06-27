@@ -80,4 +80,5 @@
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako pri izbranem elementu</system:String>
+  <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>
 </ResourceDictionary>

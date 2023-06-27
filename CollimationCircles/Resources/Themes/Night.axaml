@@ -1,0 +1,50 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:themes="using:CollimationCircles.Themes">
+
+  <ResourceDictionary.ThemeDictionaries>
+
+    <ResourceDictionary x:Key="{x:Static themes:Custom.Night}">
+
+      <Color x:Key="Red1">Red</Color>
+      <Color x:Key="Red2">DarkRed</Color>
+      <Color x:Key="Red3">#410000</Color>
+      <Color x:Key="Red4">#2c1512</Color>
+
+      <Color x:Key="BackgroundColor">#171717</Color>
+
+      <!-- TextControl colors -->
+      <SolidColorBrush x:Key="TextControlForeground" Color="{StaticResource Red2}"/>
+      <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="{StaticResource Red1}" />
+      <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{StaticResource Red1}" />
+      <SolidColorBrush x:Key="TextControlForegroundFocused" Color="{StaticResource Red1}" />
+      
+      <!-- Validation error -->
+      <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{StaticResource Red1}"/>
+
+
+      <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource BackgroundColor}" />
+      <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{StaticResource Red2}" />
+
+      <!-- List item -->
+      <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource Red3}"/>
+      <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource Red3}"/>
+      <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{StaticResource Red4}"/>
+
+      <!-- CheckBox -->
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{StaticResource Red4}"/>
+      <SolidColorBrush x:Key="CheckBoxForegroundChecked" Color="{StaticResource Red3}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{StaticResource Red3}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="{StaticResource Red1}"/>
+
+      <!-- Button -->
+      <SolidColorBrush x:Key="ButtonBackground" Color="{StaticResource Red4}"/>
+      <SolidColorBrush x:Key="SplitButtonBackground" Color="{StaticResource Red4}"/>
+      <SolidColorBrush x:Key="SplitButtonForeground" Color="{StaticResource Red2}"/>
+      <SolidColorBrush x:Key="SplitButtonForegroundPointerOver" Color="{StaticResource Red1}"/>      
+
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

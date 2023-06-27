@@ -3,10 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CollimationCircles.Views.SettingsTabUserControl">
+             x:Class="CollimationCircles.Views.SettingsTabUserControl">  
   <Border
           Padding="16" CornerRadius="4"
-          BorderBrush="Silver" BorderThickness="1">
+          BorderThickness="1">
 
     <StackPanel Orientation="Vertical">
 
@@ -21,6 +21,19 @@
           <ComboBox.ItemTemplate>
             <DataTemplate>
               <TextBlock Text="{Binding Key}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock
+          TextWrapping="WrapWithOverflow"
+          Text="{DynamicResource Text.UserInterfaceTheme}"
+          VerticalAlignment="Center"/>
+        <ComboBox
+          ItemsSource="{Binding ThemeList}"
+          SelectedItem="{Binding SelectedTheme}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" />
             </DataTemplate>
           </ComboBox.ItemTemplate>
         </ComboBox>

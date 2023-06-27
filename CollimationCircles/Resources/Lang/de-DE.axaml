@@ -80,4 +80,5 @@
   <system:String x:Key="Text.StayOnTop">Das Fenster bleibt immer oben</system:String>
   <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung beim ausgewählten Element anzeigen</system:String>
+  <system:String x:Key="Text.UserInterfaceTheme">Thema</system:String>
 </ResourceDictionary>

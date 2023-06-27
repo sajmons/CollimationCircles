@@ -29,6 +29,11 @@
     <AvaloniaResource Include="Resources\**" />    
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Remove="Resources\Themes\Dark.axaml" />
+    <AvaloniaResource Remove="Resources\Themes\Light.axaml" />
+    <AvaloniaResource Remove="Resources\Themes\Night.axaml" />
+  </ItemGroup>
+  <ItemGroup>
     <!--This helps with theme dll-s trimming. If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa. https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
     <TrimmableAssembly Include="Avalonia.Themes.Fluent" />
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
@@ -70,5 +75,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaXaml Update="Resources\Themes\Dark.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
   </ItemGroup>
 </Project>

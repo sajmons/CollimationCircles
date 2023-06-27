@@ -10,8 +10,24 @@
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ResourceInclude Source="/Resources/Lang/en-US.axaml" />
-      </ResourceDictionary.MergedDictionaries>
+        <ResourceInclude Source="/Resources/Themes/Light.axaml" />
+        <ResourceInclude Source="/Resources/Themes/Dark.axaml" />
+        <ResourceInclude Source="/Resources/Themes/Night.axaml" />
+      </ResourceDictionary.MergedDictionaries>      
     </ResourceDictionary>
+
+    
+    <ControlTheme x:Key="{x:Type TextBlock}" TargetType="TextBlock">
+      <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />      
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type UserControl}" TargetType="UserControl">
+      <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />
+    </ControlTheme>
+
+    <ControlTheme x:Key="{x:Type Border}" TargetType="Border">
+      <Setter Property="BorderBrush" Value="{DynamicResource ThemeBorderHighBrush}" />
+    </ControlTheme>
 
   </Application.Resources>
 

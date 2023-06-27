@@ -1,0 +1,15 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <ResourceDictionary.ThemeDictionaries>
+
+    <ResourceDictionary x:Key="Dark">
+      <!-- Dark colors -->
+      <SolidColorBrush x:Key="TextControlForeground">#E4E3DD</SolidColorBrush >
+      <SolidColorBrush x:Key="ThemeBackgroundBrush">#171717</SolidColorBrush >
+      <SolidColorBrush x:Key="ThemeAccentBrush">Silver</SolidColorBrush >
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

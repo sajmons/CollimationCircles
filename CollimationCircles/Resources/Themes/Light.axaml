@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  
+  <ResourceDictionary.ThemeDictionaries>
+
+    <ResourceDictionary x:Key="Light">
+      <!-- Light colors -->
+      <SolidColorBrush  x:Key="TextControlForeground">#1B1C18</SolidColorBrush >
+      <SolidColorBrush  x:Key="ThemeBackgroundBrush">#FEFCF6</SolidColorBrush >
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

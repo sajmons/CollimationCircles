@@ -6,7 +6,7 @@
              x:Class="CollimationCircles.Views.AboutTabUserControl">
   <Border
             Padding="16" CornerRadius="4"
-            BorderBrush="Silver" BorderThickness="1">
+            BorderThickness="1">
     <StackPanel Orientation="Vertical">
       <WrapPanel>
         <Image

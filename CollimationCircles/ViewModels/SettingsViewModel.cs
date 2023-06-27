@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Styling;
 using CollimationCircles.Extensions;
 using CollimationCircles.Helper;
 using CollimationCircles.Messages;
@@ -79,10 +80,17 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         public ObservableCollection<KeyValuePair<string, string>> languageList = new();
-
+        
         [JsonProperty]
         [ObservableProperty]
         public KeyValuePair<string, string> selectedLanguage = new();
+
+        [ObservableProperty]
+        public ObservableCollection<string> themeList = new();
+
+        [JsonProperty]
+        [ObservableProperty]
+        public string selectedTheme = "Dark";
 
         [JsonProperty]
         [ObservableProperty]
@@ -120,8 +128,9 @@ namespace CollimationCircles.ViewModels
         public void Initialize()
         {
             if (this.appService is not null)
-            {
+            {                
                 InitializeLanguage();
+                InitializeThemes();
                 InitializeColors();
                 InitializeDefaults();
                 InitializeMessages();
@@ -129,6 +138,22 @@ namespace CollimationCircles.ViewModels
 
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
             AppDescription = $"{DynRes.TryGetString("AppDescription")}\n{DynRes.TryGetString("Copyright")} {DynRes.TryGetString("Author")}";
+        }
+
+        private void InitializeThemes()
+        {
+            // initialize languages
+            List<string> l = new()
+            {
+                nameof(ThemeVariant.Light),
+                nameof(ThemeVariant.Dark),
+                nameof(Themes.Custom.Night)
+            };
+
+            ThemeList = new ObservableCollection<string>(l);
+            SelectedTheme = ThemeList.FirstOrDefault();
+
+            Translate(SelectedLanguage.Value);
         }
 
         private void InitializeLanguage()
@@ -444,6 +469,7 @@ namespace CollimationCircles.ViewModels
                     SelectedIndex = vm.SelectedIndex;
 
                     SelectedLanguage = vm.SelectedLanguage;
+                    SelectedTheme = vm.SelectedTheme;
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
                     AlwaysOnTop = vm.AlwaysOnTop;
                     DockInMainWindow = vm.DockInMainWindow;
@@ -468,6 +494,31 @@ namespace CollimationCircles.ViewModels
             if (SelectedLanguage.Value is not null)
             {
                 Translate(SelectedLanguage.Value);
+            }
+        }
+
+        partial void OnSelectedThemeChanged(string value)
+        {
+            if (SelectedTheme is not null)
+            {
+                if (Application.Current is not null)
+                {
+                    switch(value)
+                    {
+                        default:
+                            Application.Current.RequestedThemeVariant = ThemeVariant.Default;
+                            break;
+                        case nameof(ThemeVariant.Light):
+                            Application.Current.RequestedThemeVariant = ThemeVariant.Light;
+                            break;
+                        case nameof(Themes.Custom.Night):
+                            Application.Current.RequestedThemeVariant = Themes.Custom.Night;
+                            break;
+                        case nameof(ThemeVariant.Dark):
+                            Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
+                            break;                                                
+                    };                    
+                }
             }
         }
 

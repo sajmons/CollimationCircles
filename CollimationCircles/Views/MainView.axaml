@@ -18,7 +18,7 @@
       Width="{Binding SettingsMinWidth}"
       Height="{Binding Height}"
       RelativePanel.AlignRightWithPanel="True"        
-      Background="Black"
+      Background="{DynamicResource ThemeBackgroundBrush}"
       IsVisible="{Binding DockInMainWindow}"/>
 
     <Button
