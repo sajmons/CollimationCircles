@@ -69,10 +69,11 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         public ObservableCollection<Color> colorList = new();
-
+                
         [ObservableProperty]
         public CollimationHelper selectedItem = new();
 
+        [JsonProperty]
         [ObservableProperty]
         public int selectedIndex = 0;
 
@@ -439,6 +440,8 @@ namespace CollimationCircles.ViewModels
 
                     Items.Clear();
                     Items.AddRange(vm.Items);
+
+                    SelectedIndex = vm.SelectedIndex;
 
                     SelectedLanguage = vm.SelectedLanguage;
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
