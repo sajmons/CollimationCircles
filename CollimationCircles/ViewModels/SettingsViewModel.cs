@@ -151,7 +151,7 @@ namespace CollimationCircles.ViewModels
             };
 
             ThemeList = new ObservableCollection<string>(l);
-            SelectedTheme = ThemeList.FirstOrDefault();
+            SelectedTheme = ThemeList.FirstOrDefault() ?? nameof(ThemeVariant.Dark);
 
             Translate(SelectedLanguage.Value);
         }
