@@ -59,7 +59,7 @@
   <system:String x:Key="Text.SaveList">Save list to JSON file</system:String>
   <system:String x:Key="Text.Scale">Scale</system:String>
   <system:String x:Key="Text.Screw">Screw</system:String>
-  <system:String x:Key="Text.SelectedItemProperties">Helper properties</system:String>
+  <system:String x:Key="Text.SelectedItemProperties">Selected item properties</system:String>
   <system:String x:Key="Text.Settings">Settings</system:String>
   <system:String x:Key="Text.SettingsWindow">Undock to separate window</system:String>
   <system:String x:Key="Text.ShowLabels">Labels</system:String>

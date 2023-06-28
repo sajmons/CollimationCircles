@@ -59,7 +59,7 @@
   <system:String x:Key="Text.SaveList">Liste in JSON-Datei speichern</system:String>
   <system:String x:Key="Text.Scale">Skala</system:String>
   <system:String x:Key="Text.Screw">Schraube</system:String>
-  <system:String x:Key="Text.SelectedItemProperties">Hilfseigenschaften</system:String>
+  <system:String x:Key="Text.SelectedItemProperties">Ausgewählte Eigenschaften</system:String>
   <system:String x:Key="Text.Settings">Einstellungen</system:String>
   <system:String x:Key="Text.SettingsWindow">Zum separaten Fenster abdocken</system:String>
   <system:String x:Key="Text.ShowLabels">Titel</system:String>
