@@ -14,27 +14,27 @@
         <MenuFlyout Placement="BottomEdgeAlignedLeft">
           <MenuItem Header="{DynamicResource Text.Circle}" Command="{Binding AddCircleCommand}" >
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Circle}"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Circle}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.Screw}" Command="{Binding AddScrewCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Screw}"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Screw}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.PrimaryClip}" Command="{Binding AddClipCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Clip}"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.PrimaryClip}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.Spider}" Command="{Binding AddSpiderCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Spider}"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Spider}"/>
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem Header="{DynamicResource Text.BahtinovMask}" Command="{Binding AddBahtinovMaskCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.BahtinovMask}"/>
+              <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.BahtinovMask}"/>
             </MenuItem.Icon>
           </MenuItem>
         </MenuFlyout>
@@ -43,18 +43,26 @@
     <!--#endregion-->
 
     <!--#region ToolbarButtons-->
-    <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.ResetItems}" Width="30" Height="30">
-      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Reset}"/>
+    <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.ResetItems}" Width="32" Height="32">
+      <Viewbox Margin="7">
+        <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Reset}" />
+      </Viewbox>
     </Button>
-    <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.SaveList}" Width="30" Height="30">
-      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Save}"/>
+    <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.SaveList}" Width="32" Height="32">
+      <Viewbox Margin="7">
+        <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Save}"/>
+      </Viewbox>
     </Button>
-    <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.LoadList}" Width="30" Height="30">
-      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Load}"/>
+    <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.LoadList}" Width="32" Height="32">
+      <Viewbox Margin="7">
+        <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Load}"/>
+      </Viewbox>
     </Button>
-    <Button Padding="0" Command="{Binding DuplicateCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.Duplicate}" Width="30" Height="30"
+    <Button Padding="0" Command="{Binding DuplicateCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.Duplicate}" Width="32" Height="32"
       CommandParameter="{Binding SelectedIndex}">
-      <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Duplicate}"/>
+      <Viewbox Margin="7">
+        <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Duplicate}"/>
+      </Viewbox>
     </Button>
     <!--#endregion-->
 

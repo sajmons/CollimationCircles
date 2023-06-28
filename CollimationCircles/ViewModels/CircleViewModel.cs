@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media;
+using CollimationCircles.Helper;
 using CollimationCircles.Models;
 
 namespace CollimationCircles.ViewModels
@@ -8,6 +9,7 @@ namespace CollimationCircles.ViewModels
         public CircleViewModel()
         {
             ItemColor = Colors.Red;
+            Label = DynRes.TryGetString("Circle");
         }
     }
 }

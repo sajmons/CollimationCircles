@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -94,37 +95,28 @@ namespace CollimationCircles.Models
         [ObservableProperty]
         [Range(1, 10)]
         [NotifyDataErrorInfo]
-        private int count = 4;
+        private int count = 4;       
 
-        public Bitmap? Image
+        public string ResourceString
         {
             get
             {
-                string path = "Resources/Images/";
+                string dynRes = string.Empty;
 
                 if (this is CircleViewModel)
-                    path += nameof(CircleViewModel).ToLower();
+                    dynRes = "Circle";
                 else if (this is PrimaryClipViewModel)
-                    path += nameof(PrimaryClipViewModel).ToLower();
+                    dynRes = "PrimaryClip";
                 else if (this is ScrewViewModel)
-                    path += nameof(ScrewViewModel).ToLower();
+                    dynRes = "Screw";
                 else if (this is SpiderViewModel)
-                    path += nameof(SpiderViewModel).ToLower();
+                    dynRes = "Spider";
                 else if (this is BahtinovMaskViewModel)
-                    path += nameof(BahtinovMaskViewModel).ToLower();
+                    dynRes = "BahtinovMask";
                 else
-                    path += string.Empty;
+                    dynRes += string.Empty;
 
-                string assemblyName = Assembly.GetEntryAssembly()?.GetName().Name ?? string.Empty;
-
-                var uri = new Uri($"avares://{assemblyName}/{path}.png");
-
-                var asset = AssetLoader.Open(uri);
-
-                if (asset is null)
-                    return null;
-                else
-                    return new Bitmap(asset);
+                return DynRes.TryGetIcon(dynRes);
             }
         }
 

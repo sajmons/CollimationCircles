@@ -13,7 +13,6 @@
    BorderThickness="1"
    Margin="0,0,5,5">
       <StackPanel Orientation="Vertical" Width="220" Spacing="5">
-        <TextBlock Text="{DynamicResource Text.ItemListTitle}" />
 
         <views:ToolbarUserControl/>
 
@@ -32,16 +31,11 @@
                   IsChecked="{Binding IsVisible}"
                   ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
 
-                <Image
-                  Grid.Column="1"
-                  Margin="0,0,5,0"
-                  Height="20"
-                  Source="{Binding Image}"/>
-                <!--<PathIcon
-                  Grid.Column="1"
-                  Height="20"
-                  Foreground="{DynamicResource Red2}"
-                  Data="{DynamicResource IconData.Duplicate}"/>-->
+                <Viewbox Grid.Column="1" Margin="5">
+                  <PathIcon                    
+                    Foreground="{DynamicResource Red2}"
+                    Data="{Binding ResourceString}"/>
+                </Viewbox>
 
                 <TextBlock
                   TextWrapping="Wrap"
@@ -52,13 +46,15 @@
                   VerticalAlignment="Center" />
 
                 <Button
-                  Grid.Column="3"
-                  Width="30" Height="30"
                   Padding="0"
+                  Grid.Column="3"
+                  Width="32" Height="32"
                   Command="{Binding $parent[ListBox].DataContext.RemoveItemCommand}"
                   CommandParameter="{Binding .}"
                   ToolTip.Tip="{DynamicResource Text.RemoveItem}">
-                  <PathIcon Foreground="{DynamicResource Red2}" Data="{DynamicResource IconData.Remove}"/>
+                  <Viewbox Margin="7">
+                    <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Remove}"/>
+                  </Viewbox>
                 </Button>
 
               </Grid>
@@ -67,14 +63,15 @@
           </ListBox.ItemTemplate>
         </ListBox>
       </StackPanel>
+
     </Border>
 
     <StackPanel Orientation="Vertical">
       <Border
-    Padding="16"
-    CornerRadius="4"
-    BorderThickness="1"
-    Margin="0,0,5,5">
+        Padding="16"
+        CornerRadius="4"
+        BorderThickness="1"
+        Margin="0,0,5,5">
         <StackPanel
           Orientation="Vertical"
           Spacing="2"
