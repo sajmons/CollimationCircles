@@ -1,0 +1,56 @@
+name: .NET Core
+
+on: [push]
+
+jobs:
+  publishlinux:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.202
+    - name: Publish with dotnet
+      run: dotnet publish ./CollimationCircles/CollimationCircles.csproj -c Release -f net7.0 -r linux-x64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:PublishLinux=True
+    - name: Archive publish artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: CollimationCircles_linux-x64
+        path: CollimationCircles/bin/Release/net7.0/linux-x64/publish
+
+  publishwin:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.202
+    - name: Publish with dotnet
+      run: dotnet publish ./CollimationCircles/CollimationCircles.csproj -c Release -f net7.0 -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:PublishWin=True
+    - name: Archive publish artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: CollimationCircles_win-x64
+        path: CollimationCircles/bin/Release/net6.0/win-x64/publish
+
+  publishmac:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.202
+    - name: Publish with dotnet
+      run: dotnet publish ./CollimationCircles/CollimationCircles.csproj -c Release -f net7.0 -r osx-x64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:PublishOsx=True
+    - name: Archive publish artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: CollimationCircles_osx-x64
+        path: CollimationCircles/bin/Release/net6.0/osx-x64/publish
