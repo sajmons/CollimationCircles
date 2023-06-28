@@ -12,7 +12,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 6.0.101
+        dotnet-version: 7.0.202
     - name: Publish with dotnet
       run: dotnet publish ./CollimationCircles/CollimationCircles.csproj -c Release -f net7.0 -r linux-x64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:PublishLinux=True
     - name: Archive publish artifacts
