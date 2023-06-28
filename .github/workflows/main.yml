@@ -1,6 +1,9 @@
 name: .NET Core
 
-on: [push]
+on:  
+  push:
+    tags:
+      - '*'
 
 jobs:
   publishlinux:
@@ -36,7 +39,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: CollimationCircles_win-x64
-        path: CollimationCircles/bin/Release/net6.0/win-x64/publish
+        path: CollimationCircles/bin/Release/net7.0/win-x64/publish
 
   publishmac:
     runs-on: macos-latest
@@ -53,4 +56,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: CollimationCircles_osx-x64
-        path: CollimationCircles/bin/Release/net6.0/osx-x64/publish
+        path: CollimationCircles/bin/Release/net7.0/osx-x64/publish
