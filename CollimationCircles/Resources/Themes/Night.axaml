@@ -18,30 +18,62 @@
       <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="{StaticResource Red1}" />
       <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="{StaticResource Red1}" />
       <SolidColorBrush x:Key="TextControlForegroundFocused" Color="{StaticResource Red1}" />
-      
+      <SolidColorBrush x:Key="TextControlBorderBrush" Color="{StaticResource Red2}" />
+      <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="{StaticResource Red1}" />
+
+      <!-- ComboBox -->
+      <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="{StaticResource Red2}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPointerOver" Color="{StaticResource Red2}" />
+      <SolidColorBrush x:Key="ComboBoxBorderBrushPressed" Color="{StaticResource Red1}" />
+
+      <!-- ComboBox Item -->
+      <SolidColorBrush x:Key="ComboBoxItemBackgroundSelected" Color="{StaticResource Red4}" />
+      <SolidColorBrush x:Key="ComboBoxItemForegroundSelected" Color="{StaticResource Red3}" />
+      <SolidColorBrush x:Key="ComboBoxItemBackgroundSelectedPointerOver" Color="{StaticResource Red1}" />
+      <SolidColorBrush x:Key="ComboBoxDropDownGlyphForeground" Color="{StaticResource Red1}" />      
+
       <!-- Validation error -->
       <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{StaticResource Red1}"/>
-
 
       <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource BackgroundColor}" />
       <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{StaticResource Red2}" />
 
-      <!-- List item -->
+      <!-- List Item -->
       <SolidColorBrush x:Key="SystemControlHighlightListAccentLowBrush" Color="{StaticResource Red3}"/>
       <SolidColorBrush x:Key="SystemControlHighlightListAccentMediumBrush" Color="{StaticResource Red3}"/>
       <SolidColorBrush x:Key="SystemControlHighlightListLowBrush" Color="{StaticResource Red4}"/>
+      <SolidColorBrush x:Key="SystemControlHighlightListAccentHighBrush" Color="{StaticResource Red1}"/>
+      
 
       <!-- CheckBox -->
       <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillChecked" Color="{StaticResource Red4}"/>
       <SolidColorBrush x:Key="CheckBoxForegroundChecked" Color="{StaticResource Red3}"/>
       <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPointerOver" Color="{StaticResource Red3}"/>
       <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPointerOver" Color="{StaticResource Red1}"/>
-
+      <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundChecked" Color="{StaticResource Red1}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckGlyphForegroundCheckedPointerOver" Color="{StaticResource Red1}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundFillCheckedPressed" Color="{StaticResource Red2}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeCheckedPressed" Color="{StaticResource Red1}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUnchecked" Color="{StaticResource Red2}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPointerOver" Color="{StaticResource Red1}"/>
+      <SolidColorBrush x:Key="CheckBoxCheckBackgroundStrokeUncheckedPressed" Color="{StaticResource Red1}"/>
+      
       <!-- Button -->
       <SolidColorBrush x:Key="ButtonBackground" Color="{StaticResource Red4}"/>
+
+      <!-- SplitButton -->
       <SolidColorBrush x:Key="SplitButtonBackground" Color="{StaticResource Red4}"/>
       <SolidColorBrush x:Key="SplitButtonForeground" Color="{StaticResource Red2}"/>
-      <SolidColorBrush x:Key="SplitButtonForegroundPointerOver" Color="{StaticResource Red1}"/>      
+      <SolidColorBrush x:Key="SplitButtonForegroundPointerOver" Color="{StaticResource Red1}"/>
+
+      <!-- TabItem -->
+      <SolidColorBrush x:Key="TabItemHeaderSelectedPipeFill" Color="{StaticResource Red1}"/>
+
+      <!-- Menu Item -->
+      <SolidColorBrush x:Key="MenuFlyoutItemForeground" Color="{StaticResource Red2}"/>
+      <SolidColorBrush x:Key="MenuFlyoutItemForegroundPointerOver" Color="{StaticResource Red1}"/>
+      <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="{StaticResource Red1}"/>
+      <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPressed" Color="{StaticResource Red3}"/>
 
     </ResourceDictionary>
 
