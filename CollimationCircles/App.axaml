@@ -19,7 +19,7 @@
     
     <ControlTheme x:Key="{x:Type TextBlock}" TargetType="TextBlock">
       <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />      
-    </ControlTheme>
+    </ControlTheme>    
 
     <ControlTheme x:Key="{x:Type UserControl}" TargetType="UserControl">
       <Setter Property="Background" Value="{DynamicResource ThemeBackgroundBrush}" />

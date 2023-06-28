@@ -12,7 +12,7 @@
         <PathIcon
           Width="24" Height="24" 
           HorizontalAlignment="Center" VerticalAlignment="Center"
-          Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Launcher}" />
+          Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Launcher}" />
         <TextBlock
           Margin="0,0,10,10"
           Padding="8,0,0,0"
@@ -26,7 +26,7 @@
           VerticalAlignment="Bottom"
           Command="{Binding OpenWebSiteCommand}">
           <StackPanel Orientation="Horizontal">
-            <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Help}" />
+            <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Help}" />
             <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.OpenWebSite}" VerticalAlignment="Center"/>
           </StackPanel>
         </Button>
@@ -36,7 +36,7 @@
           VerticalAlignment="Bottom"
           Command="{Binding OpenGitHubPageCommand}">
           <StackPanel Orientation="Horizontal">
-            <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.GitHub}" />
+            <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.GitHub}" />
             <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.GitHub}" VerticalAlignment="Center"/>
           </StackPanel>
         </Button>
@@ -46,7 +46,7 @@
           VerticalAlignment="Bottom"
           Command="{Binding OpenContactWebPageCommand}">
           <StackPanel Orientation="Horizontal">
-            <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Email}" />
+            <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Email}" />
             <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>
           </StackPanel>
         </Button>        

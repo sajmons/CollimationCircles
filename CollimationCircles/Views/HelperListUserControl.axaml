@@ -33,7 +33,7 @@
 
                 <Viewbox Grid.Column="1" Margin="5">
                   <PathIcon                    
-                    Foreground="{DynamicResource Red2}"
+                    Foreground="{DynamicResource Color2}"
                     Data="{Binding ResourceString}"/>
                 </Viewbox>
 
@@ -53,7 +53,7 @@
                   CommandParameter="{Binding .}"
                   ToolTip.Tip="{DynamicResource Text.RemoveItem}">
                   <Viewbox Margin="7">
-                    <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Remove}"/>
+                    <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Remove}"/>
                   </Viewbox>
                 </Button>
 

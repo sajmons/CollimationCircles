@@ -4,11 +4,13 @@
   <ResourceDictionary.ThemeDictionaries>
 
     <ResourceDictionary x:Key="Light">
-      <Color x:Key="Red2">Black</Color>
+      <Color x:Key="Color2">#1B1C18</Color>
+      <Color x:Key="BackgroundColor">#FEFCF6</Color>      
+            
+      <SolidColorBrush x:Key="TextControlForeground" Color="{StaticResource Color2}"/>
+      <SolidColorBrush x:Key="ThemeBackgroundBrush" Color="{StaticResource BackgroundColor}" />
+      <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{StaticResource Color2}" />
 
-      <!-- Light colors -->
-      <SolidColorBrush  x:Key="TextControlForeground">#1B1C18</SolidColorBrush >
-      <SolidColorBrush  x:Key="ThemeBackgroundBrush">#FEFCF6</SolidColorBrush >
     </ResourceDictionary>
 
   </ResourceDictionary.ThemeDictionaries>

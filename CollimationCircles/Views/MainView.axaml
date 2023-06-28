@@ -31,7 +31,7 @@
       Height="40"
       Command="{Binding ShowSettingsCommand}"
       IsVisible="{Binding DockInMainWindow}">
-      <PathIcon Foreground="{DynamicResource Red2}" Data="{StaticResource IconData.Undock}"/>
+      <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Undock}"/>
     </Button>    
   </RelativePanel>
   
