@@ -33,7 +33,6 @@
   <system:String x:Key="Text.IncreaseHelperSpacing">Abstand vergrößern:</system:String>
   <system:String x:Key="Text.IncreaseItemThichness">Dicke erhöhen:</system:String>
   <system:String x:Key="Text.Inner">Innere</system:String>
-  <system:String x:Key="Text.ItemListTitle">Menüpunkt wählen</system:String>
   <system:String x:Key="Text.ItemType">Artikel Typ</system:String>
   <system:String x:Key="Text.ItemVisibility">Sichtbarkeit des Artikels</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON-Dokumente</system:String>

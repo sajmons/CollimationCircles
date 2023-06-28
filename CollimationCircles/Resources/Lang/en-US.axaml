@@ -33,7 +33,6 @@
   <system:String x:Key="Text.IncreaseHelperSpacing">Increase spacing:</system:String>
   <system:String x:Key="Text.IncreaseItemThichness">Increase thichness:</system:String>
   <system:String x:Key="Text.Inner">Inner</system:String>
-  <system:String x:Key="Text.ItemListTitle">Select item to customize</system:String>
   <system:String x:Key="Text.ItemType">Item type</system:String>
   <system:String x:Key="Text.ItemVisibility">Item visibility</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON Documents</system:String>
