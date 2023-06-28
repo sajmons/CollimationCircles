@@ -15,6 +15,7 @@
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>    
     <Copyright>Copyright © 2023</Copyright>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>  
   <ItemGroup>
     <Compile Remove="Models\ItemType.cs" />

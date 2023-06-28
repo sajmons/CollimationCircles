@@ -3,12 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CollimationCircles.Views.GlobalPropertiesUserControl">
+             x:Class="CollimationCircles.Views.GlobalPropertiesUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SettingsViewModel">
   <Border
-              Padding="16"
-              CornerRadius="4"
-              BorderThickness="1"
-              Margin="0,0,5,5">
+    Padding="16"
+    CornerRadius="4"
+    BorderThickness="1"
+    Margin="0,0,5,5">
     <StackPanel
       Orientation="Vertical"
       Spacing="2"

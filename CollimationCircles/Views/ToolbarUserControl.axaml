@@ -3,10 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CollimationCircles.Views.ToolbarUserControl">
+             x:Class="CollimationCircles.Views.ToolbarUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SettingsViewModel">
   <StackPanel
-                Orientation="Horizontal"
-                Spacing="2">
+    Orientation="Horizontal"
+    Spacing="2">
 
     <!--#region ADDItemMenu -->
     <SplitButton Content="{DynamicResource Text.Add}" ToolTip.Tip="{DynamicResource Text.AddNewItem}">

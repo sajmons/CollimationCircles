@@ -70,7 +70,7 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         public ObservableCollection<Color> colorList = new();
-                
+
         [ObservableProperty]
         public CollimationHelper selectedItem = new();
 
@@ -80,7 +80,7 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         public ObservableCollection<KeyValuePair<string, string>> languageList = new();
-        
+
         [JsonProperty]
         [ObservableProperty]
         public KeyValuePair<string, string> selectedLanguage = new();
@@ -107,7 +107,7 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         public bool showMarkAtSelectedItem = true;
-                
+
         [ObservableProperty]
         public string version = string.Empty;
 
@@ -128,12 +128,10 @@ namespace CollimationCircles.ViewModels
         public void Initialize()
         {
             if (this.appService is not null)
-            {                
+            {
                 InitializeLanguage();
                 InitializeThemes();
-                InitializeColors();
-                InitializeDefaults();
-                InitializeMessages();
+                InitializeColors();                
             }
 
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
@@ -170,15 +168,7 @@ namespace CollimationCircles.ViewModels
             SelectedLanguage = LanguageList.FirstOrDefault();
 
             Translate(SelectedLanguage.Value);
-        }
-
-        private void InitializeMessages()
-        {
-            WeakReferenceMessenger.Default.Register<ItemChangedMessage>(this, (r, m) =>
-            {
-                WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
-            });
-        }
+        }        
 
         private void InitializeColors()
         {
@@ -226,8 +216,6 @@ namespace CollimationCircles.ViewModels
             Items.Clear();
             Items.AddRange(list);
 
-            Items.CollectionChanged += Items_CollectionChanged;
-
             SelectedIndex = 0;
 
             RotationAngle = 0;
@@ -239,21 +227,7 @@ namespace CollimationCircles.ViewModels
             ShowMarkAtSelectedItem = true;
 
             Version = appService?.GetAppVersion() ?? "0.0.0";
-        }
-
-        private void Items_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
-        }
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            if (!HasErrors)
-            {
-                base.OnPropertyChanged(e);
-                WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
-            }
-        }
+        }        
 
         [RelayCommand]
         internal void ShowSettings()
@@ -437,7 +411,7 @@ namespace CollimationCircles.ViewModels
 
         internal void SaveState(Window window)
         {
-            Position= window.Position;
+            Position = window.Position;
             appService?.SaveState(this);
         }
 
@@ -454,7 +428,7 @@ namespace CollimationCircles.ViewModels
                         window.Position = Position;
                     }
 
-                    Position = vm.Position;                    
+                    Position = vm.Position;
                     Width = vm.Width;
                     Height = vm.Height;
                     Scale = vm.Scale;
@@ -478,6 +452,7 @@ namespace CollimationCircles.ViewModels
                 }
                 else
                 {
+                    InitializeDefaults();
                     return false;
                 }
 
@@ -485,6 +460,7 @@ namespace CollimationCircles.ViewModels
             }
             catch
             {
+                InitializeDefaults();
                 return false;
             }
         }
@@ -503,7 +479,7 @@ namespace CollimationCircles.ViewModels
             {
                 if (Application.Current is not null)
                 {
-                    switch(value)
+                    switch (value)
                     {
                         default:
                             Application.Current.RequestedThemeVariant = ThemeVariant.Default;
@@ -516,8 +492,8 @@ namespace CollimationCircles.ViewModels
                             break;
                         case nameof(ThemeVariant.Dark):
                             Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
-                            break;                                                
-                    };                    
+                            break;
+                    };
                 }
             }
         }
@@ -547,6 +523,27 @@ namespace CollimationCircles.ViewModels
             {
                 OpenUrl(appService.GitHubPage);
             }
-        }        
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(RotationAngle):
+                case nameof(Scale):
+                case nameof(LabelSize):
+                case nameof(ShowLabels):
+                case nameof(AlwaysOnTop):
+                case nameof(SelectedIndex):
+                case nameof(ShowMarkAtSelectedItem):
+                case nameof(DockInMainWindow):
+                    if (!HasErrors)
+                    {
+                        base.OnPropertyChanged(e);
+                        WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
+                    }
+                    break;
+            }
+        }
     }
 }

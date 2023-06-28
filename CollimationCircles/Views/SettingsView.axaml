@@ -8,6 +8,7 @@
         mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="600"
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
+        x:DataType="vm:SettingsViewModel"
         Width="542"
         Height="600"
         MinWidth="285"

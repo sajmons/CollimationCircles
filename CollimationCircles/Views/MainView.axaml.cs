@@ -25,7 +25,6 @@ namespace CollimationCircles.Views
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                DataContext = m.Value;
                 Topmost = m.Value.AlwaysOnTop;
                 InvalidateVisual();
             });
