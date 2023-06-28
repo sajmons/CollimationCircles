@@ -4,14 +4,14 @@
 
   <ResourceDictionary.ThemeDictionaries>
 
-    <ResourceDictionary x:Key="{x:Static themes:Custom.Night}">
+    <ResourceDictionary x:Key="{x:Static themes:Custom.Night}">      
 
-      <Color x:Key="Red1">Red</Color>
-      <Color x:Key="Red2">DarkRed</Color>
-      <Color x:Key="Red3">#410000</Color>
-      <Color x:Key="Red4">#2c1512</Color>
+      <Color x:Key="Red1">#de2626</Color>
+      <Color x:Key="Red2">#922323</Color>
+      <Color x:Key="Red3">#491212</Color>
+      <Color x:Key="Red4">#1e0909</Color>
 
-      <Color x:Key="BackgroundColor">#171717</Color>
+      <Color x:Key="BackgroundColor">#190808</Color>
 
       <!-- TextControl colors -->
       <SolidColorBrush x:Key="TextControlForeground" Color="{StaticResource Red2}"/>
