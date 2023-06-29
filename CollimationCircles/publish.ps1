@@ -27,7 +27,7 @@ Function PublishOne($Runtime)
 {
     <#
         .SYNOPSIS
-            Run dotnet publish for project, create ZIP archive and remove temporary files.
+            Run dotnet publish for project, get version from csproj file, create ZIP archive and remove temporary files.
     #>	
     
 	$appName = [System.IO.Path]::GetFileNameWithoutExtension($Project)
@@ -35,14 +35,21 @@ Function PublishOne($Runtime)
 	$xml = [Xml] (Get-Content $Project)
 	$version = [Version] $xml.Project.PropertyGroup.Version
 	
-	Write-Host "dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true" -ForegroundColor green
+    $command = "dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
 
-	dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
-	Compress-Archive -Force $Output/$Runtime/** $Output/$appName-$version-$Runtime.zip
+	Write-Host $command -ForegroundColor green
+    Invoke-Expression $command
+
+    # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
+    # That's why I aded number infront of file name to maintain correct order.
+    # You must always specify win-x64 as first runtime in $runtimes list
+	Compress-Archive -Force $Output/$Runtime/** $Output/$Index-$appName-$version-$Runtime.zip
 	Remove-Item –path $Output/$Runtime –Recurse -Force
 }
 
+$Index = 0;
 foreach ($Runtime in $Runtimes)
 {
-    PublishOne($Runtime)
+	$Index++ # for github file ordering
+    PublishOne $Runtime
 }
