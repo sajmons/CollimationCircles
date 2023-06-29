@@ -1,1 +1,2 @@
 ﻿- camera video streaming support
+- add collapsible sections to settings panel
