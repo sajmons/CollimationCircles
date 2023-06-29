@@ -16,6 +16,7 @@
     <Product>Collimation Circles</Product>    
     <Copyright>Copyright © 2023</Copyright>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>  
   <ItemGroup>
     <Compile Remove="Models\ItemType.cs" />
