@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.GlobalPropertiesUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SettingsViewModel">
+  <Border
+      Width="250"
+      Padding="8"      
+      CornerRadius="4"
+      BorderThickness="1">
+      <StackPanel>
+        <TextBlock Text="{DynamicResource Text.AllItemsControls}"/>
+
+        <StackPanel
+        Orientation="Vertical"
+        Spacing="2">
+
+        <UniformGrid Columns="2">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{DynamicResource Text.Scale}"/>
+          <NumericUpDown
+            Increment="0.01"
+            Value="{Binding Scale}"
+            Minimum="0.0" Maximum="4.0" />
+        </UniformGrid>
+
+        <UniformGrid Columns="2">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{DynamicResource Text.Rotation}"/>
+          <NumericUpDown
+            Value="{Binding RotationAngle}"
+            Minimum="-180" Maximum="180" />
+        </UniformGrid>
+
+        <UniformGrid Columns="2">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{DynamicResource Text.LabelSize}" />
+          <NumericUpDown
+            Value="{Binding LabelSize}"
+            Minimum="5" Maximum="20"/>
+        </UniformGrid>
+
+        <UniformGrid Columns="2">
+          <TextBlock
+            VerticalAlignment="Center"
+            Text="{DynamicResource Text.ShowLabels}" />
+          <CheckBox
+            IsChecked="{Binding ShowLabels}"/>
+        </UniformGrid>
+
+      </StackPanel>
+      </StackPanel>
+  </Border>
+</UserControl>

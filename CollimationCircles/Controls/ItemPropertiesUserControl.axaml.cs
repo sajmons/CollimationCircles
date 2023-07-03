@@ -2,11 +2,11 @@ using Avalonia.Controls;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 
-namespace CollimationCircles.Views
+namespace CollimationCircles.Controls
 {
-    public partial class HelperListUserControl : UserControl
+    public partial class ItemPropertiesUserControl : UserControl
     {
-        public HelperListUserControl()
+        public ItemPropertiesUserControl()
         {
             InitializeComponent();
             DataContext = Ioc.Default.GetService<SettingsViewModel>();

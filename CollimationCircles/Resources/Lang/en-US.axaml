@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Primary clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primary outer</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primary screw</system:String>
-  <system:String x:Key="Text.Properties">Properties</system:String>
+  <system:String x:Key="Text.Properties">Item list</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
   <system:String x:Key="Text.RemoveItem">Remove item from list</system:String>
   <system:String x:Key="Text.ResetItems">Reset list to default values</system:String>
@@ -84,4 +84,5 @@
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected item</system:String>
   <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
+  <system:String x:Key="Text.KeyboardShortcuts">Keyboard shortcuts</system:String>  
 </ResourceDictionary>

@@ -3,7 +3,7 @@
         xmlns:vm="using:CollimationCircles.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:CollimationCircles.Views"
+        xmlns:controls="clr-namespace:CollimationCircles.Controls"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
         mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="600"
         x:Class="CollimationCircles.Views.SettingsView"
@@ -13,5 +13,5 @@
         Height="600"
         MinWidth="285"
         MinHeight="473">
-  <views:SettingsUserControl/>
+  <controls:SettingsUserControl/>
 </Window>

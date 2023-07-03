@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace CollimationCircles.Views
+namespace CollimationCircles.Controls
 {
     public partial class SettingsUserControl : UserControl
     {

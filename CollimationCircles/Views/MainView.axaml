@@ -3,7 +3,7 @@
         xmlns:vm="using:CollimationCircles.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:CollimationCircles.Views"
+        xmlns:controls="clr-namespace:CollimationCircles.Controls"
         xmlns:res="clr-namespace:CollimationCircles.Resources.Strings"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CollimationCircles.Views.MainView"
@@ -15,7 +15,7 @@
         Width="{Binding Width, Mode=TwoWay}"
         Height="{Binding Height, Mode=TwoWay}">
   <RelativePanel>
-    <views:SettingsUserControl
+    <controls:SettingsUserControl
       Width="{Binding SettingsMinWidth}"
       Height="{Binding Height}"
       RelativePanel.AlignRightWithPanel="True"        

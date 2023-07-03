@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:CollimationCircles.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.PropertiesUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SettingsViewModel">
+  <WrapPanel>
+
+    <controls:ItemListUserControl Padding="0 4 0 0" />
+
+    <controls:ItemPropertiesUserControl Padding="0 4 0 0" />
+
+    <controls:GlobalPropertiesUserControl Padding="0 4 0 4" />
+
+  </WrapPanel>
+
+</UserControl>

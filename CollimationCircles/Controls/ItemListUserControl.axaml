@@ -1,0 +1,72 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:CollimationCircles.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.ItemListUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SettingsViewModel">
+  <Border
+      Width="250"
+      Padding="8"
+      CornerRadius="4"
+      BorderThickness="1">
+    <StackPanel>
+      <StackPanel
+        Orientation="Vertical"
+        Spacing="2">
+
+        <controls:ToolbarUserControl/>
+
+        <ListBox
+          Name="list"
+          ItemsSource="{Binding Items}"
+          SelectedItem="{Binding SelectedItem}"
+          SelectedIndex="{Binding SelectedIndex}"
+          SelectionMode="Single">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+
+              <Grid ColumnDefinitions="25,25,*,30">
+
+                <CheckBox
+                  IsChecked="{Binding IsVisible}"
+                  ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
+
+                <Viewbox Grid.Column="1" Margin="5">
+                  <PathIcon
+                    Foreground="{DynamicResource Color2}"
+                    Data="{Binding ResourceString}"/>
+                </Viewbox>
+
+                <TextBlock
+                  TextWrapping="Wrap"
+                  Grid.Column="2"
+                  HorizontalAlignment="Stretch"
+                  Background="{ReflectionBinding SelectedItem.ItemColor}"
+                  Text="{Binding Label}"
+                  VerticalAlignment="Center" />
+
+                <Button
+                  Padding="0"
+                  Grid.Column="3"
+                  Width="32" Height="32"
+                  Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveItemCommand}"
+                  CommandParameter="{Binding .}"
+                  ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+                  <Viewbox Margin="7">
+                    <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Remove}"/>
+                  </Viewbox>
+                </Button>
+
+              </Grid>
+
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </StackPanel>
+    </StackPanel>
+  </Border>
+
+</UserControl>

@@ -2,9 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:views="clr-namespace:CollimationCircles.Views"
+             xmlns:controls="clr-namespace:CollimationCircles.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="CollimationCircles.Views.SettingsUserControl">
+             x:Class="CollimationCircles.Controls.SettingsUserControl">
   <TabControl>
     <TabItem>
       <TabItem.Header>
@@ -13,7 +13,7 @@
           Text="{DynamicResource Text.Properties}" />
       </TabItem.Header>
       <ScrollViewer>
-        <views:HelperListUserControl/>
+        <controls:PropertiesUserControl/>
       </ScrollViewer>
     </TabItem>
     <TabItem>
@@ -23,7 +23,7 @@
           Text="{DynamicResource Text.Settings}" />
       </TabItem.Header>
       <ScrollViewer>
-        <views:SettingsTabUserControl />
+        <controls:SettingsTabUserControl />
       </ScrollViewer>
     </TabItem>
     <TabItem>
@@ -32,7 +32,7 @@
           FontSize="14"
           Text="{DynamicResource Text.About}" />
       </TabItem.Header>
-      <views:AboutTabUserControl/>
+      <controls:AboutTabUserControl/>
     </TabItem>
   </TabControl>
 </UserControl>

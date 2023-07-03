@@ -63,13 +63,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Update="Views\AboutTabUserControl.axaml.cs">
+    <Compile Update="Controls\AboutTabUserControl.axaml.cs">
       <DependentUpon>AboutTabUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\PropertiesUserControl.axaml.cs">
+      <DependentUpon>PropertiesUserControl.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\MainView.axaml.cs">
       <DependentUpon>MainView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\SettingsTabUserControl.axaml.cs">
+    <Compile Update="Controls\SettingsTabUserControl.axaml.cs">
       <DependentUpon>SettingsTabUserControl.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\SettingsView.axaml.cs">
