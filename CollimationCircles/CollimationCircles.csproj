@@ -17,6 +17,9 @@
     <Copyright>Copyright © 2023</Copyright>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <RuntimeIdentifiers>win-x64;linux-x64;linux-arm64;osx-x64</RuntimeIdentifiers>
+    <UseAppHost>true</UseAppHost>
+    <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
   </PropertyGroup>  
   <ItemGroup>
     <Compile Remove="Models\ItemType.cs" />
@@ -48,10 +51,11 @@
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
+    <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0-rc1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-preview.5.23280.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Octokit" Version="6.1.0" />
+    <PackageReference Include="Octokit" Version="6.1.0" />    
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\Strings.Designer.cs">

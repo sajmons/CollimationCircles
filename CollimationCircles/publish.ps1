@@ -35,16 +35,29 @@ Function PublishOne($Runtime)
 	$xml = [Xml] (Get-Content $Project)
 	$version = [Version] $xml.Project.PropertyGroup.Version
 	
-    $command = "dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
+    $commandRestore = "dotnet restore -r $Runtime"
 
-	Write-Host $command -ForegroundColor green
-    Invoke-Expression $command
+    Write-Host $commandRestore -ForegroundColor green
+    Invoke-Expression $commandRestore
+
+    $commandPublish = "dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
+
+	Write-Host $commandPublish -ForegroundColor green
+    Invoke-Expression $commandPublish
+
+    if ($Runtime -eq "osx-x64")
+    {
+        # make bundle for macosx
+        $commandBundle = "dotnet msbuild -t:BundleApp -p:RuntimeIdentifier=$Runtime -p:OutputPath=$Output/$Runtime/"
+        Write-Host $commandBundle -ForegroundColor green
+        Invoke-Expression $commandBundle
+    }
 
     # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
     # That's why I aded number infront of file name to maintain correct order.
     # You must always specify win-x64 as first runtime in $runtimes list
 	Compress-Archive -Force $Output/$Runtime/** $Output/$Index-$appName-$version-$Runtime.zip
-	Remove-Item –path $Output/$Runtime –Recurse -Force
+	#Remove-Item –path $Output/$Runtime –Recurse -Force
 }
 
 $Index = 0;
