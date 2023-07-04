@@ -23,12 +23,145 @@ Param(
     [string]$Output = "./publish"
 )
 
-Function PublishOne($Runtime)
+Function CreateInfoPlistFile
+{ 
+    Param
+    (        
+        [Parameter(Mandatory=$true, Position=0)]
+        [string] $AppName,
+        [Parameter(Mandatory=$true, Position=1)]
+        [string] $AppVersion,
+        [Parameter(Mandatory=$true, Position=2)]
+        [string] $Bundle
+    )
+
+    # Create & Set The Formatting with XmlWriterSettings class
+    $xmlObjectsettings = New-Object System.Xml.XmlWriterSettings
+    #Indent: Gets or sets a value indicating whether to indent elements.
+    $xmlObjectsettings.Indent = $true
+    #Gets or sets the character string to use when indenting. This setting is used when the Indent property is set to true.
+    $xmlObjectsettings.IndentChars = "    "
+ 
+    # Set the File path & Create The Document
+    $XmlFilePath = "$Output/$Bundle/Contents/Info.plist"
+    $XmlObjectWriter = [System.XML.XmlWriter]::Create($XmlFilePath, $xmlObjectsettings)
+ 
+    # Write the XML declaration and set the XSL
+    $XmlObjectWriter.WriteStartDocument()
+
+    $m = $XmlObjectWriter.gettype().getmethod("WriteDocType")
+    $m.Invoke($XmlObjectWriter, @("plist", "-//Apple//DTD PLIST 1.0//EN", "http://www.apple.com/DTDs/PropertyList-1.0.dtd", $null))
+
+    #<?xml version="1.0" encoding="UTF-8"?>
+    #<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    #<plist version="1.0">
+    #<dict>
+    #    <key>CFBundleIconFile</key>
+    #    <string>myicon-logo.icns</string>
+    #    <key>CFBundleIdentifier</key>
+    #    <string>com.identifier</string>
+    #    <key>CFBundleName</key>
+    #    <string>MyApp</string>
+    #    <key>CFBundleVersion</key>
+    #    <string>1.0.0</string>
+    #    <key>LSMinimumSystemVersion</key>
+    #    <string>10.12</string>
+    #    <key>CFBundleExecutable</key>
+    #    <string>MyApp.Avalonia</string>
+    #    <key>CFBundleInfoDictionaryVersion</key>
+    #    <string>6.0</string>
+    #    <key>CFBundlePackageType</key>
+    #    <string>APPL</string>
+    #    <key>CFBundleShortVersionString</key>
+    #    <string>1.0</string>
+    #    <key>NSHighResolutionCapable</key>
+    #    <true/>
+    #</dict>
+    #</plist>     
+
+    $XmlObjectWriter.WriteStartElement("plist") # <-- Start plist
+    $XmlObjectWriter.WriteAttributeString("version", "1.0");    
+
+        $XmlObjectWriter.WriteStartElement("dict") # <-- Start dict
+         
+            $XmlObjectWriter.WriteElementString("key","CFBundleIconFile")
+            $XmlObjectWriter.WriteElementString("string", "icon.icns")
+
+            $XmlObjectWriter.WriteElementString("key","CFBundleIdentifier")
+            $XmlObjectWriter.WriteElementString("string", "com.saimons.$AppName")
+
+            $XmlObjectWriter.WriteElementString("key", "CFBundleName")
+            $XmlObjectWriter.WriteElementString("string", $AppName)
+
+            $XmlObjectWriter.WriteElementString("key", "CFBundleVersion")
+            $XmlObjectWriter.WriteElementString("string", $AppVersion)
+
+            $XmlObjectWriter.WriteElementString("key", "LSMinimumSystemVersion")
+            $XmlObjectWriter.WriteElementString("string", "12")
+
+            $XmlObjectWriter.WriteElementString("key", "CFBundleExecutable")
+            $XmlObjectWriter.WriteElementString("string", $Appname)
+
+            $XmlObjectWriter.WriteElementString("key", "CFBundleInfoDictionaryVersion")
+            $XmlObjectWriter.WriteElementString("string", "6.0")
+
+            $XmlObjectWriter.WriteElementString("key", "CFBundlePackageType")
+            $XmlObjectWriter.WriteElementString("string", "APPL")
+
+            $XmlObjectWriter.WriteElementString("key", "CFBundleShortVersionString")
+            $XmlObjectWriter.WriteElementString("string", $AppVersion)
+
+            $XmlObjectWriter.WriteElementString("key", "NSHighResolutionCapable")
+            $XmlObjectWriter.WriteElementString("true", "")        
+ 
+        $XmlObjectWriter.WriteEndElement() # <-- End dict
+ 
+    $XmlObjectWriter.WriteEndElement();    # End plist
+ 
+    # Finally close the XML Document
+    $XmlObjectWriter.WriteEndDocument()
+    $XmlObjectWriter.Flush()
+    $XmlObjectWriter.Close()
+}
+
+Function MakeMacOSPackage
 {
-    <#
-        .SYNOPSIS
-            Run dotnet publish for project, get version from csproj file, create ZIP archive and remove temporary files.
-    #>	
+    Param
+    (
+         [Parameter(Mandatory=$true, Position=0)]
+         [string] $AppName,
+         [Parameter(Mandatory=$true, Position=1)]
+         [string] $AppVersion,
+         [Parameter(Mandatory=$true, Position=2)]
+         [string] $Runtime
+    )
+
+    $bundle = $AppName + ".app"
+
+    Remove-Item -Recurse -Force $Output/$bundle
+
+    New-Item -Path $Output/$bundle -ItemType Directory
+
+    New-Item -Path $Output/$bundle/Contents -ItemType Directory
+    New-Item -Path $Output/$bundle/Contents/MacOS -ItemType Directory
+    New-Item -Path $Output/$bundle/Contents/Resources -ItemType Directory
+
+    CreateInfoPlistFile $AppName $AppVersion $bundle
+
+    Copy-Item -Path $Output/$Runtime/** -Destination $Output/$bundle/Contents/MacOS
+  
+    #cp "$INFO_PLIST" "$AppName/Contents/Info.plist"
+    #cp "$ICON_FILE" "$AppName/Contents/Resources/$ICON_FILE"
+    #cp -a "$PUBLISH_OUTPUT_DIRECTORY" "$AppName/Contents/MacOS"
+}
+
+Function PublishOne
+{
+    Param
+    (
+         [Parameter(Mandatory=$true, Position=0)]
+         [string] $Runtime         
+    )
     
 	$appName = [System.IO.Path]::GetFileNameWithoutExtension($Project)
 
@@ -48,15 +181,13 @@ Function PublishOne($Runtime)
     if ($Runtime -eq "osx-x64")
     {
         # make bundle for macosx
-        $commandBundle = "dotnet msbuild -t:BundleApp -p:RuntimeIdentifier=$Runtime -p:OutputPath=$Output/$Runtime/"
-        Write-Host $commandBundle -ForegroundColor green
-        Invoke-Expression $commandBundle
+        MakeMacOSPackage $appName $version $Runtime
     }
 
     # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
     # That's why I aded number infront of file name to maintain correct order.
     # You must always specify win-x64 as first runtime in $runtimes list
-	Compress-Archive -Force $Output/$Runtime/** $Output/$Index-$appName-$version-$Runtime.zip
+	#Compress-Archive -Force $Output/$Runtime/** $Output/$Index-$appName-$version-$Runtime.zip
 	#Remove-Item –path $Output/$Runtime –Recurse -Force
 }
 
