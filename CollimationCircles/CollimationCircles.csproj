@@ -28,12 +28,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
-    <None Remove="appstate.json" />
+    <None Remove="appstate.json" />    
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Resources\**" />    
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup>    
     <AvaloniaResource Remove="Resources\Themes\Dark.axaml" />
     <AvaloniaResource Remove="Resources\Themes\Light.axaml" />
     <AvaloniaResource Remove="Resources\Themes\Night.axaml" />
@@ -44,18 +44,17 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-rc1.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.0-rc2.2" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-rc1.1" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-rc1.1">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.0-rc2.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-rc2.2">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.0" />
-    <PackageReference Include="Dotnet.Bundle" Version="0.9.13" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0-rc1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-preview.5.23280.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Octokit" Version="6.1.0" />    
+    <PackageReference Include="Octokit" Version="7.0.0" />    
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Resources\Strings.Designer.cs">
@@ -89,5 +88,10 @@
     <AvaloniaXaml Update="Resources\Themes\Dark.axaml">
       <SubType>Designer</SubType>
     </AvaloniaXaml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="icon.icns">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

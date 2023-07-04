@@ -6,18 +6,18 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.AboutTabUserControl"
              x:DataType="vm:SettingsViewModel">
-  <Border
-    Width="250"
-    Padding="8"
-    Margin="0 4 0 0"
-    CornerRadius="4"
-    BorderThickness="1">
+  <StackPanel
+    Width="{Binding SettingsWidth}"
+    Margin="12">
+
     <WrapPanel>
+
       <PathIcon
         Width="84" Height="84"
         Margin="8"
         HorizontalAlignment="Center" VerticalAlignment="Center"
         Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Launcher}" />
+
       <TextBlock
         Margin="0,0,10,10"
         Padding="8,8,0,0"
@@ -31,6 +31,7 @@
           </MultiBinding>
         </TextBlock.Text>
       </TextBlock>
+
       <Button
         Margin="0,0,10,10"
         Width="130"
@@ -41,6 +42,7 @@
           <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.OpenWebSite}" VerticalAlignment="Center"/>
         </StackPanel>
       </Button>
+
       <Button
         Margin="0,0,10,10"
         Width="130"
@@ -51,6 +53,7 @@
           <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.GitHub}" VerticalAlignment="Center"/>
         </StackPanel>
       </Button>
+
       <Button
         Margin="0,0,10,10"
         Width="130"
@@ -61,6 +64,9 @@
           <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>
         </StackPanel>
       </Button>
+
     </WrapPanel>
-  </Border>
+
+  </StackPanel>
+
 </UserControl>

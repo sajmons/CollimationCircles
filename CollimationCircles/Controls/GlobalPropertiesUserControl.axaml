@@ -6,55 +6,43 @@
              x:Class="CollimationCircles.Controls.GlobalPropertiesUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <Border
-      Width="250"
-      Padding="8"      
-      CornerRadius="4"
-      BorderThickness="1">
-      <StackPanel>
-        <TextBlock Text="{DynamicResource Text.AllItemsControls}"/>
 
-        <StackPanel
-        Orientation="Vertical"
-        Spacing="2">
+  <StackPanel
+    Width="{Binding SettingsWidth}"
+    Margin="12">
+    <TextBlock Text="{DynamicResource Text.AllItemsControls}"/>
 
-        <UniformGrid Columns="2">
-          <TextBlock
-            VerticalAlignment="Center"
-            Text="{DynamicResource Text.Scale}"/>
-          <NumericUpDown
-            Increment="0.01"
-            Value="{Binding Scale}"
-            Minimum="0.0" Maximum="4.0" />
-        </UniformGrid>
+    <UniformGrid
+      Columns="2">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.Scale}"/>
+      <NumericUpDown
+        Increment="0.01"
+        Value="{Binding Scale}"
+        Minimum="0.0" Maximum="4.0" />
 
-        <UniformGrid Columns="2">
-          <TextBlock
-            VerticalAlignment="Center"
-            Text="{DynamicResource Text.Rotation}"/>
-          <NumericUpDown
-            Value="{Binding RotationAngle}"
-            Minimum="-180" Maximum="180" />
-        </UniformGrid>
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.Rotation}"/>
+      <NumericUpDown
+        Value="{Binding RotationAngle}"
+        Minimum="-180" Maximum="180" />
 
-        <UniformGrid Columns="2">
-          <TextBlock
-            VerticalAlignment="Center"
-            Text="{DynamicResource Text.LabelSize}" />
-          <NumericUpDown
-            Value="{Binding LabelSize}"
-            Minimum="5" Maximum="20"/>
-        </UniformGrid>
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.LabelSize}" />
+      <NumericUpDown
+        Value="{Binding LabelSize}"
+        Minimum="5" Maximum="20"/>
 
-        <UniformGrid Columns="2">
-          <TextBlock
-            VerticalAlignment="Center"
-            Text="{DynamicResource Text.ShowLabels}" />
-          <CheckBox
-            IsChecked="{Binding ShowLabels}"/>
-        </UniformGrid>
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.ShowLabels}" />
+      <CheckBox
+        IsChecked="{Binding ShowLabels}"/>
+    </UniformGrid>
 
-      </StackPanel>
-      </StackPanel>
-  </Border>
+  </StackPanel>
+
 </UserControl>

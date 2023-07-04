@@ -7,14 +7,13 @@
              x:Class="CollimationCircles.Controls.PropertiesUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <WrapPanel>
+  
+    <WrapPanel>
 
-    <controls:ItemListUserControl Padding="0 4 0 0" />
+      <controls:ItemListUserControl Margin="0 0 0 8" />
 
-    <controls:ItemPropertiesUserControl Padding="0 4 0 0" />
+      <controls:GlobalPropertiesUserControl />
 
-    <controls:GlobalPropertiesUserControl Padding="0 4 0 4" />
-
-  </WrapPanel>
+    </WrapPanel>  
 
 </UserControl>

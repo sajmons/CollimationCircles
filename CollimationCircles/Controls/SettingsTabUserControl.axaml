@@ -7,254 +7,245 @@
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
   <WrapPanel>
-  
-    <Border
-      Width="250"
-      Padding="8"
-      Margin="0 4 0 0"
-      CornerRadius="4"
-      BorderThickness="1">
-      <StackPanel>
-        <TextBlock Text="{DynamicResource Text.Settings}"/>
-        <StackPanel Orientation="Vertical">
 
-          <Grid ColumnDefinitions="*,95" RowDefinitions="40,40">
-            <TextBlock
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.UserInterfaceLanguage}"
-              VerticalAlignment="Center"/>
-            <ComboBox
-              Grid.Column="1"
-              HorizontalAlignment="Right"
-              ItemsSource="{Binding LanguageList}"
-              SelectedItem="{Binding SelectedLanguage}">
-              <ComboBox.ItemTemplate>
-                <DataTemplate>
-                  <TextBlock Text="{Binding Key}" />
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-            <TextBlock
-              Grid.Row="1"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.UserInterfaceTheme}"
-              VerticalAlignment="Center"/>
-            <ComboBox
-              Grid.Row="1"
-              Grid.Column="1"
-              HorizontalAlignment="Right"
-              ItemsSource="{Binding ThemeList}"
-              SelectedItem="{Binding SelectedTheme}">
-              <ComboBox.ItemTemplate>
-                <DataTemplate>
-                  <TextBlock Text="{Binding}" />
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-          </Grid>
+    <StackPanel
+      Width="{Binding SettingsWidth}"
+      Margin="12">
+      <StackPanel Orientation="Vertical">
 
-          <Grid ColumnDefinitions="*,20" RowDefinitions="40,40,40">
-            <TextBlock
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.CheckForNewVersion}"
-              VerticalAlignment="Center"/>
-            <CheckBox
-              Grid.Column="1"
-              IsChecked="{Binding CheckForNewVersionOnStartup}" />
-            <TextBlock
-              Grid.Row="1"
-              TextWrapping="WrapWithOverflow"
-              RelativePanel.Below="CheckForNewVersion"
-              Text="{DynamicResource Text.StayOnTop}"
-              VerticalAlignment="Center"/>
-            <CheckBox
-              Grid.Row="1"
-              Grid.Column="1"
-              IsChecked="{Binding AlwaysOnTop}" />
-            <TextBlock
-              Grid.Row="2"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.ShowMarkAtSelectedItem}"
-              VerticalAlignment="Center"/>
-            <CheckBox
-              Grid.Row="2"
-              Grid.Column="1"
-              IsChecked="{Binding ShowMarkAtSelectedItem}" />
-          </Grid>
+        <Grid
+          ColumnDefinitions="*,95"
+          RowDefinitions="40,40">
+          <TextBlock
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.UserInterfaceLanguage}"
+            VerticalAlignment="Center"/>
+          <ComboBox
+            Grid.Column="1"
+            HorizontalAlignment="Right"
+            ItemsSource="{Binding LanguageList}"
+            SelectedItem="{Binding SelectedLanguage}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Key}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock
+            Grid.Row="1"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.UserInterfaceTheme}"
+            VerticalAlignment="Center"/>
+          <ComboBox
+            Grid.Row="1"
+            Grid.Column="1"
+            HorizontalAlignment="Right"
+            ItemsSource="{Binding ThemeList}"
+            SelectedItem="{Binding SelectedTheme}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </Grid>
 
-        </StackPanel>
+        <Grid ColumnDefinitions="*,20" RowDefinitions="40,40,40">
+          <TextBlock
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.CheckForNewVersion}"
+            VerticalAlignment="Center"/>
+          <CheckBox
+            Grid.Column="1"
+            IsChecked="{Binding CheckForNewVersionOnStartup}" />
+          <TextBlock
+            Grid.Row="1"
+            TextWrapping="WrapWithOverflow"
+            RelativePanel.Below="CheckForNewVersion"
+            Text="{DynamicResource Text.StayOnTop}"
+            VerticalAlignment="Center"/>
+          <CheckBox
+            Grid.Row="1"
+            Grid.Column="1"
+            IsChecked="{Binding AlwaysOnTop}" />
+          <TextBlock
+            Grid.Row="2"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.ShowMarkAtSelectedItem}"
+            VerticalAlignment="Center"/>
+          <CheckBox
+            Grid.Row="2"
+            Grid.Column="1"
+            IsChecked="{Binding ShowMarkAtSelectedItem}" />
+        </Grid>
+
       </StackPanel>
-    </Border>
+    </StackPanel>
 
-    <Border
-      Width="250"
-      Padding="8"
-      Margin="0 4 0 0"
-      CornerRadius="4"
-      BorderThickness="1">
-      <StackPanel>
-        <TextBlock Text="{DynamicResource Text.Settings}"/>
-        <StackPanel Orientation="Vertical">
+    <StackPanel
+      Width="{Binding SettingsWidth}"
+      Margin="12">
+      <TextBlock Text="{DynamicResource Text.KeyboardShortcuts}"/>
+      <StackPanel Orientation="Vertical">
 
-          <Grid
-            RowDefinitions="30,30,30,30,30,30,30,30,30,30,30,30,30,30"
-            ColumnDefinitions="*,20" >
-            <TextBlock
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.GlobalRotationCW}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Column="1"
-              Text="R"
-              VerticalAlignment="Center"/>
+        <Grid
+          RowDefinitions="30,30,30,30,30,30,30,30,30,30,30,30,30,30"
+          ColumnDefinitions="*,20" >
+          <TextBlock
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.GlobalRotationCW}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Column="1"
+            Text="R"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="1"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.GlobalRotationCCW}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="1"
-              Grid.Column="1"
-              Text="F"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="1"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.GlobalRotationCCW}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="1"
+            Grid.Column="1"
+            Text="F"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="2"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.GlobalScaleUp}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="2"
-              Grid.Column="1"
-              Text="+"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="2"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.GlobalScaleUp}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="2"
+            Grid.Column="1"
+            Text="+"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="3"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.GlobalScaleDown}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="3"
-              Grid.Column="1"
-              Text="-"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="3"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.GlobalScaleDown}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="3"
+            Grid.Column="1"
+            Text="-"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="4"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.RotateHelperCW}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="4"
-              Grid.Column="1"
-              Text="Q"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="4"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.RotateHelperCW}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="4"
+            Grid.Column="1"
+            Text="Q"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="5"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.RotateHelperCCW}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="5"
-              Grid.Column="1"
-              Text="A"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="5"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.RotateHelperCCW}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="5"
+            Grid.Column="1"
+            Text="A"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="6"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.IncreaseHelperRadius}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="6"
-              Grid.Column="1"
-              Text="W"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="6"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.IncreaseHelperRadius}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="6"
+            Grid.Column="1"
+            Text="W"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="7"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.DecreaseHelperRadius}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="7"
-              Grid.Column="1"
-              Text="S"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="7"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.DecreaseHelperRadius}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="7"
+            Grid.Column="1"
+            Text="S"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="8"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.IncreaseHelperCount}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="8"
-              Grid.Column="1"
-              Text="T"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="8"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.IncreaseHelperCount}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="8"
+            Grid.Column="1"
+            Text="T"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="9"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.DecreaseHelperCount}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="9"
-              Grid.Column="1"
-              Text="G"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="9"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.DecreaseHelperCount}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="9"
+            Grid.Column="1"
+            Text="G"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="10"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.IncreaseHelperSpacing}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="10"
-              Grid.Column="1"
-              Text="Z"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="10"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.IncreaseHelperSpacing}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="10"
+            Grid.Column="1"
+            Text="Z"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="11"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.DecreaseHelperSpacing}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="11"
-              Grid.Column="1"
-              Text="H"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="11"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.DecreaseHelperSpacing}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="11"
+            Grid.Column="1"
+            Text="H"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="12"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.IncreaseItemThichness}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="12"
-              Grid.Column="1"
-              Text="E"
-              VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="12"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.IncreaseItemThichness}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="12"
+            Grid.Column="1"
+            Text="E"
+            VerticalAlignment="Center"/>
 
-            <TextBlock
-              Grid.Row="13"
-              TextWrapping="WrapWithOverflow"
-              Text="{DynamicResource Text.DecreaseItemThickness}"
-              VerticalAlignment="Center"/>
-            <TextBlock
-              Grid.Row="13"
-              Grid.Column="1"
-              Text="D"
-              VerticalAlignment="Center"/>
-          </Grid>
+          <TextBlock
+            Grid.Row="13"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.DecreaseItemThickness}"
+            VerticalAlignment="Center"/>
+          <TextBlock
+            Grid.Row="13"
+            Grid.Column="1"
+            Text="D"
+            VerticalAlignment="Center"/>
+        </Grid>
 
-        </StackPanel>
       </StackPanel>
-    </Border>
+    </StackPanel>
 
   </WrapPanel>
 

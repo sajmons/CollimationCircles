@@ -5,7 +5,7 @@
              xmlns:controls="clr-namespace:CollimationCircles.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.SettingsUserControl">
-  <TabControl>
+  <TabControl Padding="0">
     <TabItem>
       <TabItem.Header>
         <TextBlock
@@ -13,7 +13,7 @@
           Text="{DynamicResource Text.Properties}" />
       </TabItem.Header>
       <ScrollViewer>
-        <controls:PropertiesUserControl/>
+        <controls:PropertiesUserControl />
       </ScrollViewer>
     </TabItem>
     <TabItem>

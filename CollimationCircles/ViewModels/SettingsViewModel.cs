@@ -115,6 +115,9 @@ namespace CollimationCircles.ViewModels
         public int settingsMinWidth = 280;
 
         [ObservableProperty]
+        public int settingsWidth = 255;
+
+        [ObservableProperty]
         public string? appDescription;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
