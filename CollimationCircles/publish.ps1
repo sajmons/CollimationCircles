@@ -173,20 +173,34 @@ Function PublishOne
 
     $commandPublish = "dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
 
+    if ($Runtime -eq "osx-x64")
+    {
+        $commandPublish += " /p:UseAppHost=true"
+    }
+
 	Write-Host $commandPublish -ForegroundColor green
     Invoke-Expression $commandPublish
+
+    $outputDir = "$Output/$Runtime/**"
 
     if ($Runtime -eq "osx-x64")
     {
         # make bundle for macosx
         MakeMacOSPackage $appName $version $Runtime
+        $outputDir = "$Output/$appName" + ".app"
     }
 
     # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
     # That's why I aded number infront of file name to maintain correct order.
     # You must always specify win-x64 as first runtime in $runtimes list
-	#Compress-Archive -Force $Output/$Runtime/** $Output/$Index-$appName-$version-$Runtime.zip
-	#Remove-Item –path $Output/$Runtime –Recurse -Force
+	Compress-Archive -Force $outputDir $Output/$Index-$appName-$version-$Runtime.zip
+
+    if ($Runtime -eq "osx-x64")
+    {
+        Remove-Item –path $outputDir –Recurse -Force
+    }
+    
+	Remove-Item –path $Output/$Runtime –Recurse -Force    
 }
 
 $Index = 0;
