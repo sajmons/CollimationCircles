@@ -138,8 +138,6 @@ Function MakeMacOSPackage
 
     $bundle = $AppName + ".app"
 
-    Remove-Item -Recurse -Force $Output/$bundle
-
     New-Item -Path $Output/$bundle -ItemType Directory
 
     New-Item -Path $Output/$bundle/Contents -ItemType Directory
