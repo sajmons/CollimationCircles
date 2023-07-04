@@ -150,9 +150,7 @@ Function MakeMacOSPackage
 
     Copy-Item -Path $Output/$Runtime/** -Destination $Output/$bundle/Contents/MacOS
   
-    #cp "$INFO_PLIST" "$AppName/Contents/Info.plist"
-    #cp "$ICON_FILE" "$AppName/Contents/Resources/$ICON_FILE"
-    #cp -a "$PUBLISH_OUTPUT_DIRECTORY" "$AppName/Contents/MacOS"
+    Move-Item –Path $Output/$bundle/Contents/MacOS/icon.icns -Destination $Output/$bundle/Contents/Resources    
 }
 
 Function PublishOne
