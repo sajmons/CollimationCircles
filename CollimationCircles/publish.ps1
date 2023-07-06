@@ -138,17 +138,41 @@ Function MakeMacOSPackage
 
     $bundle = $AppName + ".app"
 
+    # create bundle directory structure
     New-Item -Path $Output/$bundle -ItemType Directory
-
     New-Item -Path $Output/$bundle/Contents -ItemType Directory
     New-Item -Path $Output/$bundle/Contents/MacOS -ItemType Directory
     New-Item -Path $Output/$bundle/Contents/Resources -ItemType Directory
 
     CreateInfoPlistFile $AppName $AppVersion $bundle
 
-    Copy-Item -Path $Output/$Runtime/** -Destination $Output/$bundle/Contents/MacOS
+    # copy applicaton files to Contents/MacOS folder
+    Copy-Item -Path $Output/$Runtime/** -Destination $Output/$bundle/Contents/MacOS    
   
-    Move-Item –Path $Output/$bundle/Contents/MacOS/icon.icns -Destination $Output/$bundle/Contents/Resources    
+    # copy icon to Contents/Resources folder
+    Move-Item –Path $Output/$bundle/Contents/MacOS/icon.icns -Destination $Output/$bundle/Contents/Resources
+}
+
+Function GrantExecutablePermissions()
+{
+    Param
+    (
+         [Parameter(Mandatory=$true, Position=0)]
+         [string] $AppName,
+         [Parameter(Mandatory=$true, Position=1)]
+         [string] $Output,
+         [Parameter(Mandatory=$true, Position=2)]
+         [string] $Runtime
+    )
+
+    # Grant Read and Execute Access of a specific file
+    # ICACLS $Output/$Runtime /grant:r "users:(RX)" /C   
+    
+    $commandGrantPermissions = "icacls $Output/$Runtime/$AppName /grant:r Users:RX /C"
+
+    Write-Host $commandGrantPermissions -ForegroundColor green
+
+    Invoke-Expression $commandGrantPermissions
 }
 
 Function PublishOne
@@ -187,6 +211,8 @@ Function PublishOne
         MakeMacOSPackage $appName $version $Runtime
         $outputDir = "$Output/$appName" + ".app"
     }
+
+    GrantExecutablePermissions $appName $Output $Runtime
 
     # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
     # That's why I aded number infront of file name to maintain correct order.
