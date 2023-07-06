@@ -12,6 +12,7 @@
         Title="{Binding Title}"
 		    Background="Transparent"
         TransparencyBackgroundFallback="Transparent"
+        TransparencyLevelHint="Transparent"
         Width="{Binding Width, Mode=TwoWay}"
         Height="{Binding Height, Mode=TwoWay}">
   <RelativePanel>
