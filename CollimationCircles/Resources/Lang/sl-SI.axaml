@@ -43,7 +43,7 @@
   <system:String x:Key="Text.NewVersion">Nova verzija</system:String>
   <system:String x:Key="Text.NewVersionDownload">Na voljo je nova verzija {0}! Jo želite prenesti?</system:String>
   <system:String x:Key="Text.OpenFile">Odpri datoteko</system:String>
-  <system:String x:Key="Text.OpenWebSite">Spletna pomoč</system:String>
+  <system:String x:Key="Text.OpenWebSite">Spletna stran aplikacije</system:String>
   <system:String x:Key="Text.PrimaryCenter">Center primarnega</system:String>
   <system:String x:Key="Text.PrimaryClip">Sponka primernega</system:String>
   <system:String x:Key="Text.PrimaryOuter">Zunanji rob prim.</system:String>
@@ -79,5 +79,10 @@
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako pri izbranem elementu</system:String>
-  <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>
+  <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>  
+  <system:String x:Key="Text.TwitterWebSite">Avtorjeva Twitter spletna stran</system:String>
+  <system:String x:Key="Text.YouTubeChannel">Avtorjev YouTube kanal</system:String>
+  <system:String x:Key="Text.AppWebSite">Spletna stran</system:String>
+  <system:String x:Key="Text.OpenWebSiteContactForm">Odpri spletni kontaktni obrazec</system:String>
+  <system:String x:Key="Text.GitHubWebSite">Odpri GitHub stran aplikacije</system:String>
 </ResourceDictionary>

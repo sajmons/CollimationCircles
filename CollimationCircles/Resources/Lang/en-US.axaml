@@ -42,8 +42,8 @@
   <system:String x:Key="Text.LoadList">Load list from JSON file</system:String>
   <system:String x:Key="Text.NewVersion">New Version</system:String>
   <system:String x:Key="Text.NewVersionDownload">New version {0} available! Would you like to download it?</system:String>
-  <system:String x:Key="Text.OpenFile">Open file</system:String>
-  <system:String x:Key="Text.OpenWebSite">Online Help</system:String>
+  <system:String x:Key="Text.OpenFile">Open file</system:String>  
+  <system:String x:Key="Text.OpenWebSite">Open application web site</system:String>  
   <system:String x:Key="Text.PrimaryCenter">Primary Center</system:String>
   <system:String x:Key="Text.PrimaryClip">Primary clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primary outer</system:String>
@@ -82,7 +82,12 @@
   <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>
   <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected item</system:String>
-  <system:String x:Key="Text.GitHub">GitHub</system:String>
+  <system:String x:Key="Text.GitHub">GitHub</system:String>  
   <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
-  <system:String x:Key="Text.KeyboardShortcuts">Keyboard shortcuts</system:String>  
+  <system:String x:Key="Text.KeyboardShortcuts">Keyboard shortcuts</system:String>
+  <system:String x:Key="Text.TwitterWebSite">Open author Twitter web site</system:String>
+  <system:String x:Key="Text.YouTubeChannel">Open author YouTube channel</system:String>
+  <system:String x:Key="Text.AppWebSite">Web site</system:String>
+  <system:String x:Key="Text.OpenWebSiteContactForm">Open online contact form</system:String>
+  <system:String x:Key="Text.GitHubWebSite">Open application GitHub web site</system:String>
 </ResourceDictionary>

@@ -5,34 +5,40 @@
              xmlns:controls="clr-namespace:CollimationCircles.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.SettingsUserControl">
-  <TabControl Padding="0">
-    <TabItem>
-      <TabItem.Header>
-        <TextBlock
-          FontSize="14"
-          Text="{DynamicResource Text.Properties}" />
-      </TabItem.Header>
-      <ScrollViewer>
-        <controls:PropertiesUserControl />
-      </ScrollViewer>
-    </TabItem>
-    <TabItem>
-      <TabItem.Header>
-        <TextBlock
-          FontSize="14"
-          Text="{DynamicResource Text.Settings}" />
-      </TabItem.Header>
-      <ScrollViewer>
-        <controls:SettingsTabUserControl />
-      </ScrollViewer>
-    </TabItem>
-    <TabItem>
-      <TabItem.Header>
-        <TextBlock
-          FontSize="14"
-          Text="{DynamicResource Text.About}" />
-      </TabItem.Header>
-      <controls:AboutTabUserControl/>
-    </TabItem>
-  </TabControl>
+  <Grid
+      Background="{DynamicResource ThemeBackgroundBrush}"
+      RowDefinitions="*,50">
+    <TabControl Padding="0">
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
+            Text="{DynamicResource Text.Properties}" />
+        </TabItem.Header>
+        <ScrollViewer>
+          <controls:PropertiesUserControl />
+        </ScrollViewer>
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
+            Text="{DynamicResource Text.Settings}" />
+        </TabItem.Header>
+        <ScrollViewer>
+          <controls:SettingsTabUserControl />
+        </ScrollViewer>
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
+            Text="{DynamicResource Text.About}" />
+        </TabItem.Header>
+        <controls:AboutTabUserControl/>
+      </TabItem>
+    </TabControl>
+    <controls:SocialButtonBarUserControl
+      Grid.Row="1"/>
+  </Grid>  
 </UserControl>

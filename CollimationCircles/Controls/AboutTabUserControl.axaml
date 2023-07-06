@@ -36,10 +36,11 @@
         Margin="0,0,10,10"
         Width="130"
         VerticalAlignment="Bottom"
-        Command="{Binding OpenWebSiteCommand}">
+        Command="{Binding OpenWebSiteCommand}"
+        ToolTip.Tip="{DynamicResource Text.OpenWebSite}">
         <StackPanel Orientation="Horizontal">
           <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Help}" />
-          <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.OpenWebSite}" VerticalAlignment="Center"/>
+          <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.AppWebSite}" VerticalAlignment="Center"/>
         </StackPanel>
       </Button>
 
@@ -47,7 +48,8 @@
         Margin="0,0,10,10"
         Width="130"
         VerticalAlignment="Bottom"
-        Command="{Binding OpenGitHubPageCommand}">
+        Command="{Binding OpenGitHubPageCommand}"
+        ToolTip.Tip="{DynamicResource Text.GitHubWebSite}">
         <StackPanel Orientation="Horizontal">
           <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.GitHub}" />
           <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.GitHub}" VerticalAlignment="Center"/>
@@ -58,7 +60,8 @@
         Margin="0,0,10,10"
         Width="130"
         VerticalAlignment="Bottom"
-        Command="{Binding OpenContactWebPageCommand}">
+        Command="{Binding OpenContactWebPageCommand}"
+        ToolTip.Tip="{DynamicResource Text.OpenWebSiteContactForm}">
         <StackPanel Orientation="Horizontal">
           <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Email}" />
           <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>

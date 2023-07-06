@@ -7,6 +7,8 @@ namespace CollimationCircles.Services
         string WebPage { get; }
         string ContactPage { get; }
         string GitHubPage { get; }
+        string TwitterPage { get; }        
+        string YouTubeChannel { get; }
         string GetAppVersion();
         bool SameVersion(string v1, string v2);
         T? Deserialize<T>(string jsonState);

@@ -43,7 +43,7 @@
   <system:String x:Key="Text.NewVersion">Neue Version</system:String>
   <system:String x:Key="Text.NewVersionDownload">Neue Version {0} verfügbar! Möchtest du es herunterladen?</system:String>
   <system:String x:Key="Text.OpenFile">Datei öffnen</system:String>
-  <system:String x:Key="Text.OpenWebSite">Onlinehilfe</system:String>
+  <system:String x:Key="Text.OpenWebSite">Öffnen Sie die Anwendungswebsite</system:String>
   <system:String x:Key="Text.PrimaryCenter">Primäres Zentrum</system:String>
   <system:String x:Key="Text.PrimaryClip">Primäres Clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primäres Äußeres</system:String>
@@ -80,4 +80,9 @@
   <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung beim ausgewählten Element anzeigen</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Thema</system:String>
+  <system:String x:Key="Text.TwitterWebSite">Öffnen Sie die Twitter-Website des Autors</system:String>
+  <system:String x:Key="Text.YouTubeChannel">Öffnen Sie den YouTube-Kanal des Autors</system:String>
+  <system:String x:Key="Text.AppWebSite">Webseite</system:String>
+  <system:String x:Key="Text.OpenWebSiteContactForm">Online-Kontaktformular öffnen</system:String>
+  <system:String x:Key="Text.GitHubWebSite">Öffnen Sie die GitHub-Website der Anwendung</system:String>
 </ResourceDictionary>

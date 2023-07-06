@@ -16,10 +16,12 @@
         Width="{Binding Width, Mode=TwoWay}"
         Height="{Binding Height, Mode=TwoWay}">
   <RelativePanel>
+
     <controls:SettingsUserControl
       Width="{Binding SettingsMinWidth}"
       Height="{Binding Height}"
-      RelativePanel.AlignRightWithPanel="True"        
+      RelativePanel.AlignRightWithPanel="True"
+      RelativePanel.AlignTopWithPanel="True"
       Background="{DynamicResource ThemeBackgroundBrush}"
       IsVisible="{Binding DockInMainWindow}"/>
 
@@ -34,7 +36,7 @@
       Command="{Binding ShowSettingsCommand}"
       IsVisible="{Binding DockInMainWindow}">
       <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Undock}"/>
-    </Button>    
+    </Button>
   </RelativePanel>
-  
+
 </Window>

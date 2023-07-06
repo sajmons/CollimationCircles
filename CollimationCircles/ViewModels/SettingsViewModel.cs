@@ -528,6 +528,24 @@ namespace CollimationCircles.ViewModels
             }
         }
 
+        [RelayCommand]
+        internal void OpenTwitter()
+        {
+            if (appService is not null)
+            {
+                OpenUrl(appService.TwitterPage);
+            }
+        }
+
+        [RelayCommand]
+        internal void OpenYouTubeChannel()
+        {
+            if (appService is not null)
+            {
+                OpenUrl(appService.YouTubeChannel);
+            }
+        }
+
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

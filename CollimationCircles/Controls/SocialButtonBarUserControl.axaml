@@ -1,0 +1,57 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.SocialButtonBarUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SettingsViewModel"
+             Padding="8">
+
+  <StackPanel
+    HorizontalAlignment="Center"
+    Orientation="Horizontal">
+
+    <Button
+      Command="{Binding OpenWebSiteCommand}"
+      ToolTip.Tip="{DynamicResource Text.OpenWebSite}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Help}" />
+    </Button>
+
+    <Button
+      Command="{Binding OpenContactWebPageCommand}"
+      ToolTip.Tip="{DynamicResource Text.OpenWebSiteContactForm}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Email}" />
+    </Button>
+
+    <Button
+      Command="{Binding OpenGitHubPageCommand}"
+      ToolTip.Tip="{DynamicResource Text.GitHubWebSite}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.GitHub}" />
+    </Button>
+
+    <Button
+      Command="{Binding OpenTwitterCommand}"
+      ToolTip.Tip="{DynamicResource Text.TwitterWebSite}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Twetter}" />
+    </Button>
+
+    <Button
+      Command="{Binding OpenYouTubeChannelCommand}"
+      ToolTip.Tip="{DynamicResource Text.YouTubeChannel}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.YouTube}" />
+    </Button>
+    
+  </StackPanel>
+
+</UserControl>
