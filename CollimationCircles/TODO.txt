@@ -1,5 +1,4 @@
 ﻿- camera video streaming support
 - add collapsible sections to settings panel
 - add opacity global property
-- add you tube chanel icon
-- add twitter icon
+- add center offset support
