@@ -9,7 +9,7 @@ namespace CollimationCircles.Services
     {
         public void HandleMovement(Window window, SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 int x = window.Position.X;
                 int y = window.Position.Y;
@@ -48,7 +48,7 @@ namespace CollimationCircles.Services
 
         public void HandleGlobalRotation(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 if (vm != null)
                 {
@@ -76,7 +76,7 @@ namespace CollimationCircles.Services
 
         public void HandleGlobalScale(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 if (vm != null)
                 {
@@ -107,7 +107,7 @@ namespace CollimationCircles.Services
 
         public void HandleHelperRadius(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 if (vm != null)
                 {
@@ -129,7 +129,7 @@ namespace CollimationCircles.Services
 
         public void HandleHelperRotation(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 if (vm != null)
                 {
@@ -151,7 +151,7 @@ namespace CollimationCircles.Services
 
         public void HandleHelperCount(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 if (vm != null)
                 {
@@ -173,7 +173,7 @@ namespace CollimationCircles.Services
 
         public void HandleHelperSpacing(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 if (vm != null)
                 {
@@ -195,7 +195,7 @@ namespace CollimationCircles.Services
 
         public void HandleHelperThickness(SettingsViewModel? vm, KeyEventArgs e)
         {
-            if (!e.Handled)
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
             {
                 if (vm != null)
                 {
