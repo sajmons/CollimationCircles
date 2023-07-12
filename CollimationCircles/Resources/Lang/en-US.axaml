@@ -90,4 +90,6 @@
   <system:String x:Key="Text.AppWebSite">Web site</system:String>
   <system:String x:Key="Text.OpenWebSiteContactForm">Open online contact form</system:String>
   <system:String x:Key="Text.GitHubWebSite">Open application GitHub web site</system:String>
+  <system:String x:Key="Text.GlobalOffsetX">X offset</system:String>
+  <system:String x:Key="Text.GlobalOffsetY">Y offset</system:String>
 </ResourceDictionary>

@@ -120,6 +120,16 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public string? appDescription;
 
+        [JsonProperty]
+        [ObservableProperty]
+        [Range(-1000, 1000)]
+        public int globalOffsetX = -50;
+
+        [JsonProperty]
+        [ObservableProperty]
+        [Range(-1000, 1000)]
+        public int globalOffsetY = 50;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
@@ -134,7 +144,7 @@ namespace CollimationCircles.ViewModels
             {
                 InitializeLanguage();
                 InitializeThemes();
-                InitializeColors();                
+                InitializeColors();
             }
 
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
@@ -171,7 +181,7 @@ namespace CollimationCircles.ViewModels
             SelectedLanguage = LanguageList.FirstOrDefault();
 
             Translate(SelectedLanguage.Value);
-        }        
+        }
 
         private void InitializeColors()
         {
@@ -230,7 +240,7 @@ namespace CollimationCircles.ViewModels
             ShowMarkAtSelectedItem = true;
 
             Version = appService?.GetAppVersion() ?? "0.0.0";
-        }        
+        }
 
         [RelayCommand]
         internal void ShowSettings()
@@ -452,6 +462,8 @@ namespace CollimationCircles.ViewModels
                     DockInMainWindow = vm.DockInMainWindow;
                     ShowMarkAtSelectedItem = vm.ShowMarkAtSelectedItem;
                     Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
+                    GlobalOffsetX = vm.GlobalOffsetX;
+                    GlobalOffsetY = vm.GlobalOffsetY;
                 }
                 else
                 {
@@ -558,6 +570,8 @@ namespace CollimationCircles.ViewModels
                 case nameof(SelectedIndex):
                 case nameof(ShowMarkAtSelectedItem):
                 case nameof(DockInMainWindow):
+                case nameof(GlobalOffsetX):
+                case nameof(GlobalOffsetY):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);

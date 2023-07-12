@@ -38,9 +38,24 @@
 
       <TextBlock
         VerticalAlignment="Center"
+        Text="{DynamicResource Text.GlobalOffsetX}" />
+      <NumericUpDown
+        Value="{Binding GlobalOffsetX}"
+        Minimum="-1000" Maximum="1000"/>
+
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.GlobalOffsetY}" />
+      <NumericUpDown
+        Value="{Binding GlobalOffsetY}"
+        Minimum="-1000" Maximum="1000"/>
+
+      <TextBlock
+        VerticalAlignment="Center"
         Text="{DynamicResource Text.ShowLabels}" />
       <CheckBox
         IsChecked="{Binding ShowLabels}"/>
+      
     </UniformGrid>
 
   </StackPanel>
