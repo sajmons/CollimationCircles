@@ -29,11 +29,11 @@ namespace CollimationCircles.Helper
             {
                 throw new Exception($"Resource key '{resourceKey}' not found.");
             }
-        }
+        }        
 
-        public static string TryGetIcon(string resourceKey)
+        public static string TryGet(string resourceKey)
         {
-            if (Application.Current?.Resources.TryGetResource($"IconData.{resourceKey}", ThemeVariant.Dark, out object? value) == true)
+            if (Application.Current?.Resources.TryGetResource(resourceKey, ThemeVariant.Dark, out object? value) == true)
             {
                 return $"{value ?? string.Empty}";
             }

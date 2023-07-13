@@ -117,7 +117,7 @@ namespace CollimationCircles.Models
                 else
                     dynRes += string.Empty;
 
-                return DynRes.TryGetIcon(dynRes);
+                return DynRes.TryGet($"IconData.{dynRes}");
             }
         }
 
