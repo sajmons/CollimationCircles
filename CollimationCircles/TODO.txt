@@ -1,3 +1,4 @@
 ﻿- camera video streaming support
-- add collapsible sections to settings panel
-- add opacity global property
+- add global opacity property
+- add main window HUD support
+  - add support for showing shortcuts inside HUD
