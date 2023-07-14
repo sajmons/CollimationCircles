@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CollimationCircles.Services;
@@ -26,33 +27,9 @@ public partial class App : Application
         {
             SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
+            vm?.LoadState();
+
             desktop.MainWindow = new MainView();
-
-            vm?.LoadState(window: desktop.MainWindow);
-
-            KeyHandlingService? mws = Ioc.Default.GetService<KeyHandlingService>();
-
-            desktop.MainWindow.KeyDown += (s, e) =>
-            {
-                mws?.HandleMovement(desktop.MainWindow, vm, e);
-                mws?.HandleGlobalScale(vm, e);
-                mws?.HandleHelperRadius(vm, e);
-                mws?.HandleGlobalRotation(vm, e);
-                mws?.HandleHelperRotation(vm, e);
-                mws?.HandleHelperCount(vm, e);
-                mws?.HandleHelperThickness(vm, e);
-                mws?.HandleHelperSpacing(vm, e);
-            };
-
-            desktop.MainWindow.Opened += (s, e) =>
-            {
-                desktop.MainWindow.Position = vm != null ? vm.Position : new PixelPoint();
-            };
-
-            desktop.MainWindow.Closing += (s, e) =>
-            {
-                vm?.SaveState(desktop.MainWindow);
-            };
         }
 
         base.OnFrameworkInitializationCompleted();

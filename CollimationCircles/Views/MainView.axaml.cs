@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Media;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
@@ -15,13 +16,20 @@ namespace CollimationCircles.Views
     {
         readonly IDrawHelperService? dhs;
 
+        SettingsViewModel? vm;
+        KeyHandlingService? mws;
+
         public MainView()
         {
             InitializeComponent();
 
-            DataContext = Ioc.Default.GetService<SettingsViewModel>();
+            vm = Ioc.Default.GetService<SettingsViewModel>();            
 
-            CheckForUpdate(DataContext as SettingsViewModel);
+            DataContext = vm;
+
+            Position = vm?.MainWindowPosition ?? new PixelPoint();
+
+            CheckForUpdate(vm);
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
@@ -30,6 +38,7 @@ namespace CollimationCircles.Views
             });
 
             dhs = Ioc.Default.GetService<IDrawHelperService>();
+            mws = Ioc.Default.GetService<KeyHandlingService>();
         }
 
         static void CheckForUpdate(SettingsViewModel? vm)
@@ -97,6 +106,40 @@ namespace CollimationCircles.Views
             {
                 throw;
             }
+        }
+
+        protected override void OnClosing(WindowClosingEventArgs e)
+        {
+            if (vm is not null)
+            {
+                // Remember window position and Size
+                vm.MainWindowPosition = Position;
+                vm.MainWindowWidth = Width;
+                vm.MainWindowHeight = Height;
+            }
+
+            base.OnClosing(e);            
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            vm?.SaveState();
+
+            base.OnClosed(e);            
+        }        
+
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+            mws?.HandleMovement(this, vm, e);
+            mws?.HandleGlobalScale(vm, e);
+            mws?.HandleHelperRadius(vm, e);
+            mws?.HandleGlobalRotation(vm, e);
+            mws?.HandleHelperRotation(vm, e);
+            mws?.HandleHelperCount(vm, e);
+            mws?.HandleHelperThickness(vm, e);
+            mws?.HandleHelperSpacing(vm, e);
+
+            base.OnKeyDown(e);
         }
     }
 }

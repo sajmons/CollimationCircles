@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Media;
 using Avalonia.Styling;
 using CollimationCircles.Extensions;
@@ -33,31 +32,43 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public PixelPoint position = new(100, 100);
+        private PixelPoint mainWindowPosition = new(100, 100);
 
         [JsonProperty]
         [ObservableProperty]
-        public double width = 900;
+        private double mainWindowWidth = 900;
 
         [JsonProperty]
         [ObservableProperty]
-        public double height = 700;
+        private double mainWindowHeight = 700;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private PixelPoint settingsWindowPosition = new(100, 100);
+
+        [JsonProperty]
+        [ObservableProperty]
+        private double settingsWindowWidth = 560;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private double settingsWindowHeight = 600;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(0, 4)]
         [NotifyDataErrorInfo]
-        public double scale = 1.0;
+        private double scale = 1.0;
 
         [JsonProperty]
         [ObservableProperty]
-        public double labelSize = 10;
+        private double labelSize = 10;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(-180, 180)]
         [NotifyDataErrorInfo]
-        public double rotationAngle = 0;
+        private double rotationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
@@ -65,75 +76,75 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        public ObservableCollection<CollimationHelper> items = new();
+        private ObservableCollection<CollimationHelper> items = new();
 
         [JsonProperty]
         [ObservableProperty]
-        public ObservableCollection<Color> colorList = new();
+        private ObservableCollection<Color> colorList = new();
 
         [ObservableProperty]
-        public CollimationHelper selectedItem = new();
-
-        [JsonProperty]
-        [ObservableProperty]
-        public int selectedIndex = 0;
-
-        [ObservableProperty]
-        public ObservableCollection<KeyValuePair<string, string>> languageList = new();
+        private CollimationHelper selectedItem = new();
 
         [JsonProperty]
         [ObservableProperty]
-        public KeyValuePair<string, string> selectedLanguage = new();
+        private int selectedIndex = 0;
 
         [ObservableProperty]
-        public ObservableCollection<string> themeList = new();
-
-        [JsonProperty]
-        [ObservableProperty]
-        public string selectedTheme = "Dark";
+        private ObservableCollection<KeyValuePair<string, string>> languageList = new();
 
         [JsonProperty]
         [ObservableProperty]
-        public bool checkForNewVersionOnStartup = true;
+        private KeyValuePair<string, string> selectedLanguage = new();
+
+        [ObservableProperty]
+        private ObservableCollection<string> themeList = new();
 
         [JsonProperty]
         [ObservableProperty]
-        public bool alwaysOnTop = true;
+        private string selectedTheme = "Dark";
 
         [JsonProperty]
         [ObservableProperty]
-        public bool dockInMainWindow = true;
+        private bool checkForNewVersionOnStartup = true;
 
         [JsonProperty]
         [ObservableProperty]
-        public bool showMarkAtSelectedItem = true;
-
-        [ObservableProperty]
-        public string version = string.Empty;
-
-        [ObservableProperty]
-        public int settingsMinWidth = 280;
-
-        [ObservableProperty]
-        public int settingsWidth = 255;
-
-        [ObservableProperty]
-        public string? appDescription;
+        private bool alwaysOnTop = true;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(-1000, 1000)]
-        public int globalOffsetX = -0;
+        private bool dockInMainWindow = true;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool showMarkAtSelectedItem = true;
+
+        [ObservableProperty]
+        private string version = string.Empty;
+
+        [ObservableProperty]
+        private int settingsMinWidth = 280;
+
+        [ObservableProperty]
+        private int settingsWidth = 255;
+
+        [ObservableProperty]
+        private string? appDescription;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(-1000, 1000)]
-        public int globalOffsetY = 0;
+        private int globalOffsetX = -0;
+
+        [JsonProperty]
+        [ObservableProperty]
+        [Range(-1000, 1000)]
+        private int globalOffsetY = 0;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(0.1, 1)]
-        public double mainWindowOpacity = 0.8;
+        private double mainWindowOpacity = 0.8;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -394,8 +405,6 @@ namespace CollimationCircles.ViewModels
         public void OnClosed()
         {
             SettingsDialogViewModel = null;
-
-            DockInMainWindow = true;
         }
 
         [RelayCommand]
@@ -427,13 +436,12 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        internal void SaveState(Window window)
-        {
-            Position = window.Position;
+        internal void SaveState()
+        {            
             appService?.SaveState(this);
         }
 
-        internal bool LoadState(string? path = null, Window? window = null)
+        internal bool LoadState(string? path = null)
         {
             try
             {
@@ -441,14 +449,10 @@ namespace CollimationCircles.ViewModels
 
                 if (vm != null && vm.Items != null)
                 {
-                    if (window is not null)
-                    {
-                        window.Position = Position;
-                    }
-
-                    Position = vm.Position;
-                    Width = vm.Width;
-                    Height = vm.Height;
+                    MainWindowPosition = vm.MainWindowPosition;
+                    MainWindowWidth = vm.MainWindowWidth;
+                    MainWindowHeight = vm.MainWindowHeight;
+                    
                     Scale = vm.Scale;
                     RotationAngle = vm.RotationAngle;
                     ShowLabels = vm.ShowLabels;
@@ -470,6 +474,10 @@ namespace CollimationCircles.ViewModels
                     GlobalOffsetX = vm.GlobalOffsetX;
                     GlobalOffsetY = vm.GlobalOffsetY;
                     MainWindowOpacity = vm.MainWindowOpacity;
+                    
+                    SettingsWindowPosition = vm.SettingsWindowPosition;
+                    SettingsWindowWidth = vm.SettingsWindowWidth;
+                    SettingsWindowHeight = vm.SettingsWindowHeight;
 
                     if (!DockInMainWindow)
                     {
