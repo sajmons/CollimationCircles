@@ -123,12 +123,12 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         [Range(-1000, 1000)]
-        public int globalOffsetX = -50;
+        public int globalOffsetX = -0;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(-1000, 1000)]
-        public int globalOffsetY = 50;
+        public int globalOffsetY = 0;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -464,6 +464,11 @@ namespace CollimationCircles.ViewModels
                     Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
                     GlobalOffsetX = vm.GlobalOffsetX;
                     GlobalOffsetY = vm.GlobalOffsetY;
+
+                    if (!DockInMainWindow)
+                    {
+                        ShowSettings();
+                    }
                 }
                 else
                 {
