@@ -14,7 +14,8 @@
         TransparencyBackgroundFallback="Transparent"
         TransparencyLevelHint="Transparent"
         Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}">
+        Height="{Binding Height, Mode=TwoWay}"
+        Opacity="{Binding MainWindowOpacity, Mode=TwoWay}">
   <RelativePanel>
 
     <controls:SettingsUserControl

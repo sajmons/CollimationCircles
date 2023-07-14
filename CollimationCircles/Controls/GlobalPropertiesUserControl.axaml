@@ -31,10 +31,10 @@
 
       <TextBlock
         VerticalAlignment="Center"
-        Text="{DynamicResource Text.LabelSize}" />
+        Text="{DynamicResource Text.MainWindowOpacity}" />
       <NumericUpDown
-        Value="{Binding LabelSize}"
-        Minimum="5" Maximum="20"/>
+        Value="{Binding MainWindowOpacity}"
+        Minimum="0.1" Maximum="1" Increment="0.1"/>      
 
       <TextBlock
         VerticalAlignment="Center"
@@ -52,9 +52,16 @@
 
       <TextBlock
         VerticalAlignment="Center"
+        Text="{DynamicResource Text.LabelSize}" />
+      <NumericUpDown
+        Value="{Binding LabelSize}"
+        Minimum="5" Maximum="20"/>
+
+      <TextBlock
+        VerticalAlignment="Center"
         Text="{DynamicResource Text.ShowLabels}" />
       <CheckBox
-        IsChecked="{Binding ShowLabels}"/>
+        IsChecked="{Binding ShowLabels}"/>      
       
     </UniformGrid>
 

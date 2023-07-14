@@ -85,4 +85,7 @@
   <system:String x:Key="Text.AppWebSite">Webseite</system:String>
   <system:String x:Key="Text.OpenWebSiteContactForm">Online-Kontaktformular öffnen</system:String>
   <system:String x:Key="Text.GitHubWebSite">Öffnen Sie die GitHub-Website der Anwendung</system:String>
+  <system:String x:Key="Text.GlobalOffsetX">X versetzt</system:String>
+  <system:String x:Key="Text.GlobalOffsetY">Y versetzt</system:String>
+  <system:String x:Key="Text.MainWindowOpacity">Opazität</system:String>
 </ResourceDictionary>

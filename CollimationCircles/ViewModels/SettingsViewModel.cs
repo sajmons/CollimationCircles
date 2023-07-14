@@ -130,6 +130,11 @@ namespace CollimationCircles.ViewModels
         [Range(-1000, 1000)]
         public int globalOffsetY = 0;
 
+        [JsonProperty]
+        [ObservableProperty]
+        [Range(0.1, 1)]
+        public double mainWindowOpacity = 0.8;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
@@ -464,6 +469,7 @@ namespace CollimationCircles.ViewModels
                     Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
                     GlobalOffsetX = vm.GlobalOffsetX;
                     GlobalOffsetY = vm.GlobalOffsetY;
+                    MainWindowOpacity = vm.MainWindowOpacity;
 
                     if (!DockInMainWindow)
                     {
@@ -577,6 +583,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(DockInMainWindow):
                 case nameof(GlobalOffsetX):
                 case nameof(GlobalOffsetY):
+                case nameof(MainWindowOpacity):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
