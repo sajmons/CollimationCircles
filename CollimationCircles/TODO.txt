@@ -1,4 +1,3 @@
 ﻿- camera video streaming support
-- add global opacity property
 - add main window HUD support
   - add support for showing shortcuts inside HUD
