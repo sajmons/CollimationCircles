@@ -11,12 +11,36 @@ namespace CollimationCircles.Views
         public SettingsView()
         {
             InitializeComponent();
-            DataContext = Ioc.Default.GetService<SettingsViewModel>();
+
+            SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
+
+            DataContext = vm;
+
+            Position = vm?.SettingsWindowPosition ?? new Avalonia.PixelPoint();
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                Topmost = m.Value.AlwaysOnTop;
+                Topmost = m.Value.AlwaysOnTop;                
             });
+        }
+
+        protected override void OnClosing(WindowClosingEventArgs e)
+        {
+            base.OnClosing(e);
+
+            var vm = Ioc.Default.GetService<SettingsViewModel>();
+
+            if (vm is not null)
+            {
+                vm.SettingsWindowPosition = Position;
+                vm.SettingsWindowWidth = Width;
+                vm.SettingsWindowHeight = Height;
+
+                if (e.CloseReason == WindowCloseReason.WindowClosing)
+                {
+                    vm.DockInMainWindow = true;
+                }
+            }
         }
     }
 }

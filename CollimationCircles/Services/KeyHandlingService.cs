@@ -41,7 +41,7 @@ namespace CollimationCircles.Services
 
                     window.Position = new PixelPoint(x, y);
 
-                    vm.Position = window.Position;
+                    vm.MainWindowPosition = window.Position;
                 }
             }
         }

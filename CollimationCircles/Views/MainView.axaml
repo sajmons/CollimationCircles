@@ -13,17 +13,18 @@
 		    Background="Transparent"
         TransparencyBackgroundFallback="Transparent"
         TransparencyLevelHint="Transparent"
-        Width="{Binding Width, Mode=TwoWay}"
-        Height="{Binding Height, Mode=TwoWay}">
+        Width="{Binding MainWindowWidth, Mode=TwoWay}"
+        Height="{Binding MainWindowHeight, Mode=TwoWay}"
+        Opacity="{Binding MainWindowOpacity, Mode=TwoWay}">
   <RelativePanel>
 
     <controls:SettingsUserControl
       Width="{Binding SettingsMinWidth}"
-      Height="{Binding Height}"
+      Height="{Binding MainWindowHeight}"
       RelativePanel.AlignRightWithPanel="True"
       RelativePanel.AlignTopWithPanel="True"
       Background="{DynamicResource ThemeBackgroundBrush}"
-      IsVisible="{Binding DockInMainWindow}"/>
+      IsVisible="{Binding DockInMainWindow, Mode=TwoWay}"/>
 
     <Button
       RelativePanel.AlignRightWithPanel="True"

@@ -37,7 +37,7 @@
   <system:String x:Key="Text.ItemVisibility">Vidnost pomočnika</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON Dokumenti</system:String>
   <system:String x:Key="Text.Label">Opis</system:String>
-  <system:String x:Key="Text.LabelSize">Velikost pisave</system:String>
+  <system:String x:Key="Text.LabelSize">Velikost nazivov</system:String>
   <system:String x:Key="Text.ListOfItems">Seznam pomočnikov</system:String>
   <system:String x:Key="Text.LoadList">Naloži seznam iz JSON datoteke</system:String>
   <system:String x:Key="Text.NewVersion">Nova verzija</system:String>
@@ -85,4 +85,7 @@
   <system:String x:Key="Text.AppWebSite">Spletna stran</system:String>
   <system:String x:Key="Text.OpenWebSiteContactForm">Odpri spletni kontaktni obrazec</system:String>
   <system:String x:Key="Text.GitHubWebSite">Odpri GitHub stran aplikacije</system:String>
+  <system:String x:Key="Text.GlobalOffsetX">X zamik</system:String>
+  <system:String x:Key="Text.GlobalOffsetY">Y zamik</system:String>
+  <system:String x:Key="Text.MainWindowOpacity">Prosojnost</system:String>
 </ResourceDictionary>

@@ -9,9 +9,9 @@
         x:Class="CollimationCircles.Views.SettingsView"
         Title="{Binding Title}"
         x:DataType="vm:SettingsViewModel"
-        Width="560"
-        Height="600"
+        Width="{Binding SettingsWindowWidth}"
+        Height="{Binding SettingsWindowHeight}"
         MinWidth="{Binding SettingsMinWidth}"
         MinHeight="580">
-  <controls:SettingsUserControl/>
+  <controls:SettingsUserControl/>  
 </Window>
