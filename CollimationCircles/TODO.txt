@@ -1,3 +1,6 @@
 ﻿- camera video streaming support
 - add main window HUD support
   - add support for showing shortcuts inside HUD
+- add profile manager
+- fix shortcut keys when settings window is detached
+- add tri-bahtinov mask pattern
