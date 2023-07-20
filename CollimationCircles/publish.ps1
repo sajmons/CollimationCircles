@@ -211,6 +211,11 @@ Function PublishOne
         MakeMacOSPackage $appName $version $Runtime
         $outputDir = "$Output/$appName" + ".app"
     }
+    else
+    {
+        # Remove icon.incs because it's ment only for macosx platform
+        Remove-Item –path $Output/$Runtime/icon.icns
+    }
 
     GrantExecutablePermissions $appName $Output $Runtime
 
@@ -221,7 +226,7 @@ Function PublishOne
 
     if ($Runtime -eq "osx-x64")
     {
-        Remove-Item –path $outputDir –Recurse -Force
+        Remove-Item –path $outputDir –Recurse -Force        
     }
     
 	Remove-Item –path $Output/$Runtime –Recurse -Force    
