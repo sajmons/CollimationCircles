@@ -19,6 +19,7 @@ public class AppService : IAppService
     public string GitHubPage => "https://github.com/sajmons/CollimationCircles";
     public string TwitterPage => "https://twitter.com/saimons_art";
     public string YouTubeChannel => "https://www.youtube.com/channel/UCz6iFL9ziUcWgs_n6n2gwZw";
+    public string GitHubIssue => "https://github.com/sajmons/CollimationCircles/issues/new";
 
     public string GetAppVersion()
     {

@@ -79,7 +79,8 @@
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako pri izbranem elementu</system:String>
-  <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>  
+  <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>
+  <system:String x:Key="Text.KeyboardShortcuts">Bližnjice na tipkovnici</system:String>
   <system:String x:Key="Text.TwitterWebSite">Avtorjeva Twitter spletna stran</system:String>
   <system:String x:Key="Text.YouTubeChannel">Avtorjev YouTube kanal</system:String>
   <system:String x:Key="Text.AppWebSite">Spletna stran</system:String>
@@ -88,4 +89,6 @@
   <system:String x:Key="Text.GlobalOffsetX">X zamik</system:String>
   <system:String x:Key="Text.GlobalOffsetY">Y zamik</system:String>
   <system:String x:Key="Text.MainWindowOpacity">Prosojnost</system:String>
+  <system:String x:Key="Text.GitHubIssue">Prijavi težavo</system:String>
+  <system:String x:Key="Text.OpenGitHubIssue">Prijavi težavo na GitHub</system:String>
 </ResourceDictionary>

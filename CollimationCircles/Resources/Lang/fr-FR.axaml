@@ -42,8 +42,8 @@
   <system:String x:Key="Text.LoadList">Liste de chargement à partir de fichier JSON</system:String>
   <system:String x:Key="Text.NewVersion">Nouvelle version</system:String>
   <system:String x:Key="Text.NewVersionDownload">Nouvelle version {0} disponible ! Souhaitez-vous la télécharger ?</system:String>
-  <system:String x:Key="Text.OpenFile">Ouvrir fichier</system:String>  
-  <system:String x:Key="Text.OpenWebSite">Ouvrir le site Web de l'application</system:String>  
+  <system:String x:Key="Text.OpenFile">Ouvrir fichier</system:String>
+  <system:String x:Key="Text.OpenWebSite">Ouvrir le site Web de l'application</system:String>
   <system:String x:Key="Text.PrimaryCenter">Centre du primaire</system:String>
   <system:String x:Key="Text.PrimaryClip">Câles primaires</system:String>
   <system:String x:Key="Text.PrimaryOuter">Extérieur primaire</system:String>
@@ -82,7 +82,7 @@
   <system:String x:Key="Text.StayOnTop">Fenêtre toujours dessus</system:String>
   <system:String x:Key="Text.DockInMainWindow">Acrocher à la fenêtre principale</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Afficher la marque sur l'élément sélectionné</system:String>
-  <system:String x:Key="Text.GitHub">GitHub</system:String>  
+  <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Thème</system:String>
   <system:String x:Key="Text.KeyboardShortcuts">Raccourcis clavier</system:String>
   <system:String x:Key="Text.TwitterWebSite">Ouvrir le Site Web Twitter de l'auteur</system:String>
@@ -92,5 +92,7 @@
   <system:String x:Key="Text.GitHubWebSite">Ouvrir le site Web de l'application GitHub</system:String>
   <system:String x:Key="Text.GlobalOffsetX">Décalage X</system:String>
   <system:String x:Key="Text.GlobalOffsetY">Décalage Y</system:String>
-  <system:String x:Key="Text.MainWindowOpacity">Opacité</system:String>  
+  <system:String x:Key="Text.MainWindowOpacity">Opacité</system:String>
+  <system:String x:Key="Text.GitHubIssue">Problème</system:String>
+  <system:String x:Key="Text.OpenGitHubIssue">Ouvrir un nouveau problème sur GitHub</system:String>
 </ResourceDictionary>

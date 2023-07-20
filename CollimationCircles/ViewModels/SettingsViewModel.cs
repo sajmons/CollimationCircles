@@ -578,6 +578,16 @@ namespace CollimationCircles.ViewModels
             }
         }
 
+        
+        [RelayCommand]
+        internal void GitHubIssue()
+        {
+            if (appService is not null)
+            {
+                OpenUrl(appService.GitHubIssue);
+            }
+        }
+
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

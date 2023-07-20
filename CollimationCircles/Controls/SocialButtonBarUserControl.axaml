@@ -51,6 +51,14 @@
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.YouTube}" />
     </Button>
+
+    <Button
+      Command="{Binding GitHubIssueCommand}"
+      ToolTip.Tip="{DynamicResource Text.OpenGitHubIssue}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Bug}" />
+    </Button>
     
   </StackPanel>
 

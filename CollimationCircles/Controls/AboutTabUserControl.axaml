@@ -68,6 +68,18 @@
         </StackPanel>
       </Button>
 
+      <Button
+        Margin="0,0,10,10"
+        Width="130"
+        VerticalAlignment="Bottom"
+        Command="{Binding GitHubIssueCommand}"
+        ToolTip.Tip="{DynamicResource Text.OpenGitHubIssue}">
+        <StackPanel Orientation="Horizontal">
+          <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Bug}" />
+          <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.GitHubIssue}" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Button>
+
     </WrapPanel>
 
   </StackPanel>

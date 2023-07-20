@@ -80,6 +80,7 @@
   <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung beim ausgewählten Element anzeigen</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Thema</system:String>
+  <system:String x:Key="Text.KeyboardShortcuts">Tastatürkürzel</system:String>
   <system:String x:Key="Text.TwitterWebSite">Öffnen Sie die Twitter-Website des Autors</system:String>
   <system:String x:Key="Text.YouTubeChannel">Öffnen Sie den YouTube-Kanal des Autors</system:String>
   <system:String x:Key="Text.AppWebSite">Webseite</system:String>
@@ -88,4 +89,6 @@
   <system:String x:Key="Text.GlobalOffsetX">X versetzt</system:String>
   <system:String x:Key="Text.GlobalOffsetY">Y versetzt</system:String>
   <system:String x:Key="Text.MainWindowOpacity">Opazität</system:String>
+  <system:String x:Key="Text.GitHubIssue">Probleme</system:String>
+  <system:String x:Key="Text.OpenGitHubIssue">Öffnen Sie eine neue Ausgabe auf GitHub</system:String>
 </ResourceDictionary>

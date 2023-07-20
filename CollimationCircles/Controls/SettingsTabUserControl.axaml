@@ -83,6 +83,7 @@
     </StackPanel>
 
     <Expander
+      VerticalAlignment="Top"
       Header="{DynamicResource Text.KeyboardShortcuts}"
       Width="{Binding SettingsWidth}"
       Margin="12">
