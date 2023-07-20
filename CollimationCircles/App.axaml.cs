@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CollimationCircles.Services;
@@ -9,7 +8,6 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
-using System.Security.Principal;
 
 namespace CollimationCircles;
 public partial class App : Application
@@ -48,7 +46,7 @@ public partial class App : Application
             .AddSingleton<SettingsViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddTransient<IAppService, AppService>()
-            .AddSingleton<KeyHandlingService>()
+            .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .BuildServiceProvider());
     }
 }

@@ -30,7 +30,7 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - up to date online help available
 
 # Prebuild binaries
-Here are prebuild binary files avaliable for you to download (win-x64, linux-x64 and linux-arm64).
+Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
 https://github.com/sajmons/CollimationCircles/releases/
 
 # Prerequisites

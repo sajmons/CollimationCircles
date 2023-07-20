@@ -14,10 +14,9 @@ namespace CollimationCircles.Views
 {
     public partial class MainView : Window
     {
-        readonly IDrawHelperService? dhs;
-
-        SettingsViewModel? vm;
-        KeyHandlingService? mws;
+        private readonly IDrawHelperService? dhs;
+        private readonly SettingsViewModel? vm;
+        private readonly IKeyHandlingService? khs;
 
         public MainView()
         {
@@ -38,7 +37,7 @@ namespace CollimationCircles.Views
             });
 
             dhs = Ioc.Default.GetService<IDrawHelperService>();
-            mws = Ioc.Default.GetService<KeyHandlingService>();
+            khs = Ioc.Default.GetService<IKeyHandlingService>();
         }
 
         static void CheckForUpdate(SettingsViewModel? vm)
@@ -130,14 +129,14 @@ namespace CollimationCircles.Views
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            mws?.HandleMovement(this, vm, e);
-            mws?.HandleGlobalScale(vm, e);
-            mws?.HandleHelperRadius(vm, e);
-            mws?.HandleGlobalRotation(vm, e);
-            mws?.HandleHelperRotation(vm, e);
-            mws?.HandleHelperCount(vm, e);
-            mws?.HandleHelperThickness(vm, e);
-            mws?.HandleHelperSpacing(vm, e);
+            khs?.HandleMovement(this, vm, e);
+            khs?.HandleGlobalScale(vm, e);
+            khs?.HandleHelperRadius(vm, e);
+            khs?.HandleGlobalRotation(vm, e);
+            khs?.HandleHelperRotation(vm, e);
+            khs?.HandleHelperCount(vm, e);
+            khs?.HandleHelperThickness(vm, e);
+            khs?.HandleHelperSpacing(vm, e);
 
             base.OnKeyDown(e);
         }

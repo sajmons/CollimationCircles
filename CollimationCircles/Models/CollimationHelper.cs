@@ -133,6 +133,7 @@ namespace CollimationCircles.Models
                 case nameof(Size):
                 case nameof(Count):
                 case nameof(Thickness):
+                case nameof(IsVisible):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
