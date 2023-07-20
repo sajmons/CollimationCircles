@@ -7,6 +7,7 @@
              x:Class="CollimationCircles.Controls.AboutTabUserControl"
              x:DataType="vm:SettingsViewModel">
   <StackPanel
+    HorizontalAlignment="Left"
     Width="{Binding SettingsWidth}"
     Margin="12">
 
