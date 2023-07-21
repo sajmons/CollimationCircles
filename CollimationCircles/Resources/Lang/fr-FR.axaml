@@ -21,8 +21,8 @@
   <system:String x:Key="Text.DecreaseItemThickness">Diminuer l'épaisseur:</system:String>
   <system:String x:Key="Text.Duplicate">Créer un double</system:String>
   <system:String x:Key="Text.Error">Erreur</system:String>
-  <system:String x:Key="Text.GlobalRotationCCW">Rotation globale dans le sens antihoraire:</system:String>
-  <system:String x:Key="Text.GlobalRotationCW">Rotation globale dans le sens horaire:</system:String>
+  <system:String x:Key="Text.GlobalRotationCCW">Rotation globale antihoraire:</system:String>
+  <system:String x:Key="Text.GlobalRotationCW">Rotation globale horaire:</system:String>
   <system:String x:Key="Text.GlobalScaleDown">Réduction globale:</system:String>
   <system:String x:Key="Text.GlobalScaleUp">Augmentation globale:</system:String>
   <system:String x:Key="Text.Helper">Assistant</system:String>
@@ -39,11 +39,11 @@
   <system:String x:Key="Text.Label">Étiquette</system:String>
   <system:String x:Key="Text.LabelSize">Taille de l'étiquette</system:String>
   <system:String x:Key="Text.ListOfItems">Liste des étiquettes</system:String>
-  <system:String x:Key="Text.LoadList">Liste de chargement à partir de fichier JSON</system:String>
+  <system:String x:Key="Text.LoadList">Charger une liste à partir d'un fichier JSON</system:String>
   <system:String x:Key="Text.NewVersion">Nouvelle version</system:String>
   <system:String x:Key="Text.NewVersionDownload">Nouvelle version {0} disponible ! Souhaitez-vous la télécharger ?</system:String>
-  <system:String x:Key="Text.OpenFile">Ouvrir fichier</system:String>
-  <system:String x:Key="Text.OpenWebSite">Ouvrir le site Web de l'application</system:String>
+  <system:String x:Key="Text.OpenFile">Ouvrir fichier</system:String>  
+  <system:String x:Key="Text.OpenWebSite">Ouvrir le site Web de l'application</system:String>  
   <system:String x:Key="Text.PrimaryCenter">Centre du primaire</system:String>
   <system:String x:Key="Text.PrimaryClip">Câles primaires</system:String>
   <system:String x:Key="Text.PrimaryOuter">Extérieur primaire</system:String>
@@ -82,7 +82,7 @@
   <system:String x:Key="Text.StayOnTop">Fenêtre toujours dessus</system:String>
   <system:String x:Key="Text.DockInMainWindow">Acrocher à la fenêtre principale</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Afficher la marque sur l'élément sélectionné</system:String>
-  <system:String x:Key="Text.GitHub">GitHub</system:String>
+  <system:String x:Key="Text.GitHub">GitHub</system:String>  
   <system:String x:Key="Text.UserInterfaceTheme">Thème</system:String>
   <system:String x:Key="Text.KeyboardShortcuts">Raccourcis clavier</system:String>
   <system:String x:Key="Text.TwitterWebSite">Ouvrir le Site Web Twitter de l'auteur</system:String>
