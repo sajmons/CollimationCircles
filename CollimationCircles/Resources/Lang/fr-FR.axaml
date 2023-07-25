@@ -14,8 +14,8 @@
   <system:String x:Key="Text.Circle">Cercle</system:String>
   <system:String x:Key="Text.Color">Couleur</system:String>
   <system:String x:Key="Text.Contact">Contact</system:String>
-  <system:String x:Key="Text.Count">Compte</system:String>
-  <system:String x:Key="Text.DecreaseHelperCount">Diminuer:</system:String>
+  <system:String x:Key="Text.Count">Nombre</system:String>
+  <system:String x:Key="Text.DecreaseHelperCount">Diminuer Nombre:</system:String>
   <system:String x:Key="Text.DecreaseHelperRadius">Diminuer le rayon:</system:String>
   <system:String x:Key="Text.DecreaseHelperSpacing">Diminuer l'espacement:</system:String>
   <system:String x:Key="Text.DecreaseItemThickness">Diminuer l'épaisseur:</system:String>
@@ -36,9 +36,9 @@
   <system:String x:Key="Text.ItemType">Type d'élément</system:String>
   <system:String x:Key="Text.ItemVisibility">Visibilité de l'article</system:String>
   <system:String x:Key="Text.JSONDocuments">Documents JSON</system:String>
-  <system:String x:Key="Text.Label">Étiquette</system:String>
-  <system:String x:Key="Text.LabelSize">Taille de l'étiquette</system:String>
-  <system:String x:Key="Text.ListOfItems">Liste des étiquettes</system:String>
+  <system:String x:Key="Text.Label">Label</system:String>
+  <system:String x:Key="Text.LabelSize">Taille du Label</system:String>
+  <system:String x:Key="Text.ListOfItems">Liste des Labels</system:String>
   <system:String x:Key="Text.LoadList">Charger une liste à partir d'un fichier JSON</system:String>
   <system:String x:Key="Text.NewVersion">Nouvelle version</system:String>
   <system:String x:Key="Text.NewVersionDownload">Nouvelle version {0} disponible ! Souhaitez-vous la télécharger ?</system:String>
@@ -57,12 +57,12 @@
   <system:String x:Key="Text.Rotation">Rotation</system:String>
   <system:String x:Key="Text.SaveFile">Enregistrer le fichier</system:String>
   <system:String x:Key="Text.SaveList">Enregistrer la liste dans fichier JSON</system:String>
-  <system:String x:Key="Text.Scale">Échelle</system:String>
+  <system:String x:Key="Text.Scale">échelle</system:String>
   <system:String x:Key="Text.Screw">Vis</system:String>
   <system:String x:Key="Text.SelectedItemProperties">Propriétés de l'élément sélectionné</system:String>
   <system:String x:Key="Text.Settings">Paramètres</system:String>
   <system:String x:Key="Text.SettingsWindow">Détacher dans une fenêtre séparée</system:String>
-  <system:String x:Key="Text.ShowLabels">Voir les étiquettes</system:String>
+  <system:String x:Key="Text.ShowLabels">Voir les Labels</system:String>
   <system:String x:Key="Text.Size">Taille</system:String>
   <system:String x:Key="Text.Spacing">Espacement</system:String>
   <system:String x:Key="Text.Spider">Araignée</system:String>
@@ -92,7 +92,7 @@
   <system:String x:Key="Text.GitHubWebSite">Ouvrir le site Web de l'application GitHub</system:String>
   <system:String x:Key="Text.GlobalOffsetX">Décalage X</system:String>
   <system:String x:Key="Text.GlobalOffsetY">Décalage Y</system:String>
-  <system:String x:Key="Text.MainWindowOpacity">Opacité</system:String>
+  <system:String x:Key="Text.MainWindowOpacity">Opacité</system:String>  
   <system:String x:Key="Text.GitHubIssue">Problème</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Ouvrir un nouveau problème sur GitHub</system:String>
 </ResourceDictionary>
