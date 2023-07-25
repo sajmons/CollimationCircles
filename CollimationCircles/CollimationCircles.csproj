@@ -29,7 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
-    <None Remove="appstate.json" />    
+    <None Remove="appstate.json" />
+    <None Remove="Resources\Images\icon_256px.ico" />    
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="Resources\**" />
@@ -38,6 +39,9 @@
     <AvaloniaResource Remove="Resources\Themes\Dark.axaml" />
     <AvaloniaResource Remove="Resources\Themes\Light.axaml" />
     <AvaloniaResource Remove="Resources\Themes\Night.axaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="icon_256px.ico" />
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming. If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa. https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
