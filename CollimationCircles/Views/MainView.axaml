@@ -8,7 +8,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="CollimationCircles.Views.MainView"
         x:DataType="vm:SettingsViewModel"
-        Icon="/Resources/Images/icon_128px.png"
+        Icon="/Resources/Images/icon_256px.ico"
         Title="{Binding Title}"
 		    Background="Transparent"
         TransparencyBackgroundFallback="Transparent"

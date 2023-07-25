@@ -20,6 +20,7 @@
     <RuntimeIdentifiers>win-x64;linux-x64;linux-arm64;osx-x64</RuntimeIdentifiers>
     <UseAppHost>true</UseAppHost>
     <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
+    <ApplicationIcon>Resources\Images\icon_256px.ico</ApplicationIcon>
   </PropertyGroup>  
   <ItemGroup>
     <Compile Remove="Models\ItemType.cs" />
@@ -31,7 +32,7 @@
     <None Remove="appstate.json" />    
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Include="Resources\**" />    
+    <AvaloniaResource Include="Resources\**" />
   </ItemGroup>
   <ItemGroup>    
     <AvaloniaResource Remove="Resources\Themes\Dark.axaml" />
