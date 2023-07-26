@@ -421,6 +421,9 @@ namespace CollimationCircles.ViewModels
 
                     if (success && !string.IsNullOrWhiteSpace(result))
                     {
+                        var at = AlwaysOnTop;   // prevent new version dialog to appear behind MainWindow
+                        AlwaysOnTop = false;    // save AlwaysOnTop setting for later restore
+
                         var dialogResult = await dialogService.ShowMessageBoxAsync(null,
                             DynRes.TryGetString("NewVersionDownload").F(newVersion), DynRes.TryGetString("NewVersion"), MessageBoxButton.YesNo);
 
@@ -428,6 +431,8 @@ namespace CollimationCircles.ViewModels
                         {
                             OpenUrl(result);
                         }
+
+                        AlwaysOnTop = at;       // restore previous AlwaysOnTop setting
                     }
                     else if (!success)
                     {
@@ -483,7 +488,7 @@ namespace CollimationCircles.ViewModels
                     if (!DockInMainWindow)
                     {
                         ShowSettings();
-                    }
+                    }                    
                 }
                 else
                 {

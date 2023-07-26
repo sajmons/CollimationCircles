@@ -28,6 +28,7 @@ public partial class App : Application
             vm?.LoadState();
 
             desktop.MainWindow = new MainView();
+            desktop.MainWindow.Topmost = vm?.AlwaysOnTop ?? false;
         }
 
         base.OnFrameworkInitializationCompleted();
