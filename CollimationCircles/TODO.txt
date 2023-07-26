@@ -4,3 +4,4 @@
 - add profile manager
 - fix shortcut keys when settings window is detached
 - add tri-bahtinov mask pattern
+- fix update dialog below main window when always on top enabled
