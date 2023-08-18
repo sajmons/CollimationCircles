@@ -91,5 +91,4 @@
   <system:String x:Key="Text.MainWindowOpacity">Prosojnost</system:String>
   <system:String x:Key="Text.GitHubIssue">Prijavi težavo</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Prijavi težavo na GitHub</system:String>
-  <system:String x:Key="Text.ShortcutNotice">Upoštevajte, da bližnjice najbolje delujejo v načinu ločenega okna z nastavitvami</system:String>
 </ResourceDictionary>

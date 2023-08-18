@@ -95,5 +95,4 @@
   <system:String x:Key="Text.MainWindowOpacity">Opacity</system:String>
   <system:String x:Key="Text.GitHubIssue">Report issue</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Open new issue on GitHub</system:String>
-  <system:String x:Key="Text.ShortcutNotice">Please take into account that shortcuts works best in detached window mode</system:String>  
 </ResourceDictionary>

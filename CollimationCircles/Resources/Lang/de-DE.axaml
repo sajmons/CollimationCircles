@@ -91,5 +91,4 @@
   <system:String x:Key="Text.MainWindowOpacity">Opazität</system:String>
   <system:String x:Key="Text.GitHubIssue">Probleme</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Öffnen Sie eine neue Ausgabe auf GitHub</system:String>
-  <system:String x:Key="Text.ShortcutNotice">Bitte beachten Sie, dass Verknüpfungen im getrennten Einstellungsfenstermodus am besten funktionieren</system:String>
 </ResourceDictionary>
