@@ -2,3 +2,4 @@
 - add main window HUD support
   - add support for showing shortcuts inside HUD
 - add profile manager
+- fix min max range limitation for all properties when using keyboard
