@@ -20,31 +20,31 @@ namespace CollimationCircles.Models
         private Guid id = Guid.NewGuid();
 
         [JsonProperty]
-        [ObservableProperty]        
+        [ObservableProperty]
         private Color itemColor = Colors.Red;
 
         [JsonProperty]
-        [ObservableProperty]        
+        [ObservableProperty]
         private string? label;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(1, 10)]
-        [NotifyDataErrorInfo]        
+        [NotifyDataErrorInfo]
         private int thickness = 1;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(1, 2000)]
-        [NotifyDataErrorInfo]        
+        [NotifyDataErrorInfo]
         private double radius = 300;
 
         [JsonProperty]
-        [ObservableProperty]        
+        [ObservableProperty]
         private double rotationIncrement = 1;
 
         [JsonProperty]
-        [ObservableProperty]        
+        [ObservableProperty]
         private double inclinationIncrement = 0.1;
 
         [JsonProperty]
@@ -74,29 +74,35 @@ namespace CollimationCircles.Models
         [JsonProperty]
         [ObservableProperty]
         [Range(-180, 180)]
-        [NotifyDataErrorInfo]        
+        [NotifyDataErrorInfo]
         private double rotationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(-90, 90)]
-        [NotifyDataErrorInfo]        
+        [NotifyDataErrorInfo]
         private double inclinationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(1, 100)]
-        [NotifyDataErrorInfo]        
+        [NotifyDataErrorInfo]
         private double size = 10;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(1, 10)]
-        [NotifyDataErrorInfo]        
+        [NotifyDataErrorInfo]
         private int count = 4;
 
+        [JsonProperty]
         [ObservableProperty]
-        private string? invalidateGraphics;
+        [Range(1, 10)]
+        [NotifyDataErrorInfo]
+        private int maxCount = 10;
+
+        [ObservableProperty]
+        private string? invalidateGraphics;        
 
         public string ResourceString
         {
@@ -119,7 +125,7 @@ namespace CollimationCircles.Models
 
                 return DynRes.TryGet($"IconData.{dynRes}");
             }
-        }
+        }        
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -137,16 +143,16 @@ namespace CollimationCircles.Models
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
-                        
+
                         SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
-                        
+
                         if (vm is not null)
                         {
                             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(vm));
                         }
                     }
                     break;
-            }            
+            }
         }
     }
 }

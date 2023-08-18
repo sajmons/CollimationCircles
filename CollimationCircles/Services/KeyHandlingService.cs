@@ -158,12 +158,14 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.T:
-                            vm.SelectedItem.Count -= 1;
+                            if (vm.SelectedItem.Count < vm.SelectedItem.MaxCount)
+                                vm.SelectedItem.Count += 1;
                             e.Handled = true;
                             break;
 
                         case Key.G:
-                            vm.SelectedItem.Count += 1;
+                            if (vm.SelectedItem.Count > 1)
+                                vm.SelectedItem.Count -= 1;
                             e.Handled = true;
                             break;
                     }

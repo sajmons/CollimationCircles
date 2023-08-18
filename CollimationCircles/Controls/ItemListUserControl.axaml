@@ -168,7 +168,7 @@
         <NumericUpDown
           Increment="1"
           Value="{ReflectionBinding #list.SelectedItem.Count}"
-          Minimum="1" Maximum="10" />
+          Minimum="1" Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
       </UniformGrid>
 
       <UniformGrid
