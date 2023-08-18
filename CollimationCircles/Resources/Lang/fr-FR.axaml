@@ -95,4 +95,5 @@
   <system:String x:Key="Text.MainWindowOpacity">Opacité</system:String>  
   <system:String x:Key="Text.GitHubIssue">Problème</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Ouvrir un nouveau problème sur GitHub</system:String>
+  <system:String x:Key="Text.ShortcutNotice">Veuillez tenir compte du fait que les raccourcis fonctionnent mieux en mode fenêtre de paramètres détachés</system:String>  
 </ResourceDictionary>

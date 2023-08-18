@@ -146,6 +146,10 @@ namespace CollimationCircles.ViewModels
         [Range(0.1, 1)]
         private double mainWindowOpacity = 0.8;
 
+        [JsonProperty]
+        [ObservableProperty]
+        private bool keyboardShortcutsExpanded = true;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
@@ -484,6 +488,7 @@ namespace CollimationCircles.ViewModels
                     SettingsWindowPosition = vm.SettingsWindowPosition;
                     SettingsWindowWidth = vm.SettingsWindowWidth;
                     SettingsWindowHeight = vm.SettingsWindowHeight;
+                    KeyboardShortcutsExpanded = vm.KeyboardShortcutsExpanded;
 
                     if (!DockInMainWindow)
                     {

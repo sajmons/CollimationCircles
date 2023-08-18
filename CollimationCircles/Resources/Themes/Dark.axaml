@@ -4,6 +4,7 @@
   <ResourceDictionary.ThemeDictionaries>
 
     <ResourceDictionary x:Key="Dark">
+      <Color x:Key="Color1">#de2626</Color>
       <Color x:Key="Color2">#E4E3DD</Color>
       <Color x:Key="BackgroundColor">#171717</Color>
       

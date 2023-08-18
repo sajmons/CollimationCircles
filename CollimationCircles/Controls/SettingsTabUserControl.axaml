@@ -86,9 +86,17 @@
       VerticalAlignment="Top"
       Header="{DynamicResource Text.KeyboardShortcuts}"
       Width="{Binding SettingsWidth}"
-      Margin="12">
+      Margin="12"
+      IsExpanded="{Binding KeyboardShortcutsExpanded}">
 
-      <UniformGrid Columns="2">
+      <StackPanel Orientation="Vertical">
+        <TextBlock
+          Foreground="{DynamicResource Color1}"
+          Text="{DynamicResource Text.ShortcutNotice}"
+          TextWrapping="WrapWithOverflow"
+          Padding="0 0 0 8"/>
+
+        <UniformGrid Columns="2">
         <TextBlock
           HorizontalAlignment="Stretch"
           TextWrapping="WrapWithOverflow"
@@ -188,7 +196,7 @@
           Width="50"
           Text="CTRL D"/>
       </UniformGrid>
-
+      </StackPanel>
     </Expander>
 
   </WrapPanel>
