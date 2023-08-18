@@ -102,7 +102,13 @@ namespace CollimationCircles.Models
         private int maxCount = 10;
 
         [ObservableProperty]
-        private string? invalidateGraphics;        
+        private string? invalidateGraphics;
+
+        [JsonProperty]
+        [ObservableProperty]
+        [Range(0.1, 1)]
+        [NotifyDataErrorInfo]
+        private double opacity = 1;
 
         public string ResourceString
         {
@@ -125,7 +131,7 @@ namespace CollimationCircles.Models
 
                 return DynRes.TryGet($"IconData.{dynRes}");
             }
-        }        
+        }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
@@ -140,6 +146,7 @@ namespace CollimationCircles.Models
                 case nameof(Count):
                 case nameof(Thickness):
                 case nameof(IsVisible):
+                case nameof(Opacity):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);

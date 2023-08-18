@@ -91,4 +91,5 @@
   <system:String x:Key="Text.MainWindowOpacity">Opazität</system:String>
   <system:String x:Key="Text.GitHubIssue">Probleme</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Öffnen Sie eine neue Ausgabe auf GitHub</system:String>
+  <system:String x:Key="Text.SelectedPatternOpacity">Opazität</system:String>
 </ResourceDictionary>

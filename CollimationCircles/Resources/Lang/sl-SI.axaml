@@ -91,4 +91,5 @@
   <system:String x:Key="Text.MainWindowOpacity">Prosojnost</system:String>
   <system:String x:Key="Text.GitHubIssue">Prijavi težavo</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Prijavi težavo na GitHub</system:String>
+  <system:String x:Key="Text.SelectedPatternOpacity">Prosojnost</system:String>
 </ResourceDictionary>

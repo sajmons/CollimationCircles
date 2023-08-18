@@ -17,7 +17,7 @@ namespace CollimationCircles.Services
                         18,
                         Brushes.Yellow);
 
-        public void DrawMask<T>(DrawingContext context, SettingsViewModel? vm, T item, IBrush brush, Matrix translate)
+        public void DrawMask<T>(DrawingContext context, SettingsViewModel? vm, T item, Matrix translate)
         {
             if (item is not ICollimationHelper helper || !helper.IsVisible) return;
 
@@ -26,28 +26,30 @@ namespace CollimationCircles.Services
                 switch (item)
                 {
                     case CircleViewModel civm:
-                        DrawCircle(context, vm, civm, brush, translate);
+                        DrawCircle(context, vm, civm, translate);
                         break;
                     case ScrewViewModel scvm:
-                        DrawScrew(context, vm, scvm, brush, translate);
+                        DrawScrew(context, vm, scvm, translate);
                         break;
                     case PrimaryClipViewModel pcvm:
-                        DrawPrimaryClip(context, vm, pcvm, brush, translate);
+                        DrawPrimaryClip(context, vm, pcvm, translate);
                         break;
                     case SpiderViewModel spvm:
-                        DrawSpider(context, vm, spvm, brush, translate);
+                        DrawSpider(context, vm, spvm, translate);
                         break;
                     case BahtinovMaskViewModel bmvm:
-                        DrawTriBahtinovMask(context, vm, bmvm, brush, translate);
+                        DrawTriBahtinovMask(context, vm, bmvm, translate);
                         break;
                 }
             }
         }
 
-        private void DrawCircle(DrawingContext context, SettingsViewModel vm, CircleViewModel item, IBrush brush, Matrix translate)
+        private void DrawCircle(DrawingContext context, SettingsViewModel vm, CircleViewModel item, Matrix translate)
         {
             using (context.PushTransform(translate))
             {
+                var brush = new SolidColorBrush(item.ItemColor, item.Opacity);
+
                 context.DrawEllipse(Brushes.Transparent, new Pen(brush, item.Thickness), new Point(0, 0), item.Radius, item.Radius);
 
                 if (vm.ShowLabels)
@@ -73,7 +75,7 @@ namespace CollimationCircles.Services
             }
         }
 
-        private void DrawScrew(DrawingContext context, SettingsViewModel vm, ScrewViewModel item, IBrush brush, Matrix translate)
+        private void DrawScrew(DrawingContext context, SettingsViewModel vm, ScrewViewModel item, Matrix translate)
         {
             double angle = 360 / item.Count;
 
@@ -85,6 +87,8 @@ namespace CollimationCircles.Services
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
                     using (context.PushTransform(rotate * translate))
                     {
+                        var brush = new SolidColorBrush(item.ItemColor, item.Opacity);
+
                         context.DrawEllipse(brush, new Pen(brush, item.Thickness), new Point(0, item.Radius), item.Size, item.Size);
 
                         if (vm.ShowLabels)
@@ -109,7 +113,7 @@ namespace CollimationCircles.Services
             }
         }
 
-        private void DrawPrimaryClip(DrawingContext context, SettingsViewModel vm, PrimaryClipViewModel item, IBrush brush, Matrix translate)
+        private void DrawPrimaryClip(DrawingContext context, SettingsViewModel vm, PrimaryClipViewModel item, Matrix translate)
         {
             double angle = 360 / item.Count;
 
@@ -121,6 +125,8 @@ namespace CollimationCircles.Services
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
                     using (context.PushTransform(rotate * translate))
                     {
+                        var brush = new SolidColorBrush(item.ItemColor, item.Opacity);
+
                         context.DrawRectangle(new Pen(brush, item.Thickness), new Rect(-item.Size / 2, item.Radius - item.Size / 2, item.Size, item.Size / 3));
 
                         if (vm.ShowLabels)
@@ -145,7 +151,7 @@ namespace CollimationCircles.Services
             }
         }
 
-        private void DrawSpider(DrawingContext context, SettingsViewModel vm, SpiderViewModel item, IBrush brush, Matrix translate)
+        private void DrawSpider(DrawingContext context, SettingsViewModel vm, SpiderViewModel item, Matrix translate)
         {
             if (item.Count < 1) return;
 
@@ -154,6 +160,8 @@ namespace CollimationCircles.Services
             Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
             using (context.PushTransform(translate.Invert() * rotate2 * translate))
             {
+                var brush = new SolidColorBrush(item.ItemColor, item.Opacity);
+
                 for (int i = 0; i < item.Count; i++)
                 {
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
@@ -186,13 +194,15 @@ namespace CollimationCircles.Services
             }
         }
 
-        private void DrawBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, IBrush brush, Matrix translate, bool drawSelectedMark)
+        private void DrawBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, Matrix translate, bool drawSelectedMark)
         {
             double angle = item.InclinationAngle;
 
             Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
             using (context.PushTransform(translate.Invert() * rotate2 * translate))
             {
+                var brush = new SolidColorBrush(item.ItemColor, item.Opacity);
+
                 for (int i = -1; i <= 1; i++)
                 {
                     Matrix rotate = Matrix.CreateRotation(angle * i * Math.PI / 180);
@@ -231,7 +241,7 @@ namespace CollimationCircles.Services
             }
         }
 
-        private void DrawTriBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, IBrush brush, Matrix translate)
+        private void DrawTriBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, Matrix translate)
         {
             double angle = 60;
 
@@ -239,7 +249,7 @@ namespace CollimationCircles.Services
             {
                 Matrix rotate2 = Matrix.CreateRotation(angle * i * Math.PI / 180);
                 using (context.PushTransform(translate.Invert() * rotate2 * translate))
-                    DrawBahtinovMask(context, vm, item, brush, translate, i == 0);
+                    DrawBahtinovMask(context, vm, item, translate, i == 0);
             }
         }
     }

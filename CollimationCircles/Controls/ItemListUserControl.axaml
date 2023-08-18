@@ -172,6 +172,17 @@
       </UniformGrid>
 
       <UniformGrid
+        Columns="2">
+        <TextBlock
+          VerticalAlignment="Bottom"
+          Text="{DynamicResource Text.SelectedPatternOpacity}"/>
+        <NumericUpDown
+          Increment="0.1"
+          Value="{ReflectionBinding #list.SelectedItem.Opacity}"
+          Minimum="0.1" Maximum="1" />
+      </UniformGrid>
+
+      <UniformGrid
         Columns="2"
         IsVisible="{ReflectionBinding #list.SelectedItem.IsEditable}">
         <TextBlock

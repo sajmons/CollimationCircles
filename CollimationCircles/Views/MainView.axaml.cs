@@ -68,9 +68,7 @@ namespace CollimationCircles.Views
                             double scaleOrDefault = vm?.Scale ?? 1.0;
                             double rotAngleOrDefault = vm?.RotationAngle ?? 0;
                             double offsetX = vm?.GlobalOffsetX ?? 0;
-                            double offsetY = vm?.GlobalOffsetY ?? 0;
-
-                            var brush = new SolidColorBrush(item.ItemColor);
+                            double offsetY = vm?.GlobalOffsetY ?? 0;                            
 
                             Matrix scaleMat = Matrix.CreateScale(scaleOrDefault, scaleOrDefault);
                             Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
@@ -81,19 +79,19 @@ namespace CollimationCircles.Views
                                 switch (item)
                                 {
                                     case CircleViewModel civm:
-                                        dhs?.DrawMask(context, vm, civm, brush, translateMat);
+                                        dhs?.DrawMask(context, vm, civm, translateMat);
                                         break;
                                     case ScrewViewModel scvm:
-                                        dhs?.DrawMask(context, vm, scvm, brush, translateMat);
+                                        dhs?.DrawMask(context, vm, scvm, translateMat);
                                         break;
                                     case PrimaryClipViewModel pcvm:
-                                        dhs?.DrawMask(context, vm, pcvm, brush, translateMat);
+                                        dhs?.DrawMask(context, vm, pcvm, translateMat);
                                         break;
                                     case SpiderViewModel spvm:
-                                        dhs?.DrawMask(context, vm, spvm, brush, translateMat);
+                                        dhs?.DrawMask(context, vm, spvm, translateMat);
                                         break;
                                     case BahtinovMaskViewModel bmvm:
-                                        dhs?.DrawMask(context, vm, bmvm, brush, translateMat);
+                                        dhs?.DrawMask(context, vm, bmvm, translateMat);
                                         break;
                                 };
                             }
