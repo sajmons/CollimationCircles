@@ -15,11 +15,13 @@ namespace CollimationCircles.ViewModels
             IsInclinatable = true;
             IsSizeable = true;
             IsEditable = true;
-            IsCountable = false;
+            IsCountable = true;
             RotationAngle = 90;
             InclinationAngle = 10;
             RotationIncrement = 0.1;
             InclinationIncrement = 0.1;
+            Count = 3;
+            MaxCount = 3;
         }
     }
 }

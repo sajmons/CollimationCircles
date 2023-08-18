@@ -38,7 +38,7 @@ namespace CollimationCircles.Services
                         DrawSpider(context, vm, spvm, brush, translate);
                         break;
                     case BahtinovMaskViewModel bmvm:
-                        DrawBahtinovMask(context, vm, bmvm, brush, translate);
+                        DrawTriBahtinovMask(context, vm, bmvm, brush, translate);
                         break;
                 }
             }
@@ -62,13 +62,13 @@ namespace CollimationCircles.Services
 
                     if (item is not null)
                     {
-                        context.DrawText(formattedText, new Point(- item.Size * formattedText.Width / vm.LabelSize, - item.Radius - item.Size * 2));
+                        context.DrawText(formattedText, new Point(-item.Size * formattedText.Width / vm.LabelSize, -item.Radius - item.Size * 2));
                     }
                 }
 
                 if (vm.SelectedItem is CircleViewModel && vm.ShowMarkAtSelectedItem && item is not null && vm.SelectedItem == item)
                 {
-                    context.DrawText(selectedMark, new Point(- item.Size, - item.Radius));
+                    context.DrawText(selectedMark, new Point(-item.Size, -item.Radius));
                 }
             }
         }
@@ -175,18 +175,18 @@ namespace CollimationCircles.Services
                             vm.LabelSize,
                             brush);
 
-                        context.DrawText(formattedText, new Point(- item.Radius, - item.Size / 2));
+                        context.DrawText(formattedText, new Point(-item.Radius, -item.Size / 2));
                     }
 
                     if (vm.SelectedItem is SpiderViewModel && vm.ShowMarkAtSelectedItem && vm.SelectedItem == item)
                     {
-                        context.DrawText(selectedMark, new Point(- item.Radius, - item.Size / 2));
+                        context.DrawText(selectedMark, new Point(-item.Radius, -item.Size / 2));
                     }
                 }
             }
         }
 
-        private void DrawBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, IBrush brush, Matrix translate)
+        private void DrawBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, IBrush brush, Matrix translate, bool drawSelectedMark)
         {
             double angle = item.InclinationAngle;
 
@@ -205,26 +205,41 @@ namespace CollimationCircles.Services
                     }
                 }
 
-                using (context.PushTransform(translate))
+                if (drawSelectedMark)
                 {
-                    if (vm.ShowLabels)
+                    using (context.PushTransform(translate))
                     {
-                        var formattedText = new FormattedText(
-                            $"{item.Label}",
-                            CultureInfo.CurrentCulture,
-                            FlowDirection.LeftToRight,
-                            Typeface.Default,
-                            vm.LabelSize,
-                            brush);
+                        if (vm.ShowLabels)
+                        {
+                            var formattedText = new FormattedText(
+                                $"{item.Label}",
+                                CultureInfo.CurrentCulture,
+                                FlowDirection.LeftToRight,
+                                Typeface.Default,
+                                vm.LabelSize,
+                                brush);
 
-                        context.DrawText(formattedText, new Point(-item.Radius, -item.Size + vm.LabelSize));
-                    }
+                            context.DrawText(formattedText, new Point(-item.Radius, -item.Size + vm.LabelSize));
+                        }
 
-                    if (vm.SelectedItem is BahtinovMaskViewModel && vm.ShowMarkAtSelectedItem && vm.SelectedItem == item)
-                    {
-                        context.DrawText(selectedMark, new Point(-item.Radius, item.Size));
+                        if (vm.SelectedItem is BahtinovMaskViewModel && vm.ShowMarkAtSelectedItem && vm.SelectedItem == item)
+                        {
+                            context.DrawText(selectedMark, new Point(-item.Radius, item.Size));
+                        }
                     }
                 }
+            }
+        }
+
+        private void DrawTriBahtinovMask(DrawingContext context, SettingsViewModel vm, BahtinovMaskViewModel item, IBrush brush, Matrix translate)
+        {
+            double angle = 60;
+
+            for (int i = 0; i < item.Count; i++)
+            {
+                Matrix rotate2 = Matrix.CreateRotation(angle * i * Math.PI / 180);
+                using (context.PushTransform(translate.Invert() * rotate2 * translate))
+                    DrawBahtinovMask(context, vm, item, brush, translate, i == 0);
             }
         }
     }
