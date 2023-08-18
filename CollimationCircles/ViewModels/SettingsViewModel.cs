@@ -256,8 +256,7 @@ namespace CollimationCircles.ViewModels
             Scale = 1;
             ShowLabels = true;
             CheckForNewVersionOnStartup = true;
-            AlwaysOnTop = true;
-            DockInMainWindow = true;
+            AlwaysOnTop = true;            
             ShowMarkAtSelectedItem = true;
 
             Version = appService?.GetAppVersion() ?? "0.0.0";
