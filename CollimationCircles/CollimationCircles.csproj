@@ -21,6 +21,7 @@
     <UseAppHost>true</UseAppHost>
     <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
     <ApplicationIcon>Resources\Images\icon_256px.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>  
   <ItemGroup>
     <Compile Remove="Models\ItemType.cs" />
@@ -49,19 +50,26 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.3" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.4" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.3" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.3">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-preview.6.23329.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Octokit" Version="7.1.0" />    
+    <PackageReference Include="Octokit" Version="7.1.0" />
+    <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.18" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LibVLCSharp.Avalonia.Unofficial\LibVLCSharp.Avalonia.Unofficial.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Controls\StreamUserControl.axaml.cs">
+      <DependentUpon>StreamUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Resources\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -81,6 +89,9 @@
     </Compile>
     <Compile Update="Views\SettingsView.axaml.cs">
       <DependentUpon>SettingsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\StreamView.axaml.cs">
+      <DependentUpon>StreamView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

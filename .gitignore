@@ -5,3 +5,5 @@
 /.vs
 /FocusMaskTestImages
 /CollimationCircles/appstate.json
+/LibVLCSharp.Avalonia.Unofficial/obj
+/LibVLCSharp.Avalonia.Unofficial/bin/Debug/net6.0

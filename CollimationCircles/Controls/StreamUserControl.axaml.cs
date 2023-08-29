@@ -4,11 +4,13 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Controls
 {
-    public partial class PropertiesUserControl : UserControl
+    public partial class StreamUserControl : UserControl
     {
-        public PropertiesUserControl()
+        public StreamUserControl()
         {
             InitializeComponent();            
+
+            DataContext = Ioc.Default.GetService<StreamViewModel>();
         }
     }
 }

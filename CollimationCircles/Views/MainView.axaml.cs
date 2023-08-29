@@ -38,7 +38,14 @@ namespace CollimationCircles.Views
 
             dhs = Ioc.Default.GetService<IDrawHelperService>();
             khs = Ioc.Default.GetService<IKeyHandlingService>();
+
+            PositionChanged += MainView_PositionChanged;            
         }
+
+        private void MainView_PositionChanged(object? sender, PixelPointEventArgs e)
+        {
+            vm!.MainWindowPosition = Position;
+        }        
 
         static void CheckForUpdate(SettingsViewModel? vm)
         {

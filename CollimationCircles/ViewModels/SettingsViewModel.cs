@@ -150,6 +150,8 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool keyboardShortcutsExpanded = true;
 
+        private bool oldAllwysOnTop = false;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
@@ -256,7 +258,7 @@ namespace CollimationCircles.ViewModels
             Scale = 1;
             ShowLabels = true;
             CheckForNewVersionOnStartup = true;
-            AlwaysOnTop = true;            
+            AlwaysOnTop = true;
             ShowMarkAtSelectedItem = true;
 
             Version = appService?.GetAppVersion() ?? "0.0.0";
@@ -424,8 +426,7 @@ namespace CollimationCircles.ViewModels
 
                     if (success && !string.IsNullOrWhiteSpace(result))
                     {
-                        var at = AlwaysOnTop;   // prevent new version dialog to appear behind MainWindow
-                        AlwaysOnTop = false;    // save AlwaysOnTop setting for later restore
+                        DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
 
                         var dialogResult = await dialogService.ShowMessageBoxAsync(null,
                             DynRes.TryGetString("NewVersionDownload").F(newVersion), DynRes.TryGetString("NewVersion"), MessageBoxButton.YesNo);
@@ -435,7 +436,7 @@ namespace CollimationCircles.ViewModels
                             OpenUrl(result);
                         }
 
-                        AlwaysOnTop = at;       // restore previous AlwaysOnTop setting
+                        RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
                     }
                     else if (!success)
                     {
@@ -446,7 +447,7 @@ namespace CollimationCircles.ViewModels
         }
 
         internal void SaveState()
-        {            
+        {
             appService?.SaveState(this);
         }
 
@@ -461,7 +462,7 @@ namespace CollimationCircles.ViewModels
                     MainWindowPosition = vm.MainWindowPosition;
                     MainWindowWidth = vm.MainWindowWidth;
                     MainWindowHeight = vm.MainWindowHeight;
-                    
+
                     Scale = vm.Scale;
                     RotationAngle = vm.RotationAngle;
                     ShowLabels = vm.ShowLabels;
@@ -483,7 +484,7 @@ namespace CollimationCircles.ViewModels
                     GlobalOffsetX = vm.GlobalOffsetX;
                     GlobalOffsetY = vm.GlobalOffsetY;
                     MainWindowOpacity = vm.MainWindowOpacity;
-                    
+
                     SettingsWindowPosition = vm.SettingsWindowPosition;
                     SettingsWindowWidth = vm.SettingsWindowWidth;
                     SettingsWindowHeight = vm.SettingsWindowHeight;
@@ -492,7 +493,7 @@ namespace CollimationCircles.ViewModels
                     if (!DockInMainWindow)
                     {
                         ShowSettings();
-                    }                    
+                    }
                 }
                 else
                 {
@@ -587,7 +588,7 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        
+
         [RelayCommand]
         internal void GitHubIssue()
         {
@@ -612,6 +613,9 @@ namespace CollimationCircles.ViewModels
                 case nameof(GlobalOffsetX):
                 case nameof(GlobalOffsetY):
                 case nameof(MainWindowOpacity):
+                case nameof(MainWindowPosition):
+                case nameof(MainWindowWidth):
+                case nameof(MainWindowHeight):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
@@ -619,6 +623,18 @@ namespace CollimationCircles.ViewModels
                     }
                     break;
             }
+        }
+
+        public void DissableAlwaysOnTop()
+        {
+            oldAllwysOnTop = AlwaysOnTop;
+
+            AlwaysOnTop = false;
+        }
+
+        public void RestoreAlwaysOnTop()
+        {
+            AlwaysOnTop = oldAllwysOnTop;
         }
     }
 }

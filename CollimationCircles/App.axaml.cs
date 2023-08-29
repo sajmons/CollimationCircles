@@ -45,6 +45,7 @@ public partial class App : Application
                         .AddMessageBox()),
                 viewModelFactory: x => Ioc.Default.GetService(x)))
             .AddSingleton<SettingsViewModel>()
+            .AddSingleton<StreamViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddTransient<IAppService, AppService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()

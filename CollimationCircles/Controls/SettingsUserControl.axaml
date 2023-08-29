@@ -33,6 +33,14 @@
         <TabItem.Header>
           <TextBlock
             FontSize="14"
+            Text="{DynamicResource Text.WebCamStream}" />
+        </TabItem.Header>
+        <controls:StreamUserControl />
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
             Text="{DynamicResource Text.About}" />
         </TabItem.Header>
         <controls:AboutTabUserControl/>
