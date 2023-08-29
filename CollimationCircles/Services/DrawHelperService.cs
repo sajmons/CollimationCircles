@@ -94,7 +94,7 @@ namespace CollimationCircles.Services
                         if (vm.ShowLabels)
                         {
                             var formattedText = new FormattedText(
-                                $"{item.Label} {i}",
+                                $"{item.Label} {i + 1}",
                                 CultureInfo.CurrentCulture,
                                 FlowDirection.LeftToRight,
                                 Typeface.Default,
@@ -132,7 +132,7 @@ namespace CollimationCircles.Services
                         if (vm.ShowLabels)
                         {
                             var formattedText = new FormattedText(
-                                $"{item.Label} {i}",
+                                $"{item.Label} {i + 1}",
                                 CultureInfo.CurrentCulture,
                                 FlowDirection.LeftToRight,
                                 Typeface.Default,

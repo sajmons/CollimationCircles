@@ -3,5 +3,4 @@
   - add support for showing shortcuts inside HUD
 - add profile manager
 - fix min max range limitation for all properties when using keyboard
-- fix labeling of screws starting from number 1 and not 0
 - add option to completelly hide settings window
