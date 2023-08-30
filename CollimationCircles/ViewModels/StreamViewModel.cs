@@ -6,7 +6,6 @@ using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Text;
 
 namespace CollimationCircles.ViewModels
@@ -25,9 +24,11 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         private string buttonTitle = string.Empty;
-        
+
         [ObservableProperty]
-        private StringBuilder mediaPlayerLog = new();        
+        private string mediaPlayerLog = string.Empty;
+
+        private StringBuilder _mediaPlayerLog = new();
 
         private bool CanExecutePlayPause
         {
@@ -40,7 +41,6 @@ namespace CollimationCircles.ViewModels
         public StreamViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-            MediaPlayerLog = new();
             Initialize();
         }
 
@@ -52,18 +52,19 @@ namespace CollimationCircles.ViewModels
                 libVLC.Log += LibVLC_Log;
 
                 MediaPlayer = new MediaPlayer(libVLC) { };
-            }            
+            }
 
             ButtonTitle = DynRes.TryGetString("Start");
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
         {
-            if (MediaPlayerLog is not null)
+            Dispatcher.UIThread.Post(() =>
             {
-                MediaPlayerLog.AppendLine(e.Message);
-            }
-        }        
+                _mediaPlayerLog.AppendLine(e.Message);
+                MediaPlayerLog = _mediaPlayerLog.ToString();
+            });
+        }
 
         private void Play()
         {
@@ -99,6 +100,8 @@ namespace CollimationCircles.ViewModels
         {
             ShowWebCamStream();
             ButtonTitle = DynRes.TryGetString("Stop");
+            _mediaPlayerLog.Clear();
+            MediaPlayerLog = _mediaPlayerLog.ToString();
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
@@ -132,13 +135,13 @@ namespace CollimationCircles.ViewModels
 
         private void CloseWebCamStream()
         {
-            if (WebCamStreamDialogViewModel is not null)
+            Dispatcher.UIThread.Post(() =>
             {
-                Dispatcher.UIThread.Post(() =>
+                if (WebCamStreamDialogViewModel is not null)
                 {
                     dialogService?.Close(WebCamStreamDialogViewModel);
-                });
-            }
+                }
+            });
         }
 
         public void OnClosed()

@@ -6,15 +6,16 @@
              x:Class="CollimationCircles.Controls.StreamUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:StreamViewModel">
-  <StackPanel
-      Margin="12">
-    <StackPanel
-      Orientation="Vertical">
 
-      <TextBlock        
+  <DockPanel
+    Margin="12">
+    <StackPanel
+      Orientation="Vertical"
+      DockPanel.Dock="Top">
+      <TextBlock
         Text="{DynamicResource Text.StreamURL}"
         VerticalAlignment="Center"/>
-      <TextBox        
+      <TextBox
         Text="{Binding MediaUri, Mode=TwoWay}"
         TextWrapping="Wrap"
         VerticalAlignment="Center"
@@ -24,16 +25,30 @@
         HorizontalAlignment="Stretch"
         Content="{Binding ButtonTitle}"
         Command="{Binding PlayPauseCommand}"/>
+      <TextBlock
+        Text="Example how to start libcamera stream"
+        VerticalAlignment="Center"/>
       <TextBox
         IsReadOnly="true"
         Text="{DynamicResource Text.StreamCommandExample}"
         VerticalAlignment="Center"
         TextWrapping="Wrap"/>
+      <TextBlock
+        Text="Example of URL from libcamera stream"
+        VerticalAlignment="Center"/>
       <TextBox
         IsReadOnly="true"
         Text="{DynamicResource Text.StreamURLExample}"
         VerticalAlignment="Center"
         TextWrapping="Wrap"/>
+    </StackPanel>
+    <StackPanel
+      VerticalAlignment="Bottom"
+      Orientation="Vertical"
+      DockPanel.Dock="Bottom">
+      <TextBlock
+        Text="Stream log"
+        VerticalAlignment="Center"/>
       <TextBox
         IsReadOnly="true"
         MaxLines="3"
@@ -41,7 +56,7 @@
         Text="{Binding MediaPlayerLog}"
         VerticalAlignment="Center"
         TextWrapping="Wrap"/>
-
     </StackPanel>
-  </StackPanel>
+  </DockPanel>
+
 </UserControl>
