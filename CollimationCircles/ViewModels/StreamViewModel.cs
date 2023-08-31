@@ -28,7 +28,7 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string mediaPlayerLog = string.Empty;
 
-        private StringBuilder _mediaPlayerLog = new();
+        private readonly StringBuilder _mediaPlayerLog = new();
 
         private bool CanExecutePlayPause
         {
