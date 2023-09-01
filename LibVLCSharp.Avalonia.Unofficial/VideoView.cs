@@ -14,10 +14,8 @@ using LibVLCSharp.Shared;
 using Avalonia.Layout;
 using System.Linq;
 using Avalonia.LogicalTree;
-using Avalonia.Markup.Xaml;
 using Avalonia.Input;
 using System.Diagnostics;
-using Avalonia.Media.Immutable;
 
 namespace LibVLCSharp.Avalonia.Unofficial;
 
