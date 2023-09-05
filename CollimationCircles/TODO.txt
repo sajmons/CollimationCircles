@@ -4,3 +4,4 @@
 - add profile manager
 - fix min max range limitation for all properties when using keyboard
 - add option to completelly hide settings window
+- add ellipse pattern with custom offset for collimation RC (Ritchey‐Chrétien) telescopes see this: http://www.deepskyinstruments.com/truerc/docs/DSI_Collimation_Procedure_Ver_1.0.pdf
