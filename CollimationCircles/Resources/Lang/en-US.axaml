@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Primary clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primary outer</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primary screw</system:String>
-  <system:String x:Key="Text.Properties">Item list</system:String>
+  <system:String x:Key="Text.Properties">Properties</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
   <system:String x:Key="Text.RemoveItem">Remove item from list</system:String>
   <system:String x:Key="Text.ResetItems">Reset list to default values</system:String>
@@ -96,12 +96,11 @@
   <system:String x:Key="Text.GitHubIssue">Report issue</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Open new issue on GitHub</system:String>
   <system:String x:Key="Text.SelectedPatternOpacity">Opacity</system:String>
-  <system:String x:Key="Text.WebCamStream">WebCam</system:String>
+  <system:String x:Key="Text.WebCamStream">Video</system:String>
   <system:String x:Key="Text.StreamURL">Stream url</system:String>  
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stop</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StreamCommandExample">libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
-  <system:String x:Key="Text.StreamURLExample">tcp/h264://192.168.1.174:8080</system:String>
 </ResourceDictionary>

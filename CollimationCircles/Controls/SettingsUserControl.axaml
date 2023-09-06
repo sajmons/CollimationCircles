@@ -23,20 +23,20 @@
         <TabItem.Header>
           <TextBlock
             FontSize="14"
-            Text="{DynamicResource Text.Settings}" />
+            Text="{DynamicResource Text.WebCamStream}" />
         </TabItem.Header>
-        <ScrollViewer>
-          <controls:SettingsTabUserControl />
-        </ScrollViewer>
+        <controls:StreamUserControl />
       </TabItem>
       <TabItem>
         <TabItem.Header>
           <TextBlock
             FontSize="14"
-            Text="{DynamicResource Text.WebCamStream}" />
+            Text="{DynamicResource Text.Settings}" />
         </TabItem.Header>
-        <controls:StreamUserControl />
-      </TabItem>
+        <ScrollViewer>
+          <controls:SettingsTabUserControl />
+        </ScrollViewer>
+      </TabItem>      
       <TabItem>
         <TabItem.Header>
           <TextBlock

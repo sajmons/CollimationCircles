@@ -11,7 +11,8 @@
     Margin="12">
     <StackPanel
       Orientation="Vertical"
-      DockPanel.Dock="Top">
+      DockPanel.Dock="Top"
+      Spacing="5">
       <TextBlock
         Text="{DynamicResource Text.StreamURL}"
         VerticalAlignment="Center"/>
@@ -24,7 +25,13 @@
         HorizontalContentAlignment="Center"
         HorizontalAlignment="Stretch"
         Content="{Binding ButtonTitle}"
-        Command="{Binding PlayPauseCommand}"/>
+        Command="{Binding PlayPauseCommand}"/>      
+    </StackPanel>
+    <StackPanel
+      VerticalAlignment="Bottom"
+      Orientation="Vertical"
+      DockPanel.Dock="Bottom"
+      Spacing="5">
       <TextBlock
         Text="Example how to start libcamera stream"
         VerticalAlignment="Center"/>
@@ -34,25 +41,11 @@
         VerticalAlignment="Center"
         TextWrapping="Wrap"/>
       <TextBlock
-        Text="Example of URL from libcamera stream"
-        VerticalAlignment="Center"/>
-      <TextBox
-        IsReadOnly="true"
-        Text="{DynamicResource Text.StreamURLExample}"
-        VerticalAlignment="Center"
-        TextWrapping="Wrap"/>
-    </StackPanel>
-    <StackPanel
-      VerticalAlignment="Bottom"
-      Orientation="Vertical"
-      DockPanel.Dock="Bottom">
-      <TextBlock
         Text="Stream log"
         VerticalAlignment="Center"/>
       <TextBox
         IsReadOnly="true"
-        MaxLines="3"
-        Height="80"
+        Height="200"
         Text="{Binding MediaPlayerLog}"
         VerticalAlignment="Center"
         TextWrapping="Wrap"/>

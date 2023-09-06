@@ -92,7 +92,7 @@
   <system:String x:Key="Text.GitHubIssue">Probleme</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Öffnen Sie eine neue Ausgabe auf GitHub</system:String>
   <system:String x:Key="Text.SelectedPatternOpacity">Opazität</system:String>
-  <system:String x:Key="Text.WebCamStream">WebCam</system:String>
+  <system:String x:Key="Text.WebCamStream">Video</system:String>
   <system:String x:Key="Text.StreamURL">Stream url</system:String>
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stoppen</system:String>  
