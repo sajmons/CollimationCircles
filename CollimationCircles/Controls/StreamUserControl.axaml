@@ -33,15 +33,16 @@
       DockPanel.Dock="Bottom"
       Spacing="5">
       <TextBlock
-        Text="Example how to start libcamera stream"
-        VerticalAlignment="Center"/>
+        Text="{DynamicResource Text.ExampleHowToStartVideoStream}"
+        VerticalAlignment="Center"
+        TextWrapping="Wrap"/>
       <TextBox
         IsReadOnly="true"
         Text="{DynamicResource Text.StreamCommandExample}"
         VerticalAlignment="Center"
         TextWrapping="Wrap"/>
       <TextBlock
-        Text="Stream log"
+        Text="{DynamicResource Text.VideoStreamLog}"
         VerticalAlignment="Center"/>
       <TextBox
         IsReadOnly="true"

@@ -96,4 +96,8 @@
   <system:String x:Key="Text.StreamURL">Stream url</system:String>
   <system:String x:Key="Text.Start">Začni</system:String>
   <system:String x:Key="Text.Stop">Ustavi</system:String>
+  <system:String x:Key="Text.CameraStreamSeparateWindow">Prikaži video iz kamere v svojem oknu</system:String>
+  <system:String x:Key="Text.CameraStreamWindowTitle">Video iz kamere</system:String>
+  <system:String x:Key="Text.ExampleHowToStartVideoStream">Primer, kako z libcamera začeti pretočni video</system:String>
+  <system:String x:Key="Text.VideoStreamLog">Dnevnik pretočnega videa</system:String>
 </ResourceDictionary>

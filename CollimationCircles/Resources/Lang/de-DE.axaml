@@ -95,5 +95,9 @@
   <system:String x:Key="Text.WebCamStream">Video</system:String>
   <system:String x:Key="Text.StreamURL">Stream url</system:String>
   <system:String x:Key="Text.Start">Start</system:String>
-  <system:String x:Key="Text.Stop">Stoppen</system:String>  
+  <system:String x:Key="Text.Stop">Stoppen</system:String>
+  <system:String x:Key="Text.CameraStreamSeparateWindow">Kamerastream in separatem Fenster anzeigen</system:String>
+  <system:String x:Key="Text.CameraStreamWindowTitle">Kamera-Videostream</system:String>
+  <system:String x:Key="Text.ExampleHowToStartVideoStream">Beispiel für den Start des libcamera-Streams</system:String>
+  <system:String x:Key="Text.VideoStreamLog">Videostream-Protokoll</system:String>
 </ResourceDictionary>

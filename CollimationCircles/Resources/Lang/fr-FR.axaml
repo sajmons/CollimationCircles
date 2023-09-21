@@ -100,4 +100,8 @@
   <system:String x:Key="Text.StreamURL">Stream url</system:String>
   <system:String x:Key="Text.Start">Commencer</system:String>
   <system:String x:Key="Text.Stop">Arrêt</system:String>
+  <system:String x:Key="Text.CameraStreamSeparateWindow">Afficher le flux de la caméra dans une fenêtre séparée</system:String>
+  <system:String x:Key="Text.CameraStreamWindowTitle">Flux vidéo de la caméra</system:String>
+  <system:String x:Key="Text.ExampleHowToStartVideoStream">Exemple comment démarrer le flux libcamera</system:String>
+  <system:String x:Key="Text.VideoStreamLog">Journal du flux vidéo</system:String>
 </ResourceDictionary>
