@@ -5,7 +5,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:vlcsharp="clr-namespace:LibVLCSharp.Avalonia.Unofficial;assembly=LibVLCSharp.Avalonia.Unofficial"
         x:Class="CollimationCircles.Views.StreamView"
-        Title="Stream Window">
+        Title="{DynamicResource Text.CameraStreamWindowTitle}">
   <Grid>
     <vlcsharp:VideoView      
       RelativePanel.AlignHorizontalCenterWithPanel="True"

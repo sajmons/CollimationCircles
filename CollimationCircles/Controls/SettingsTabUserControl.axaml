@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.SettingsTabUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
@@ -50,7 +50,7 @@
           </ComboBox>
         </Grid>
 
-        <Grid ColumnDefinitions="*,20" RowDefinitions="40,40,40">
+        <Grid ColumnDefinitions="*,20" RowDefinitions="40,40,40,40">
           <TextBlock
             TextWrapping="WrapWithOverflow"
             Text="{DynamicResource Text.CheckForNewVersion}"
@@ -77,6 +77,15 @@
             Grid.Row="2"
             Grid.Column="1"
             IsChecked="{Binding ShowMarkAtSelectedItem}" />
+          <TextBlock
+            Grid.Row="3"
+            TextWrapping="WrapWithOverflow"
+            Text="{DynamicResource Text.CameraStreamSeparateWindow}"
+            VerticalAlignment="Center"/>
+          <CheckBox
+            Grid.Row="3"
+            Grid.Column="1"
+            IsChecked="{Binding CameraStreamSeparateWindow}" />
         </Grid>
 
       </StackPanel>

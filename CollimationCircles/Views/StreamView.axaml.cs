@@ -18,7 +18,7 @@ namespace CollimationCircles.Views
             InitializeComponent();
 
             vm = Ioc.Default.GetService<StreamViewModel>();
-            svm = Ioc.Default.GetService<SettingsViewModel>();            
+            svm = Ioc.Default.GetService<SettingsViewModel>();
 
             videoViewer = this.Get<VideoView>("VideoViewer");
 
@@ -43,6 +43,8 @@ namespace CollimationCircles.Views
 
         private void UpdateWindowPosition()
         {
+            if (svm?.CameraStreamSeparateWindow == true) return;
+
             Position = svm!.MainWindowPosition;
 
             if (svm!.DockInMainWindow)
@@ -53,7 +55,7 @@ namespace CollimationCircles.Views
             {
                 Width = svm!.MainWindowWidth;
             }
-            
+
             Height = svm!.MainWindowHeight;
         }
     }

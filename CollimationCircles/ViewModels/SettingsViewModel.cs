@@ -152,6 +152,10 @@ namespace CollimationCircles.ViewModels
 
         private bool oldAllwysOnTop = false;
 
+        [JsonProperty]
+        [ObservableProperty]
+        private bool cameraStreamSeparateWindow = false;
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
