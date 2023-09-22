@@ -85,7 +85,7 @@
           <CheckBox
             Grid.Row="3"
             Grid.Column="1"
-            IsChecked="{Binding CameraStreamSeparateWindow}" />
+            IsChecked="{Binding PinVideoWindowToMainWindow}" />
         </Grid>
 
       </StackPanel>

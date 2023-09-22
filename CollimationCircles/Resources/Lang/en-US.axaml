@@ -100,7 +100,7 @@
   <system:String x:Key="Text.StreamURL">Stream url</system:String>  
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stop</system:String>
-  <system:String x:Key="Text.CameraStreamSeparateWindow">Show camera stream in separate window</system:String>
+  <system:String x:Key="Text.CameraStreamSeparateWindow">Pin video window to main window</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Camera video stream</system:String>
   <system:String x:Key="Text.ExampleHowToStartVideoStream">Example how to start libcamera stream</system:String>
   <system:String x:Key="Text.VideoStreamLog">Video stream log</system:String>  

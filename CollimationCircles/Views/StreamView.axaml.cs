@@ -43,7 +43,7 @@ namespace CollimationCircles.Views
 
         private void UpdateWindowPosition()
         {
-            if (svm?.CameraStreamSeparateWindow == true) return;
+            if (svm?.PinVideoWindowToMainWindow == false) return;
 
             Position = svm!.MainWindowPosition;
 

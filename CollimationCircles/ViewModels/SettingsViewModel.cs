@@ -154,7 +154,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool cameraStreamSeparateWindow = false;
+        private bool pinVideoWindowToMainWindow = true;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -620,6 +620,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(MainWindowPosition):
                 case nameof(MainWindowWidth):
                 case nameof(MainWindowHeight):
+                case nameof(PinVideoWindowToMainWindow):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
