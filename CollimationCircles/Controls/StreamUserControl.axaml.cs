@@ -8,9 +8,12 @@ namespace CollimationCircles.Controls
     {
         public StreamUserControl()
         {
-            InitializeComponent();            
+            InitializeComponent();
 
-            DataContext = Ioc.Default.GetService<StreamViewModel>();
+            if (!Design.IsDesignMode)
+            {
+                DataContext = Ioc.Default.GetService<StreamViewModel>();
+            }
         }
     }
 }
