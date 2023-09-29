@@ -12,7 +12,7 @@ This package depends on LibVLCSharp as well as Avalonia.
 
 LibVLC needs to be installed separately, see VideoLAN.LibVLC.* packages.
     </Description>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <RootNamespace>LibVLCSharp.Avalonia.Unofficial</RootNamespace>
     <PackageId>LibVLCSharp.Avalonia.Unofficial</PackageId>
@@ -25,6 +25,6 @@ LibVLC needs to be installed separately, see VideoLAN.LibVLC.* packages.
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.4" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.4" />
-    <PackageReference Include="LibVLCSharp" Version="3.7.0" />
+    <PackageReference Include="LibVLCSharp" Version="3.8.0" />
   </ItemGroup>
 </Project>

@@ -60,7 +60,7 @@
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0-preview.6.23329.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Octokit" Version="7.1.0" />
+    <PackageReference Include="Octokit" Version="8.0.0" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.18" />
   </ItemGroup>
   <ItemGroup>
