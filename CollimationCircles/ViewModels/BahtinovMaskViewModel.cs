@@ -20,7 +20,7 @@ namespace CollimationCircles.ViewModels
             InclinationAngle = 10;
             RotationIncrement = 0.1;
             InclinationIncrement = 0.1;
-            Count = 3;
+            Count = 1;
             MaxCount = 3;
         }
     }
