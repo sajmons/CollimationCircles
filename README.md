@@ -127,7 +127,7 @@ Read my articles here:
 
 # Known issues
 
-### Window transparency issues on Linux
+### Window transparency issues on Raspberry PI OS Bullseye
 
 Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But luckily there is workaround for that.
 
@@ -140,3 +140,5 @@ go to advanced settings and enable Compositor. Then run this command:
 xcompmgr
 ```
 and then run the CollimationCircles program again. Main Window should now be transparent!
+
+Latest version of Raspberry PI OS Bookworm uses never Wayland window manager and transparency works as it should.
