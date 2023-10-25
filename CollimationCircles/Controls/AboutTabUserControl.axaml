@@ -3,18 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CollimationCircles.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:controls="clr-namespace:CollimationCircles.Controls"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.AboutTabUserControl"
              x:DataType="vm:SettingsViewModel">
-  <StackPanel
+  <WrapPanel
     HorizontalAlignment="Left"
-    Width="{Binding SettingsWidth}"
     Margin="12">
-
-    <WrapPanel>
-
+    
       <PathIcon
-        Width="84" Height="84"
+        Width="32" Height="32"
         Margin="8"
         HorizontalAlignment="Center" VerticalAlignment="Center"
         Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Launcher}" />
@@ -22,67 +20,35 @@
       <TextBlock
         Margin="0,0,10,10"
         Padding="8,8,0,0"
-        HorizontalAlignment="Stretch"
         TextWrapping="WrapWithOverflow"
-        VerticalAlignment="Center">
-        <TextBlock.Text>
-          <MultiBinding StringFormat="{}{0} {1}">
-            <Binding Path="Title" />
-            <Binding Path="AppDescription" />
-          </MultiBinding>
-        </TextBlock.Text>
-      </TextBlock>
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Top"
+        Text="{DynamicResource Text.AppDescription}">
+      </TextBlock>    
 
-      <Button
-        Margin="0,0,10,10"
-        Width="130"
-        VerticalAlignment="Bottom"
-        Command="{Binding OpenWebSiteCommand}"
-        ToolTip.Tip="{DynamicResource Text.OpenWebSite}">
-        <StackPanel Orientation="Horizontal">
-          <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Help}" />
-          <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.AppWebSite}" VerticalAlignment="Center"/>
-        </StackPanel>
-      </Button>
+    <TextBlock
+      Margin="8"
+      HorizontalAlignment="Stretch"
+      TextWrapping="WrapWithOverflow"
+      VerticalAlignment="Center"
+      Text="{DynamicResource Text.PatreonDesc}" />
 
-      <Button
-        Margin="0,0,10,10"
-        Width="130"
-        VerticalAlignment="Bottom"
-        Command="{Binding OpenGitHubPageCommand}"
-        ToolTip.Tip="{DynamicResource Text.GitHubWebSite}">
-        <StackPanel Orientation="Horizontal">
-          <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.GitHub}" />
-          <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.GitHub}" VerticalAlignment="Center"/>
-        </StackPanel>
-      </Button>
+    <Button
+      Margin="8"
+      VerticalAlignment="Bottom"
+      Command="{Binding OpenPatreonWebSiteCommand}"
+      ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
+      <StackPanel Orientation="Horizontal">
+        <PathIcon
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Patreon}" />
+        <TextBlock
+          Padding="8,0,0,0"
+          Text="{DynamicResource Text.Patreon}"
+          VerticalAlignment="Center"/>
+      </StackPanel>
+    </Button>
 
-      <Button
-        Margin="0,0,10,10"
-        Width="130"
-        VerticalAlignment="Bottom"
-        Command="{Binding OpenContactWebPageCommand}"
-        ToolTip.Tip="{DynamicResource Text.OpenWebSiteContactForm}">
-        <StackPanel Orientation="Horizontal">
-          <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Email}" />
-          <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.Contact}" VerticalAlignment="Center"/>
-        </StackPanel>
-      </Button>
-
-      <Button
-        Margin="0,0,10,10"
-        Width="130"
-        VerticalAlignment="Bottom"
-        Command="{Binding GitHubIssueCommand}"
-        ToolTip.Tip="{DynamicResource Text.OpenGitHubIssue}">
-        <StackPanel Orientation="Horizontal">
-          <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Bug}" />
-          <TextBlock Padding="8,0,0,0" Text="{DynamicResource Text.GitHubIssue}" VerticalAlignment="Center"/>
-        </StackPanel>
-      </Button>
-
-    </WrapPanel>
-
-  </StackPanel>
+  </WrapPanel>
 
 </UserControl>

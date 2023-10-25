@@ -128,9 +128,6 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private int settingsWidth = 255;
 
-        [ObservableProperty]
-        private string? appDescription;
-
         [JsonProperty]
         [ObservableProperty]
         [Range(-1000, 1000)]
@@ -173,8 +170,7 @@ namespace CollimationCircles.ViewModels
                 InitializeColors();
             }
 
-            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
-            AppDescription = $"{DynRes.TryGetString("AppDescription")}\n{DynRes.TryGetString("Copyright")} {DynRes.TryGetString("Author")}";
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";            
         }
 
         private void InitializeThemes()
@@ -589,6 +585,15 @@ namespace CollimationCircles.ViewModels
             if (appService is not null)
             {
                 OpenUrl(appService.YouTubeChannel);
+            }
+        }
+        
+        [RelayCommand]
+        internal void OpenPatreonWebSite()
+        {
+            if (appService is not null)
+            {
+                OpenUrl(appService.PatreonWebPage);
             }
         }
 

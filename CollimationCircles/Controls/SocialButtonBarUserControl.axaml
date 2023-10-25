@@ -13,12 +13,20 @@
     Orientation="Horizontal">
 
     <Button
+      Command="{Binding OpenPatreonWebSiteCommand}"
+      ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Patreon}" />
+    </Button>
+
+    <Button
       Command="{Binding OpenWebSiteCommand}"
       ToolTip.Tip="{DynamicResource Text.OpenWebSite}">
       <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Help}" />
-    </Button>
+    </Button>    
 
     <Button
       Command="{Binding OpenContactWebPageCommand}"

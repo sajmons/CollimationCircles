@@ -6,7 +6,7 @@
   <system:String x:Key="Text.AddNewItem">Neuen Artikel zur Liste hinzufügen</system:String>
   <system:String x:Key="Text.AllFiles">Alle Dateien</system:String>
   <system:String x:Key="Text.AllItemsControls">Gilt für alle Artikel</system:String>
-  <system:String x:Key="Text.AppDescription">Anwendung für elektronisch unterstützte Teleskopkollimation</system:String>
+  <system:String x:Key="Text.AppDescription">Anwendung für elektronisch unterstützte Teleskopkollimation © 2023 Simon Šander</system:String>
   <system:String x:Key="Text.BahtinovMask">Bahtinov-Maske</system:String>
   <system:String x:Key="Text.ChangeLanguage">Sprache ändern</system:String>
   <system:String x:Key="Text.ChangeTo">In {0} ändern</system:String>
@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Primäres Clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primäres Äußeres</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primäres Schraube</system:String>
-  <system:String x:Key="Text.Properties">Eigenschaften</system:String>
+  <system:String x:Key="Text.Properties">Muster</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
   <system:String x:Key="Text.RemoveItem">Artikel von der Liste entfernen</system:String>
   <system:String x:Key="Text.ResetItems">Liste auf Standardwerte zurücksetzen</system:String>
@@ -100,4 +100,7 @@
   <system:String x:Key="Text.CameraStreamWindowTitle">Kamera-Videostream</system:String>
   <system:String x:Key="Text.ExampleHowToStartVideoStream">Beispiel für den Start des libcamera-Streams</system:String>
   <system:String x:Key="Text.VideoStreamLog">Videostream-Protokoll</system:String>
+  <system:String x:Key="Text.Fans">Fans</system:String>
+  <system:String x:Key="Text.PatreonDesc">Die Entwicklung dieser Anwendung erfordert viel Aufwand, Freizeit und Engagement. Wenn Sie das zu schätzen wissen und etwas Unterstützung zeigen möchten, besuchen Sie bitte meine Patreon-Website und abonnieren Sie die Mitgliedschaftsstufen oder kaufen Sie einige Assets. Vielen Dank für all Ihre Unterstützung!</system:String>
+  <system:String x:Key="Text.PatreonWebSite">Besuchen Sie die Patreon-Website</system:String>
 </ResourceDictionary>

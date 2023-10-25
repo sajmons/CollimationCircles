@@ -6,6 +6,7 @@ using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Text;
 
 namespace CollimationCircles.ViewModels
@@ -70,6 +71,22 @@ namespace CollimationCircles.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(MediaUri))
             {
+                if (OperatingSystem.IsLinux())
+                {
+                    // libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080
+                    
+                    ProcessStartInfo startInfo = new ProcessStartInfo() {
+                        FileName = "libcamera-vid",
+                        Arguments = "-t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080"
+                    };
+                    
+                    Process proc = new() {
+                        StartInfo = startInfo
+                    };
+
+                    proc.Start();
+                }
+
                 if (libVLC != null && MediaPlayer != null)
                 {
                     string[] Media_AdditionalOptions = Array.Empty<string>();

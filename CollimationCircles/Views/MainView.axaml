@@ -32,11 +32,13 @@
       HorizontalAlignment="Right"
       VerticalAlignment="Top"
       ToolTip.Tip="{DynamicResource Text.SettingsWindow}"
-      Width="40"
-      Height="40"
+      Width="20"
+      Height="20"
       Command="{Binding ShowSettingsCommand}"
       IsVisible="{Binding DockInMainWindow}">
-      <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Undock}"/>
+      <PathIcon        
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Undock}"/>
     </Button>
   </RelativePanel>
 

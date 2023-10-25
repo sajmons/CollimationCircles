@@ -6,7 +6,7 @@
   <system:String x:Key="Text.AddNewItem">Ajouter un nouvel élément</system:String>
   <system:String x:Key="Text.AllFiles">Tous Fichiers</system:String>
   <system:String x:Key="Text.AllItemsControls">Propriétés Globales</system:String>
-  <system:String x:Key="Text.AppDescription">Aide à la collimation éléctronique</system:String>
+  <system:String x:Key="Text.AppDescription">Aide à la collimation éléctronique © 2023 Simon Šander</system:String>
   <system:String x:Key="Text.BahtinovMask">Masque de Bahtinov</system:String>
   <system:String x:Key="Text.ChangeLanguage">Changer de langue</system:String>
   <system:String x:Key="Text.ChangeTo">Change par {0}</system:String>
@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Câles primaires</system:String>
   <system:String x:Key="Text.PrimaryOuter">Extérieur primaire</system:String>
   <system:String x:Key="Text.PrimaryScrew">Vis primaire</system:String>
-  <system:String x:Key="Text.Properties">Propriétés</system:String>
+  <system:String x:Key="Text.Properties">Motifs</system:String>
   <system:String x:Key="Text.Radius">Rayon</system:String>
   <system:String x:Key="Text.RemoveItem">Supprimer l'élément de la liste</system:String>
   <system:String x:Key="Text.ResetItems">Valeurs par défaut</system:String>
@@ -77,8 +77,6 @@
   <system:String x:Key="Text.Secondary">Secondaire</system:String>
   <system:String x:Key="Text.FocuserTube">Tube de focalisation</system:String>
   <system:String x:Key="Text.CollimationCircles">Cercles de Collimation</system:String>
-  <system:String x:Key="Text.Copyright">© 2023</system:String>
-  <system:String x:Key="Text.Author">Simon Šander</system:String>
   <system:String x:Key="Text.StayOnTop">Fenêtre toujours dessus</system:String>
   <system:String x:Key="Text.DockInMainWindow">Acrocher à la fenêtre principale</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Afficher la marque sur l'élément sélectionné</system:String>
@@ -104,4 +102,7 @@
   <system:String x:Key="Text.CameraStreamWindowTitle">Flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.ExampleHowToStartVideoStream">Exemple comment démarrer le flux libcamera</system:String>
   <system:String x:Key="Text.VideoStreamLog">Journal du flux vidéo</system:String>
+  <system:String x:Key="Text.Fans">Ventilateurs</system:String>
+  <system:String x:Key="Text.PatreonDesc">Le développement de cette application demande beaucoup d’efforts, de temps libre et d’engagement. Si vous appréciez cela et souhaitez montrer un certain soutien, veuillez visiter mon site Web Patreon et vous abonner aux niveaux d'adhésion ou acheter des actifs. Merci pour tout votre support!</system:String>
+  <system:String x:Key="Text.PatreonWebSite">Visitez le site Patreon</system:String>
 </ResourceDictionary>

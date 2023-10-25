@@ -6,7 +6,7 @@
   <system:String x:Key="Text.AddNewItem">Add new item to list</system:String>
   <system:String x:Key="Text.AllFiles">All Files</system:String>
   <system:String x:Key="Text.AllItemsControls">Global properties</system:String>
-  <system:String x:Key="Text.AppDescription">Application for electronicaly asisted telescope collimation</system:String>
+  <system:String x:Key="Text.AppDescription">Application for electronicaly asisted telescope collimation © 2023 Simon Šander</system:String>  
   <system:String x:Key="Text.BahtinovMask">Bahtinov mask</system:String>
   <system:String x:Key="Text.ChangeLanguage">Change language</system:String>
   <system:String x:Key="Text.ChangeTo">Change to {0}</system:String>
@@ -43,12 +43,12 @@
   <system:String x:Key="Text.NewVersion">New Version</system:String>
   <system:String x:Key="Text.NewVersionDownload">New version {0} available! Would you like to download it?</system:String>
   <system:String x:Key="Text.OpenFile">Open file</system:String>
-  <system:String x:Key="Text.OpenWebSite">Open application web site</system:String>
+  <system:String x:Key="Text.OpenWebSite">Open application website</system:String>
   <system:String x:Key="Text.PrimaryCenter">Primary Center</system:String>
   <system:String x:Key="Text.PrimaryClip">Primary clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primary outer</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primary screw</system:String>
-  <system:String x:Key="Text.Properties">Properties</system:String>
+  <system:String x:Key="Text.Properties">Paterns</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
   <system:String x:Key="Text.RemoveItem">Remove item from list</system:String>
   <system:String x:Key="Text.ResetItems">Reset list to default values</system:String>
@@ -76,20 +76,18 @@
   <system:String x:Key="Text.ItemColor">Color</system:String>
   <system:String x:Key="Text.Secondary">Secondary</system:String>
   <system:String x:Key="Text.FocuserTube">Focuser tube</system:String>
-  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>
-  <system:String x:Key="Text.Copyright">© 2023</system:String>
-  <system:String x:Key="Text.Author">Simon Šander</system:String>
+  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>  
   <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>
   <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected item</system:String>
   <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
   <system:String x:Key="Text.KeyboardShortcuts">Keyboard shortcuts</system:String>
-  <system:String x:Key="Text.TwitterWebSite">Open author Twitter web site</system:String>
+  <system:String x:Key="Text.TwitterWebSite">Open author Twitter website</system:String>
   <system:String x:Key="Text.YouTubeChannel">Open author YouTube channel</system:String>
-  <system:String x:Key="Text.AppWebSite">Web site</system:String>
+  <system:String x:Key="Text.AppWebSite">Website</system:String>
   <system:String x:Key="Text.OpenWebSiteContactForm">Open online contact form</system:String>
-  <system:String x:Key="Text.GitHubWebSite">Open application GitHub web site</system:String>
+  <system:String x:Key="Text.GitHubWebSite">Open application GitHub website</system:String>
   <system:String x:Key="Text.GlobalOffsetX">X offset</system:String>
   <system:String x:Key="Text.GlobalOffsetY">Y offset</system:String>
   <system:String x:Key="Text.MainWindowOpacity">Opacity</system:String>
@@ -103,7 +101,11 @@
   <system:String x:Key="Text.CameraStreamSeparateWindow">Pin video window to main window</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Camera video stream</system:String>
   <system:String x:Key="Text.ExampleHowToStartVideoStream">Example how to start libcamera stream</system:String>
-  <system:String x:Key="Text.VideoStreamLog">Video stream log</system:String>  
+  <system:String x:Key="Text.VideoStreamLog">Video stream log</system:String>
+  <system:String x:Key="Text.Fans">Fans</system:String>
+  <system:String x:Key="Text.PatreonDesc">The development of this application requires a lot of effort, free time and commitment. If you appreciate that and want to show some support, please visit my Patreon website and subscribe to the membership levels or buy some assets. Thank you for all your support!</system:String>
+  <system:String x:Key="Text.PatreonWebSite">Visit Patreon website</system:String>
+  <system:String x:Key="Text.Patreon">Patreon</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StreamCommandExample">libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
