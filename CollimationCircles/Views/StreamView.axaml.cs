@@ -3,7 +3,7 @@ using CollimationCircles.Messages;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using LibVLCSharp.Avalonia.Unofficial;
+using LibVLCSharp.Avalonia;
 
 namespace CollimationCircles.Views
 {
@@ -32,10 +32,9 @@ namespace CollimationCircles.Views
 
         private void WebCamStreamWindow_Opened(object? sender, System.EventArgs e)
         {
-            if (videoViewer != null && videoViewer.PlatformHandle != null && vm!.MediaPlayer != null)
+            if (videoViewer != null && vm!.MediaPlayer != null)
             {
                 videoViewer.MediaPlayer = vm?.MediaPlayer;
-                videoViewer.MediaPlayer?.SetHandle(videoViewer.PlatformHandle);
 
                 UpdateWindowPosition();
             }
