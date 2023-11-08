@@ -16,13 +16,14 @@ namespace CollimationCircles
                 BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
             }
-            catch
+            catch (Exception ex)
             {
                 // here we can work with the exception, for example add it to our log file
                 //Log.Fatal(e, "Something very bad happened");
                 //var ds = Ioc.Default.GetService<IDialogService>();
                 //var vm = Ioc.Default.GetService<MainViewModel>();
                 //ds?.ShowMessageBoxAsync(vm, e.Message, "Error");
+                Console.WriteLine(ex.Message);
                 throw;
             }
             finally
