@@ -23,18 +23,7 @@
     <ApplicationIcon>Resources\Images\icon_256px.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>    
-  <ItemGroup>
-    <None Remove=".gitignore" />
-    <None Remove="appstate.json" />
-    <None Remove="Resources\Images\icon_256px.ico" />    
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="**\*.xaml.cs">
-      <DependentUpon>%(Filename)</DependentUpon>
-    </Compile>
-    <AvaloniaResource Include="**\*.xaml">
-      <SubType>Designer</SubType>
-    </AvaloniaResource>
+  <ItemGroup>    
     <AvaloniaResource Include="Resources\**" />
   </ItemGroup>
   <ItemGroup>
