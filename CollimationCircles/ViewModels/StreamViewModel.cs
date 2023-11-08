@@ -5,23 +5,22 @@ using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
 using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 
 namespace CollimationCircles.ViewModels
 {
-    public partial class StreamViewModel : BaseViewModel, IViewClosed
+    public partial class StreamViewModel : BaseViewModel
     {
         private readonly IDialogService dialogService;
-        private LibVLC? libVLC;
+        private readonly LibVLC libVLC;
+        private Process? proc;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
-        private string mediaUri = "tcp/h264://192.168.1.174:8080";
+        private string mediaUri = "tcp/h264://192.168.1.129:8080";
 
-        [ObservableProperty]
-        private MediaPlayer? mediaPlayer;
+        public MediaPlayer MediaPlayer { get; }
 
         [ObservableProperty]
         private string buttonTitle = string.Empty;
@@ -36,24 +35,19 @@ namespace CollimationCircles.ViewModels
             get => !string.IsNullOrWhiteSpace(MediaUri);
         }
 
-        [ObservableProperty]
-        private INotifyPropertyChanged? webCamStreamDialogViewModel;
-
         public StreamViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-            Initialize();
-        }
 
-        public void Initialize()
-        {
-            if (!Avalonia.Controls.Design.IsDesignMode)
+            if (OperatingSystem.IsLinux())
             {
-                libVLC = new LibVLC(enableDebugLogs: false);
-                libVLC.Log += LibVLC_Log;
-
-                MediaPlayer = new MediaPlayer(libVLC) { };
+                MediaUri = "tcp/h264://127.0.0.1:8080";
             }
+
+            libVLC = new();
+            //libVLC.Log += LibVLC_Log;
+
+            MediaPlayer = new(libVLC);
 
             ButtonTitle = DynRes.TryGetString("Start");
         }
@@ -73,38 +67,43 @@ namespace CollimationCircles.ViewModels
             {
                 if (OperatingSystem.IsLinux())
                 {
-                    // libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080
-                    
-                    ProcessStartInfo startInfo = new ProcessStartInfo() {
+                    Console.WriteLine("Starting video stream: libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080");
+
+                    ProcessStartInfo startInfo = new()
+                    {
                         FileName = "libcamera-vid",
                         Arguments = "-t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080"
                     };
-                    
-                    Process proc = new() {
+
+                    proc = new()
+                    {
                         StartInfo = startInfo
                     };
 
-                    proc.Start();
+                    if (proc.Start())
+                    {
+                        MediaPlayerPlay();
+                    }
                 }
-
-                if (libVLC != null && MediaPlayer != null)
+                else
                 {
-                    string[] Media_AdditionalOptions = Array.Empty<string>();
-
-                    using var media = new Media(
-                        libVLC,
-                        MediaUri,
-                        FromType.FromLocation,
-                        Media_AdditionalOptions
-                        );
-
-                    MediaPlayer.Opening += MediaPlayer_Opening;
-                    MediaPlayer.Stopped += MediaPlayer_Stopped;
-
-                    MediaPlayer.Play(media);
-                    media.Dispose();
+                    MediaPlayerPlay();
                 }
             }
+        }
+
+        private void MediaPlayerPlay()
+        {
+            using var media = new Media(
+                    libVLC,
+                    MediaUri,
+                    FromType.FromLocation
+                    );
+
+            MediaPlayer.Opening += MediaPlayer_Opening;
+            MediaPlayer.Stopped += MediaPlayer_Stopped;
+
+            MediaPlayer.Play(media);
         }
 
         private void MediaPlayer_Stopped(object? sender, EventArgs e)
@@ -139,31 +138,19 @@ namespace CollimationCircles.ViewModels
 
         private void ShowWebCamStream()
         {
-            if (WebCamStreamDialogViewModel is null)
+            Dispatcher.UIThread.Post(() =>
             {
-                WebCamStreamDialogViewModel = dialogService?.CreateViewModel<StreamViewModel>();
-
-                if (WebCamStreamDialogViewModel is not null)
-                {
-                    dialogService?.Show<StreamViewModel>(null, WebCamStreamDialogViewModel);
-                }
-            }
+                dialogService?.Show<StreamViewModel>(null, this);
+            });
         }
 
         private void CloseWebCamStream()
         {
             Dispatcher.UIThread.Post(() =>
             {
-                if (WebCamStreamDialogViewModel is not null)
-                {
-                    dialogService?.Close(WebCamStreamDialogViewModel);
-                }
+                dialogService?.Close(this);
+                proc?.Close();
             });
-        }
-
-        public void OnClosed()
-        {
-            WebCamStreamDialogViewModel = null;
         }
     }
 }
