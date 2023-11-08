@@ -141,4 +141,4 @@ xcompmgr
 ```
 and then run the CollimationCircles program again. Main Window should now be transparent!
 
-Latest version of Raspberry PI OS Bookworm uses never Wayland window manager and transparency works as it should.
+Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
