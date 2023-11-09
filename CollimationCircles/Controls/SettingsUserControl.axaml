@@ -18,15 +18,7 @@
         <ScrollViewer>
           <controls:PropertiesUserControl />
         </ScrollViewer>
-      </TabItem>
-      <TabItem>
-        <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.WebCamStream}" />
-        </TabItem.Header>
-        <controls:StreamUserControl />
-      </TabItem>
+      </TabItem>      
       <TabItem>
         <TabItem.Header>
           <TextBlock
@@ -43,10 +35,10 @@
             FontSize="14"
             Text="{DynamicResource Text.About}" />
         </TabItem.Header>
-        <controls:AboutTabUserControl/>
+        <controls:AboutTabUserControl />
       </TabItem>
     </TabControl>
     <controls:SocialButtonBarUserControl
       Grid.Row="1"/>
-  </Grid>  
+  </Grid>
 </UserControl>

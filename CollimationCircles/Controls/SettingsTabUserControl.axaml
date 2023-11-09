@@ -2,100 +2,109 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:CollimationCircles.Controls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.SettingsTabUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <WrapPanel>
+  <WrapPanel HorizontalAlignment="Center">
 
     <StackPanel
-      Width="{Binding SettingsWidth}"
-      Margin="12">
-      <StackPanel Orientation="Vertical">
+      Orientation="Vertical"
+      HorizontalAlignment="Center"
+      Width="{Binding SettingsWidth}">
 
-        <Grid
-          ColumnDefinitions="*,95"
-          RowDefinitions="40,40">
-          <TextBlock
-            TextWrapping="WrapWithOverflow"
-            Text="{DynamicResource Text.UserInterfaceLanguage}"
-            VerticalAlignment="Center"/>
-          <ComboBox
-            Grid.Column="1"
-            HorizontalAlignment="Right"
-            ItemsSource="{Binding LanguageList}"
-            SelectedItem="{Binding SelectedLanguage}">
-            <ComboBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding Key}" />
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-          <TextBlock
-            Grid.Row="1"
-            TextWrapping="WrapWithOverflow"
-            Text="{DynamicResource Text.UserInterfaceTheme}"
-            VerticalAlignment="Center"/>
-          <ComboBox
-            Grid.Row="1"
-            Grid.Column="1"
-            HorizontalAlignment="Right"
-            ItemsSource="{Binding ThemeList}"
-            SelectedItem="{Binding SelectedTheme}">
-            <ComboBox.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding}" />
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-        </Grid>
+      <Grid
+        ColumnDefinitions="*,95"
+        RowDefinitions="40,40">
+        <TextBlock
+          TextWrapping="WrapWithOverflow"
+          Text="{DynamicResource Text.UserInterfaceLanguage}"
+          VerticalAlignment="Center"/>
+        <ComboBox
+          Grid.Column="1"
+          HorizontalAlignment="Right"
+          ItemsSource="{Binding LanguageList}"
+          SelectedItem="{Binding SelectedLanguage}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Key}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <TextBlock
+          Grid.Row="1"
+          TextWrapping="WrapWithOverflow"
+          Text="{DynamicResource Text.UserInterfaceTheme}"
+          VerticalAlignment="Center"/>
+        <ComboBox
+          Grid.Row="1"
+          Grid.Column="1"
+          HorizontalAlignment="Right"
+          ItemsSource="{Binding ThemeList}"
+          SelectedItem="{Binding SelectedTheme}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </Grid>
 
-        <Grid ColumnDefinitions="*,20" RowDefinitions="40,40,40,40">
-          <TextBlock
-            TextWrapping="WrapWithOverflow"
-            Text="{DynamicResource Text.CheckForNewVersion}"
-            VerticalAlignment="Center"/>
-          <CheckBox
-            Grid.Column="1"
-            IsChecked="{Binding CheckForNewVersionOnStartup}" />
-          <TextBlock
-            Grid.Row="1"
-            TextWrapping="WrapWithOverflow"
-            RelativePanel.Below="CheckForNewVersion"
-            Text="{DynamicResource Text.StayOnTop}"
-            VerticalAlignment="Center"/>
-          <CheckBox
-            Grid.Row="1"
-            Grid.Column="1"
-            IsChecked="{Binding AlwaysOnTop}" />
-          <TextBlock
-            Grid.Row="2"
-            TextWrapping="WrapWithOverflow"
-            Text="{DynamicResource Text.ShowMarkAtSelectedItem}"
-            VerticalAlignment="Center"/>
-          <CheckBox
-            Grid.Row="2"
-            Grid.Column="1"
-            IsChecked="{Binding ShowMarkAtSelectedItem}" />
-          <TextBlock
-            Grid.Row="3"
-            TextWrapping="WrapWithOverflow"
-            Text="{DynamicResource Text.CameraStreamSeparateWindow}"
-            VerticalAlignment="Center"/>
-          <CheckBox
-            Grid.Row="3"
-            Grid.Column="1"
-            IsChecked="{Binding PinVideoWindowToMainWindow}" />
-        </Grid>
+      <Grid ColumnDefinitions="*,20" RowDefinitions="40,40,40,40">
+        <TextBlock
+          TextWrapping="WrapWithOverflow"
+          Text="{DynamicResource Text.CheckForNewVersion}"
+          VerticalAlignment="Center"/>
+        <CheckBox
+          Grid.Column="1"
+          IsChecked="{Binding CheckForNewVersionOnStartup}" />
+        <TextBlock
+          Grid.Row="1"
+          TextWrapping="WrapWithOverflow"
+          RelativePanel.Below="CheckForNewVersion"
+          Text="{DynamicResource Text.StayOnTop}"
+          VerticalAlignment="Center"/>
+        <CheckBox
+          Grid.Row="1"
+          Grid.Column="1"
+          IsChecked="{Binding AlwaysOnTop}" />
+        <TextBlock
+          Grid.Row="2"
+          TextWrapping="WrapWithOverflow"
+          Text="{DynamicResource Text.ShowMarkAtSelectedItem}"
+          VerticalAlignment="Center"/>
+        <CheckBox
+          Grid.Row="2"
+          Grid.Column="1"
+          IsChecked="{Binding ShowMarkAtSelectedItem}" />
+        <TextBlock
+          Grid.Row="3"
+          TextWrapping="WrapWithOverflow"
+          Text="{DynamicResource Text.CameraStreamSeparateWindow}"
+          VerticalAlignment="Center"/>
+        <CheckBox
+          Grid.Row="3"
+          Grid.Column="1"
+          IsChecked="{Binding PinVideoWindowToMainWindow}" />
+      </Grid>
 
-      </StackPanel>
     </StackPanel>
 
     <Expander
+        VerticalAlignment="Top"
+        HorizontalAlignment="Stretch"
+        Header="{DynamicResource Text.WebCamStream}"
+        Width="{Binding SettingsWidth}"
+        IsExpanded="{Binding CameraVideoStreamExpanded}">
+      <controls:StreamUserControl/>
+    </Expander>
+
+    <Expander
+      HorizontalAlignment="Stretch"
       VerticalAlignment="Top"
       Header="{DynamicResource Text.KeyboardShortcuts}"
       Width="{Binding SettingsWidth}"
-      Margin="12"
       IsExpanded="{Binding KeyboardShortcutsExpanded}">
 
       <UniformGrid Columns="2">

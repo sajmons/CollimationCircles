@@ -7,50 +7,42 @@
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:StreamViewModel">
 
-  <DockPanel
-    Margin="12">
-    <StackPanel
-      Orientation="Vertical"
-      DockPanel.Dock="Top"
-      Spacing="5">
-      <TextBlock
-        Text="{DynamicResource Text.StreamURL}"
-        VerticalAlignment="Center"/>
+  <StackPanel
+    Orientation="Vertical"
+    DockPanel.Dock="Top">
+    <CheckBox
+      Name="remote"
+      IsChecked="{Binding IsRemoteConnection, Mode=TwoWay}"
+      IsEnabled="{Binding IsEnabled}"
+      Content="Connect remote"/>
+    <Grid
+      ColumnDefinitions="*,10,Auto"
+      RowDefinitions="40,40,*">
       <TextBox
-        Text="{Binding MediaUri, Mode=TwoWay}"
+        Text="{Binding Address, Mode=TwoWay}"
+        IsEnabled="{Binding IsEnabled}"
+        TextWrapping="Wrap"
+        VerticalAlignment="Center"
+        HorizontalAlignment="Stretch"/>
+      <TextBlock
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center"
+        Grid.Column="1">:</TextBlock>
+      <TextBox
+        Grid.Column="2"
+        Text="{Binding Port, Mode=TwoWay}"
+        IsEnabled="{Binding IsEnabled}"
         TextWrapping="Wrap"
         VerticalAlignment="Center"
         HorizontalAlignment="Stretch"/>
       <Button
+        Grid.Row="1"
+        Grid.ColumnSpan="3"
         HorizontalContentAlignment="Center"
         HorizontalAlignment="Stretch"
         Content="{Binding ButtonTitle}"
-        Command="{Binding PlayPauseCommand}"/>      
-    </StackPanel>
-    <StackPanel
-      VerticalAlignment="Bottom"
-      Orientation="Vertical"
-      DockPanel.Dock="Bottom"
-      Spacing="5">
-      <TextBlock
-        Text="{DynamicResource Text.ExampleHowToStartVideoStream}"
-        VerticalAlignment="Center"
-        TextWrapping="Wrap"/>
-      <TextBox
-        IsReadOnly="true"
-        Text="{DynamicResource Text.StreamCommandExample}"
-        VerticalAlignment="Center"
-        TextWrapping="Wrap"/>
-      <TextBlock
-        Text="{DynamicResource Text.VideoStreamLog}"
-        VerticalAlignment="Center"/>
-      <TextBox
-        IsReadOnly="true"
-        Height="200"
-        Text="{Binding MediaPlayerLog}"
-        VerticalAlignment="Center"
-        TextWrapping="Wrap"/>
-    </StackPanel>
-  </DockPanel>
+        Command="{Binding PlayPauseCommand}"/>
+    </Grid>
+  </StackPanel>
 
 </UserControl>
