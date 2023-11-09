@@ -92,15 +92,14 @@
   <system:String x:Key="Text.GitHubIssue">Prijavi težavo</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Prijavi težavo na GitHub</system:String>
   <system:String x:Key="Text.SelectedPatternOpacity">Prosojnost</system:String>
-  <system:String x:Key="Text.WebCamStream">Video</system:String>
-  <system:String x:Key="Text.StreamURL">Stream url</system:String>
+  <system:String x:Key="Text.WebCamStream">Video tok kamere</system:String>
   <system:String x:Key="Text.Start">Začni</system:String>
   <system:String x:Key="Text.Stop">Ustavi</system:String>
   <system:String x:Key="Text.CameraStreamSeparateWindow">Pripni video okno na glavno okno</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Video iz kamere</system:String>
-  <system:String x:Key="Text.ExampleHowToStartVideoStream">Primer, kako z libcamera začeti pretočni video</system:String>
-  <system:String x:Key="Text.VideoStreamLog">Dnevnik pretočnega videa</system:String>
   <system:String x:Key="Text.Fans">Oboževalci</system:String>
   <system:String x:Key="Text.PatreonDesc">Razvoj te aplikacije zahteva veliko truda, prostega časa in angažiranosti. V kolikor to cenite in me želite podpreti, vas prosim, da obiščete mojo Patreon spletno stran in se naroči na članske ugodnosti ali kupite katerega od izdelkov. Hvala za vso vašo podporo!</system:String>
   <system:String x:Key="Text.PatreonWebSite">Obiščite Patreon spletno stran</system:String>
+  <system:String x:Key="Text.AppLog">Dnevnik aplikacije</system:String>
+  <system:String x:Key="Text.AppLogTabTitle">Dnevnik</system:String>
 </ResourceDictionary>

@@ -2,71 +2,94 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="250" d:DesignHeight="32"
              x:Class="CollimationCircles.Controls.ToolbarUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <StackPanel
-    Orientation="Horizontal"
-    Spacing="2">
+  <Grid
+    RowDefinitions="32"
+    ColumnDefinitions="Auto,32,32,32,32">
 
-    <!--#region ADDItemMenu -->
-    <SplitButton Content="{DynamicResource Text.Add}" ToolTip.Tip="{DynamicResource Text.AddNewItem}">
+    <SplitButton
+      Content="{DynamicResource Text.Add}"
+      ToolTip.Tip="{DynamicResource Text.AddNewItem}">
       <SplitButton.Flyout>
         <MenuFlyout Placement="BottomEdgeAlignedLeft">
-          <MenuItem Header="{DynamicResource Text.Circle}" Command="{Binding AddCircleCommand}" >
+          <MenuItem Header="{DynamicResource Text.Circle}"
+          Command="{Binding AddCircleCommand}" >
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Circle}"/>
+              <PathIcon Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Circle}"/>
             </MenuItem.Icon>
           </MenuItem>
-          <MenuItem Header="{DynamicResource Text.Screw}" Command="{Binding AddScrewCommand}">
+          <MenuItem Header="{DynamicResource Text.Screw}"
+          Command="{Binding AddScrewCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Screw}"/>
+              <PathIcon Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Screw}"/>
             </MenuItem.Icon>
           </MenuItem>
-          <MenuItem Header="{DynamicResource Text.PrimaryClip}" Command="{Binding AddClipCommand}">
+          <MenuItem Header="{DynamicResource Text.PrimaryClip}"
+          Command="{Binding AddClipCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.PrimaryClip}"/>
+              <PathIcon Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.PrimaryClip}"/>
             </MenuItem.Icon>
           </MenuItem>
-          <MenuItem Header="{DynamicResource Text.Spider}" Command="{Binding AddSpiderCommand}">
+          <MenuItem Header="{DynamicResource Text.Spider}"
+          Command="{Binding AddSpiderCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Spider}"/>
+              <PathIcon Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Spider}"/>
             </MenuItem.Icon>
           </MenuItem>
-          <MenuItem Header="{DynamicResource Text.BahtinovMask}" Command="{Binding AddBahtinovMaskCommand}">
+          <MenuItem Header="{DynamicResource Text.BahtinovMask}"
+          Command="{Binding AddBahtinovMaskCommand}">
             <MenuItem.Icon>
-              <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.BahtinovMask}"/>
+              <PathIcon Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.BahtinovMask}"/>
             </MenuItem.Icon>
           </MenuItem>
         </MenuFlyout>
       </SplitButton.Flyout>
     </SplitButton>
-    <!--#endregion-->
 
-    <!--#region ToolbarButtons-->
-    <Button Padding="0" Command="{Binding ResetListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.ResetItems}" Width="32" Height="32">
-      <Viewbox Margin="7">
-        <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Reset}" />
-      </Viewbox>
+    <Button
+      Grid.Column="1"
+      Command="{Binding ResetListCommand}"
+      ToolTip.Tip="{DynamicResource Text.ResetItems}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Reset}" />
     </Button>
-    <Button Padding="0" Command="{Binding SaveListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.SaveList}" Width="32" Height="32">
-      <Viewbox Margin="7">
-        <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Save}"/>
-      </Viewbox>
+
+    <Button
+      Grid.Column="2"
+      Command="{Binding SaveListCommand}"
+      ToolTip.Tip="{DynamicResource Text.SaveList}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Save}"/>
     </Button>
-    <Button Padding="0" Command="{Binding LoadListCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.LoadList}" Width="32" Height="32">
-      <Viewbox Margin="7">
-        <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Load}"/>
-      </Viewbox>
+
+    <Button
+      Grid.Column="3"
+      Command="{Binding LoadListCommand}"
+      ToolTip.Tip="{DynamicResource Text.LoadList}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Load}"/>
     </Button>
-    <Button Padding="0" Command="{Binding DuplicateCommand}" VerticalAlignment="Center" ToolTip.Tip="{DynamicResource Text.Duplicate}" Width="32" Height="32"
+
+    <Button
+      Grid.Column="4"
+      Command="{Binding DuplicateCommand}"
+      ToolTip.Tip="{DynamicResource Text.Duplicate}"
       CommandParameter="{Binding SelectedIndex}">
-      <Viewbox Margin="7">
-        <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Duplicate}"/>
-      </Viewbox>
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Duplicate}"/>
     </Button>
-    <!--#endregion-->
 
-  </StackPanel>
+  </Grid>
 </UserControl>

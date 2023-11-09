@@ -94,15 +94,14 @@
   <system:String x:Key="Text.GitHubIssue">Problème</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Ouvrir un nouveau problème sur GitHub</system:String>
   <system:String x:Key="Text.SelectedPatternOpacity">Opacité</system:String>
-  <system:String x:Key="Text.WebCamStream">Vidéo</system:String>
-  <system:String x:Key="Text.StreamURL">Stream url</system:String>
+  <system:String x:Key="Text.WebCamStream">Flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.Start">Commencer</system:String>
   <system:String x:Key="Text.Stop">Arrêt</system:String>
   <system:String x:Key="Text.CameraStreamSeparateWindow">Épingler la fenêtre vidéo à la fenêtre principale</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Flux vidéo de la caméra</system:String>
-  <system:String x:Key="Text.ExampleHowToStartVideoStream">Exemple comment démarrer le flux libcamera</system:String>
-  <system:String x:Key="Text.VideoStreamLog">Journal du flux vidéo</system:String>
   <system:String x:Key="Text.Fans">Ventilateurs</system:String>
   <system:String x:Key="Text.PatreonDesc">Le développement de cette application demande beaucoup d’efforts, de temps libre et d’engagement. Si vous appréciez cela et souhaitez montrer un certain soutien, veuillez visiter mon site Web Patreon et vous abonner aux niveaux d'adhésion ou acheter des actifs. Merci pour tout votre support!</system:String>
   <system:String x:Key="Text.PatreonWebSite">Visitez le site Patreon</system:String>
+  <system:String x:Key="Text.AppLog">Journal des applications</system:String>
+  <system:String x:Key="Text.AppLogTabTitle">Journal</system:String>
 </ResourceDictionary>

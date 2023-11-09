@@ -12,6 +12,9 @@ using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Newtonsoft.Json;
+using NLog.Targets;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -24,6 +27,8 @@ namespace CollimationCircles.ViewModels
     [JsonObject(MemberSerialization.OptIn)]
     public partial class SettingsViewModel : BaseViewModel, IViewClosed
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         private readonly IDialogService dialogService;
         private readonly IAppService? appService;
 
@@ -145,13 +150,25 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool keyboardShortcutsExpanded = true;
+        private bool settingsExpanded = true;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool keyboardShortcutsExpanded = false;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool cameraVideoStreamExpanded = false;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool appLogExpanded = false;
 
         private bool oldAllwysOnTop = false;
 
         [JsonProperty]
         [ObservableProperty]
-        private bool pinVideoWindowToMainWindow = true;
+        private bool pinVideoWindowToMainWindow = true;        
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -159,7 +176,7 @@ namespace CollimationCircles.ViewModels
             this.appService = appService;
 
             Initialize();
-        }
+        }        
 
         public void Initialize()
         {
@@ -170,7 +187,7 @@ namespace CollimationCircles.ViewModels
                 InitializeColors();
             }
 
-            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";            
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
         }
 
         private void InitializeThemes()
@@ -187,6 +204,8 @@ namespace CollimationCircles.ViewModels
             SelectedTheme = ThemeList.FirstOrDefault() ?? nameof(ThemeVariant.Dark);
 
             Translate(SelectedLanguage.Value);
+
+            logger.Info("Initialized themes");
         }
 
         private void InitializeLanguage()
@@ -204,6 +223,8 @@ namespace CollimationCircles.ViewModels
             SelectedLanguage = LanguageList.FirstOrDefault();
 
             Translate(SelectedLanguage.Value);
+
+            logger.Info("Initialized languages");
         }
 
         private void InitializeColors()
@@ -226,6 +247,8 @@ namespace CollimationCircles.ViewModels
             };
 
             ColorList = new ObservableCollection<Color>(c);
+
+            logger.Info("Initialized colors");
         }
 
         private void InitializeDefaults()
@@ -262,6 +285,8 @@ namespace CollimationCircles.ViewModels
             ShowMarkAtSelectedItem = true;
 
             Version = appService?.GetAppVersion() ?? "0.0.0";
+
+            logger.Info("Settings reset to default values");
         }
 
         [RelayCommand]
@@ -274,6 +299,7 @@ namespace CollimationCircles.ViewModels
                 if (SettingsDialogViewModel is not null)
                 {
                     dialogService?.Show(null, SettingsDialogViewModel);
+                    logger.Info("Opened settings window");
                 }
 
                 DockInMainWindow = false;
@@ -321,6 +347,8 @@ namespace CollimationCircles.ViewModels
         {
             Items.Add(item);
             SelectedIndex = Items.Count - 1;
+
+            logger.Info($"Added pattern {item.Label}");
         }
 
         [RelayCommand]
@@ -416,6 +444,8 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal async Task CheckForUpdate()
         {
+            logger.Info($"Checking for application update");
+
             string? appVersion = appService?.GetAppVersion();
 
             if (appVersion is not null)
@@ -426,6 +456,8 @@ namespace CollimationCircles.ViewModels
 
                     if (success && !string.IsNullOrWhiteSpace(result))
                     {
+                        logger.Info($"Found new version {newVersion}");
+
                         DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
 
                         var dialogResult = await dialogService.ShowMessageBoxAsync(null,
@@ -440,7 +472,9 @@ namespace CollimationCircles.ViewModels
                     }
                     else if (!success)
                     {
+                        DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
                         await dialogService.ShowMessageBoxAsync(null, result, DynRes.TryGetString("Error"));
+                        RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
                     }
                 }
             }
@@ -489,6 +523,9 @@ namespace CollimationCircles.ViewModels
                     SettingsWindowWidth = vm.SettingsWindowWidth;
                     SettingsWindowHeight = vm.SettingsWindowHeight;
                     KeyboardShortcutsExpanded = vm.KeyboardShortcutsExpanded;
+                    SettingsExpanded = vm.SettingsExpanded;
+                    CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
+                    AppLogExpanded = vm.AppLogExpanded;
 
                     if (!DockInMainWindow)
                     {
@@ -515,6 +552,7 @@ namespace CollimationCircles.ViewModels
             if (SelectedLanguage.Value is not null)
             {
                 Translate(SelectedLanguage.Value);
+                logger.Info($"Application language changed to '{SelectedLanguage.Value}'");
             }
         }
 
@@ -541,6 +579,8 @@ namespace CollimationCircles.ViewModels
                     };
                 }
             }
+
+            logger.Info($"Application theme changed to '{value}'");
         }
 
         [RelayCommand]
@@ -587,7 +627,7 @@ namespace CollimationCircles.ViewModels
                 OpenUrl(appService.YouTubeChannel);
             }
         }
-        
+
         [RelayCommand]
         internal void OpenPatreonWebSite()
         {
@@ -630,6 +670,10 @@ namespace CollimationCircles.ViewModels
                     {
                         base.OnPropertyChanged(e);
                         WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(this));
+
+                        var pVal = Property.GetPropValue(this, e.PropertyName);
+
+                        logger.Info($"Global property '{e.PropertyName}' changed to '{pVal}'");
                     }
                     break;
             }
@@ -638,13 +682,15 @@ namespace CollimationCircles.ViewModels
         public void DissableAlwaysOnTop()
         {
             oldAllwysOnTop = AlwaysOnTop;
-
             AlwaysOnTop = false;
+
+            logger.Info($"Always on top dissabled by application");
         }
 
         public void RestoreAlwaysOnTop()
         {
             AlwaysOnTop = oldAllwysOnTop;
+            logger.Info($"Always on top restored by application");
         }
     }
 }

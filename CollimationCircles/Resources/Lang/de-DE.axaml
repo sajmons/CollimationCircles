@@ -92,15 +92,14 @@
   <system:String x:Key="Text.GitHubIssue">Probleme</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Öffnen Sie eine neue Ausgabe auf GitHub</system:String>
   <system:String x:Key="Text.SelectedPatternOpacity">Opazität</system:String>
-  <system:String x:Key="Text.WebCamStream">Video</system:String>
-  <system:String x:Key="Text.StreamURL">Stream url</system:String>
+  <system:String x:Key="Text.WebCamStream">Kamera-Videostream</system:String>
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stoppen</system:String>
   <system:String x:Key="Text.CameraStreamSeparateWindow">Videofenster an Hauptfenster anheften</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Kamera-Videostream</system:String>
-  <system:String x:Key="Text.ExampleHowToStartVideoStream">Beispiel für den Start des libcamera-Streams</system:String>
-  <system:String x:Key="Text.VideoStreamLog">Videostream-Protokoll</system:String>
   <system:String x:Key="Text.Fans">Fans</system:String>
   <system:String x:Key="Text.PatreonDesc">Die Entwicklung dieser Anwendung erfordert viel Aufwand, Freizeit und Engagement. Wenn Sie das zu schätzen wissen und etwas Unterstützung zeigen möchten, besuchen Sie bitte meine Patreon-Website und abonnieren Sie die Mitgliedschaftsstufen oder kaufen Sie einige Assets. Vielen Dank für all Ihre Unterstützung!</system:String>
   <system:String x:Key="Text.PatreonWebSite">Besuchen Sie die Patreon-Website</system:String>
+  <system:String x:Key="Text.AppLog">Anwendungsprotokoll</system:String>
+  <system:String x:Key="Text.AppLogTabTitle">Protokoll</system:String>
 </ResourceDictionary>

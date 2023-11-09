@@ -8,23 +8,23 @@
              x:Class="CollimationCircles.Controls.AboutTabUserControl"
              x:DataType="vm:SettingsViewModel">
   <WrapPanel
-    HorizontalAlignment="Left"
-    Margin="12">
-    
-      <PathIcon
-        Width="32" Height="32"
-        Margin="8"
-        HorizontalAlignment="Center" VerticalAlignment="Center"
-        Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Launcher}" />
+    HorizontalAlignment="Left">
 
-      <TextBlock
-        Margin="0,0,10,10"
-        Padding="8,8,0,0"
-        TextWrapping="WrapWithOverflow"
-        HorizontalAlignment="Stretch"
-        VerticalAlignment="Top"
-        Text="{DynamicResource Text.AppDescription}">
-      </TextBlock>    
+    <PathIcon
+      Width="32" Height="32"
+      Margin="8"
+      HorizontalAlignment="Center" VerticalAlignment="Center"
+      Foreground="{DynamicResource Color2}"
+      Data="{StaticResource IconData.Launcher}" />
+
+    <TextBlock
+      Margin="0,0,10,10"
+      Padding="8,8,0,0"
+      TextWrapping="WrapWithOverflow"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Top"
+      Text="{DynamicResource Text.AppDescription}">
+    </TextBlock>
 
     <TextBlock
       Margin="8"
@@ -33,21 +33,27 @@
       VerticalAlignment="Center"
       Text="{DynamicResource Text.PatreonDesc}" />
 
-    <Button
-      Margin="8"
-      VerticalAlignment="Bottom"
-      Command="{Binding OpenPatreonWebSiteCommand}"
-      ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
-      <StackPanel Orientation="Horizontal">
-        <PathIcon
-          Foreground="{DynamicResource Color2}"
-          Data="{StaticResource IconData.Patreon}" />
-        <TextBlock
-          Padding="8,0,0,0"
-          Text="{DynamicResource Text.Patreon}"
-          VerticalAlignment="Center"/>
-      </StackPanel>
-    </Button>
+    <StackPanel Orientation="Vertical"
+      HorizontalAlignment="Stretch">
+      <Button
+        Margin="8"
+        VerticalAlignment="Bottom"
+        Command="{Binding OpenPatreonWebSiteCommand}"
+        ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
+        <StackPanel Orientation="Horizontal">
+          <PathIcon
+            Foreground="{DynamicResource Color2}"
+            Data="{StaticResource IconData.Patreon}" />
+          <TextBlock
+            Padding="8,0,0,0"
+            Text="{DynamicResource Text.Patreon}"
+            VerticalAlignment="Center"/>
+        </StackPanel>
+      </Button>
+
+      <controls:AppLogUserControl
+        Margin="8"/>
+    </StackPanel>
 
   </WrapPanel>
 
