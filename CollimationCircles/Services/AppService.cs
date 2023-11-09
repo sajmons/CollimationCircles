@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Octokit;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace CollimationCircles.Services;
 public class AppService : IAppService
 {
+    private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     private const string stateFile = "appstate.json";
     private readonly GitHubClient client = new(new ProductHeaderValue("CollimationCircles"));
     private readonly string owner = "sajmons";
@@ -56,6 +58,8 @@ public class AppService : IAppService
 
     public T? LoadState<T>(string? fileName = null)
     {
+        logger.Info($"Loading application state from '{fileName ?? stateFile}'");
+
         var jsonState = File.ReadAllText(fileName ?? stateFile);
 
         return Deserialize<T>(jsonState);
@@ -66,6 +70,8 @@ public class AppService : IAppService
         var jsonState = Serialize<T>(obj);
 
         File.WriteAllText(fileName ?? stateFile, jsonState, System.Text.Encoding.UTF8);
+
+        logger.Info($"Saving application state to '{fileName ?? stateFile}'");
     }
 
     public async Task<(bool, string, string)> DownloadUrl(string currentVersion)

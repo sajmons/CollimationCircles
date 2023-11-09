@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Markup.Xaml.Styling;
+using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
@@ -12,6 +13,8 @@ namespace CollimationCircles.ViewModels
 {
     public partial class BaseViewModel : ObservableValidator
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         [ObservableProperty]
         public string title = string.Empty;
 
@@ -20,6 +23,8 @@ namespace CollimationCircles.ViewModels
 
         public static void OpenUrl(string url)
         {
+            logger.Info($"Opening external url '{url}'");
+
             try
             {
                 Process.Start(url);
@@ -68,6 +73,6 @@ namespace CollimationCircles.ViewModels
                     }
                 );
             }
-        }
+        }        
     }
 }

@@ -15,6 +15,8 @@ namespace CollimationCircles.Models
     [JsonObject(MemberSerialization.OptIn)]
     public partial class CollimationHelper : ObservableValidator, ICollimationHelper
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         [JsonProperty]
         [ObservableProperty]
         private Guid id = Guid.NewGuid();
@@ -153,13 +155,17 @@ namespace CollimationCircles.Models
 
                         SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
-                        if (vm is not null)
+                        if (vm is not null && vm.SelectedItem.Label is not null)
                         {
                             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(vm));
-                        }
+
+                            var pVal = Property.GetPropValue(this, e.PropertyName);
+
+                            logger.Info($"Pattern '{vm.SelectedItem.Label}' property '{e.PropertyName}' changed to '{pVal}'");
+                        }                        
                     }
                     break;
             }
-        }
+        }        
     }
 }

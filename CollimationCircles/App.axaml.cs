@@ -46,6 +46,7 @@ public partial class App : Application
                 viewModelFactory: x => Ioc.Default.GetService(x)))
             .AddSingleton<SettingsViewModel>()
             .AddSingleton<StreamViewModel>()
+            .AddSingleton<AppLogViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddTransient<IAppService, AppService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
