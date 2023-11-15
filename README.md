@@ -59,7 +59,7 @@ and then run the CollimationCircles program again. Main Window should now be tra
 
 Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
 
-# Advanced way of download and running (works on all platforms)
+# Running with GitHub source code (works on all platforms)
 After installing .NET Framework you type following terminal commands:
 ```
 sudo apt-get install git
