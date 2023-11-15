@@ -33,7 +33,26 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
 https://github.com/sajmons/CollimationCircles/releases/
 
-# Prerequisites
+Download latest release as ZIP file, extract it and run executable.
+
+# Advanced way of download and running (works on all platforms)
+After installing .NET Framework you type following terminal commands:
+```
+sudo apt-get install git
+```
+```
+git clone https://github.com/sajmons/CollimationCircles.git
+```
+```
+cd CollimationCircles/CollimationCircles
+```
+```
+dotnet run
+```
+
+# Building and publishing
+
+## Prerequisites for building
 To use this application, you must first install .NET Framework on your computer.
 
 ## .NET Framework Instalation
@@ -92,24 +111,6 @@ dotnet --info
 ### macOS
 https://learn.microsoft.com/en-us/dotnet/core/install/macos
 
-Download latest release as ZIP file, extract it and run executable.
-
-# Advanced way of download and running (works on all platforms)
-After installing .NET Framework you type following terminal commands:
-```
-sudo apt-get install git
-```
-```
-git clone https://github.com/sajmons/CollimationCircles.git
-```
-```
-cd CollimationCircles/CollimationCircles
-```
-```
-dotnet run
-```
-
-# Building and publishing
 I'm using these commands to make prebuild binaries.
 ```
 dotnet restore .\CollimationCircles.sln -r win-x64
