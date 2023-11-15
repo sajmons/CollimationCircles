@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Octokit;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -28,9 +27,9 @@ public class AppService : IAppService
     {
         var entryAssembly = Assembly.GetEntryAssembly();
 
-        string version = entryAssembly?.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? string.Empty;
+        var assemblyVersion = entryAssembly?.GetName().Version;        
 
-        return version;
+        return assemblyVersion?.ToString() ?? "0.0.0";
     }
 
     public bool SameVersion(string v1, string v2)
