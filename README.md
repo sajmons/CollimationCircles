@@ -1,6 +1,6 @@
 # Collimation Circles
 
-<p style="text-align: center;"><img src="https://github.com/sajmons/CollimationCircles/assets/7437280/c8e03980-4a89-4894-8799-8e73ddcad045" width="600"></p>
+<img src="https://github.com/sajmons/CollimationCircles/assets/7437280/c8e03980-4a89-4894-8799-8e73ddcad045" width="600">
 
 This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
 
