@@ -30,7 +30,7 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IDialogService dialogService;
-        private readonly IAppService? appService;
+        private readonly IAppService appService;
 
         [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
@@ -81,11 +81,11 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private ObservableCollection<CollimationHelper> items = new();
+        private ObservableCollection<CollimationHelper> items = [];
 
         [JsonProperty]
         [ObservableProperty]
-        private ObservableCollection<Color> colorList = new();
+        private ObservableCollection<Color> colorList = [];
 
         [ObservableProperty]
         private CollimationHelper selectedItem = new();
@@ -95,14 +95,14 @@ namespace CollimationCircles.ViewModels
         private int selectedIndex = 0;
 
         [ObservableProperty]
-        private ObservableCollection<KeyValuePair<string, string>> languageList = new();
+        private ObservableCollection<KeyValuePair<string, string>> languageList = [];
 
         [JsonProperty]
         [ObservableProperty]
         private KeyValuePair<string, string> selectedLanguage = new();
 
         [ObservableProperty]
-        private ObservableCollection<string> themeList = new();
+        private ObservableCollection<string> themeList = [];
 
         [JsonProperty]
         [ObservableProperty]
@@ -168,7 +168,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool pinVideoWindowToMainWindow = true;        
+        private bool pinVideoWindowToMainWindow = true;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -176,16 +176,13 @@ namespace CollimationCircles.ViewModels
             this.appService = appService;
 
             Initialize();
-        }        
+        }
 
         public void Initialize()
         {
-            if (this.appService is not null)
-            {
-                InitializeLanguage();
-                InitializeThemes();
-                InitializeColors();
-            }
+            InitializeLanguage();
+            InitializeThemes();
+            InitializeColors();
 
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
         }
@@ -193,12 +190,12 @@ namespace CollimationCircles.ViewModels
         private void InitializeThemes()
         {
             // initialize languages
-            List<string> l = new()
-            {
+            List<string> l =
+            [
                 nameof(ThemeVariant.Light),
                 nameof(ThemeVariant.Dark),
                 nameof(Themes.Custom.Night)
-            };
+            ];
 
             ThemeList = new ObservableCollection<string>(l);
             SelectedTheme = ThemeList.FirstOrDefault() ?? nameof(ThemeVariant.Dark);
@@ -211,13 +208,13 @@ namespace CollimationCircles.ViewModels
         private void InitializeLanguage()
         {
             // initialize languages
-            List<KeyValuePair<string, string>> l = new()
-            {
+            List<KeyValuePair<string, string>> l =
+            [
                 new KeyValuePair<string, string>("English", "en-US"),
                 new KeyValuePair<string, string>("Slovenian", "sl-SI"),
                 new KeyValuePair<string, string>("German", "de-DE"),
                 new KeyValuePair<string, string>("French", "fr-FR")
-            };
+            ];
 
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
             SelectedLanguage = LanguageList.FirstOrDefault();
@@ -229,8 +226,8 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeColors()
         {
-            List<Color> c = new()
-            {
+            List<Color> c =
+            [
                 Colors.Red,
                 Colors.Green,
                 Colors.Blue,
@@ -244,7 +241,7 @@ namespace CollimationCircles.ViewModels
                 Colors.Gold,
                 Colors.White,
                 Colors.Black
-            };
+            ];
 
             ColorList = new ObservableCollection<Color>(c);
 
@@ -253,24 +250,24 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeDefaults()
         {
-            List<CollimationHelper> list = new()
-                {
-                    // Circles
-                    new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = DynRes.TryGetString("Secondary") },
-                    new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = DynRes.TryGetString("FocuserTube") },
+            List<CollimationHelper> list =
+            [
+                // Circles
+                new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = DynRes.TryGetString("Secondary") },
+                new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = DynRes.TryGetString("FocuserTube") },
 
-                    // Spider
-                    new SpiderViewModel(),
+                // Spider
+                new SpiderViewModel(),
 
-                    // Screws
-                    new ScrewViewModel(),
+                // Screws
+                new ScrewViewModel(),
 
-                    // Primary Clip
-                    new PrimaryClipViewModel(),
+                // Primary Clip
+                new PrimaryClipViewModel(),
 
-                    // Focus mask
-                    new BahtinovMaskViewModel()
-                };
+                // Focus mask
+                new BahtinovMaskViewModel()
+            ];
 
             Items.Clear();
             Items.AddRange(list);
@@ -284,7 +281,7 @@ namespace CollimationCircles.ViewModels
             AlwaysOnTop = true;
             ShowMarkAtSelectedItem = true;
 
-            Version = appService?.GetAppVersion() ?? "0.0.0";
+            Version = appService.GetAppVersion();
 
             logger.Info("Settings reset to default values");
         }
@@ -363,12 +360,12 @@ namespace CollimationCircles.ViewModels
             var settings = new SaveFileDialogSettings
             {
                 Title = DynRes.TryGetString("SaveFile"),
-                InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
-                Filters = new List<FileFilter>()
-                {
-                    new FileFilter(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
-                    new FileFilter(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar"))
-                },
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                Filters =
+                [
+                    new(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
+                    new(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar"))
+                ],
                 DefaultExtension = DynRes.TryGetString("StarJson")
             };
 
@@ -376,7 +373,7 @@ namespace CollimationCircles.ViewModels
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
-                appService?.SaveState(this, path?.Path?.LocalPath);
+                appService.SaveState(this, path?.Path?.LocalPath);
             }
         }
 
@@ -386,12 +383,12 @@ namespace CollimationCircles.ViewModels
             var settings = new OpenFileDialogSettings
             {
                 Title = DynRes.TryGetString("OpenFile"),
-                InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal),
-                Filters = new List<FileFilter>()
-                {
-                    new FileFilter(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
-                    new FileFilter(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar")),
-                }
+                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
+                Filters =
+                [
+                    new(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
+                    new(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar")),
+                ]
             };
 
             var path = await dialogService.ShowOpenFileDialogAsync(this, settings);
@@ -446,50 +443,44 @@ namespace CollimationCircles.ViewModels
         {
             logger.Info($"Checking for application update");
 
-            string? appVersion = appService?.GetAppVersion();
+            string appVersion = appService.GetAppVersion();
 
-            if (appVersion is not null)
+            var (success, result, newVersion) = await appService.DownloadUrl(appVersion);
+
+            if (success && !string.IsNullOrWhiteSpace(result))
             {
-                if (appService is not null)
+                logger.Info($"Found new version {newVersion}");
+
+                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
+
+                var dialogResult = await dialogService.ShowMessageBoxAsync(null,
+                    DynRes.TryGetString("NewVersionDownload").F(newVersion), DynRes.TryGetString("NewVersion"), MessageBoxButton.YesNo);
+
+                if (dialogResult is true)
                 {
-                    var (success, result, newVersion) = await appService.DownloadUrl(appVersion);
-
-                    if (success && !string.IsNullOrWhiteSpace(result))
-                    {
-                        logger.Info($"Found new version {newVersion}");
-
-                        DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
-
-                        var dialogResult = await dialogService.ShowMessageBoxAsync(null,
-                            DynRes.TryGetString("NewVersionDownload").F(newVersion), DynRes.TryGetString("NewVersion"), MessageBoxButton.YesNo);
-
-                        if (dialogResult is true)
-                        {
-                            OpenUrl(result);
-                        }
-
-                        RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
-                    }
-                    else if (!success)
-                    {
-                        DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
-                        await dialogService.ShowMessageBoxAsync(null, result, DynRes.TryGetString("Error"));
-                        RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
-                    }
+                    OpenUrl(result);
                 }
+
+                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
+            }
+            else if (!success)
+            {
+                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
+                await dialogService.ShowMessageBoxAsync(null, result, DynRes.TryGetString("Error"));
+                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
         }
 
         internal void SaveState()
         {
-            appService?.SaveState(this);
+            appService.SaveState(this);
         }
 
         internal bool LoadState(string? path = null)
         {
             try
             {
-                SettingsViewModel? vm = appService?.LoadState<SettingsViewModel>(path);
+                SettingsViewModel? vm = appService.LoadState<SettingsViewModel>(path);
 
                 if (vm != null && vm.Items != null)
                 {
@@ -514,7 +505,7 @@ namespace CollimationCircles.ViewModels
                     AlwaysOnTop = vm.AlwaysOnTop;
                     DockInMainWindow = vm.DockInMainWindow;
                     ShowMarkAtSelectedItem = vm.ShowMarkAtSelectedItem;
-                    Version = vm.Version ?? appService?.GetAppVersion() ?? "0.0.0";
+                    Version = vm.Version ?? appService.GetAppVersion();
                     GlobalOffsetX = vm.GlobalOffsetX;
                     GlobalOffsetY = vm.GlobalOffsetY;
                     MainWindowOpacity = vm.MainWindowOpacity;
@@ -586,65 +577,44 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void OpenWebSite()
         {
-            if (appService is not null)
-            {
-                OpenUrl(appService.WebPage);
-            }
+            OpenUrl(appService.WebPage);
         }
 
         [RelayCommand]
         internal void OpenContactWebPage()
         {
-            if (appService is not null)
-            {
-                OpenUrl(appService.ContactPage);
-            }
+            OpenUrl(appService.ContactPage);
         }
 
         [RelayCommand]
         internal void OpenGitHubPage()
         {
-            if (appService is not null)
-            {
-                OpenUrl(appService.GitHubPage);
-            }
+            OpenUrl(appService.GitHubPage);
         }
 
         [RelayCommand]
         internal void OpenTwitter()
         {
-            if (appService is not null)
-            {
-                OpenUrl(appService.TwitterPage);
-            }
+            OpenUrl(appService.TwitterPage);
         }
 
         [RelayCommand]
         internal void OpenYouTubeChannel()
         {
-            if (appService is not null)
-            {
-                OpenUrl(appService.YouTubeChannel);
-            }
+            OpenUrl(appService.YouTubeChannel);
         }
 
         [RelayCommand]
         internal void OpenPatreonWebSite()
         {
-            if (appService is not null)
-            {
-                OpenUrl(appService.PatreonWebPage);
-            }
+            OpenUrl(appService.PatreonWebPage);
         }
 
 
         [RelayCommand]
         internal void GitHubIssue()
         {
-            if (appService is not null)
-            {
-                OpenUrl(appService.GitHubIssue);
-            }
+            OpenUrl(appService.GitHubIssue);
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
