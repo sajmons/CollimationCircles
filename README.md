@@ -35,6 +35,30 @@ https://github.com/sajmons/CollimationCircles/releases/
 
 Download latest release as ZIP file, extract it and run executable.
 
+# How to use
+
+Read my articles here:
+- https://saimons-astronomy.webador.com/software/collimation-circles
+- https://saimons-astronomy.webador.com/1191504_eaa-telescope-collimation-with-collimation-circles-application
+
+# Known issues
+
+### Window transparency issues on Raspberry PI OS Bullseye
+
+Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But luckily there is workaround for that.
+
+Open terminal and type this:
+```
+raspi-config
+```
+go to advanced settings and enable Compositor. Then run this command:
+```
+xcompmgr
+```
+and then run the CollimationCircles program again. Main Window should now be transparent!
+
+Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
+
 # Advanced way of download and running (works on all platforms)
 After installing .NET Framework you type following terminal commands:
 ```
@@ -119,27 +143,3 @@ dotnet restore .\CollimationCircles.sln -r win-x64
 dotnet publish -c Release -f net7.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
 ```
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
-
-# How to use
-
-Read my articles here:
-- https://saimons-astronomy.webador.com/software/collimation-circles
-- https://saimons-astronomy.webador.com/1191504_eaa-telescope-collimation-with-collimation-circles-application
-
-# Known issues
-
-### Window transparency issues on Raspberry PI OS Bullseye
-
-Unfortunately on some Linux distros main window is not transparent :(. I have succesfully tested it on Ubuntu that's using Wayland window manager. On Raspberry Pi OS Bullseye window transparency doesn't work out of the box. But luckily there is workaround for that.
-
-Open terminal and type this:
-```
-raspi-config
-```
-go to advanced settings and enable Compositor. Then run this command:
-```
-xcompmgr
-```
-and then run the CollimationCircles program again. Main Window should now be transparent!
-
-Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
