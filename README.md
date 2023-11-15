@@ -135,7 +135,9 @@ dotnet --info
 ### macOS
 https://learn.microsoft.com/en-us/dotnet/core/install/macos
 
-I'm using these commands to make prebuild binaries.
+## Build and publish on Windows
+
+On windows I'm using these commands to make prebuild binaries.
 ```
 dotnet restore .\CollimationCircles.sln -r win-x64
 ```
