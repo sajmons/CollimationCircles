@@ -6,10 +6,9 @@ This program was inspired by Mire De Collimation program written by Gilbert Gril
 
 Main purpose of this program is to help you with aligning optical elements of your telescope such as secondary mirror, primary mirror, focuser, etc.
 
-Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS, but it should work.
+Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS (only in virtual machine), but it should work.
 
-Please be gentle. This app is still in beta stage, but It's suitable to be exposed to wider audience. Feel free to report any issues. 
-Suggestions and contributions are welcome!
+Feel free to report any issues. Suggestions and contributions are welcome!
 
 # Home page
 https://saimons-astronomy.webador.com/software/collimation-circles
