@@ -19,7 +19,7 @@ namespace CollimationCircles.ViewModels
         private readonly IDialogService dialogService;
         private readonly LibVLC libVLC;
         private Process? proc;
-        
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
         private string address;
@@ -45,7 +45,7 @@ namespace CollimationCircles.ViewModels
         [NotifyPropertyChangedFor(nameof(IsEnabled))]
         private bool isPlaying = false;
 
-        public bool IsEnabled => !IsPlaying && IsRemoteConnection;        
+        public bool IsEnabled => !IsPlaying && IsRemoteConnection;
 
         public StreamViewModel(IDialogService dialogService)
         {
@@ -53,13 +53,22 @@ namespace CollimationCircles.ViewModels
 
             Address = GetUrl();
 
+            // https://wiki.videolan.org/VLC_command-line_help/
+
+            //string[] libVLCOptions = {
+            //    $"--width=320",
+            //    $"--height=240",
+            //    $"--zoom=1.5",
+            //    $"--log-verbose=0"
+            //};
+
             libVLC = new();
             //libVLC.Log += LibVLC_Log;
 
             MediaPlayer = new(libVLC);
             MediaPlayer.Opening += MediaPlayer_Opening;
             MediaPlayer.Playing += MediaPlayer_Playing;
-            MediaPlayer.Stopped += MediaPlayer_Stopped;                     
+            MediaPlayer.Stopped += MediaPlayer_Stopped;
 
             ButtonTitle = DynRes.TryGetString("Start");            
         }
@@ -79,6 +88,7 @@ namespace CollimationCircles.ViewModels
                     {
                         ProcessStartInfo startInfo = new()
                         {
+                            // libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080
                             FileName = "libcamera-vid",
                             Arguments = $"-t 0 --inline --nopreview --listen -o tcp://0.0.0.0:{Port}"
                         };
@@ -111,6 +121,13 @@ namespace CollimationCircles.ViewModels
         {
             string mrl = $"tcp/h264://{Address}:{Port}";
 
+            //string[] mediaAdditionalOptions = {
+            //    $"--osd",
+            //    $"--video-title=my title",
+            //    $"--avcodec-hw=any",
+            //    $"--zoom=0.25"
+            //};
+
             using var media = new Media(
                     libVLC,
                     mrl,
@@ -118,7 +135,7 @@ namespace CollimationCircles.ViewModels
                     );
 
             MediaPlayer.Play(media);
-            logger.Info($"Playing web camera stream: '{media.Mrl}'");
+            logger.Info($"Playing web camera stream: '{media.Mrl}'");            
         }
 
         private void MediaPlayer_Opening(object? sender, EventArgs e)
@@ -134,6 +151,10 @@ namespace CollimationCircles.ViewModels
         {
             logger.Info($"MediaPlayer playing");
             IsPlaying = MediaPlayer.IsPlaying;
+
+            //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Enable, 1);
+            //MediaPlayer.SetAdjustInt(VideoAdjustOption.Enable, 1);
+            //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Gamma, 0.1f);
         }
 
         private void MediaPlayer_Stopped(object? sender, EventArgs e)
@@ -143,7 +164,7 @@ namespace CollimationCircles.ViewModels
             CloseWebCamStream();
             ButtonTitle = DynRes.TryGetString("Start");
             IsPlaying = MediaPlayer.IsPlaying;
-        }        
+        }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
         private void PlayPause()
@@ -197,6 +218,6 @@ namespace CollimationCircles.ViewModels
             string newRemoteAddress = Address ?? defaultRemoteAddress;
 
             return IsRemoteConnection ? newRemoteAddress : defaultLocalAddress;
-        }        
+        }
     }
 }
