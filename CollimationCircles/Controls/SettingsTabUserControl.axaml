@@ -77,16 +77,7 @@
         <CheckBox
           Grid.Row="2"
           Grid.Column="1"
-          IsChecked="{Binding ShowMarkAtSelectedItem}" />
-        <TextBlock
-          Grid.Row="3"
-          TextWrapping="WrapWithOverflow"
-          Text="{DynamicResource Text.CameraStreamSeparateWindow}"
-          VerticalAlignment="Center"/>
-        <CheckBox
-          Grid.Row="3"
-          Grid.Column="1"
-          IsChecked="{Binding PinVideoWindowToMainWindow}" />
+          IsChecked="{Binding ShowMarkAtSelectedItem}" />        
       </Grid>
 
     </StackPanel>

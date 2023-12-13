@@ -42,6 +42,17 @@
         HorizontalAlignment="Stretch"
         Content="{Binding ButtonTitle}"
         Command="{Binding PlayPauseCommand}"/>
+
+      <TextBlock
+        Grid.Row="2"
+        Grid.ColumnSpan="2"
+        TextWrapping="WrapWithOverflow"
+        Text="{DynamicResource Text.CameraStreamSeparateWindow}"
+        VerticalAlignment="Center"/>
+      <CheckBox
+        Grid.Row="2"
+        Grid.Column="2"
+        IsChecked="{Binding PinVideoWindowToMainWindow}" />
     </Grid>
   </StackPanel>
 

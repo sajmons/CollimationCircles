@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
+using Newtonsoft.Json;
 
 namespace CollimationCircles.ViewModels
 {
@@ -47,9 +48,15 @@ namespace CollimationCircles.ViewModels
 
         public bool IsEnabled => !IsPlaying && IsRemoteConnection;
 
-        public StreamViewModel(IDialogService dialogService)
+        private SettingsViewModel settingsViewModel;
+
+        [ObservableProperty]
+        private bool pinVideoWindowToMainWindow = true;
+
+        public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
+            this.settingsViewModel = settingsViewModel;
 
             Address = GetUrl();
 
@@ -70,7 +77,8 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
-            ButtonTitle = DynRes.TryGetString("Start");            
+            ButtonTitle = DynRes.TryGetString("Start");
+            this.settingsViewModel = settingsViewModel;
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
@@ -218,6 +226,11 @@ namespace CollimationCircles.ViewModels
             string newRemoteAddress = Address ?? defaultRemoteAddress;
 
             return IsRemoteConnection ? newRemoteAddress : defaultLocalAddress;
+        }
+
+        partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)
+        {
+            settingsViewModel.PinVideoWindowToMainWindow = newValue;
         }
     }
 }
