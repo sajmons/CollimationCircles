@@ -34,9 +34,6 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string buttonTitle = string.Empty;
 
-        [ObservableProperty]
-        private bool isRemoteConnection = !OperatingSystem.IsLinux();
-
         public bool CanExecutePlayPause
         {
             get => !string.IsNullOrWhiteSpace(Address) && !string.IsNullOrWhiteSpace(Port);
@@ -46,12 +43,14 @@ namespace CollimationCircles.ViewModels
         [NotifyPropertyChangedFor(nameof(IsEnabled))]
         private bool isPlaying = false;
 
-        public bool IsEnabled => !IsPlaying && IsRemoteConnection;
+        public bool IsEnabled => !IsPlaying;
 
         private SettingsViewModel settingsViewModel;
 
         [ObservableProperty]
         private bool pinVideoWindowToMainWindow = true;
+
+        private bool localConnectionPossible => OperatingSystem.IsLinux();
 
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
@@ -90,7 +89,7 @@ namespace CollimationCircles.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(Address))
             {
-                if (!IsRemoteConnection)
+                if (localConnectionPossible)
                 {
                     try
                     {
@@ -211,21 +210,11 @@ namespace CollimationCircles.ViewModels
             });
         }
 
-        partial void OnIsRemoteConnectionChanged(bool oldValue, bool newValue)
-        {
-            string oldMediaUri = Address;
-
-            if (newValue) Address = defaultRemoteAddress;
-
-            Address = GetUrl();
-            Debug.WriteLine($"MediaUrl changed from '{oldMediaUri}:{Port}' to '{Address}:{Port}'");
-        }
-
         private string GetUrl()
         {
             string newRemoteAddress = Address ?? defaultRemoteAddress;
 
-            return IsRemoteConnection ? newRemoteAddress : defaultLocalAddress;
+            return localConnectionPossible ? defaultLocalAddress : newRemoteAddress;
         }
 
         partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)

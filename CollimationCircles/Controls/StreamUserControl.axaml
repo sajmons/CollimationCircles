@@ -10,11 +10,6 @@
   <StackPanel
     Orientation="Vertical"
     DockPanel.Dock="Top">
-    <CheckBox
-      Name="remote"
-      IsChecked="{Binding IsRemoteConnection, Mode=TwoWay}"
-      IsEnabled="{Binding IsEnabled}"
-      Content="Connect remote"/>
     <Grid
       ColumnDefinitions="*,10,Auto"
       RowDefinitions="40,40,*">
