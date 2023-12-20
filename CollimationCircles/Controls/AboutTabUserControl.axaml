@@ -50,15 +50,7 @@
             Text="{DynamicResource Text.Patreon}"
             VerticalAlignment="Center"/>
         </StackPanel>
-      </Button>
-
-      <Expander
-        VerticalAlignment="Stretch"
-        HorizontalAlignment="Stretch"
-        Header="{DynamicResource Text.AppLog}"
-        Width="{Binding SettingsWidth}">
-          <controls:AppLogUserControl />
-      </Expander>
+      </Button>      
     </StackPanel>
 
   </WrapPanel>
