@@ -51,34 +51,15 @@
         </ComboBox>
       </Grid>
 
-      <Grid ColumnDefinitions="*,20" RowDefinitions="40,40,40,40">
-        <TextBlock
-          TextWrapping="WrapWithOverflow"
-          Text="{DynamicResource Text.CheckForNewVersion}"
-          VerticalAlignment="Center"/>
-        <CheckBox
-          Grid.Column="1"
-          IsChecked="{Binding CheckForNewVersionOnStartup}" />
-        <TextBlock
-          Grid.Row="1"
-          TextWrapping="WrapWithOverflow"
-          RelativePanel.Below="CheckForNewVersion"
-          Text="{DynamicResource Text.StayOnTop}"
-          VerticalAlignment="Center"/>
-        <CheckBox
-          Grid.Row="1"
-          Grid.Column="1"
-          IsChecked="{Binding AlwaysOnTop}" />
-        <TextBlock
-          Grid.Row="2"
-          TextWrapping="WrapWithOverflow"
-          Text="{DynamicResource Text.ShowMarkAtSelectedItem}"
-          VerticalAlignment="Center"/>
-        <CheckBox
-          Grid.Row="2"
-          Grid.Column="1"
-          IsChecked="{Binding ShowMarkAtSelectedItem}" />        
-      </Grid>
+      <CheckBox
+        Content="{DynamicResource Text.CheckForNewVersion}"
+        IsChecked="{Binding CheckForNewVersionOnStartup}" />
+      <CheckBox
+        Content="{DynamicResource Text.StayOnTop}"
+        IsChecked="{Binding AlwaysOnTop}" />
+      <CheckBox
+        Content="{DynamicResource Text.ShowMarkAtSelectedItem}"
+        IsChecked="{Binding ShowMarkAtSelectedItem}" />
 
     </StackPanel>
 
