@@ -6,11 +6,9 @@
              x:Class="CollimationCircles.Controls.AppLogUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:AppLogViewModel">
-    
-    <TextBox
-      VerticalAlignment="Stretch"
-      HorizontalAlignment="Stretch"
-      Text="{Binding LogContent}"
-      IsReadOnly="True"/>
+
+  <TextBox
+    Text="{Binding LogContent}"
+    IsReadOnly="True"/>
 
 </UserControl>

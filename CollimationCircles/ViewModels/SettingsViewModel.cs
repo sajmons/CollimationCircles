@@ -278,6 +278,7 @@ namespace CollimationCircles.ViewModels
             CheckForNewVersionOnStartup = true;
             AlwaysOnTop = true;
             ShowMarkAtSelectedItem = true;
+            ShowApplicationLog = false;
 
             Version = appService.GetAppVersion();
 

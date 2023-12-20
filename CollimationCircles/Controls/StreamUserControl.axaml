@@ -26,6 +26,7 @@
       Grid.Row="2"
       Grid.Column="0"
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"
+      IsEnabled="{Binding IsPlaying}"
       IsChecked="{Binding PinVideoWindowToMainWindow}" />
 
   </StackPanel>

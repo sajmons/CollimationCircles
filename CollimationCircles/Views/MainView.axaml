@@ -31,15 +31,11 @@
       Grid.RowSpan="2"
       Width="{Binding SettingsMinWidth}"
       Height="{Binding MainWindowHeight}"
-      RelativePanel.AlignRightWithPanel="True"
-      RelativePanel.AlignTopWithPanel="True"
       Background="{DynamicResource ThemeBackgroundBrush}"
       IsVisible="{Binding DockInMainWindow, Mode=TwoWay}"/>
 
     <Button
       Grid.Column="1"
-      RelativePanel.AlignRightWithPanel="True"
-      RelativePanel.AlignTopWithPanel="True"
       HorizontalAlignment="Right"
       VerticalAlignment="Top"
       ToolTip.Tip="{DynamicResource Text.SettingsWindow}"
@@ -52,7 +48,7 @@
         Data="{StaticResource IconData.Undock}"/>
     </Button>
 
-    <controls:AppLogUserControl
+    <controls:AppLogUserControl 
       Grid.Row="1"
       IsVisible="{Binding ShowApplicationLog}"/>
     
