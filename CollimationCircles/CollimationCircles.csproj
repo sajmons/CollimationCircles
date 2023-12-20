@@ -7,13 +7,13 @@
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <LangVersion>latest</LangVersion>
-    <StartupObject>CollimationCircles.Program</StartupObject>    
+    <StartupObject>CollimationCircles.Program</StartupObject>
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Version>2.3.0</Version>
     <Authors>Simon Šander</Authors>
-    <Product>Collimation Circles</Product>    
+    <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
@@ -22,8 +22,8 @@
     <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
     <ApplicationIcon>Resources\Images\icon_256px.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>    
-  <ItemGroup>    
+  </PropertyGroup>
+  <ItemGroup>
     <AvaloniaResource Include="Resources\**" />
   </ItemGroup>
   <ItemGroup>
@@ -46,7 +46,8 @@
     <PackageReference Include="NLog" Version="5.2.7" />
     <PackageReference Include="Octokit" Version="9.0.0" />
     <PackageReference Condition="$(RuntimeIdentifier.StartsWith('win'))" Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
-    <PackageReference Condition="$(RuntimeIdentifier.StartsWith('osx'))" Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />    
+    <PackageReference Condition="$(RuntimeIdentifier.StartsWith('osx'))" Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />
+    <PackageReference Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
   </ItemGroup>
   <ItemGroup>
     <None Update="icon.icns">
@@ -55,5 +56,5 @@
     <None Update="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-  </ItemGroup>  
+  </ItemGroup>
 </Project>

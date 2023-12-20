@@ -11,42 +11,21 @@
     Orientation="Vertical"
     DockPanel.Dock="Top">
     <Grid
-      ColumnDefinitions="*,10,Auto"
       RowDefinitions="40,40,*">
       <TextBox
-        Text="{Binding Address, Mode=TwoWay}"
+        Text="{Binding FullAddress, Mode=TwoWay}"
         IsEnabled="{Binding IsEnabled}"
-        TextWrapping="Wrap"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Stretch"/>
-      <TextBlock
-        VerticalAlignment="Center"
-        HorizontalAlignment="Center"
-        Grid.Column="1">:</TextBlock>
-      <TextBox
-        Grid.Column="2"
-        Text="{Binding Port, Mode=TwoWay}"
-        IsEnabled="{Binding IsEnabled}"
-        TextWrapping="Wrap"
-        VerticalAlignment="Center"
-        HorizontalAlignment="Stretch"/>
+        VerticalAlignment="Center"/>
       <Button
         Grid.Row="1"
-        Grid.ColumnSpan="3"
         HorizontalContentAlignment="Center"
         HorizontalAlignment="Stretch"
         Content="{Binding ButtonTitle}"
         Command="{Binding PlayPauseCommand}"/>
-
-      <TextBlock
-        Grid.Row="2"
-        Grid.ColumnSpan="2"
-        TextWrapping="WrapWithOverflow"
-        Text="{DynamicResource Text.CameraStreamSeparateWindow}"
-        VerticalAlignment="Center"/>
       <CheckBox
         Grid.Row="2"
-        Grid.Column="2"
+        Grid.Column="0"
+        Content="{DynamicResource Text.CameraStreamSeparateWindow}"
         IsChecked="{Binding PinVideoWindowToMainWindow}" />
     </Grid>
   </StackPanel>
