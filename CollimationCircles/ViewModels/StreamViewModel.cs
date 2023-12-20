@@ -51,30 +51,30 @@ namespace CollimationCircles.ViewModels
 
         public bool IsEnabled => !IsPlaying;
 
-        private SettingsViewModel settingsViewModel;
+        private readonly SettingsViewModel settingsViewModel;
 
         [ObservableProperty]
         private bool pinVideoWindowToMainWindow = true;
 
-        private bool localConnectionPossible => OperatingSystem.IsLinux();
+        private static bool LocalConnectionPossible => OperatingSystem.IsLinux();
 
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
-            address = localConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
+            address = LocalConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
             pathAndQuery = string.Empty;
 
             FullAddress = GetFullUrlFromParts();
 
             // https://wiki.videolan.org/VLC_command-line_help/
 
-            string[] libVLCOptions = {
+            string[] libVLCOptions = [
                 //$"--width=320",
                 //$"--height=240",
                 //$"--zoom=1.5",
                 //$"--log-verbose=0"
-            };
+            ];
 
             libVLC = new(libVLCOptions);
             //libVLC.Log += LibVLC_Log;
@@ -97,7 +97,7 @@ namespace CollimationCircles.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(port))
             {
-                if (localConnectionPossible)
+                if (LocalConnectionPossible)
                 {
                     try
                     {
@@ -136,12 +136,12 @@ namespace CollimationCircles.ViewModels
         {
             string mrl = $"{protocol}://{address}:{port}";
 
-            string[] mediaAdditionalOptions = {
+            string[] mediaAdditionalOptions = [
                 //$"--osd",
                 //$"--video-title=my title",
                 //$"--avcodec-hw=any",
                 //$"--zoom=0.25"
-            };
+            ];
 
             using var media = new Media(
                     libVLC,
@@ -222,7 +222,7 @@ namespace CollimationCircles.ViewModels
         private string GetFullUrlFromParts()
         {
             string newRemoteAddress = address ?? defaultRemoteAddress;
-            string addr = localConnectionPossible ? defaultLocalAddress : newRemoteAddress;
+            string addr = LocalConnectionPossible ? defaultLocalAddress : newRemoteAddress;
             string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
 
             return $"{protocol}://{addr}:{port}{pth}";

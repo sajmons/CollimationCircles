@@ -8,7 +8,9 @@ namespace CollimationCircles.ViewModels
     internal partial class AppLogViewModel : BaseViewModel
     {
         private readonly MemoryTarget memoryTarget;
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly Timer timer;
+#pragma warning restore IDE0052 // Remove unread private members
 
         [ObservableProperty]
         private string logContent = "LOG";
