@@ -9,25 +9,25 @@
 
   <StackPanel
     Orientation="Vertical"
+    Spacing="10"
     DockPanel.Dock="Top">
-    <Grid
-      RowDefinitions="40,40,*">
-      <TextBox
-        Text="{Binding FullAddress, Mode=TwoWay}"
-        IsEnabled="{Binding IsEnabled}"
-        VerticalAlignment="Center"/>
-      <Button
-        Grid.Row="1"
-        HorizontalContentAlignment="Center"
-        HorizontalAlignment="Stretch"
-        Content="{Binding ButtonTitle}"
-        Command="{Binding PlayPauseCommand}"/>
-      <CheckBox
-        Grid.Row="2"
-        Grid.Column="0"
-        Content="{DynamicResource Text.CameraStreamSeparateWindow}"
-        IsChecked="{Binding PinVideoWindowToMainWindow}" />
-    </Grid>
+
+    <TextBox
+      Text="{Binding FullAddress, Mode=TwoWay}"
+      IsEnabled="{Binding IsEnabled}"
+      VerticalAlignment="Center"/>
+    <Button
+      Grid.Row="1"
+      HorizontalContentAlignment="Center"
+      HorizontalAlignment="Stretch"
+      Content="{Binding ButtonTitle}"
+      Command="{Binding PlayPauseCommand}"/>
+    <CheckBox
+      Grid.Row="2"
+      Grid.Column="0"
+      Content="{DynamicResource Text.CameraStreamSeparateWindow}"
+      IsChecked="{Binding PinVideoWindowToMainWindow}" />
+
   </StackPanel>
 
 </UserControl>
