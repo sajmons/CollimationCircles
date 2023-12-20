@@ -62,8 +62,7 @@ namespace CollimationCircles.ViewModels
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
-            address = string.Empty;
-            port = string.Empty;
+            address = localConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
             pathAndQuery = string.Empty;
 
             FullAddress = GetFullUrlFromParts();
