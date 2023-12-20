@@ -62,6 +62,9 @@ namespace CollimationCircles.ViewModels
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
+            address = string.Empty;
+            port = string.Empty;
+            pathAndQuery = string.Empty;
 
             FullAddress = GetFullUrlFromParts();
 
@@ -239,6 +242,7 @@ namespace CollimationCircles.ViewModels
 
             if (m.Success)
             {
+                logger.Info($"Media URL parsed sucessfully '{FullAddress}'");
                 protocol = m.Groups[1].Value;
                 address = m.Groups[2].Value;
                 port = m.Groups[3].Value;
@@ -246,6 +250,7 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
+                logger.Warn($"Please check media URL for errors '{FullAddress}'");
                 protocol = string.Empty;
                 address = string.Empty;
                 port = string.Empty;

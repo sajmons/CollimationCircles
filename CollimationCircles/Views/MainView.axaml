@@ -16,9 +16,19 @@
         Width="{Binding MainWindowWidth, Mode=TwoWay}"
         Height="{Binding MainWindowHeight, Mode=TwoWay}"
         Opacity="{Binding MainWindowOpacity, Mode=TwoWay}">
-  <RelativePanel>
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+      <ColumnDefinition Width="Auto" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="100" />
+    </Grid.RowDefinitions>    
 
     <controls:SettingsUserControl
+      Grid.Column="1"
+      Grid.RowSpan="2"
       Width="{Binding SettingsMinWidth}"
       Height="{Binding MainWindowHeight}"
       RelativePanel.AlignRightWithPanel="True"
@@ -27,6 +37,7 @@
       IsVisible="{Binding DockInMainWindow, Mode=TwoWay}"/>
 
     <Button
+      Grid.Column="1"
       RelativePanel.AlignRightWithPanel="True"
       RelativePanel.AlignTopWithPanel="True"
       HorizontalAlignment="Right"
@@ -36,10 +47,15 @@
       Height="20"
       Command="{Binding ShowSettingsCommand}"
       IsVisible="{Binding DockInMainWindow}">
-      <PathIcon        
+      <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Undock}"/>
     </Button>
-  </RelativePanel>
+
+    <controls:AppLogUserControl
+      Grid.Row="1"
+      IsVisible="{Binding ShowApplicationLog}"/>
+    
+  </Grid>
 
 </Window>

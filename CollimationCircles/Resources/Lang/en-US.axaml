@@ -105,6 +105,7 @@
   <system:String x:Key="Text.Patreon">Patreon</system:String>
   <system:String x:Key="Text.AppLog">Application Log</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Log</system:String>
+  <system:String x:Key="Text.ShowApplicationLog">Show application log</system:String>
 
   <!-- Non translatable -->
 </ResourceDictionary>

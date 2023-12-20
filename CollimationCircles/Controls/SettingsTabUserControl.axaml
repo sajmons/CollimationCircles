@@ -60,6 +60,9 @@
       <CheckBox
         Content="{DynamicResource Text.ShowMarkAtSelectedItem}"
         IsChecked="{Binding ShowMarkAtSelectedItem}" />
+      <CheckBox
+        Content="{DynamicResource Text.ShowApplicationLog}"
+        IsChecked="{Binding ShowApplicationLog}" />
 
     </StackPanel>
 

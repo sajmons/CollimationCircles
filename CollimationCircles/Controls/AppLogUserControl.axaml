@@ -6,13 +6,11 @@
              x:Class="CollimationCircles.Controls.AppLogUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:AppLogViewModel">
-  <Grid    
-    RowDefinitions="30,230">
-    <TextBlock
-      Text="{DynamicResource Text.AppLog}"/>
+    
     <TextBox
-      Grid.Row="1"
+      VerticalAlignment="Stretch"
+      HorizontalAlignment="Stretch"
       Text="{Binding LogContent}"
       IsReadOnly="True"/>
-  </Grid>
+
 </UserControl>

@@ -12,8 +12,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Newtonsoft.Json;
-using NLog.Targets;
-using NLog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -160,15 +158,15 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool cameraVideoStreamExpanded = false;
 
-        [JsonProperty]
-        [ObservableProperty]
-        private bool appLogExpanded = false;
-
         private bool oldAllwysOnTop = false;
 
         [JsonProperty]
         [ObservableProperty]
         private bool pinVideoWindowToMainWindow = true;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool showApplicationLog = true;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
@@ -516,7 +514,8 @@ namespace CollimationCircles.ViewModels
                     KeyboardShortcutsExpanded = vm.KeyboardShortcutsExpanded;
                     SettingsExpanded = vm.SettingsExpanded;
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
-                    AppLogExpanded = vm.AppLogExpanded;
+                    PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
+                    ShowApplicationLog = vm.ShowApplicationLog;
 
                     if (!DockInMainWindow)
                     {
@@ -636,6 +635,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(MainWindowWidth):
                 case nameof(MainWindowHeight):
                 case nameof(PinVideoWindowToMainWindow):
+                case nameof(ShowApplicationLog):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
@@ -643,7 +643,7 @@ namespace CollimationCircles.ViewModels
 
                         var pVal = Property.GetPropValue(this, e.PropertyName);
 
-                        logger.Info($"Global property '{e.PropertyName}' changed to '{pVal}'");
+                        logger.Info($"{e.PropertyName} changed to '{pVal}'");
                     }
                     break;
             }

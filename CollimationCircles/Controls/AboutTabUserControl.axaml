@@ -7,8 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.AboutTabUserControl"
              x:DataType="vm:SettingsViewModel">
-  <WrapPanel
-    HorizontalAlignment="Left">
+  <WrapPanel HorizontalAlignment="Center">
 
     <PathIcon
       Width="32" Height="32"
@@ -34,7 +33,9 @@
       Text="{DynamicResource Text.PatreonDesc}" />
 
     <StackPanel Orientation="Vertical"
-      HorizontalAlignment="Stretch">
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch"
+      Margin="8">
       <Button
         Margin="8"
         VerticalAlignment="Bottom"
@@ -51,8 +52,13 @@
         </StackPanel>
       </Button>
 
-      <controls:AppLogUserControl
-        Margin="8"/>
+      <Expander
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch"
+        Header="{DynamicResource Text.AppLog}"
+        Width="{Binding SettingsWidth}">
+          <controls:AppLogUserControl />
+      </Expander>
     </StackPanel>
 
   </WrapPanel>

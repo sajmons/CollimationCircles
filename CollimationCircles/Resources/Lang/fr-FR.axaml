@@ -104,4 +104,5 @@
   <system:String x:Key="Text.PatreonWebSite">Visitez le site Patreon</system:String>
   <system:String x:Key="Text.AppLog">Journal des applications</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Journal</system:String>
+  <system:String x:Key="Text.ShowApplicationLog">Afficher le journal des applications</system:String>
 </ResourceDictionary>

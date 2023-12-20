@@ -18,7 +18,7 @@
         <ScrollViewer>
           <controls:PropertiesUserControl />
         </ScrollViewer>
-      </TabItem>      
+      </TabItem>
       <TabItem>
         <TabItem.Header>
           <TextBlock
@@ -28,7 +28,7 @@
         <ScrollViewer>
           <controls:SettingsTabUserControl />
         </ScrollViewer>
-      </TabItem>      
+      </TabItem>
       <TabItem>
         <TabItem.Header>
           <TextBlock
