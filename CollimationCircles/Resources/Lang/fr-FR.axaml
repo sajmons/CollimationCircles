@@ -66,8 +66,6 @@
   <system:String x:Key="Text.Size">Taille</system:String>
   <system:String x:Key="Text.Spacing">Espacement</system:String>
   <system:String x:Key="Text.Spider">Araignée</system:String>
-  <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">*.json</system:String>
   <system:String x:Key="Text.Thickness">Épaisseur</system:String>
   <system:String x:Key="Text.UnableToOpenFile">Impossible d'ouvrir le fichier</system:String>
   <system:String x:Key="Text.UnableToParseJsonFile">Impossible d'analyser le fichier JSON</system:String>

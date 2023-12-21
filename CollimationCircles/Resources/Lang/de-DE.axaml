@@ -66,8 +66,6 @@
   <system:String x:Key="Text.Size">Größe</system:String>
   <system:String x:Key="Text.Spacing">Abstand</system:String>
   <system:String x:Key="Text.Spider">Spinne</system:String>
-  <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">*.json</system:String>
   <system:String x:Key="Text.Thickness">Dicke</system:String>
   <system:String x:Key="Text.UnableToOpenFile">Datei kann nicht geöffnet werden</system:String>
   <system:String x:Key="Text.UnableToParseJsonFile">Die JSON-Datei kann nicht analysiert werden</system:String>

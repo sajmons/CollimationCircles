@@ -66,8 +66,6 @@
   <system:String x:Key="Text.Size">Velikost</system:String>
   <system:String x:Key="Text.Spacing">Širina</system:String>
   <system:String x:Key="Text.Spider">Pajek</system:String>
-  <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">*.json</system:String>
   <system:String x:Key="Text.Thickness">Debelina</system:String>
   <system:String x:Key="Text.UnableToOpenFile">Odpiranje datoteke ni uspelo</system:String>
   <system:String x:Key="Text.UnableToParseJsonFile">Branje JSON datoteke ni uspelo</system:String>

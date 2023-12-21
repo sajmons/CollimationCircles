@@ -66,8 +66,6 @@
   <system:String x:Key="Text.Size">Size</system:String>
   <system:String x:Key="Text.Spacing">Spacing</system:String>
   <system:String x:Key="Text.Spider">Spider</system:String>
-  <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">*.json</system:String>
   <system:String x:Key="Text.Thickness">Thickness</system:String>
   <system:String x:Key="Text.UnableToOpenFile">Unable to open file</system:String>
   <system:String x:Key="Text.UnableToParseJsonFile">Unable to parse JSON file</system:String>
@@ -109,4 +107,6 @@
   <system:String x:Key="Text.OpenLogFileLocation">Show application log file location</system:String>
   
   <!-- Non translatable -->
+  <system:String x:Key="Text.StarChar">*</system:String>
+  <system:String x:Key="Text.StarJson">json</system:String>
 </ResourceDictionary>
