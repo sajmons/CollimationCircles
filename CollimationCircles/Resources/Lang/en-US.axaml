@@ -106,6 +106,7 @@
   <system:String x:Key="Text.AppLog">Application Log</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Log</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Show application log</system:String>
-
+  <system:String x:Key="Text.OpenLogFileLocation">Show application log file location</system:String>
+  
   <!-- Non translatable -->
 </ResourceDictionary>

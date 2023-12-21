@@ -1,11 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CollimationCircles.Messages;
+using CollimationCircles.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using NLog;
 using NLog.Targets;
+using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
-    internal partial class AppLogViewModel : BaseViewModel
+    public partial class AppLogViewModel : BaseViewModel
     {
         private readonly MemoryTarget memoryTarget;
 #pragma warning disable IDE0052 // Remove unread private members
@@ -17,9 +23,18 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         private bool showApplicationLog = false;
+
+        private readonly IAppService appService;
+
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        public AppLogViewModel(SettingsViewModel settingsViewModel, IAppService appService)
         {
+            this.appService = appService;
             ShowApplicationLog = settingsViewModel.ShowApplicationLog;
+
             memoryTarget = (MemoryTarget)LogManager.Configuration.FindTargetByName("memory");
+
             timer = new Timer(
                 new TimerCallback(TickTimer),
                 null,
@@ -36,6 +51,16 @@ namespace CollimationCircles.ViewModels
         {
             var log = string.Join("\r\n", memoryTarget.Logs);
             LogContent = log;
+        }
+
+        [RelayCommand]
+        internal async Task ShowLogFileLocation()
+        {
+            string logPath = AppDomain.CurrentDomain.BaseDirectory + "logs";
+
+            logger.Info($"Open log file path in file browser '{logPath}'");
+
+            await appService.OpenFileBrowser(logPath);
         }
     }
 }

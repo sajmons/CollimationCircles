@@ -103,4 +103,5 @@
   <system:String x:Key="Text.AppLog">Dnevnik aplikacije</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Dnevnik</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Prikaži dnevnik aplikacije</system:String>
+  <system:String x:Key="Text.OpenLogFileLocation">Prikaži lokacijo datoteke dnevnika</system:String>
 </ResourceDictionary>

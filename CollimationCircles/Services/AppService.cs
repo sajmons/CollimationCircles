@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Octokit;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services;
@@ -124,5 +126,56 @@ public class AppService : IAppService
             os = "osx";
 
         return $"{os}-{System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture}".ToLower() ?? null;
+    }
+
+    public async Task OpenFileBrowser(string path)
+    {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            using Process fileOpener = new();
+            fileOpener.StartInfo.FileName = "explorer";
+            fileOpener.StartInfo.Arguments = "/select," + path + "\"";
+            fileOpener.Start();
+            await fileOpener.WaitForExitAsync();
+            return;
+        }
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            using Process fileOpener = new();
+            fileOpener.StartInfo.FileName = "explorer";
+            fileOpener.StartInfo.Arguments = "-R " + path;
+            fileOpener.Start();
+            await fileOpener.WaitForExitAsync();
+            return;
+        }
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            using Process dbusShowItemsProcess = new()
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "dbus-send",
+                    Arguments = "--print-reply --dest=org.freedesktop.FileManager1 /org/freedesktop/FileManager1 org.freedesktop.FileManager1.ShowItems array:string:\"file://" + path + "\" string:\"\"",
+                    UseShellExecute = true
+                }
+            };
+            dbusShowItemsProcess.Start();
+            await dbusShowItemsProcess.WaitForExitAsync();
+
+            if (dbusShowItemsProcess.ExitCode == 0)
+            {
+                // The dbus invocation can fail for a variety of reasons:
+                // - dbus is not available
+                // - no programs implement the service,
+                // - ...
+                return;
+            }
+        }
+
+        using Process folderOpener = new Process();
+        folderOpener.StartInfo.FileName = System.IO.Path.GetDirectoryName(path);
+        folderOpener.StartInfo.UseShellExecute = true;
+        folderOpener.Start();
+        await folderOpener.WaitForExitAsync();
     }
 }

@@ -103,4 +103,5 @@
   <system:String x:Key="Text.AppLog">Anwendungsprotokoll</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Protokoll</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Anwendungsprotokoll anzeigen</system:String>
+  <system:String x:Key="Text.OpenLogFileLocation">Speicherort der Anwendungsprotokolldatei anzeigen</system:String>  
 </ResourceDictionary>

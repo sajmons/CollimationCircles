@@ -105,4 +105,5 @@
   <system:String x:Key="Text.AppLog">Journal des applications</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Journal</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Afficher le journal des applications</system:String>
+  <system:String x:Key="Text.OpenLogFileLocation">Afficher l'emplacement du fichier journal de l'application</system:String>
 </ResourceDictionary>

@@ -18,5 +18,6 @@ namespace CollimationCircles.Services
         void SaveState<T>(T obj, string? fileName = null);
         T? LoadState<T>(string? fileName = null);
         Task<(bool, string, string)> DownloadUrl(string version);
+        Task OpenFileBrowser(string path);
     }
 }
