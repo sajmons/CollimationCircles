@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
-using Newtonsoft.Json;
 
 namespace CollimationCircles.ViewModels
 {
@@ -84,8 +83,7 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
-            ButtonTitle = DynRes.TryGetString("Start");
-            this.settingsViewModel = settingsViewModel;
+            ButtonTitle = DynRes.TryGetString("Start");            
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
