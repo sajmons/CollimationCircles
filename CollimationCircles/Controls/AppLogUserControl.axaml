@@ -18,7 +18,7 @@
       Command="{Binding ShowLogFileLocationCommand}">
       <PathIcon
         Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Load}" />
+        Data="{StaticResource IconData.LogFile}" />
     </Button>
     <TextBox
       Grid.Column="1"
