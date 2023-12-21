@@ -22,7 +22,7 @@ namespace CollimationCircles.Views
         {
             InitializeComponent();
 
-            vm = Ioc.Default.GetService<SettingsViewModel>();            
+            vm = Ioc.Default.GetService<SettingsViewModel>();
 
             DataContext = vm;
 
@@ -39,13 +39,13 @@ namespace CollimationCircles.Views
             dhs = Ioc.Default.GetService<IDrawHelperService>();
             khs = Ioc.Default.GetService<IKeyHandlingService>();
 
-            PositionChanged += MainView_PositionChanged;            
+            PositionChanged += MainView_PositionChanged;
         }
 
         private void MainView_PositionChanged(object? sender, PixelPointEventArgs e)
         {
             vm!.MainWindowPosition = Position;
-        }        
+        }
 
         static void CheckForUpdate(SettingsViewModel? vm)
         {
@@ -75,7 +75,7 @@ namespace CollimationCircles.Views
                             double scaleOrDefault = vm?.Scale ?? 1.0;
                             double rotAngleOrDefault = vm?.RotationAngle ?? 0;
                             double offsetX = vm?.GlobalOffsetX ?? 0;
-                            double offsetY = vm?.GlobalOffsetY ?? 0;                            
+                            double offsetY = vm?.GlobalOffsetY ?? 0;
 
                             Matrix scaleMat = Matrix.CreateScale(scaleOrDefault, scaleOrDefault);
                             Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
@@ -122,15 +122,15 @@ namespace CollimationCircles.Views
                 vm.MainWindowHeight = Height;
             }
 
-            base.OnClosing(e);            
+            base.OnClosing(e);
         }
 
         protected override void OnClosed(EventArgs e)
         {
             vm?.SaveState();
 
-            base.OnClosed(e);            
-        }        
+            base.OnClosed(e);
+        }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {

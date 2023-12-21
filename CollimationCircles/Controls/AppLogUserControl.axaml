@@ -5,10 +5,25 @@
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.AppLogUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
-             x:DataType="vm:AppLogViewModel">
+             x:DataType="vm:AppLogViewModel"
+             IsVisible="{Binding ShowApplicationLog}"
+             Background="{DynamicResource ThemeBackgroundBrush}">
 
-  <TextBox
-    Text="{Binding LogContent}"
-    IsReadOnly="True"/>
+  <Grid
+    ColumnDefinitions="34,*">
+    <Button
+      VerticalAlignment="Top"
+      Margin="2"
+      ToolTip.Tip="{DynamicResource Text.OpenLogFileLocation}"
+      Command="{Binding ShowLogFileLocationCommand}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Load}" />
+    </Button>
+    <TextBox
+      Grid.Column="1"
+      Text="{Binding LogContent}"
+      IsReadOnly="True"/>
+  </Grid>
 
 </UserControl>

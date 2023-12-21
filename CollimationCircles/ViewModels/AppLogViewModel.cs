@@ -15,14 +15,21 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string logContent = "LOG";
 
-        public AppLogViewModel()
+        [ObservableProperty]
+        private bool showApplicationLog = false;
         {
+            ShowApplicationLog = settingsViewModel.ShowApplicationLog;
             memoryTarget = (MemoryTarget)LogManager.Configuration.FindTargetByName("memory");
             timer = new Timer(
                 new TimerCallback(TickTimer),
                 null,
                 1000,
                 1000);
+
+            WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
+            {
+                ShowApplicationLog = m.Value.ShowApplicationLog;
+            });
         }
 
         private void TickTimer(object? state)

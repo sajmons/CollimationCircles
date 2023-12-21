@@ -16,6 +16,7 @@
         Width="{Binding MainWindowWidth, Mode=TwoWay}"
         Height="{Binding MainWindowHeight, Mode=TwoWay}"
         Opacity="{Binding MainWindowOpacity, Mode=TwoWay}">
+
   <Grid>
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
@@ -32,7 +33,7 @@
       Width="{Binding SettingsMinWidth}"
       Height="{Binding MainWindowHeight}"
       Background="{DynamicResource ThemeBackgroundBrush}"
-      IsVisible="{Binding DockInMainWindow, Mode=TwoWay}"/>
+      IsVisible="{Binding DockInMainWindow}"/>
 
     <Button
       Grid.Column="1"
@@ -48,9 +49,8 @@
         Data="{StaticResource IconData.Undock}"/>
     </Button>
 
-    <controls:AppLogUserControl 
-      Grid.Row="1"
-      IsVisible="{Binding ShowApplicationLog}"/>
+    <controls:AppLogUserControl
+      Grid.Row="1" />
     
   </Grid>
 

@@ -166,13 +166,13 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool showApplicationLog = true;
+        private bool showApplicationLog = false;        
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
             this.appService = appService;
-
+                    
             Initialize();
         }
 
@@ -662,6 +662,6 @@ namespace CollimationCircles.ViewModels
         {
             AlwaysOnTop = oldAllwysOnTop;
             logger.Info($"Always on top restored by application");
-        }
+        }        
     }
 }
