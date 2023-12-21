@@ -30,7 +30,7 @@ namespace CollimationCircles.ViewModels
 
         private string address;
 
-        private string port = defaultPort;
+        private string port = $":{defaultPort}";
 
         private string pathAndQuery;        
 
@@ -41,7 +41,7 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            get => !string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(port);
+            get => !string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address);
         }
 
         [ObservableProperty]
@@ -93,7 +93,7 @@ namespace CollimationCircles.ViewModels
 
         private void Play()
         {
-            if (!string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(port))
+            if (!string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address))
             {
                 if (LocalConnectionPossible)
                 {
@@ -103,7 +103,7 @@ namespace CollimationCircles.ViewModels
                         {
                             // libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080
                             FileName = "libcamera-vid",
-                            Arguments = $"-t 0 --inline --nopreview --listen -o tcp://0.0.0.0:{port}"
+                            Arguments = $"-t 0 --inline --nopreview --listen -o tcp://0.0.0.0{port}"
                         };
 
                         proc = new()
@@ -132,7 +132,7 @@ namespace CollimationCircles.ViewModels
 
         private void MediaPlayerPlay()
         {
-            string mrl = $"{protocol}://{address}:{port}";
+            string mrl = $"{protocol}://{address}{port}{pathAndQuery}";
 
             string[] mediaAdditionalOptions = [
                 //$"--osd",
@@ -223,7 +223,7 @@ namespace CollimationCircles.ViewModels
             string addr = LocalConnectionPossible ? defaultLocalAddress : newRemoteAddress;
             string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
 
-            return $"{protocol}://{addr}:{port}{pth}";
+            return $"{protocol}://{addr}{port}{pth}";
         }
 
         partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)
@@ -233,17 +233,20 @@ namespace CollimationCircles.ViewModels
 
         partial void OnFullAddressChanged(string? oldValue, string newValue)
         {
-            string mrlRegExpr = "^(.*):\\/\\/(.*):([0-9]+)(\\/.*?.*)*";
+            string url = @"^(?:(?<protocol>tcp\/h264|http|https):\/\/)?(?<host>[\w\.-]+)(?::(?<port>\d+))?(?<path>\/\S*)?$";
 
-            Match m = Regex.Match(FullAddress, mrlRegExpr);
+            Match m = Regex.Match(FullAddress, url);
 
             if (m.Success)
             {
                 logger.Info($"Media URL parsed sucessfully '{FullAddress}'");
-                protocol = m.Groups[1].Value;
-                address = m.Groups[2].Value;
-                port = m.Groups[3].Value;
-                pathAndQuery = m.Groups[4].Value;                
+                protocol = m.Groups["protocol"].Value;
+                address = m.Groups["host"].Value;
+
+                string p = m.Groups["port"].Value;
+
+                port = string.IsNullOrWhiteSpace(p) ? string.Empty : $":{port}";
+                pathAndQuery = m.Groups["path"].Value;                
             }
             else
             {
