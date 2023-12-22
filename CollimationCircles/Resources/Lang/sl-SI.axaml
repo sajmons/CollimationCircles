@@ -102,4 +102,6 @@
   <system:String x:Key="Text.AppLogTabTitle">Dnevnik</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Prikaži dnevnik aplikacije</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Prikaži lokacijo datoteke dnevnika</system:String>
+  <system:String x:Key="Text.AutoStartCameraStream">Če je mogoče, samodejno zaženi tok kamere</system:String>
+  <system:String x:Key="Text.AutoStartCameraStreamHelp">Ta funkcija je trenutno podprta samo na platformi Linux. Za druge platforme mora uporabnik zagotoviti URL naslov za video tok kamere.</system:String>
 </ResourceDictionary>
