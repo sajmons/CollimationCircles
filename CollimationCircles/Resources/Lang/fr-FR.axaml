@@ -105,5 +105,5 @@
   <system:String x:Key="Text.ShowApplicationLog">Afficher le journal des applications</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Afficher l'emplacement du fichier journal de l'application</system:String>
   <system:String x:Key="Text.AutoStartCameraStream">Démarrez automatiquement le flux de la caméra si possible</system:String>
-  <system:String x:Key="Text.AutoStartCameraStreamHelp">Cette fonctionnalité n'est actuellement prise en charge que sur la plateforme Linux. Pour les autres plates-formes, l'utilisateur doit fournir l'adresse URL du flux vidéo de la caméra.</system:String>
+  <system:String x:Key="Text.AutoStartCameraStreamHelp">Fonctionne uniquement avec Libcamera et Linux. Dans les autres cas, l'utilisateur doit fournir l'adresse URL du flux vidéo.</system:String>
 </ResourceDictionary>

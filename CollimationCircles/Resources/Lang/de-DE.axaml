@@ -103,5 +103,5 @@
   <system:String x:Key="Text.ShowApplicationLog">Anwendungsprotokoll anzeigen</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Speicherort der Anwendungsprotokolldatei anzeigen</system:String>
   <system:String x:Key="Text.AutoStartCameraStream">Starten Sie den Kamerastream nach Möglichkeit automatisch</system:String>
-  <system:String x:Key="Text.AutoStartCameraStreamHelp">Diese Funktion wird derzeit nur auf der Linux-Plattform unterstützt. Für andere Plattformen muss der Benutzer eine URL-Adresse für den Videostream der Kamera angeben.</system:String>
+  <system:String x:Key="Text.AutoStartCameraStreamHelp">Funktioniert nur mit Libcamera und Linux. In anderen Fällen muss der Benutzer die URL-Adresse des Videostreams angeben.</system:String>
 </ResourceDictionary>
