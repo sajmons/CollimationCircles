@@ -105,6 +105,8 @@
   <system:String x:Key="Text.AppLogTabTitle">Log</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Show application log</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Show application log file location</system:String>
+  <system:String x:Key="Text.AutoStartCameraStream">Automatically start camera stream if possible</system:String>
+  <system:String x:Key="Text.AutoStartCameraStreamHelp">Works only with Libcamera and Linux. For other cases user must provide URL address of video stream.</system:String>  
   <system:String x:Key="Text.Tools">Tools</system:String>
   <system:String x:Key="Text.ShowAboutDialog">About this application</system:String>
   <system:String x:Key="Text.Close">Close</system:String>

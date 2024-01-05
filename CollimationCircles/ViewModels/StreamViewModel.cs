@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Avalonia.Threading;
 using CollimationCircles.Helper;
+using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -20,7 +22,6 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IDialogService dialogService;
         private readonly LibVLC libVLC;
-        private Process? proc;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
@@ -32,7 +33,7 @@ namespace CollimationCircles.ViewModels
 
         private string port = $":{defaultPort}";
 
-        private string pathAndQuery;        
+        private string pathAndQuery;
 
         public MediaPlayer MediaPlayer { get; }
 
@@ -55,12 +56,21 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool pinVideoWindowToMainWindow = true;
 
-        private static bool LocalConnectionPossible => OperatingSystem.IsLinux();
+        [ObservableProperty]
+        private string streamInfo;
+
+        [ObservableProperty]
+        private bool localConnectionPossible = false;
+
+        Process? proc;
 
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
+
+            LocalConnectionPossible = AppService.IsPackageInstalled("libcamera").GetAwaiter().GetResult();
+
             address = LocalConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
             pathAndQuery = string.Empty;
 
@@ -83,7 +93,7 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
-            ButtonTitle = DynRes.TryGetString("Start");            
+            ButtonTitle = DynRes.TryGetString("Start");
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
@@ -91,37 +101,13 @@ namespace CollimationCircles.ViewModels
             logger.Info(e.Message);
         }
 
-        private void Play()
+        private async Task Play()
         {
             if (!string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address))
             {
                 if (LocalConnectionPossible)
                 {
-                    try
-                    {
-                        ProcessStartInfo startInfo = new()
-                        {
-                            // libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080
-                            FileName = "libcamera-vid",
-                            Arguments = $"-t 0 --inline --nopreview --listen -o tcp://0.0.0.0{port}"
-                        };
-
-                        proc = new()
-                        {
-                            StartInfo = startInfo
-                        };
-
-                        if (proc.Start())
-                        {
-                            logger.Info($"Started LibCamera process '{startInfo.FileName} {startInfo.Arguments}'");
-                            MediaPlayerPlay();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Info("Local connection is only supported on Linux.\nPlease use 'Connect remote' option.");
-                        logger.Error(ex.Message);
-                    }
+                    proc = await AppService.StartTCPCameraStream($"0.0.0.0:{port}");
                 }
                 else
                 {
@@ -246,7 +232,7 @@ namespace CollimationCircles.ViewModels
                 string p = m.Groups["port"].Value;
 
                 port = string.IsNullOrWhiteSpace(p) ? string.Empty : $":{port}";
-                pathAndQuery = m.Groups["path"].Value;                
+                pathAndQuery = m.Groups["path"].Value;
             }
             else
             {

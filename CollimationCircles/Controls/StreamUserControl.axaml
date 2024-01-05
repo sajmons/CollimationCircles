@@ -13,17 +13,26 @@
 
     <TextBox
       Text="{Binding FullAddress, Mode=TwoWay}"
-      IsEnabled="{Binding IsEnabled}"
+      IsEnabled="{Binding !#autoStartCamStream.IsChecked}"
       VerticalAlignment="Center"/>
     <Button
-      Grid.Row="1"
       HorizontalContentAlignment="Center"
       HorizontalAlignment="Stretch"
       Content="{Binding ButtonTitle}"
       Command="{Binding PlayPauseCommand}"/>
+    <Grid ColumnDefinitions="*,20">
+      <CheckBox
+        Name="autoStartCamStream"
+        Content="{DynamicResource Text.AutoStartCameraStream}"
+        IsEnabled="{Binding LocalConnectionPossible}"
+        IsChecked="{Binding LocalConnectionPossible}" />
+      <PathIcon
+        Grid.Column="1"
+        ToolTip.Tip="{DynamicResource Text.AutoStartCameraStreamHelp}"
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Help}" />
+    </Grid>
     <CheckBox
-      Grid.Row="2"
-      Grid.Column="0"
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"
       IsChecked="{Binding PinVideoWindowToMainWindow}" />
 

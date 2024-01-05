@@ -29,7 +29,7 @@ public class AppService : IAppService
     {
         var entryAssembly = Assembly.GetEntryAssembly();
 
-        var assemblyVersion = entryAssembly?.GetName().Version;        
+        var assemblyVersion = entryAssembly?.GetName().Version;
 
         return assemblyVersion?.ToString() ?? "0.0.0";
     }
@@ -177,5 +177,112 @@ public class AppService : IAppService
         folderOpener.StartInfo.UseShellExecute = true;
         folderOpener.Start();
         await folderOpener.WaitForExitAsync();
+    }
+
+    public static Task<bool> IsPackageInstalled(string package)
+    {
+        var tcs = new TaskCompletionSource<bool>();
+
+        var result = ExecuteCommand("dpkg", $"-s {package} | grep Status");
+
+        if (result.Result.Item2 == "Status: install ok installed")
+        {
+            tcs.TrySetResult(true);
+        }
+        else
+        { 
+            tcs.TrySetResult(false);
+        }
+
+        return tcs.Task;
+    }
+
+    public static Task<(int, string)> ExecuteCommand(string fileName, string arguments)
+    {
+        var tcs = new TaskCompletionSource<(int, string)>();
+
+        try
+        {
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = fileName,
+                Arguments = arguments
+            };
+
+            Process proc = new()
+            {
+                StartInfo = startInfo
+            };
+
+            if (proc.Start())
+            {                
+                proc.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                {
+                    logger.Info($"Command '{fileName}{arguments}' executed");
+                    tcs.TrySetResult((proc.ExitCode, e.Data ?? string.Empty));
+                };
+            }
+            else
+            {
+                logger.Info($"Failed to execute command '{fileName}{arguments}'");
+                tcs.TrySetResult((proc.ExitCode, string.Empty));
+            }
+        }
+        catch (Exception exc)
+        {
+            logger.Info($"Failed to execute command '{fileName}{arguments}' '{exc.Message}'");
+            tcs.TrySetResult((-1, exc.Message));
+        }
+
+        return tcs.Task;
+    }
+
+    public static Task<Process> StartProcess(string fileName, string arguments)
+    {
+        var tcs = new TaskCompletionSource<Process>();
+
+        try
+        {
+            ProcessStartInfo startInfo = new()
+            {
+                FileName = fileName,
+                Arguments = arguments
+            };
+
+            Process proc = new()
+            {
+                StartInfo = startInfo
+            };
+
+            if (proc.Start())
+            {
+                proc.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                {
+                    logger.Info($"Command '{fileName}{arguments}' executed");
+                    tcs.TrySetResult(proc);
+                };
+            }
+            else
+            {
+                tcs.TrySetResult(proc);
+            }
+        }
+        catch (Exception exc)
+        {
+            tcs.TrySetException(exc);
+        }
+
+        return tcs.Task;
+    }
+
+    public static Task<Process> StartTCPCameraStream(string address)
+    {
+        var tcs = new TaskCompletionSource<Process>();
+
+        var result = StartProcess(
+            "libcamera-vid", 
+            $"-t 0 --inline --nopreview --listen -o tcp://{address}");        
+
+        return tcs.Task;
     }
 }
