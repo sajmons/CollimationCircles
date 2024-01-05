@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Primary clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primary outer</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primary screw</system:String>
-  <system:String x:Key="Text.Properties">Paterns</system:String>
+  <system:String x:Key="Text.Properties">Patterns</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
   <system:String x:Key="Text.RemoveItem">Remove item from list</system:String>
   <system:String x:Key="Text.ResetItems">Reset list to default values</system:String>
@@ -62,7 +62,7 @@
   <system:String x:Key="Text.SelectedItemProperties">Selected item properties</system:String>
   <system:String x:Key="Text.Settings">Settings</system:String>
   <system:String x:Key="Text.SettingsWindow">Undock to separate window</system:String>
-  <system:String x:Key="Text.ShowLabels">Show labels</system:String>
+  <system:String x:Key="Text.ShowLabels">Show pattern labels</system:String>
   <system:String x:Key="Text.Size">Size</system:String>
   <system:String x:Key="Text.Spacing">Spacing</system:String>
   <system:String x:Key="Text.Spider">Spider</system:String>
@@ -95,7 +95,7 @@
   <system:String x:Key="Text.WebCamStream">Camera video stream</system:String>
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stop</system:String>
-  <system:String x:Key="Text.CameraStreamSeparateWindow">Pin video window to main window</system:String>
+  <system:String x:Key="Text.CameraStreamSeparateWindow">Pin to main window</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Camera video stream</system:String>
   <system:String x:Key="Text.Fans">Fans</system:String>
   <system:String x:Key="Text.PatreonDesc">The development of this application requires a lot of effort, free time and commitment. If you appreciate that and want to show some support, please visit my Patreon website and subscribe to the membership levels or buy some assets. Thank you for all your support!</system:String>
@@ -105,6 +105,9 @@
   <system:String x:Key="Text.AppLogTabTitle">Log</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Show application log</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Show application log file location</system:String>
+  <system:String x:Key="Text.Tools">Tools</system:String>
+  <system:String x:Key="Text.ShowAboutDialog">About this application</system:String>
+  <system:String x:Key="Text.Close">Close</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

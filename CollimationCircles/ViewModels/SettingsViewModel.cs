@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Dialogs;
 using Avalonia.Media;
 using Avalonia.Styling;
 using CollimationCircles.Extensions;
@@ -6,6 +7,7 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -156,7 +158,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool cameraVideoStreamExpanded = false;
+        private bool cameraVideoStreamExpanded = true;
 
         private bool oldAllwysOnTop = false;
 
@@ -166,13 +168,17 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool showApplicationLog = false;        
+        private bool showApplicationLog = false;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool globalPropertiesExpanded = true;
 
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
             this.appService = appService;
-                    
+
             Initialize();
         }
 
@@ -517,6 +523,7 @@ namespace CollimationCircles.ViewModels
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
+                    GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
 
                     if (!DockInMainWindow)
                     {
@@ -575,9 +582,13 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void OpenWebSite()
+        internal async Task OpenAboutDialog()
         {
-            OpenUrl(appService.WebPage);
+            var dialogViewModel = dialogService.CreateViewModel<AboutViewModel>();
+
+            DissableAlwaysOnTop();
+            _ = await dialogService.ShowDialogAsync(this, dialogViewModel);
+            RestoreAlwaysOnTop();
         }
 
         [RelayCommand]
@@ -662,6 +673,6 @@ namespace CollimationCircles.ViewModels
         {
             AlwaysOnTop = oldAllwysOnTop;
             logger.Info($"Always on top restored by application");
-        }        
+        }
     }
 }

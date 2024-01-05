@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:CollimationCircles.Controls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="CollimationCircles.Controls.SettingsUserControl">
+             x:Class="CollimationCircles.Controls.SettingsUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SettingsViewModel">
   <Grid
       Background="{DynamicResource ThemeBackgroundBrush}"
       RowDefinitions="*,50">
@@ -15,8 +17,33 @@
             FontSize="14"
             Text="{DynamicResource Text.Properties}" />
         </TabItem.Header>
-        <ScrollViewer>
-          <controls:PropertiesUserControl />
+        <controls:ItemListUserControl />
+      </TabItem>
+      <TabItem>
+        <TabItem.Header>
+          <TextBlock
+            FontSize="14"
+            Text="{DynamicResource Text.Tools}" />
+        </TabItem.Header>
+        <ScrollViewer Padding="12">
+          <StackPanel>
+            <Expander
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                Width="{Binding SettingsWidth}"
+                Header="{DynamicResource Text.AllItemsControls}"
+                IsExpanded="{Binding GlobalPropertiesExpanded}">
+              <controls:GlobalPropertiesUserControl />
+            </Expander>
+            <Expander
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              Width="{Binding SettingsWidth}"
+              Header="{DynamicResource Text.WebCamStream}"
+              IsExpanded="{Binding CameraVideoStreamExpanded}">
+              <controls:StreamUserControl/>
+            </Expander>
+          </StackPanel>
         </ScrollViewer>
       </TabItem>
       <TabItem>
@@ -28,15 +55,7 @@
         <ScrollViewer>
           <controls:SettingsTabUserControl />
         </ScrollViewer>
-      </TabItem>
-      <TabItem>
-        <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.About}" />
-        </TabItem.Header>
-        <controls:AboutTabUserControl />
-      </TabItem>
+      </TabItem>      
     </TabControl>
     <controls:SocialButtonBarUserControl
       Grid.Row="1"/>

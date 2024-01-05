@@ -62,7 +62,7 @@
   <system:String x:Key="Text.SelectedItemProperties">Lastnosti izbranega</system:String>
   <system:String x:Key="Text.Settings">Nastavitve</system:String>
   <system:String x:Key="Text.SettingsWindow">Odpni v ločeno okno</system:String>
-  <system:String x:Key="Text.ShowLabels">Prikaži nazive</system:String>
+  <system:String x:Key="Text.ShowLabels">Prikaži nazive oblik</system:String>
   <system:String x:Key="Text.Size">Velikost</system:String>
   <system:String x:Key="Text.Spacing">Širina</system:String>
   <system:String x:Key="Text.Spider">Pajek</system:String>
@@ -93,7 +93,7 @@
   <system:String x:Key="Text.WebCamStream">Video tok kamere</system:String>
   <system:String x:Key="Text.Start">Začni</system:String>
   <system:String x:Key="Text.Stop">Ustavi</system:String>
-  <system:String x:Key="Text.CameraStreamSeparateWindow">Pripni video okno na glavno okno</system:String>
+  <system:String x:Key="Text.CameraStreamSeparateWindow">Pripni na glavno okno</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Video iz kamere</system:String>
   <system:String x:Key="Text.Fans">Oboževalci</system:String>
   <system:String x:Key="Text.PatreonDesc">Razvoj te aplikacije zahteva veliko truda, prostega časa in angažiranosti. V kolikor to cenite in me želite podpreti, vas prosim, da obiščete mojo Patreon spletno stran in se naroči na članske ugodnosti ali kupite katerega od izdelkov. Hvala za vso vašo podporo!</system:String>
@@ -102,4 +102,7 @@
   <system:String x:Key="Text.AppLogTabTitle">Dnevnik</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Prikaži dnevnik aplikacije</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Prikaži lokacijo datoteke dnevnika</system:String>
+  <system:String x:Key="Text.Tools">Orodja</system:String>
+  <system:String x:Key="Text.ShowAboutDialog">O programu</system:String>
+  <system:String x:Key="Text.Close">Zapri</system:String>
 </ResourceDictionary>

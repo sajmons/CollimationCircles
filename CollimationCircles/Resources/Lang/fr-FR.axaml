@@ -62,7 +62,7 @@
   <system:String x:Key="Text.SelectedItemProperties">Propriétés de l'élément sélectionné</system:String>
   <system:String x:Key="Text.Settings">Paramètres</system:String>
   <system:String x:Key="Text.SettingsWindow">Détacher dans une fenêtre séparée</system:String>
-  <system:String x:Key="Text.ShowLabels">Voir les Labels</system:String>
+  <system:String x:Key="Text.ShowLabels">Afficher les étiquettes des motifs</system:String>
   <system:String x:Key="Text.Size">Taille</system:String>
   <system:String x:Key="Text.Spacing">Espacement</system:String>
   <system:String x:Key="Text.Spider">Araignée</system:String>
@@ -95,7 +95,7 @@
   <system:String x:Key="Text.WebCamStream">Flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.Start">Commencer</system:String>
   <system:String x:Key="Text.Stop">Arrêt</system:String>
-  <system:String x:Key="Text.CameraStreamSeparateWindow">Épingler la fenêtre vidéo à la fenêtre principale</system:String>
+  <system:String x:Key="Text.CameraStreamSeparateWindow">Épingler à la fenêtre principale</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.Fans">Ventilateurs</system:String>
   <system:String x:Key="Text.PatreonDesc">Le développement de cette application demande beaucoup d’efforts, de temps libre et d’engagement. Si vous appréciez cela et souhaitez montrer un certain soutien, veuillez visiter mon site Web Patreon et vous abonner aux niveaux d'adhésion ou acheter des actifs. Merci pour tout votre support!</system:String>
@@ -104,4 +104,7 @@
   <system:String x:Key="Text.AppLogTabTitle">Journal</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Afficher le journal des applications</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Afficher l'emplacement du fichier journal de l'application</system:String>
+  <system:String x:Key="Text.Tools">Outils</system:String>
+  <system:String x:Key="Text.ShowAboutDialog">À propos de cette application</system:String>
+  <system:String x:Key="Text.Close">Fermer</system:String>
 </ResourceDictionary>

@@ -59,21 +59,12 @@
         IsChecked="{Binding AlwaysOnTop}" />
       <CheckBox
         Content="{DynamicResource Text.ShowMarkAtSelectedItem}"
-        IsChecked="{Binding ShowMarkAtSelectedItem}" />
+        IsChecked="{Binding ShowMarkAtSelectedItem}" />      
       <CheckBox
         Content="{DynamicResource Text.ShowApplicationLog}"
         IsChecked="{Binding ShowApplicationLog}" />
 
-    </StackPanel>
-
-    <Expander
-        VerticalAlignment="Top"
-        HorizontalAlignment="Stretch"
-        Header="{DynamicResource Text.WebCamStream}"
-        Width="{Binding SettingsWidth}"
-        IsExpanded="{Binding CameraVideoStreamExpanded}">
-      <controls:StreamUserControl/>
-    </Expander>
+    </StackPanel>    
 
     <Expander
       HorizontalAlignment="Stretch"
@@ -183,7 +174,7 @@
           Text="CTRL D"/>
       </UniformGrid>
 
-    </Expander>
+    </Expander>    
 
   </WrapPanel>
 

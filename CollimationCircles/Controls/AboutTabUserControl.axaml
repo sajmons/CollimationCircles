@@ -32,27 +32,6 @@
       VerticalAlignment="Center"
       Text="{DynamicResource Text.PatreonDesc}" />
 
-    <StackPanel Orientation="Vertical"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Stretch"
-      Margin="8">
-      <Button
-        Margin="8"
-        VerticalAlignment="Bottom"
-        Command="{Binding OpenPatreonWebSiteCommand}"
-        ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
-        <StackPanel Orientation="Horizontal">
-          <PathIcon
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.Patreon}" />
-          <TextBlock
-            Padding="8,0,0,0"
-            Text="{DynamicResource Text.Patreon}"
-            VerticalAlignment="Center"/>
-        </StackPanel>
-      </Button>      
-    </StackPanel>
-
   </WrapPanel>
 
 </UserControl>

@@ -7,196 +7,200 @@
              x:Class="CollimationCircles.Controls.ItemListUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
+  <ScrollViewer>
+    <WrapPanel>
 
-  <WrapPanel>
+      <StackPanel
+        Width="{Binding SettingsMinWidth}"
+        Orientation="Vertical">
 
-    <StackPanel
-      Width="{Binding SettingsMinWidth}"
-      Orientation="Vertical"
-      Margin="0 0 0 8">
+        <controls:ToolbarUserControl/>
 
-      <controls:ToolbarUserControl/>
+        <ListBox
+          Name="list"
+          ItemsSource="{Binding Items}"
+          SelectedItem="{Binding SelectedItem}"
+          SelectedIndex="{Binding SelectedIndex}"
+          SelectionMode="Single">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
 
-      <ListBox
-        Name="list"
-        ItemsSource="{Binding Items}"
-        SelectedItem="{Binding SelectedItem}"
-        SelectedIndex="{Binding SelectedIndex}"
-        SelectionMode="Single">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
+              <Grid
+                ColumnDefinitions="25,25,*,34"
+                RowDefinitions="20">
 
-            <Grid
-              ColumnDefinitions="25,25,*,34"
-              RowDefinitions="20">
+                <CheckBox
+                  IsChecked="{Binding IsVisible}"
+                  ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
 
-              <CheckBox
-                IsChecked="{Binding IsVisible}"
-                ToolTip.Tip="{DynamicResource Text.ItemVisibility}" />
-
-              <Viewbox
-                Grid.Column="1"
-                Margin="2">
-                <PathIcon
-                  Foreground="{DynamicResource Color2}"
-                  Data="{Binding ResourceString}"/>
-              </Viewbox>
-
-              <TextBlock
-                TextWrapping="Wrap"
-                Grid.Column="2"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Stretch"
-                Background="{ReflectionBinding SelectedItem.ItemColor}"
-                Text="{Binding Label}" />
-
-              <Button
-                Padding="0"
-                Grid.Column="3"
-                Width="32"
-                Height="32"
-                Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveItemCommand}"
-                CommandParameter="{Binding .}"
-                ToolTip.Tip="{DynamicResource Text.RemoveItem}">
-                <Viewbox Margin="7">
-                  <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Remove}"/>
+                <Viewbox
+                  Grid.Column="1"
+                  Margin="2">
+                  <PathIcon
+                    Foreground="{DynamicResource Color2}"
+                    Data="{Binding ResourceString}"/>
                 </Viewbox>
-              </Button>
 
-            </Grid>
+                <TextBlock
+                  TextWrapping="Wrap"
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Stretch"
+                  Background="{ReflectionBinding SelectedItem.ItemColor}"
+                  Text="{Binding Label}" />
 
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+                <Button
+                  Padding="0"
+                  Grid.Column="3"
+                  Width="32"
+                  Height="32"
+                  Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveItemCommand}"
+                  CommandParameter="{Binding .}"
+                  ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+                  <Viewbox Margin="7">
+                    <PathIcon Foreground="{DynamicResource Color2}" Data="{StaticResource IconData.Remove}"/>
+                  </Viewbox>
+                </Button>
 
-    </StackPanel>
+              </Grid>
 
-    <StackPanel
-      Width="{Binding SettingsWidth}"
-      Margin="12">
-
-      <UniformGrid
-        Columns="2">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.Color}" />
-        <ComboBox
-          HorizontalAlignment="Right"
-          SelectedItem="{ReflectionBinding #list.SelectedItem.ItemColor}"
-          ItemsSource="{Binding ColorList}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate DataType="Color">
-              <Border
-                HorizontalAlignment="Left"
-                CornerRadius="4"
-                Width="20"
-                Height="20"
-                BorderThickness="1" >
-                <Border.Background>
-                  <SolidColorBrush Color="{Binding}" />
-                </Border.Background>
-              </Border>
             </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </UniformGrid>
+          </ListBox.ItemTemplate>
+        </ListBox>
 
-      <UniformGrid
-        Columns="2">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.Radius}"/>
-        <NumericUpDown
-          Increment="1"
-          Value="{ReflectionBinding #list.SelectedItem.Radius}"
-          Minimum="1" Maximum="2000"/>
-      </UniformGrid>
+      </StackPanel>
 
-      <UniformGrid
-        Columns="2">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.Thickness}" />
-        <NumericUpDown
-          Increment="1"
-          Value="{ReflectionBinding #list.SelectedItem.Thickness}"
-          Minimum="1" Maximum="10"/>
-      </UniformGrid>
+      <StackPanel
+        Width="{Binding SettingsWidth}"
+        Margin="12">
 
-      <UniformGrid
-        Columns="2"
-        IsVisible="{ReflectionBinding #list.SelectedItem.IsRotatable}">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.Rotation}"/>
-        <NumericUpDown
-          Increment="{ReflectionBinding #list.SelectedItem.RotationIncrement}"
-          Value="{ReflectionBinding #list.SelectedItem.RotationAngle}"
-          Minimum="-180" Maximum="180"/>
-      </UniformGrid>
+        <UniformGrid
+          Columns="2">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.Color}" />
+          <ComboBox
+            HorizontalAlignment="Right"
+            SelectedItem="{ReflectionBinding #list.SelectedItem.ItemColor}"
+            ItemsSource="{Binding ColorList}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate DataType="Color">
+                <Border
+                  HorizontalAlignment="Left"
+                  CornerRadius="4"
+                  Width="20"
+                  Height="20"
+                  BorderThickness="1" >
+                  <Border.Background>
+                    <SolidColorBrush Color="{Binding}" />
+                  </Border.Background>
+                </Border>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </UniformGrid>
 
-      <UniformGrid
-        Columns="2"
-        IsVisible="{ReflectionBinding #list.SelectedItem.IsInclinatable}">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.InclinationAngle}"/>
-        <NumericUpDown
-          Increment="{ReflectionBinding #list.SelectedItem.InclinationIncrement}"
-          Value="{ReflectionBinding #list.SelectedItem.InclinationAngle}"
-          Minimum="-180" Maximum="180"/>
-      </UniformGrid>
+        <UniformGrid
+          Columns="2">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.Radius}"/>
+          <NumericUpDown
+            Increment="1"
+            Value="{ReflectionBinding #list.SelectedItem.Radius}"
+            Minimum="1" Maximum="2000"/>
+        </UniformGrid>
 
-      <UniformGrid
-        Columns="2"
-        IsVisible="{ReflectionBinding #list.SelectedItem.IsSizeable}">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.Spacing}"/>
-        <NumericUpDown
-          Increment="1"
-          Value="{ReflectionBinding #list.SelectedItem.Size}"
-          Minimum="1" Maximum="100"/>
-      </UniformGrid>
+        <UniformGrid
+          Columns="2">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.Thickness}" />
+          <NumericUpDown
+            Increment="1"
+            Value="{ReflectionBinding #list.SelectedItem.Thickness}"
+            Minimum="1" Maximum="10"/>
+        </UniformGrid>
 
-      <UniformGrid
-        Columns="2"
-        IsVisible="{ReflectionBinding #list.SelectedItem.IsCountable}">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.Count}"/>
-        <NumericUpDown
-          Increment="1"
-          Value="{ReflectionBinding #list.SelectedItem.Count}"
-          Minimum="1" Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
-      </UniformGrid>
+        <UniformGrid
+          Columns="2"
+          IsVisible="{ReflectionBinding #list.SelectedItem.IsRotatable}">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.Rotation}"/>
+          <NumericUpDown
+            Increment="{ReflectionBinding #list.SelectedItem.RotationIncrement}"
+            Value="{ReflectionBinding #list.SelectedItem.RotationAngle}"
+            Minimum="-180" Maximum="180"/>
+        </UniformGrid>
 
-      <UniformGrid
-        Columns="2">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.SelectedPatternOpacity}"/>
-        <NumericUpDown
-          Increment="0.1"
-          Value="{ReflectionBinding #list.SelectedItem.Opacity}"
-          Minimum="0.1" Maximum="1" />
-      </UniformGrid>
+        <UniformGrid
+          Columns="2"
+          IsVisible="{ReflectionBinding #list.SelectedItem.IsInclinatable}">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.InclinationAngle}"/>
+          <NumericUpDown
+            Increment="{ReflectionBinding #list.SelectedItem.InclinationIncrement}"
+            Value="{ReflectionBinding #list.SelectedItem.InclinationAngle}"
+            Minimum="-180" Maximum="180"/>
+        </UniformGrid>
 
-      <UniformGrid
-        Columns="2"
-        IsVisible="{ReflectionBinding #list.SelectedItem.IsEditable}">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.Label}"/>
-        <TextBox
-          TextWrapping="Wrap"
-          MaxLength="20"
-          Watermark="{DynamicResource Text.HelperName}"
-          Text="{ReflectionBinding #list.SelectedItem.Label}" />
-      </UniformGrid>
+        <UniformGrid
+          Columns="2"
+          IsVisible="{ReflectionBinding #list.SelectedItem.IsSizeable}">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.Spacing}"/>
+          <NumericUpDown
+            Increment="1"
+            Value="{ReflectionBinding #list.SelectedItem.Size}"
+            Minimum="1" Maximum="100"/>
+        </UniformGrid>
 
-    </StackPanel>
+        <UniformGrid
+          Columns="2"
+          IsVisible="{ReflectionBinding #list.SelectedItem.IsCountable}">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.Count}"/>
+          <NumericUpDown
+            Increment="1"
+            Value="{ReflectionBinding #list.SelectedItem.Count}"
+            Minimum="1" Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
+        </UniformGrid>
 
-  </WrapPanel>
+        <UniformGrid
+          Columns="2">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.SelectedPatternOpacity}"/>
+          <NumericUpDown
+            Increment="0.1"
+            Value="{ReflectionBinding #list.SelectedItem.Opacity}"
+            Minimum="0.1" Maximum="1" />
+        </UniformGrid>
+
+        <UniformGrid
+          Columns="2"
+          IsVisible="{ReflectionBinding #list.SelectedItem.IsEditable}">
+          <TextBlock
+            VerticalAlignment="Bottom"
+            Text="{DynamicResource Text.Label}"/>
+          <TextBox
+            TextWrapping="Wrap"
+            MaxLength="20"
+            Watermark="{DynamicResource Text.HelperName}"
+            Text="{ReflectionBinding #list.SelectedItem.Label}" />
+        </UniformGrid>
+
+        <CheckBox
+          Content="{DynamicResource Text.ShowLabels}"
+          IsChecked="{Binding ShowLabels}"/>
+
+      </StackPanel>
+
+    </WrapPanel>
+  </ScrollViewer>
 
 </UserControl>

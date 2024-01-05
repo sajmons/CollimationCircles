@@ -21,8 +21,8 @@
     </Button>
 
     <Button
-      Command="{Binding OpenWebSiteCommand}"
-      ToolTip.Tip="{DynamicResource Text.OpenWebSite}">
+      Command="{Binding OpenAboutDialogCommand}"
+      ToolTip.Tip="{DynamicResource Text.ShowAboutDialog}">
       <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Help}" />

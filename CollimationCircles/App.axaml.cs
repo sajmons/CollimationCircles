@@ -49,6 +49,7 @@ public partial class App : Application
             .AddSingleton<SettingsViewModel>()
             .AddSingleton<StreamViewModel>()
             .AddSingleton<AppLogViewModel>()
+            .AddTransient<AboutViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddTransient<IAppService, AppService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()

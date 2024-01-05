@@ -9,8 +9,7 @@
 
   <StackPanel
     Orientation="Vertical"
-    Spacing="10"
-    DockPanel.Dock="Top">
+    Spacing="10">
 
     <TextBox
       Text="{Binding FullAddress, Mode=TwoWay}"
