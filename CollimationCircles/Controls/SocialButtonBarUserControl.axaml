@@ -5,8 +5,7 @@
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.SocialButtonBarUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
-             x:DataType="vm:SettingsViewModel"
-             Padding="8">
+             x:DataType="vm:SettingsViewModel">
 
   <StackPanel
     HorizontalAlignment="Center"
