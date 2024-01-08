@@ -50,6 +50,11 @@
     <PackageReference Condition="$([MSBuild]::IsOsPlatform('Windows'))" Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\AboutUserControl.axaml.cs">
+      <DependentUpon>AboutUserControl.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="icon.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

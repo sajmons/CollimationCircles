@@ -13,20 +13,20 @@
     Orientation="Horizontal">
 
     <Button
+      Command="{Binding OpenAboutDialogCommand}"
+      ToolTip.Tip="{DynamicResource Text.ShowAboutDialog}">
+      <PathIcon
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Info}" />
+    </Button>
+
+    <Button
       Command="{Binding OpenPatreonWebSiteCommand}"
       ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
       <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Patreon}" />
     </Button>
-
-    <Button
-      Command="{Binding OpenAboutDialogCommand}"
-      ToolTip.Tip="{DynamicResource Text.ShowAboutDialog}">
-      <PathIcon
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Help}" />
-    </Button>    
 
     <Button
       Command="{Binding OpenContactWebPageCommand}"
@@ -67,7 +67,7 @@
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Bug}" />
     </Button>
-    
+
   </StackPanel>
 
 </UserControl>
