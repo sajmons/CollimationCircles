@@ -75,6 +75,12 @@
       <SolidColorBrush x:Key="MenuFlyoutItemForegroundPressed" Color="{StaticResource Color1}"/>
       <SolidColorBrush x:Key="MenuFlyoutItemBackgroundPressed" Color="{StaticResource Color3}"/>
 
+      <!-- ToggleButton -->
+      <SolidColorBrush x:Key="ToggleButtonBackground" Color="{StaticResource Color4}"/>
+      <SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="{StaticResource Color3}"/>
+      <SolidColorBrush x:Key="ToggleButtonBackgroundPressed" Color="{StaticResource Color4}"/>      
+      <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="{StaticResource Color4}"/>
+      
     </ResourceDictionary>
 
   </ResourceDictionary.ThemeDictionaries>
