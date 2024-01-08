@@ -6,11 +6,12 @@
              x:Class="CollimationCircles.Controls.ToolbarUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <Grid
-    RowDefinitions="32"
-    ColumnDefinitions="Auto,32,32,32,32">
+  <StackPanel    
+    Orientation="Horizontal">
 
     <SplitButton
+      Margin="11 0 0 0"
+      VerticalAlignment="Stretch"
       Content="{DynamicResource Text.Add}"
       ToolTip.Tip="{DynamicResource Text.AddNewItem}">
       <SplitButton.Flyout>
@@ -55,7 +56,6 @@
     </SplitButton>
 
     <Button
-      Grid.Column="1"
       Command="{Binding ResetListCommand}"
       ToolTip.Tip="{DynamicResource Text.ResetItems}">
       <PathIcon
@@ -64,7 +64,6 @@
     </Button>
 
     <Button
-      Grid.Column="2"
       Command="{Binding SaveListCommand}"
       ToolTip.Tip="{DynamicResource Text.SaveList}">
       <PathIcon
@@ -73,7 +72,6 @@
     </Button>
 
     <Button
-      Grid.Column="3"
       Command="{Binding LoadListCommand}"
       ToolTip.Tip="{DynamicResource Text.LoadList}">
       <PathIcon
@@ -82,7 +80,6 @@
     </Button>
 
     <Button
-      Grid.Column="4"
       Command="{Binding DuplicateCommand}"
       ToolTip.Tip="{DynamicResource Text.Duplicate}"
       CommandParameter="{Binding SelectedIndex}">
@@ -91,5 +88,5 @@
         Data="{StaticResource IconData.Duplicate}"/>
     </Button>
 
-  </Grid>
+  </StackPanel>
 </UserControl>

@@ -72,7 +72,7 @@
 
       <StackPanel
         Width="{Binding SettingsWidth}"
-        Margin="12">
+        Margin="0 12 0 0">
 
         <UniformGrid
           Columns="2">

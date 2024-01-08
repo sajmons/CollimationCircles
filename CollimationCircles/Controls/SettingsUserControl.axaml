@@ -10,14 +10,14 @@
   <Grid
       Background="{DynamicResource ThemeBackgroundBrush}"
       RowDefinitions="*,50">
-    <TabControl Padding="0">
+    <TabControl>
       <TabItem>
         <TabItem.Header>
           <TextBlock
             FontSize="14"
             Text="{DynamicResource Text.Properties}" />
         </TabItem.Header>
-        <controls:ItemListUserControl />
+        <controls:ItemListUserControl/>
       </TabItem>
       <TabItem>
         <TabItem.Header>
