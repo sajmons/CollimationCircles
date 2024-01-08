@@ -25,8 +25,8 @@
             FontSize="14"
             Text="{DynamicResource Text.Tools}" />
         </TabItem.Header>
-        <ScrollViewer Padding="12">
-          <StackPanel>
+        <ScrollViewer>
+          <StackPanel Spacing="12">
             <Expander
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
