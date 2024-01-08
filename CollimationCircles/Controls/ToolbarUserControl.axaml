@@ -57,7 +57,9 @@
 
     <Button
       Command="{Binding ResetListCommand}"
-      ToolTip.Tip="{DynamicResource Text.ResetItems}">
+      ToolTip.Tip="{DynamicResource Text.ResetItems}"
+      Width="32"
+      Height="32">
       <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Reset}" />
@@ -65,7 +67,9 @@
 
     <Button
       Command="{Binding SaveListCommand}"
-      ToolTip.Tip="{DynamicResource Text.SaveList}">
+      ToolTip.Tip="{DynamicResource Text.SaveList}"
+      Width="32" 
+      Height="32">
       <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Save}"/>
@@ -73,7 +77,9 @@
 
     <Button
       Command="{Binding LoadListCommand}"
-      ToolTip.Tip="{DynamicResource Text.LoadList}">
+      ToolTip.Tip="{DynamicResource Text.LoadList}"
+      Width="32"
+      Height="32">
       <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Load}"/>
@@ -82,7 +88,9 @@
     <Button
       Command="{Binding DuplicateCommand}"
       ToolTip.Tip="{DynamicResource Text.Duplicate}"
-      CommandParameter="{Binding SelectedIndex}">
+      CommandParameter="{Binding SelectedIndex}"
+      Width="32"
+      Height="32">
       <PathIcon
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Duplicate}"/>
