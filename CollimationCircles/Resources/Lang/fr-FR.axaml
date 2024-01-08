@@ -3,7 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
   <system:String x:Key="Text.About">À propos</system:String>
   <system:String x:Key="Text.Add">Ajout</system:String>
-  <system:String x:Key="Text.AddNewItem">Ajouter un nouvel élément</system:String>
+  <system:String x:Key="Text.AddNewItem">Ajouter un nouveau modèle à la liste</system:String>
   <system:String x:Key="Text.AllFiles">Tous Fichiers</system:String>
   <system:String x:Key="Text.AllItemsControls">Propriétés Globales</system:String>
   <system:String x:Key="Text.AppDescription">Aide à la collimation éléctronique © 2023 Simon Šander</system:String>
@@ -33,8 +33,8 @@
   <system:String x:Key="Text.IncreaseHelperSpacing">Augmenter l'espacement:</system:String>
   <system:String x:Key="Text.IncreaseItemThichness">Augmenter l'épaisseur:</system:String>
   <system:String x:Key="Text.Inner">Intérieur</system:String>
-  <system:String x:Key="Text.ItemType">Type d'élément</system:String>
-  <system:String x:Key="Text.ItemVisibility">Visibilité de l'article</system:String>
+  <system:String x:Key="Text.ItemType">Type de motif</system:String>
+  <system:String x:Key="Text.ItemVisibility">Visibilité du modèle</system:String>
   <system:String x:Key="Text.JSONDocuments">Documents JSON</system:String>
   <system:String x:Key="Text.Label">Label</system:String>
   <system:String x:Key="Text.LabelSize">Taille du Label</system:String>

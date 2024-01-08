@@ -3,7 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
   <system:String x:Key="Text.About">Um</system:String>
   <system:String x:Key="Text.Add">Neu</system:String>
-  <system:String x:Key="Text.AddNewItem">Neuen Artikel zur Liste hinzufügen</system:String>
+  <system:String x:Key="Text.AddNewItem">Neues Muster zur Liste hinzufügen</system:String>
   <system:String x:Key="Text.AllFiles">Alle Dateien</system:String>
   <system:String x:Key="Text.AllItemsControls">Gilt für alle Artikel</system:String>
   <system:String x:Key="Text.AppDescription">Anwendung für elektronisch unterstützte Teleskopkollimation © 2023 Simon Šander</system:String>
@@ -33,8 +33,8 @@
   <system:String x:Key="Text.IncreaseHelperSpacing">Abstand vergrößern:</system:String>
   <system:String x:Key="Text.IncreaseItemThichness">Dicke erhöhen:</system:String>
   <system:String x:Key="Text.Inner">Innere</system:String>
-  <system:String x:Key="Text.ItemType">Artikel Typ</system:String>
-  <system:String x:Key="Text.ItemVisibility">Sichtbarkeit des Artikels</system:String>
+  <system:String x:Key="Text.ItemType">Muster-Art</system:String>
+  <system:String x:Key="Text.ItemVisibility">Sichtbarkeit von Mustern</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON-Dokumente</system:String>
   <system:String x:Key="Text.Label">Etikett</system:String>
   <system:String x:Key="Text.LabelSize">Textgröße</system:String>

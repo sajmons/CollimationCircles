@@ -33,8 +33,8 @@
   <system:String x:Key="Text.IncreaseHelperSpacing">Povečaj širino:</system:String>
   <system:String x:Key="Text.IncreaseItemThichness">Povečaj debelino:</system:String>
   <system:String x:Key="Text.Inner">Notranji</system:String>
-  <system:String x:Key="Text.ItemType">Tip pomočnika</system:String>
-  <system:String x:Key="Text.ItemVisibility">Vidnost pomočnika</system:String>
+  <system:String x:Key="Text.ItemType">Tip oblike</system:String>
+  <system:String x:Key="Text.ItemVisibility">Vidnost oblike</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON Dokumenti</system:String>
   <system:String x:Key="Text.Label">Opis</system:String>
   <system:String x:Key="Text.LabelSize">Velikost nazivov</system:String>
