@@ -6,12 +6,10 @@ using System;
 
 namespace CollimationCircles.ViewModels
 {
-    internal partial class AboutViewModel : BaseViewModel, IModalDialogViewModel, ICloseable
+    internal partial class AboutViewModel : BaseViewModel, IModalDialogViewModel
     {
         public bool? DialogResult => true;
         
-        public event EventHandler? RequestClose;
-
         private readonly IAppService appService;
         private readonly IDialogService dialogService;
 

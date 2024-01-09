@@ -57,9 +57,6 @@ namespace CollimationCircles.ViewModels
         private bool pinVideoWindowToMainWindow = true;
 
         [ObservableProperty]
-        private string streamInfo;
-
-        [ObservableProperty]
         private bool localConnectionPossible = false;
 
         Process? proc;
@@ -167,13 +164,13 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
-        private void PlayPause()
+        private async Task PlayPause()
         {
             if (MediaPlayer != null)
             {
                 if (!MediaPlayer.IsPlaying)
                 {
-                    Play();
+                    await Play();
                 }
                 else
                 {
