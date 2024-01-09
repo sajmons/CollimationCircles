@@ -15,23 +15,23 @@
   <system:String x:Key="Text.Color">Color</system:String>
   <system:String x:Key="Text.Contact">Contact</system:String>
   <system:String x:Key="Text.Count">Count</system:String>
-  <system:String x:Key="Text.DecreaseHelperCount">Decrease count:</system:String>
-  <system:String x:Key="Text.DecreaseHelperRadius">Decrease radius:</system:String>
-  <system:String x:Key="Text.DecreaseHelperSpacing">Decrease spacing:</system:String>
-  <system:String x:Key="Text.DecreaseItemThickness">Decrease thickness:</system:String>
+  <system:String x:Key="Text.DecreaseHelperCount">Decrease count</system:String>
+  <system:String x:Key="Text.DecreaseHelperRadius">Decrease radius</system:String>
+  <system:String x:Key="Text.DecreaseHelperSpacing">Decrease spacing</system:String>
+  <system:String x:Key="Text.DecreaseItemThickness">Decrease thickness</system:String>
   <system:String x:Key="Text.Duplicate">Create duplicate</system:String>
   <system:String x:Key="Text.Error">Error</system:String>
-  <system:String x:Key="Text.GlobalRotationCCW">Global rotation counterclockwise:</system:String>
-  <system:String x:Key="Text.GlobalRotationCW">Global rotation clockwise:</system:String>
-  <system:String x:Key="Text.GlobalScaleDown">Global scale down:</system:String>
-  <system:String x:Key="Text.GlobalScaleUp">Global scale up:</system:String>
+  <system:String x:Key="Text.GlobalRotationCCW">Global rotation counterclockwise</system:String>
+  <system:String x:Key="Text.GlobalRotationCW">Global rotation clockwise</system:String>
+  <system:String x:Key="Text.GlobalScaleDown">Global scale down</system:String>
+  <system:String x:Key="Text.GlobalScaleUp">Global scale up</system:String>
   <system:String x:Key="Text.Helper">Helper</system:String>
   <system:String x:Key="Text.HelperName">Enter name</system:String>
   <system:String x:Key="Text.InclinationAngle">Inclination</system:String>
-  <system:String x:Key="Text.IncreaseHelperCount">Increase count:</system:String>
-  <system:String x:Key="Text.IncreaseHelperRadius">Increase radius:</system:String>
-  <system:String x:Key="Text.IncreaseHelperSpacing">Increase spacing:</system:String>
-  <system:String x:Key="Text.IncreaseItemThichness">Increase thichness:</system:String>
+  <system:String x:Key="Text.IncreaseHelperCount">Increase count</system:String>
+  <system:String x:Key="Text.IncreaseHelperRadius">Increase radius</system:String>
+  <system:String x:Key="Text.IncreaseHelperSpacing">Increase spacing</system:String>
+  <system:String x:Key="Text.IncreaseItemThichness">Increase thichness</system:String>
   <system:String x:Key="Text.Inner">Inner</system:String>
   <system:String x:Key="Text.ItemType">Shape type</system:String>
   <system:String x:Key="Text.ItemVisibility">Shape visibility</system:String>
@@ -52,8 +52,8 @@
   <system:String x:Key="Text.Radius">Radius</system:String>
   <system:String x:Key="Text.RemoveItem">Remove from list</system:String>
   <system:String x:Key="Text.ResetItems">Reset list to default values</system:String>
-  <system:String x:Key="Text.RotateHelperCCW">Rotate counterclockwise:</system:String>
-  <system:String x:Key="Text.RotateHelperCW">Rotate clockwise:</system:String>
+  <system:String x:Key="Text.RotateHelperCCW">Rotate counterclockwise</system:String>
+  <system:String x:Key="Text.RotateHelperCW">Rotate clockwise</system:String>
   <system:String x:Key="Text.Rotation">Rotation</system:String>
   <system:String x:Key="Text.SaveFile">Save file</system:String>
   <system:String x:Key="Text.SaveList">Save list to JSON file</system:String>
@@ -80,8 +80,7 @@
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected shape</system:String>
   <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
-  <system:String x:Key="Text.GlobalKeyboardShortcuts">Global shortcuts</system:String>
-  <system:String x:Key="Text.ShapeKeyboardShortcuts">Shape shortcuts</system:String>
+  <system:String x:Key="Text.ShowKeyboardShortcuts">Show keyboard shortcuts</system:String>
   <system:String x:Key="Text.TwitterWebSite">Open author Twitter website</system:String>
   <system:String x:Key="Text.YouTubeChannel">Open author YouTube channel</system:String>
   <system:String x:Key="Text.AppWebSite">Website</system:String>
@@ -111,7 +110,9 @@
   <system:String x:Key="Text.Tools">Tools</system:String>
   <system:String x:Key="Text.ShowAboutDialog">About this application</system:String>
   <system:String x:Key="Text.Close">Close</system:String>
-  
+  <system:String x:Key="Text.IncreaseInclination">Increase inclination</system:String>
+  <system:String x:Key="Text.DecreaseInclination">Decrease inclination</system:String>
+
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>

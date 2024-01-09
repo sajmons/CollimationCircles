@@ -63,6 +63,9 @@
       <CheckBox
         Content="{DynamicResource Text.ShowApplicationLog}"
         IsChecked="{Binding ShowApplicationLog}" />
+      <CheckBox
+        Content="{DynamicResource Text.ShowKeyboardShortcuts}"
+        IsChecked="{Binding ShowKeyboardShortcuts}" />      
 
     </StackPanel>    
 

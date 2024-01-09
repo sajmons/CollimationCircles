@@ -14,4 +14,5 @@ public interface IKeyHandlingService
     void HandleHelperCount(SettingsViewModel? vm, KeyEventArgs e);
     void HandleHelperSpacing(SettingsViewModel? vm, KeyEventArgs e);
     void HandleHelperThickness(SettingsViewModel? vm, KeyEventArgs e);
+    void HandleHelperInclination(SettingsViewModel? vm, KeyEventArgs e);
 }

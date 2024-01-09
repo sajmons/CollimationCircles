@@ -66,21 +66,27 @@ namespace CollimationCircles.Views
                     int dockedWidth = vm.DockInMainWindow ? vm.SettingsMinWidth / 2 : 0;
                     var items = vm?.Items;
 
+                    if (vm?.ShowKeyboardShortcuts == true)
+                    {
+                        dhs?.DrawShortcuts(context, vm.GlobalShortcuts, new Point(5, 0));
+                        dhs?.DrawShortcuts(context, vm.ShapeShortcuts, new Point(5, 80));
+                    }                    
+
                     if (items is not null)
                     {
+                        double width2 = Width / 2 - dockedWidth;
+                        double height2 = Height / 2;
+                        double scaleOrDefault = vm?.Scale ?? 1.0;
+                        double rotAngleOrDefault = vm?.RotationAngle ?? 0;
+                        double offsetX = vm?.GlobalOffsetX ?? 0;
+                        double offsetY = vm?.GlobalOffsetY ?? 0;
+
+                        Matrix scaleMat = Matrix.CreateScale(scaleOrDefault, scaleOrDefault);
+                        Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
+                        Matrix translateMat = Matrix.CreateTranslation(width2 + offsetX, height2 + offsetY);
+
                         foreach (ICollimationHelper item in items)
                         {
-                            double width2 = Width / 2 - dockedWidth;
-                            double height2 = Height / 2;
-                            double scaleOrDefault = vm?.Scale ?? 1.0;
-                            double rotAngleOrDefault = vm?.RotationAngle ?? 0;
-                            double offsetX = vm?.GlobalOffsetX ?? 0;
-                            double offsetY = vm?.GlobalOffsetY ?? 0;
-
-                            Matrix scaleMat = Matrix.CreateScale(scaleOrDefault, scaleOrDefault);
-                            Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
-                            Matrix translateMat = Matrix.CreateTranslation(width2 + offsetX, height2 + offsetY);
-
                             using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
                             {
                                 switch (item)
@@ -142,6 +148,7 @@ namespace CollimationCircles.Views
             khs?.HandleHelperCount(vm, e);
             khs?.HandleHelperThickness(vm, e);
             khs?.HandleHelperSpacing(vm, e);
+            khs?.HandleHelperInclination(vm, e);
 
             base.OnKeyDown(e);
         }

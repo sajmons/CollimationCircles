@@ -216,5 +216,27 @@ namespace CollimationCircles.Services
                 }
             }
         }
+
+        public void HandleHelperInclination(SettingsViewModel? vm, KeyEventArgs e)
+        {
+            if (!e.Handled && e.KeyModifiers == KeyModifiers.Control)
+            {
+                if (vm != null)
+                {
+                    switch (e.Key)
+                    {
+                        case Key.U:
+                            vm.SelectedItem.InclinationAngle += .1;
+                            e.Handled = true;
+                            break;
+
+                        case Key.J:
+                            vm.SelectedItem.InclinationAngle -= .1;
+                            e.Handled = true;
+                            break;
+                    }
+                }
+            }
+        }
     }
 }

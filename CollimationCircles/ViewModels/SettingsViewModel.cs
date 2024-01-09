@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Dialogs;
 using Avalonia.Media;
 using Avalonia.Styling;
 using CollimationCircles.Extensions;
@@ -7,7 +6,6 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
-using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -154,7 +152,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool keyboardShortcutsExpanded = false;
+        private bool showKeyboardShortcuts = true;
 
         [JsonProperty]
         [ObservableProperty]
@@ -174,6 +172,12 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool globalPropertiesExpanded = true;
 
+        [ObservableProperty]
+        private Dictionary<string, string> globalShortcuts = [];
+
+        [ObservableProperty]
+        private Dictionary<string, string> shapeShortcuts = [];
+
         public SettingsViewModel(IDialogService dialogService, IAppService appService)
         {
             this.dialogService = dialogService;
@@ -187,8 +191,38 @@ namespace CollimationCircles.ViewModels
             InitializeLanguage();
             InitializeThemes();
             InitializeColors();
+            InitializeKeyboardShortcuts();
 
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
+        }
+
+        private void InitializeKeyboardShortcuts()
+        {
+            GlobalShortcuts = new()
+            {
+                { DynRes.TryGetString("GlobalRotationCW"), "CTRL R" },
+                { DynRes.TryGetString("GlobalRotationCCW"), "CTRL F" },
+                { DynRes.TryGetString("GlobalScaleUp"), "CTRL +" },
+                { DynRes.TryGetString("GlobalScaleDown"), "CTRL -" }
+            };
+
+            ShapeShortcuts = new()
+            {
+                { DynRes.TryGetString("IncreaseHelperRadius"), "CTRL W" },
+                { DynRes.TryGetString("DecreaseHelperRadius"), "CTRL S" },
+                { DynRes.TryGetString("IncreaseItemThichness"), "CTRL E" },
+                { DynRes.TryGetString("DecreaseItemThickness"), "CTRL D" },
+                { DynRes.TryGetString("RotateHelperCW"), "CTRL Q" },
+                { DynRes.TryGetString("RotateHelperCCW"), "CTRL A" },
+                { DynRes.TryGetString("IncreaseInclination"), "CTRL U" },
+                { DynRes.TryGetString("DecreaseInclination"), "CTRL J" },
+                { DynRes.TryGetString("IncreaseHelperSpacing"), "CTRL Z" },
+                { DynRes.TryGetString("DecreaseHelperSpacing"), "CTRL H" },
+                { DynRes.TryGetString("IncreaseHelperCount"), "CTRL T" },
+                { DynRes.TryGetString("DecreaseHelperCount"), "CTRL G" }                
+            };
+
+            logger.Info("Keyboard shortcuts initialized");
         }
 
         private void InitializeThemes()
@@ -518,7 +552,7 @@ namespace CollimationCircles.ViewModels
                     SettingsWindowPosition = vm.SettingsWindowPosition;
                     SettingsWindowWidth = vm.SettingsWindowWidth;
                     SettingsWindowHeight = vm.SettingsWindowHeight;
-                    KeyboardShortcutsExpanded = vm.KeyboardShortcutsExpanded;
+                    ShowKeyboardShortcuts = vm.ShowKeyboardShortcuts;
                     SettingsExpanded = vm.SettingsExpanded;
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
@@ -550,6 +584,7 @@ namespace CollimationCircles.ViewModels
             if (SelectedLanguage.Value is not null)
             {
                 Translate(SelectedLanguage.Value);
+                InitializeKeyboardShortcuts();
                 logger.Info($"Application language changed to '{SelectedLanguage.Value}'");
             }
         }
@@ -648,6 +683,8 @@ namespace CollimationCircles.ViewModels
                 case nameof(MainWindowHeight):
                 case nameof(PinVideoWindowToMainWindow):
                 case nameof(ShowApplicationLog):
+                case nameof(ShowKeyboardShortcuts):
+                case nameof(SelectedLanguage):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
