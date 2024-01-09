@@ -80,7 +80,8 @@
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected shape</system:String>
   <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
-  <system:String x:Key="Text.KeyboardShortcuts">Keyboard shortcuts</system:String>
+  <system:String x:Key="Text.GlobalKeyboardShortcuts">Global shortcuts</system:String>
+  <system:String x:Key="Text.ShapeKeyboardShortcuts">Shape shortcuts</system:String>
   <system:String x:Key="Text.TwitterWebSite">Open author Twitter website</system:String>
   <system:String x:Key="Text.YouTubeChannel">Open author YouTube channel</system:String>
   <system:String x:Key="Text.AppWebSite">Website</system:String>

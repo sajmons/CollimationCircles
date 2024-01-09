@@ -78,7 +78,8 @@
   <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung bei ausgewählter Form anzeigen</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Thema</system:String>
-  <system:String x:Key="Text.KeyboardShortcuts">Tastatürkürzel</system:String>
+  <system:String x:Key="Text.GlobalKeyboardShortcuts">Globale Verknüpfungen</system:String>
+  <system:String x:Key="Text.ShapeKeyboardShortcuts">Formverknüpfungen</system:String>
   <system:String x:Key="Text.TwitterWebSite">Öffnen Sie die Twitter-Website des Autors</system:String>
   <system:String x:Key="Text.YouTubeChannel">Öffnen Sie den YouTube-Kanal des Autors</system:String>
   <system:String x:Key="Text.AppWebSite">Webseite</system:String>

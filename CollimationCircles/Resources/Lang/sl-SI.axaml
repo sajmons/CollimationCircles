@@ -78,7 +78,8 @@
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako izbranega</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>
-  <system:String x:Key="Text.KeyboardShortcuts">Bližnjice na tipkovnici</system:String>
+  <system:String x:Key="Text.GlobalKeyboardShortcuts">Globalne bližnjice</system:String>
+  <system:String x:Key="Text.ShapeKeyboardShortcuts">Bližnjice oblike</system:String>
   <system:String x:Key="Text.TwitterWebSite">Avtorjeva Twitter spletna stran</system:String>
   <system:String x:Key="Text.YouTubeChannel">Avtorjev YouTube kanal</system:String>
   <system:String x:Key="Text.AppWebSite">Spletna stran</system:String>
