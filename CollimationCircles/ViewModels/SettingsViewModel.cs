@@ -219,7 +219,7 @@ namespace CollimationCircles.ViewModels
                 { DynRes.TryGetString("IncreaseHelperSpacing"), "CTRL Z" },
                 { DynRes.TryGetString("DecreaseHelperSpacing"), "CTRL H" },
                 { DynRes.TryGetString("IncreaseHelperCount"), "CTRL T" },
-                { DynRes.TryGetString("DecreaseHelperCount"), "CTRL G" }                
+                { DynRes.TryGetString("DecreaseHelperCount"), "CTRL G" }
             };
 
             logger.Info("Keyboard shortcuts initialized");
@@ -399,7 +399,6 @@ namespace CollimationCircles.ViewModels
             var settings = new SaveFileDialogSettings
             {
                 Title = DynRes.TryGetString("SaveFile"),
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
                 Filters =
                 [
                     new(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
@@ -422,7 +421,6 @@ namespace CollimationCircles.ViewModels
             var settings = new OpenFileDialogSettings
             {
                 Title = DynRes.TryGetString("OpenFile"),
-                InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal),
                 Filters =
                 [
                     new(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
