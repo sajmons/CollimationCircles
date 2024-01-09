@@ -1,4 +1,5 @@
 ﻿- add main window HUD support
   - add support for showing shortcuts inside HUD
 - add profile manager
+
 - add ellipse pattern with custom offset for collimation RC (Ritchey‐Chrétien) telescopes see this: http://www.deepskyinstruments.com/truerc/docs/DSI_Collimation_Procedure_Ver_1.0.pdf
