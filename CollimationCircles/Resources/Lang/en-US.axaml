@@ -3,7 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
   <system:String x:Key="Text.About">About</system:String>
   <system:String x:Key="Text.Add">Add</system:String>
-  <system:String x:Key="Text.AddNewItem">Add new pattern to list</system:String>
+  <system:String x:Key="Text.AddNewItem">Add new shape</system:String>
   <system:String x:Key="Text.AllFiles">All Files</system:String>
   <system:String x:Key="Text.AllItemsControls">Global properties</system:String>
   <system:String x:Key="Text.AppDescription">Application for electronicaly asisted telescope collimation © 2023 Simon Šander</system:String>  
@@ -33,12 +33,12 @@
   <system:String x:Key="Text.IncreaseHelperSpacing">Increase spacing:</system:String>
   <system:String x:Key="Text.IncreaseItemThichness">Increase thichness:</system:String>
   <system:String x:Key="Text.Inner">Inner</system:String>
-  <system:String x:Key="Text.ItemType">Pattern type</system:String>
-  <system:String x:Key="Text.ItemVisibility">Pattern visibility</system:String>
+  <system:String x:Key="Text.ItemType">Shape type</system:String>
+  <system:String x:Key="Text.ItemVisibility">Shape visibility</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON Documents</system:String>
   <system:String x:Key="Text.Label">Label</system:String>
   <system:String x:Key="Text.LabelSize">Label size</system:String>
-  <system:String x:Key="Text.ListOfItems">List of patterns</system:String>
+  <system:String x:Key="Text.ListOfItems">List of shapes</system:String>
   <system:String x:Key="Text.LoadList">Load list from JSON file</system:String>
   <system:String x:Key="Text.NewVersion">New Version</system:String>
   <system:String x:Key="Text.NewVersionDownload">New version {0} available! Would you like to download it?</system:String>
@@ -48,9 +48,9 @@
   <system:String x:Key="Text.PrimaryClip">Primary clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primary outer</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primary screw</system:String>
-  <system:String x:Key="Text.Properties">Patterns</system:String>
+  <system:String x:Key="Text.Properties">Shapes</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
-  <system:String x:Key="Text.RemoveItem">Remove pattern from list</system:String>
+  <system:String x:Key="Text.RemoveItem">Remove from list</system:String>
   <system:String x:Key="Text.ResetItems">Reset list to default values</system:String>
   <system:String x:Key="Text.RotateHelperCCW">Rotate counterclockwise:</system:String>
   <system:String x:Key="Text.RotateHelperCW">Rotate clockwise:</system:String>
@@ -59,10 +59,10 @@
   <system:String x:Key="Text.SaveList">Save list to JSON file</system:String>
   <system:String x:Key="Text.Scale">Scale</system:String>
   <system:String x:Key="Text.Screw">Screw</system:String>
-  <system:String x:Key="Text.SelectedItemProperties">Selected pattern properties</system:String>
+  <system:String x:Key="Text.SelectedItemProperties">Selected shape properties</system:String>
   <system:String x:Key="Text.Settings">Settings</system:String>
   <system:String x:Key="Text.SettingsWindow">Undock to separate window</system:String>
-  <system:String x:Key="Text.ShowLabels">Show pattern labels</system:String>
+  <system:String x:Key="Text.ShowLabels">Show shape labels</system:String>
   <system:String x:Key="Text.Size">Size</system:String>
   <system:String x:Key="Text.Spacing">Spacing</system:String>
   <system:String x:Key="Text.Spider">Spider</system:String>
@@ -77,7 +77,7 @@
   <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>  
   <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>
   <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>
-  <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected pattern</system:String>
+  <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected shape</system:String>
   <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
   <system:String x:Key="Text.KeyboardShortcuts">Keyboard shortcuts</system:String>
@@ -91,7 +91,7 @@
   <system:String x:Key="Text.MainWindowOpacity">Opacity</system:String>
   <system:String x:Key="Text.GitHubIssue">Report issue</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Open new issue on GitHub</system:String>
-  <system:String x:Key="Text.SelectedPatternOpacity">Opacity</system:String>
+  <system:String x:Key="Text.SelectedOpacity">Opacity</system:String>
   <system:String x:Key="Text.WebCamStream">Camera video stream</system:String>
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stop</system:String>

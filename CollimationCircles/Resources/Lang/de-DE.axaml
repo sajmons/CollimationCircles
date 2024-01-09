@@ -3,9 +3,9 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
   <system:String x:Key="Text.About">Um</system:String>
   <system:String x:Key="Text.Add">Neu</system:String>
-  <system:String x:Key="Text.AddNewItem">Neues Muster zur Liste hinzufügen</system:String>
+  <system:String x:Key="Text.AddNewItem">Neue Form hinzufügen</system:String>
   <system:String x:Key="Text.AllFiles">Alle Dateien</system:String>
-  <system:String x:Key="Text.AllItemsControls">Gilt für alle Artikel</system:String>
+  <system:String x:Key="Text.AllItemsControls">Globale Eigenschaften</system:String>
   <system:String x:Key="Text.AppDescription">Anwendung für elektronisch unterstützte Teleskopkollimation © 2023 Simon Šander</system:String>
   <system:String x:Key="Text.BahtinovMask">Bahtinov-Maske</system:String>
   <system:String x:Key="Text.ChangeLanguage">Sprache ändern</system:String>
@@ -33,12 +33,12 @@
   <system:String x:Key="Text.IncreaseHelperSpacing">Abstand vergrößern:</system:String>
   <system:String x:Key="Text.IncreaseItemThichness">Dicke erhöhen:</system:String>
   <system:String x:Key="Text.Inner">Innere</system:String>
-  <system:String x:Key="Text.ItemType">Muster-Art</system:String>
-  <system:String x:Key="Text.ItemVisibility">Sichtbarkeit von Mustern</system:String>
+  <system:String x:Key="Text.ItemType">Formtyp</system:String>
+  <system:String x:Key="Text.ItemVisibility">Formsichtbarkeit</system:String>
   <system:String x:Key="Text.JSONDocuments">JSON-Dokumente</system:String>
   <system:String x:Key="Text.Label">Etikett</system:String>
   <system:String x:Key="Text.LabelSize">Textgröße</system:String>
-  <system:String x:Key="Text.ListOfItems">Liste der Artikel</system:String>
+  <system:String x:Key="Text.ListOfItems">Liste der Formen</system:String>
   <system:String x:Key="Text.LoadList">Liste aus JSON-Datei laden</system:String>
   <system:String x:Key="Text.NewVersion">Neue Version</system:String>
   <system:String x:Key="Text.NewVersionDownload">Neue Version {0} verfügbar! Möchtest du es herunterladen?</system:String>
@@ -48,10 +48,10 @@
   <system:String x:Key="Text.PrimaryClip">Primäres Clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primäres Äußeres</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primäres Schraube</system:String>
-  <system:String x:Key="Text.Properties">Muster</system:String>
+  <system:String x:Key="Text.Properties">Formen</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
-  <system:String x:Key="Text.RemoveItem">Artikel von der Liste entfernen</system:String>
-  <system:String x:Key="Text.ResetItems">Liste auf Standardwerte zurücksetzen</system:String>
+  <system:String x:Key="Text.RemoveItem">Aus Liste entfernen</system:String>
+  <system:String x:Key="Text.ResetItems">Auf Standardwerte zurücksetzen</system:String>
   <system:String x:Key="Text.RotateHelperCCW">Gegen den Uhrzeigersinn drehen:</system:String>
   <system:String x:Key="Text.RotateHelperCW">Im Uhrzeiger sinn drehen:</system:String>
   <system:String x:Key="Text.Rotation">Drehung</system:String>
@@ -59,10 +59,10 @@
   <system:String x:Key="Text.SaveList">Liste in JSON-Datei speichern</system:String>
   <system:String x:Key="Text.Scale">Skala</system:String>
   <system:String x:Key="Text.Screw">Schraube</system:String>
-  <system:String x:Key="Text.SelectedItemProperties">Ausgewählte Eigenschaften</system:String>
+  <system:String x:Key="Text.SelectedItemProperties">Ausgewählte Formeigenschaften</system:String>
   <system:String x:Key="Text.Settings">Einstellungen</system:String>
   <system:String x:Key="Text.SettingsWindow">Zum separaten Fenster abdocken</system:String>
-  <system:String x:Key="Text.ShowLabels">Musterbeschriftungen anzeigen</system:String>
+  <system:String x:Key="Text.ShowLabels">Formbeschriftungen anzeigen</system:String>
   <system:String x:Key="Text.Size">Größe</system:String>
   <system:String x:Key="Text.Spacing">Abstand</system:String>
   <system:String x:Key="Text.Spider">Spinne</system:String>
@@ -76,7 +76,7 @@
   <system:String x:Key="Text.FocuserTube">Fokussierrohr</system:String>
   <system:String x:Key="Text.StayOnTop">Das Fenster bleibt immer oben</system:String>
   <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>
-  <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung beim ausgewählten Element anzeigen</system:String>
+  <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung bei ausgewählter Form anzeigen</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Thema</system:String>
   <system:String x:Key="Text.KeyboardShortcuts">Tastatürkürzel</system:String>
   <system:String x:Key="Text.TwitterWebSite">Öffnen Sie die Twitter-Website des Autors</system:String>
@@ -89,7 +89,7 @@
   <system:String x:Key="Text.MainWindowOpacity">Opazität</system:String>
   <system:String x:Key="Text.GitHubIssue">Probleme</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Öffnen Sie eine neue Ausgabe auf GitHub</system:String>
-  <system:String x:Key="Text.SelectedPatternOpacity">Opazität</system:String>
+  <system:String x:Key="Text.SelectedOpacity">Opazität</system:String>
   <system:String x:Key="Text.WebCamStream">Kamera-Videostream</system:String>
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stoppen</system:String>

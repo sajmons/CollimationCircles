@@ -350,7 +350,7 @@ namespace CollimationCircles.ViewModels
             Items.Add(item);
             SelectedIndex = Items.Count - 1;
 
-            logger.Info($"Added pattern {item.Label}");
+            logger.Info($"Added shape {item.Label}");
         }
 
         [RelayCommand]

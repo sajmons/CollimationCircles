@@ -3,7 +3,7 @@
                     xmlns:system="clr-namespace:System;assembly=System.Runtime">
   <system:String x:Key="Text.About">O ...</system:String>
   <system:String x:Key="Text.Add">Dodaj</system:String>
-  <system:String x:Key="Text.AddNewItem">Dodaj v seznam</system:String>
+  <system:String x:Key="Text.AddNewItem">Dodaj novo obliko</system:String>
   <system:String x:Key="Text.AllFiles">Vse datoteke</system:String>
   <system:String x:Key="Text.AllItemsControls">Lastnosti vseh</system:String>
   <system:String x:Key="Text.AppDescription">Aplikacija za elektronsko podprto kolimacijo teleskopa © 2023 Simon Šander</system:String>
@@ -38,7 +38,7 @@
   <system:String x:Key="Text.JSONDocuments">JSON Dokumenti</system:String>
   <system:String x:Key="Text.Label">Opis</system:String>
   <system:String x:Key="Text.LabelSize">Velikost nazivov</system:String>
-  <system:String x:Key="Text.ListOfItems">Seznam pomočnikov</system:String>
+  <system:String x:Key="Text.ListOfItems">Seznam oblik</system:String>
   <system:String x:Key="Text.LoadList">Naloži seznam iz JSON datoteke</system:String>
   <system:String x:Key="Text.NewVersion">Nova verzija</system:String>
   <system:String x:Key="Text.NewVersionDownload">Na voljo je nova verzija {0}! Jo želite prenesti?</system:String>
@@ -76,7 +76,7 @@
   <system:String x:Key="Text.FocuserTube">Fokuser</system:String>
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
-  <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako pri izbranem elementu</system:String>
+  <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako izbranega</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>
   <system:String x:Key="Text.KeyboardShortcuts">Bližnjice na tipkovnici</system:String>
   <system:String x:Key="Text.TwitterWebSite">Avtorjeva Twitter spletna stran</system:String>
@@ -89,7 +89,7 @@
   <system:String x:Key="Text.MainWindowOpacity">Prosojnost</system:String>
   <system:String x:Key="Text.GitHubIssue">Prijavi težavo</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Prijavi težavo na GitHub</system:String>
-  <system:String x:Key="Text.SelectedPatternOpacity">Prosojnost</system:String>
+  <system:String x:Key="Text.SelectedOpacity">Prosojnost</system:String>
   <system:String x:Key="Text.WebCamStream">Video tok kamere</system:String>
   <system:String x:Key="Text.Start">Začni</system:String>
   <system:String x:Key="Text.Stop">Ustavi</system:String>

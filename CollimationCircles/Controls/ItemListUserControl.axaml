@@ -198,7 +198,7 @@
           Columns="2">
           <TextBlock
             VerticalAlignment="Bottom"
-            Text="{DynamicResource Text.SelectedPatternOpacity}"/>
+            Text="{DynamicResource Text.SelectedOpacity}"/>
           <NumericUpDown
             Increment="0.1"
             Value="{ReflectionBinding #list.SelectedItem.Opacity}"

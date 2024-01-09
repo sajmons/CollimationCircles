@@ -161,7 +161,7 @@ namespace CollimationCircles.Models
 
                             var pVal = Property.GetPropValue(this, e.PropertyName);
 
-                            logger.Info($"Pattern '{vm.SelectedItem.Label}' property '{e.PropertyName}' changed to '{pVal}'");
+                            logger.Info($"Shape '{vm.SelectedItem.Label}' property '{e.PropertyName}' changed to '{pVal}'");
                         }                        
                     }
                     break;
