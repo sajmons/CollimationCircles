@@ -74,6 +74,7 @@
   <system:String x:Key="Text.ItemColor">Barva</system:String>
   <system:String x:Key="Text.Secondary">Sekundarni</system:String>
   <system:String x:Key="Text.FocuserTube">Fokuser</system:String>
+  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako izbranega</system:String>

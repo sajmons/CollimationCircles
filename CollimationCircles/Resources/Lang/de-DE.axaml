@@ -74,6 +74,7 @@
   <system:String x:Key="Text.ItemColor">Farbe</system:String>
   <system:String x:Key="Text.Secondary">Sekundär</system:String>
   <system:String x:Key="Text.FocuserTube">Fokussierrohr</system:String>
+  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>  
   <system:String x:Key="Text.StayOnTop">Das Fenster bleibt immer oben</system:String>
   <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung bei ausgewählter Form anzeigen</system:String>
