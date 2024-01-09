@@ -9,7 +9,8 @@
         xmlns:vm="using:CollimationCircles.ViewModels"
         x:DataType="vm:AboutViewModel"
         Width="600" Height="190"
-        Icon="/Resources/Images/icon_256px.ico">
+        Icon="/Resources/Images/icon_256px.ico"
+        WindowStartupLocation="CenterScreen">
   <StackPanel
     Orientation="Vertical">
     <controls:AboutTabUserControl />
