@@ -64,9 +64,9 @@ namespace CollimationCircles.ViewModels
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
-            this.settingsViewModel = settingsViewModel;
+            this.settingsViewModel = settingsViewModel;            
 
-            LocalConnectionPossible = AppService.IsPackageInstalled("libcamera").GetAwaiter().GetResult();
+            LocalConnectionPossible = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
 
             address = LocalConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
             pathAndQuery = string.Empty;
@@ -91,7 +91,7 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
             ButtonTitle = DynRes.TryGetString("Start");
-        }
+        }        
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
         {

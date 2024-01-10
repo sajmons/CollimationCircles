@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using CollimationCircles.Services;
 using System;
 
 namespace CollimationCircles
@@ -15,8 +16,15 @@ namespace CollimationCircles
         {
             try
             {
-                BuildAvaloniaApp()
-                .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
+                if (AppService.CheckRequirements())
+                {
+                    BuildAvaloniaApp()
+                    .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
+                }
+                else
+                {
+                    throw new Exception("Application requirements are not met. See application log for more information.");
+                }
             }
             catch (Exception ex)
             {
@@ -25,7 +33,7 @@ namespace CollimationCircles
                 //var ds = Ioc.Default.GetService<IDialogService>();
                 //var vm = Ioc.Default.GetService<MainViewModel>();
                 //ds?.ShowMessageBoxAsync(vm, e.Message, "Error");                
-                logger.Fatal(ex.Message);                
+                logger.Fatal(ex.Message);
                 throw;
             }
             finally

@@ -17,6 +17,11 @@ public class AppService : IAppService
     private readonly string owner = "sajmons";
     private readonly string reponame = "CollimationCircles";
 
+    public const string LIBCAMERA_VID = "libcamera-vid";
+    public const string LIBCAMERA_APPS = "libcamera-apps";
+    public const string LIBVLC = "vlc";
+    public const string LIBVLC_DEV = "libvlc-dev";
+
     public string WebPage => "https://saimons-astronomy.webador.com/software/collimation-circles";
     public string ContactPage => "https://saimons-astronomy.webador.com/about";
     public string GitHubPage => "https://github.com/sajmons/CollimationCircles";
@@ -125,7 +130,7 @@ public class AppService : IAppService
         if (OperatingSystem.IsMacOS())
             os = "osx";
 
-        return $"{os}-{System.Runtime.InteropServices.RuntimeInformation.ProcessArchitecture}".ToLower() ?? null;
+        return $"{os}-{RuntimeInformation.ProcessArchitecture}".ToLower() ?? null;
     }
 
     public async Task OpenFileBrowser(string path)
@@ -280,9 +285,22 @@ public class AppService : IAppService
         var tcs = new TaskCompletionSource<Process>();
 
         var result = StartProcess(
-            "libcamera-vid", 
+            LIBCAMERA_VID, 
             $"-t 0 --inline --nopreview --listen -o tcp://{address}");        
 
         return tcs.Task;
+    }
+
+    public static bool CheckRequirements()
+    {
+        bool result = true;
+
+        if (OperatingSystem.IsLinux())
+        {
+            result &= IsPackageInstalled(LIBVLC).GetAwaiter().GetResult();
+            result &= IsPackageInstalled(LIBVLC_DEV).GetAwaiter().GetResult();
+        }
+
+        return result;
     }
 }
