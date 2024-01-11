@@ -60,11 +60,13 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private int cameraStreamTimeout = 1000;
 
-
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
+
+            PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
+            CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
 
             LocalConnectionPossible = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
 
@@ -90,7 +92,7 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
-            ButtonTitle = DynRes.TryGetString("Start");
+            ButtonTitle = DynRes.TryGetString("Start");            
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)

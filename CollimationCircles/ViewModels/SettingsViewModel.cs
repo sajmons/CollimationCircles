@@ -559,6 +559,7 @@ namespace CollimationCircles.ViewModels
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
+                    CameraStreamTimeout = vm.CameraStreamTimeout;
 
                     if (!DockInMainWindow)
                     {
@@ -685,6 +686,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(ShowApplicationLog):
                 case nameof(ShowKeyboardShortcuts):
                 case nameof(SelectedLanguage):
+                case nameof(CameraStreamTimeout):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
