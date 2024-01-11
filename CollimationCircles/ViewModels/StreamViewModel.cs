@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Avalonia.Threading;
 using CollimationCircles.Helper;
 using CollimationCircles.Services;
@@ -15,7 +13,7 @@ namespace CollimationCircles.ViewModels
     public partial class StreamViewModel : BaseViewModel
     {
         const string defaultProtocol = "tcp/h264";
-        const string defaultLocalAddress = "127.0.0.1";
+        const string defaultLocalAddress = "0.0.0.0";
         const string defaultRemoteAddress = "192.168.1.174";
         const string defaultPort = "8080";
 
@@ -31,7 +29,7 @@ namespace CollimationCircles.ViewModels
 
         private string address;
 
-        private string port = $":{defaultPort}";
+        private string port = defaultPort;
 
         private string pathAndQuery;
 
@@ -59,12 +57,11 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool localConnectionPossible = false;
 
-        Process? proc;
 
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
-            this.settingsViewModel = settingsViewModel;            
+            this.settingsViewModel = settingsViewModel;
 
             LocalConnectionPossible = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
 
@@ -91,31 +88,40 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
             ButtonTitle = DynRes.TryGetString("Start");
-        }        
+        }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
         {
-            logger.Info(e.Message);
+            logger.Debug(e.Message);
         }
 
-        private async Task Play()
+        private void Play()
         {
             if (!string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address))
             {
                 if (LocalConnectionPossible)
                 {
-                    proc = await AppService.StartTCPCameraStream($"0.0.0.0:{port}");
+                    logger.Info($"Just in case kill '{AppService.LIBCAMERA_VID}' process");
+                    AppService.ExecuteCommand("pkill", [AppService.LIBCAMERA_VID]);
+
+                    // proc = await AppService.StartTCPCameraStream($"0.0.0.0:{port}");
+                    logger.Info("Starting camera video stream");
+                    AppService.ExecuteCommand(
+                        AppService.LIBCAMERA_VID,
+                        [$"-t", "0", "--inline", "--nopreview", "--listen", "-o", $"tcp://{defaultLocalAddress}:{port}"], () =>
+                        {
+                            
+                        }, 1000);
+                    logger.Info("Camera video stream started");
                 }
-                else
-                {
-                    MediaPlayerPlay();
-                }
+                
+                MediaPlayerPlay();                
             }
         }
 
         private void MediaPlayerPlay()
         {
-            string mrl = $"{protocol}://{address}{port}{pathAndQuery}";
+            string mrl = GetFullUrlFromParts();
 
             string[] mediaAdditionalOptions = [
                 //$"--osd",
@@ -137,7 +143,7 @@ namespace CollimationCircles.ViewModels
 
         private void MediaPlayer_Opening(object? sender, EventArgs e)
         {
-            logger.Info($"MediaPlayer opening");
+            logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
             ButtonTitle = DynRes.TryGetString("Stop");
@@ -146,7 +152,7 @@ namespace CollimationCircles.ViewModels
 
         private void MediaPlayer_Playing(object? sender, EventArgs e)
         {
-            logger.Info($"MediaPlayer playing");
+            logger.Trace($"MediaPlayer playing");
             IsPlaying = MediaPlayer.IsPlaying;
 
             //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Enable, 1);
@@ -156,7 +162,7 @@ namespace CollimationCircles.ViewModels
 
         private void MediaPlayer_Stopped(object? sender, EventArgs e)
         {
-            logger.Info($"MediaPlayer stopped");
+            logger.Trace($"MediaPlayer stopped");
 
             CloseWebCamStream();
             ButtonTitle = DynRes.TryGetString("Start");
@@ -164,13 +170,13 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
-        private async Task PlayPause()
+        private void PlayPause()
         {
             if (MediaPlayer != null)
             {
                 if (!MediaPlayer.IsPlaying)
                 {
-                    await Play();
+                    Play();
                 }
                 else
                 {
@@ -184,7 +190,7 @@ namespace CollimationCircles.ViewModels
             Dispatcher.UIThread.Post(() =>
             {
                 dialogService?.Show<StreamViewModel>(null, this);
-                logger.Info($"Opened web camera stream window");
+                logger.Trace($"Opened web camera stream window");
             });
         }
 
@@ -193,10 +199,7 @@ namespace CollimationCircles.ViewModels
             Dispatcher.UIThread.Post(() =>
             {
                 dialogService?.Close(this);
-                logger.Info($"Closed web camera stream window");
-
-                proc?.Close();
-                logger.Info($"Closed LibCamera process");
+                logger.Trace($"Closed web camera stream window");
             });
         }
 
@@ -205,8 +208,9 @@ namespace CollimationCircles.ViewModels
             string newRemoteAddress = address ?? defaultRemoteAddress;
             string addr = LocalConnectionPossible ? defaultLocalAddress : newRemoteAddress;
             string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
+            string prt = string.IsNullOrWhiteSpace(port) ? "" : $":{port}";
 
-            return $"{protocol}://{addr}{port}{pth}";
+            return $"{protocol}://{addr}{prt}{pth}";
         }
 
         partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)
@@ -222,13 +226,13 @@ namespace CollimationCircles.ViewModels
 
             if (m.Success)
             {
-                logger.Info($"Media URL parsed sucessfully '{FullAddress}'");
+                logger.Debug($"Media URL parsed sucessfully '{FullAddress}'");
                 protocol = m.Groups["protocol"].Value;
                 address = m.Groups["host"].Value;
 
                 string p = m.Groups["port"].Value;
 
-                port = string.IsNullOrWhiteSpace(p) ? string.Empty : $":{port}";
+                port = string.IsNullOrWhiteSpace(p) ? string.Empty : $"{p}";
                 pathAndQuery = m.Groups["path"].Value;
             }
             else

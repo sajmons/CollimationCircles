@@ -296,58 +296,7 @@ public class AppService
         }
 
         return tcs.Task;
-    }
-
-    //public static void StartProcess(string fileName, string arguments)
-    //{
-    //    try
-    //    {
-    //        ProcessStartInfo startInfo = new()
-    //        {
-    //            FileName = fileName,
-    //            Arguments = arguments
-    //        };
-
-    //        Process proc = new()
-    //        {
-    //            StartInfo = startInfo
-    //        };
-
-    //        logger.Debug($"Starting proces '{fileName} {arguments}'");
-
-    //        if (proc.Start())
-    //        {
-    //            logger.Debug($"Proces '{fileName} {arguments}' started");
-    //        }
-    //        else
-    //        {
-    //            logger.Warn($"Failed to start process '{fileName} {arguments}'");
-    //        }
-    //    }
-    //    catch (Exception exc)
-    //    {
-    //        logger.Error($"Failed to start process '{fileName} {arguments}' '{exc.Message}'");
-    //    }
-    //}
-
-    //public static void StartTCPCameraStream(string address)
-    //{
-    //    StartProcess(
-    //        LIBCAMERA_VID,
-    //        $"-t 0 --inline --nopreview --listen -o tcp://{address}");
-
-    //    //await ExecuteCommand(LIBCAMERA_VID, [$"-t", "0", "--inline", "", "--nopreview", "", "--listen", "", "-o", $"tcp://{address}"]);
-
-    //    //var t1 = Task.Run(async () =>
-    //    //{
-    //    //    var (exitCode, output, process) = await ExecuteCommand(LIBCAMERA_VID,
-    //    //        [$"-t", "0", "--inline", "--nopreview", "--listen", "-o", $"tcp://{address}"], 0);
-
-    //    //    tcs.TrySetResult(process);
-    //    //});
-
-    //    //t1.Wait();
-    //}
+    }    
 
     public static bool CheckRequirements()
     {
