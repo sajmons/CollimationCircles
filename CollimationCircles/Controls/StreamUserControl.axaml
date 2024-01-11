@@ -14,7 +14,7 @@
     <TextBox
       Text="{Binding FullAddress, Mode=TwoWay}"
       IsEnabled="{Binding !#autoStartCamStream.IsChecked}"
-      VerticalAlignment="Center"/>
+      VerticalAlignment="Center"/>    
     <Button
       HorizontalContentAlignment="Center"
       HorizontalAlignment="Stretch"
@@ -32,9 +32,21 @@
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Help}" />
     </Grid>
+    <StackPanel
+          Orientation="Vertical"
+          IsEnabled="{Binding LocalConnectionPossible}">
+      <TextBlock
+        VerticalAlignment="Bottom"
+        TextWrapping="WrapWithOverflow"
+        Text="{DynamicResource Text.CameraStreamTimeout}" />
+      <NumericUpDown
+        Increment="100"
+        Value="{Binding CameraStreamTimeout}"
+        Minimum="100" Maximum="5000"/>
+    </StackPanel>
     <CheckBox
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"
-      IsChecked="{Binding PinVideoWindowToMainWindow}" />
+      IsChecked="{Binding PinVideoWindowToMainWindow}" />    
 
   </StackPanel>
 

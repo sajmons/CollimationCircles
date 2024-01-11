@@ -57,6 +57,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool localConnectionPossible = false;
 
+        [ObservableProperty]
+        private int cameraStreamTimeout = 1000;
+
 
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
@@ -111,7 +114,7 @@ namespace CollimationCircles.ViewModels
                         [$"-t", "0", "--inline", "--nopreview", "--listen", "-o", $"tcp://{defaultLocalAddress}:{port}"], () =>
                         {
                             
-                        }, 1000);
+                        }, CameraStreamTimeout);
                     logger.Info("Camera video stream started");
                 }
                 
@@ -216,6 +219,11 @@ namespace CollimationCircles.ViewModels
         partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)
         {
             settingsViewModel.PinVideoWindowToMainWindow = newValue;
+        }
+
+        partial void OnCameraStreamTimeoutChanged(int oldValue, int newValue)
+        {            
+            settingsViewModel.CameraStreamTimeout = newValue;
         }
 
         partial void OnFullAddressChanged(string? oldValue, string newValue)

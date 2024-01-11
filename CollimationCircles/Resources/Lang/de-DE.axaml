@@ -112,4 +112,5 @@
   <system:String x:Key="Text.DecreaseInclination">Neigung verringern</system:String>
   <system:String x:Key="Text.PayPalDonation">Mit dieser Spende unterstützen Sie mich bei der Weiterentwicklung der Collimation Circles-Anwendung. Danke schön!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
+  <system:String x:Key="Text.CameraStreamTimeout">Zeitüberschreitung beim Warten auf den Videostream</system:String>
 </ResourceDictionary>

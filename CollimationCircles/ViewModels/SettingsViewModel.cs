@@ -177,6 +177,11 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private Dictionary<string, string> shapeShortcuts = [];
 
+        [JsonProperty]
+        [ObservableProperty]
+        [Range(100, 5000)]
+        private int cameraStreamTimeout = 1000;
+
         public SettingsViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
