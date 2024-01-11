@@ -181,7 +181,7 @@ public class AppService
             }
         }
 
-        using Process folderOpener = new Process();
+        using Process folderOpener = new();
         folderOpener.StartInfo.FileName = System.IO.Path.GetDirectoryName(path);
         folderOpener.StartInfo.UseShellExecute = true;
         folderOpener.Start();

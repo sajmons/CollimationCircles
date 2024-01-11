@@ -180,7 +180,7 @@ namespace CollimationCircles.ViewModels
         public SettingsViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-
+            
             Initialize();
         }
 
@@ -382,7 +382,7 @@ namespace CollimationCircles.ViewModels
             Items.Add(item);
             SelectedIndex = Items.Count - 1;
 
-            logger.Info($"Added shape {item.Label}");
+            logger.Debug($"Added shape {item.Label}");
         }
 
         [RelayCommand]
@@ -623,38 +623,37 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void OpenContactWebPage()
+        internal static void OpenContactWebPage()
         {
             AppService.OpenUrl(AppService.ContactPage);
         }
 
         [RelayCommand]
-        internal void OpenGitHubPage()
+        internal static void OpenGitHubPage()
         {
             AppService.OpenUrl(AppService.GitHubPage);
         }
 
         [RelayCommand]
-        internal void OpenTwitter()
+        internal static void OpenTwitter()
         {
             AppService.OpenUrl(AppService.TwitterPage);
         }
 
         [RelayCommand]
-        internal void OpenYouTubeChannel()
+        internal static void OpenYouTubeChannel()
         {
             AppService.OpenUrl(AppService.YouTubeChannel);
         }
 
         [RelayCommand]
-        internal void OpenPatreonWebSite()
+        internal static void OpenPatreonWebSite()
         {
             AppService.OpenUrl(AppService.PatreonWebPage);
         }
 
-
         [RelayCommand]
-        internal void GitHubIssue()
+        internal static void GitHubIssue()
         {
             AppService.OpenUrl(AppService.GitHubIssue);
         }
@@ -688,7 +687,7 @@ namespace CollimationCircles.ViewModels
 
                         var pVal = Property.GetPropValue(this, e.PropertyName);
 
-                        logger.Info($"{e.PropertyName} changed to '{pVal}'");
+                        logger.Debug($"{e.PropertyName} changed to '{pVal}'");
                     }
                     break;
             }
@@ -698,14 +697,11 @@ namespace CollimationCircles.ViewModels
         {
             oldAllwysOnTop = AlwaysOnTop;
             AlwaysOnTop = false;
-
-            logger.Info($"Always on top dissabled by application");
         }
 
         public void RestoreAlwaysOnTop()
         {
             AlwaysOnTop = oldAllwysOnTop;
-            logger.Info($"Always on top restored by application");
         }
     }
 }
