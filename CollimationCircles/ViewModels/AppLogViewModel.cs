@@ -24,13 +24,10 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool showApplicationLog = false;
 
-        private readonly IAppService appService;
-
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public AppLogViewModel(SettingsViewModel settingsViewModel, IAppService appService)
-        {
-            this.appService = appService;
+        public AppLogViewModel(SettingsViewModel settingsViewModel)
+        {            
             ShowApplicationLog = settingsViewModel.ShowApplicationLog;
 
             memoryTarget = (MemoryTarget)LogManager.Configuration.FindTargetByName("memory");
@@ -54,13 +51,13 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal async Task ShowLogFileLocation()
+        internal static async Task ShowLogFileLocation()
         {
             string logPath = AppDomain.CurrentDomain.BaseDirectory + "logs";
 
             logger.Info($"Open log file path in file browser '{logPath}'");
 
-            await appService.OpenFileBrowser(logPath);
+            await AppService.OpenFileBrowser(logPath);
         }
     }
 }

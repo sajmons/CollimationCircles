@@ -28,7 +28,6 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly IDialogService dialogService;
-        private readonly IAppService appService;
 
         [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
@@ -178,10 +177,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private Dictionary<string, string> shapeShortcuts = [];
 
-        public SettingsViewModel(IDialogService dialogService, IAppService appService)
+        public SettingsViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-            this.appService = appService;
 
             Initialize();
         }
@@ -193,7 +191,7 @@ namespace CollimationCircles.ViewModels
             InitializeColors();
             InitializeKeyboardShortcuts();
 
-            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersion()}";
         }
 
         private void InitializeKeyboardShortcuts()
@@ -320,7 +318,7 @@ namespace CollimationCircles.ViewModels
             ShowMarkAtSelectedItem = true;
             ShowApplicationLog = false;
 
-            Version = appService.GetAppVersion();
+            Version = AppService.GetAppVersion();
 
             logger.Info("Settings reset to default values");
         }
@@ -411,7 +409,7 @@ namespace CollimationCircles.ViewModels
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
-                appService.SaveState(this, path?.Path?.LocalPath);
+                AppService.SaveState(this, path?.Path?.LocalPath);
             }
         }
 
@@ -480,9 +478,9 @@ namespace CollimationCircles.ViewModels
         {
             logger.Info($"Checking for application update");
 
-            string appVersion = appService.GetAppVersion();
+            string appVersion = AppService.GetAppVersion();
 
-            var (success, result, newVersion) = await appService.DownloadUrl(appVersion);
+            var (success, result, newVersion) = await AppService.DownloadUrl(appVersion);
 
             if (success && !string.IsNullOrWhiteSpace(result))
             {
@@ -495,7 +493,7 @@ namespace CollimationCircles.ViewModels
 
                 if (dialogResult is true)
                 {
-                    OpenUrl(result);
+                    AppService.OpenUrl(result);
                 }
 
                 RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
@@ -510,14 +508,14 @@ namespace CollimationCircles.ViewModels
 
         internal void SaveState()
         {
-            appService.SaveState(this);
+            AppService.SaveState(this);
         }
 
         internal bool LoadState(string? path = null)
         {
             try
             {
-                SettingsViewModel? vm = appService.LoadState<SettingsViewModel>(path);
+                SettingsViewModel? vm = AppService.LoadState<SettingsViewModel>(path);
 
                 if (vm != null && vm.Items != null)
                 {
@@ -542,7 +540,7 @@ namespace CollimationCircles.ViewModels
                     AlwaysOnTop = vm.AlwaysOnTop;
                     DockInMainWindow = vm.DockInMainWindow;
                     ShowMarkAtSelectedItem = vm.ShowMarkAtSelectedItem;
-                    Version = vm.Version ?? appService.GetAppVersion();
+                    Version = vm.Version ?? AppService.GetAppVersion();
                     GlobalOffsetX = vm.GlobalOffsetX;
                     GlobalOffsetY = vm.GlobalOffsetY;
                     MainWindowOpacity = vm.MainWindowOpacity;
@@ -627,38 +625,38 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void OpenContactWebPage()
         {
-            OpenUrl(appService.ContactPage);
+            AppService.OpenUrl(AppService.ContactPage);
         }
 
         [RelayCommand]
         internal void OpenGitHubPage()
         {
-            OpenUrl(appService.GitHubPage);
+            AppService.OpenUrl(AppService.GitHubPage);
         }
 
         [RelayCommand]
         internal void OpenTwitter()
         {
-            OpenUrl(appService.TwitterPage);
+            AppService.OpenUrl(AppService.TwitterPage);
         }
 
         [RelayCommand]
         internal void OpenYouTubeChannel()
         {
-            OpenUrl(appService.YouTubeChannel);
+            AppService.OpenUrl(AppService.YouTubeChannel);
         }
 
         [RelayCommand]
         internal void OpenPatreonWebSite()
         {
-            OpenUrl(appService.PatreonWebPage);
+            AppService.OpenUrl(AppService.PatreonWebPage);
         }
 
 
         [RelayCommand]
         internal void GitHubIssue()
         {
-            OpenUrl(appService.GitHubIssue);
+            AppService.OpenUrl(AppService.GitHubIssue);
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)

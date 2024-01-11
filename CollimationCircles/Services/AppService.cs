@@ -1,36 +1,38 @@
 ﻿using Newtonsoft.Json;
 using Octokit;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services;
-public class AppService : IAppService
+public class AppService
 {
     private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-    private const string stateFile = "appstate.json";
-    private readonly GitHubClient client = new(new ProductHeaderValue("CollimationCircles"));
-    private readonly string owner = "sajmons";
-    private readonly string reponame = "CollimationCircles";
+    private const string stateFile = "appstate.json";    
+    private static readonly string owner = "sajmons";
+    private static readonly string reponame = "CollimationCircles";
 
     public const string LIBCAMERA_VID = "libcamera-vid";
     public const string LIBCAMERA_APPS = "libcamera-apps";
-    public const string LIBVLC = "vlc";
+    public const string VLC = "vlc";
     public const string LIBVLC_DEV = "libvlc-dev";
 
-    public string WebPage => "https://saimons-astronomy.webador.com/software/collimation-circles";
-    public string ContactPage => "https://saimons-astronomy.webador.com/about";
-    public string GitHubPage => "https://github.com/sajmons/CollimationCircles";
-    public string TwitterPage => "https://twitter.com/saimons_art";
-    public string YouTubeChannel => "https://www.youtube.com/channel/UCz6iFL9ziUcWgs_n6n2gwZw";
-    public string GitHubIssue => "https://github.com/sajmons/CollimationCircles/issues/new";
-    public string PatreonWebPage => "https://www.patreon.com/SaimonsAstronomy";
+    public const string WebPage = "https://saimons-astronomy.webador.com/software/collimation-circles";
+    public const string ContactPage = "https://saimons-astronomy.webador.com/about";
+    public const string GitHubPage = "https://github.com/sajmons/CollimationCircles";
+    public const string TwitterPage = "https://twitter.com/saimons_art";
+    public const string YouTubeChannel = "https://www.youtube.com/channel/UCz6iFL9ziUcWgs_n6n2gwZw";
+    public const string GitHubIssue = "https://github.com/sajmons/CollimationCircles/issues/new";
+    public const string PatreonWebPage = "https://www.patreon.com/SaimonsAstronomy";
 
-    public string GetAppVersion()
+    public static string GetAppVersion()
     {
         var entryAssembly = Assembly.GetEntryAssembly();
 
@@ -39,12 +41,12 @@ public class AppService : IAppService
         return assemblyVersion?.ToString() ?? "0.0.0";
     }
 
-    public bool SameVersion(string v1, string v2)
+    public static bool SameVersion(string v1, string v2)
     {
         return new Version(v1) == new Version(v2);
     }
 
-    public T? Deserialize<T>(string jsonState)
+    public static T? Deserialize<T>(string jsonState)
     {
         return JsonConvert.DeserializeObject<T>(jsonState,
             new JsonSerializerSettings
@@ -54,7 +56,7 @@ public class AppService : IAppService
             });
     }
 
-    public string Serialize<T>(T obj)
+    public static string Serialize<T>(T obj)
     {
         return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
         {
@@ -62,7 +64,7 @@ public class AppService : IAppService
         });
     }
 
-    public T? LoadState<T>(string? fileName = null)
+    public static T? LoadState<T>(string? fileName = null)
     {
         logger.Info($"Loading application state from '{fileName ?? stateFile}'");
 
@@ -71,7 +73,7 @@ public class AppService : IAppService
         return Deserialize<T>(jsonState);
     }
 
-    public void SaveState<T>(T obj, string? fileName = null)
+    public static void SaveState<T>(T obj, string? fileName = null)
     {
         var jsonState = Serialize<T>(obj);
 
@@ -80,10 +82,12 @@ public class AppService : IAppService
         logger.Info($"Saving application state to '{fileName ?? stateFile}'");
     }
 
-    public async Task<(bool, string, string)> DownloadUrl(string currentVersion)
+    public static async Task<(bool, string, string)> DownloadUrl(string currentVersion)
     {
         try
         {
+            GitHubClient client = new(new ProductHeaderValue("CollimationCircles"));
+
             var release = await client.Repository.Release.GetLatest(owner, reponame);
 
             var gitHubVer = release.TagName.Split('-')[1];
@@ -133,7 +137,7 @@ public class AppService : IAppService
         return $"{os}-{RuntimeInformation.ProcessArchitecture}".ToLower() ?? null;
     }
 
-    public async Task OpenFileBrowser(string path)
+    public static async Task OpenFileBrowser(string path)
     {
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
@@ -188,108 +192,162 @@ public class AppService : IAppService
     {
         var tcs = new TaskCompletionSource<bool>();
 
-        var result = ExecuteCommand("dpkg", $"-s {package} | grep Status");
-
-        if (result.Result.Item2 == "Status: install ok installed")
+        var t1 = Task.Run(async () =>
         {
-            tcs.TrySetResult(true);
-        }
-        else
-        { 
-            tcs.TrySetResult(false);
-        }
+            // dpkg-query -W -f='${Status} ${Version}\n' vlc
+            var (exitCode, output, process) = await ExecuteCommand("dpkg-query", [$"-W", "-f=${Status}; ${Version}\n", $"{package}"]);            
+            tcs.TrySetResult(exitCode == 0 && output.StartsWith("install ok installed"));
+        });
+
+        t1.Wait();
 
         return tcs.Task;
     }
 
-    public static Task<(int, string)> ExecuteCommand(string fileName, string arguments)
+    public static Task<(int, string, Process)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
     {
-        var tcs = new TaskCompletionSource<(int, string)>();
+        var tcs = new TaskCompletionSource<(int, string, Process)>();
+
+        ProcessStartInfo startInfo = new()
+        {
+            FileName = fileName,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true            
+        };
+
+        using Process process = new()
+        {
+            StartInfo = startInfo
+        };
+
+        var argStr = string.Join(' ', arguments);
 
         try
         {
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = fileName,
-                Arguments = arguments
-            };
+            arguments.ForEach(startInfo.ArgumentList.Add);
 
-            Process proc = new()
-            {
-                StartInfo = startInfo
-            };
+            logger.Debug($"Executing command '{fileName} {argStr}'");
 
-            if (proc.Start())
-            {                
-                proc.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+            StringBuilder output = new();
+            StringBuilder error = new();
+
+            using AutoResetEvent outputWaitHandle = new(false);
+            using AutoResetEvent errorWaitHandle = new(false);
+
+            process.OutputDataReceived += (sender, e) =>
+            {
+                if (e.Data == null)
                 {
-                    logger.Info($"Command '{fileName}{arguments}' executed");
-                    tcs.TrySetResult((proc.ExitCode, e.Data ?? string.Empty));
-                };
+                    outputWaitHandle.Set();
+                }
+                else
+                {
+                    output.AppendLine(e.Data);
+                }
+            };
+
+            process.ErrorDataReceived += (sender, e) =>
+            {
+                if (e.Data == null)
+                {
+                    errorWaitHandle.Set();
+                }
+                else
+                {
+                    error.AppendLine(e.Data);
+                }
+            };
+
+            if (process.Start())
+            {
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+
+                if (process.WaitForExit(timeout) &&
+                    outputWaitHandle.WaitOne(timeout) &&
+                    errorWaitHandle.WaitOne(timeout))
+                {
+                    started?.Invoke();
+
+                    // Process completed. Check process.ExitCode and output here.
+                    string outputStr = $"{output}";
+                    logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}");
+                    tcs.TrySetResult((process.ExitCode, outputStr, process));
+                }
+                else
+                {
+                    // Timed out.
+                    logger.Warn($"Timeout '{fileName} {argStr}'");
+                    tcs.TrySetResult((process.ExitCode, string.Empty, process));
+                }
             }
             else
             {
-                logger.Info($"Failed to execute command '{fileName}{arguments}'");
-                tcs.TrySetResult((proc.ExitCode, string.Empty));
+                // Process failed to start
+                logger.Warn($"Failed to execute command '{fileName} {argStr}'");
+                tcs.TrySetResult((process.ExitCode, string.Empty, process));
             }
         }
         catch (Exception exc)
         {
-            logger.Info($"Failed to execute command '{fileName}{arguments}' '{exc.Message}'");
-            tcs.TrySetResult((-1, exc.Message));
+            logger.Error($"Failed to execute command '{fileName} {argStr}' '{exc.Message}'");
+            tcs.TrySetResult((-1, string.Empty, process));
         }
 
         return tcs.Task;
     }
 
-    public static Task<Process> StartProcess(string fileName, string arguments)
-    {
-        var tcs = new TaskCompletionSource<Process>();
+    //public static void StartProcess(string fileName, string arguments)
+    //{
+    //    try
+    //    {
+    //        ProcessStartInfo startInfo = new()
+    //        {
+    //            FileName = fileName,
+    //            Arguments = arguments
+    //        };
 
-        try
-        {
-            ProcessStartInfo startInfo = new()
-            {
-                FileName = fileName,
-                Arguments = arguments
-            };
+    //        Process proc = new()
+    //        {
+    //            StartInfo = startInfo
+    //        };
 
-            Process proc = new()
-            {
-                StartInfo = startInfo
-            };
+    //        logger.Debug($"Starting proces '{fileName} {arguments}'");
 
-            if (proc.Start())
-            {
-                proc.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
-                {
-                    logger.Info($"Command '{fileName}{arguments}' executed");
-                    tcs.TrySetResult(proc);
-                };
-            }
-            else
-            {
-                tcs.TrySetResult(proc);
-            }
-        }
-        catch (Exception exc)
-        {
-            tcs.TrySetException(exc);
-        }
+    //        if (proc.Start())
+    //        {
+    //            logger.Debug($"Proces '{fileName} {arguments}' started");
+    //        }
+    //        else
+    //        {
+    //            logger.Warn($"Failed to start process '{fileName} {arguments}'");
+    //        }
+    //    }
+    //    catch (Exception exc)
+    //    {
+    //        logger.Error($"Failed to start process '{fileName} {arguments}' '{exc.Message}'");
+    //    }
+    //}
 
-        return tcs.Task;
-    }
+    //public static void StartTCPCameraStream(string address)
+    //{
+    //    StartProcess(
+    //        LIBCAMERA_VID,
+    //        $"-t 0 --inline --nopreview --listen -o tcp://{address}");
 
-    public static Task<Process> StartTCPCameraStream(string address)
-    {
-        var tcs = new TaskCompletionSource<Process>();
+    //    //await ExecuteCommand(LIBCAMERA_VID, [$"-t", "0", "--inline", "", "--nopreview", "", "--listen", "", "-o", $"tcp://{address}"]);
 
-        var result = StartProcess(
-            LIBCAMERA_VID, 
-            $"-t 0 --inline --nopreview --listen -o tcp://{address}");        
+    //    //var t1 = Task.Run(async () =>
+    //    //{
+    //    //    var (exitCode, output, process) = await ExecuteCommand(LIBCAMERA_VID,
+    //    //        [$"-t", "0", "--inline", "--nopreview", "--listen", "-o", $"tcp://{address}"], 0);
 
-        return tcs.Task;
-    }
+    //    //    tcs.TrySetResult(process);
+    //    //});
+
+    //    //t1.Wait();
+    //}
 
     public static bool CheckRequirements()
     {
@@ -297,10 +355,40 @@ public class AppService : IAppService
 
         if (OperatingSystem.IsLinux())
         {
-            result &= IsPackageInstalled(LIBVLC).GetAwaiter().GetResult();
+            result &= IsPackageInstalled(VLC).GetAwaiter().GetResult();
             result &= IsPackageInstalled(LIBVLC_DEV).GetAwaiter().GetResult();
         }
 
         return result;
     }
+
+    public static void OpenUrl(string url)
+    {
+        logger.Trace($"Opening external url '{url}'");
+
+        try
+        {
+            Process.Start(url);
+        }
+        catch
+        {
+            // hack because of this: https://github.com/dotnet/corefx/issues/10361
+            if (OperatingSystem.IsWindows())
+            {
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                Process.Start("xdg-open", url);
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                Process.Start("open", url);
+            }
+            else
+            {
+                throw;
+            }
+        }
+    }    
 }

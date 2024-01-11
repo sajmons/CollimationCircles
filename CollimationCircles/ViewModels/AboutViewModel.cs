@@ -3,6 +3,7 @@ using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using System;
+using System.Web;
 
 namespace CollimationCircles.ViewModels
 {
@@ -10,22 +11,20 @@ namespace CollimationCircles.ViewModels
     {
         public bool? DialogResult => true;
         
-        private readonly IAppService appService;
         private readonly IDialogService dialogService;
 
 
-        public AboutViewModel(IAppService appService, IDialogService dialogService)
+        public AboutViewModel(IDialogService dialogService)
         {
-            this.appService = appService;
             this.dialogService = dialogService;
 
-            Title = $"{DynRes.TryGetString("About")} - {DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {appService?.GetAppVersion()}";
+            Title = $"{DynRes.TryGetString("About")} - {DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersion()}";
         }
 
         [RelayCommand]
-        internal void OpenPatreonWebSite()
+        internal static void OpenPatreonWebSite()
         {
-            OpenUrl(appService.PatreonWebPage);
+            AppService.OpenUrl(AppService.PatreonWebPage);
         }
 
         [RelayCommand]

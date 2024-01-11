@@ -51,7 +51,6 @@ public partial class App : Application
             .AddSingleton<AppLogViewModel>()
             .AddTransient<AboutViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
-            .AddTransient<IAppService, AppService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .BuildServiceProvider());
     }
