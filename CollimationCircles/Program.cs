@@ -23,7 +23,7 @@ namespace CollimationCircles
                 }
                 else
                 {
-                    throw new Exception("Application requirements are not met. See application log for more information.");
+                    throw new Exception("Application requirements are not met. Try to set 'minLevel' to 'Trace' for 'logconsole' in NLog.config, for more information.");
                 }
             }
             catch (Exception ex)
