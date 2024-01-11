@@ -155,13 +155,13 @@ namespace CollimationCircles.Models
 
                         SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
 
-                        if (vm is not null && vm.SelectedItem.Label is not null)
+                        if (vm is not null && vm?.SelectedItem?.Label is not null)
                         {
                             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(vm));
 
                             var pVal = Property.GetPropValue(this, e.PropertyName);
 
-                            logger.Info($"Shape '{vm.SelectedItem.Label}' property '{e.PropertyName}' changed to '{pVal}'");
+                            logger.Debug($"Shape '{vm.SelectedItem.Label}' property '{e.PropertyName}' changed to '{pVal}'");
                         }                        
                     }
                     break;
