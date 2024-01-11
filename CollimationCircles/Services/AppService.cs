@@ -15,7 +15,7 @@ namespace CollimationCircles.Services;
 public class AppService
 {
     private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-    private const string stateFile = "appstate.json";    
+    private const string stateFile = "appstate.json";
     private static readonly string owner = "sajmons";
     private static readonly string reponame = "CollimationCircles";
 
@@ -195,7 +195,7 @@ public class AppService
         var t1 = Task.Run(async () =>
         {
             // dpkg-query -W -f='${Status} ${Version}\n' vlc
-            var (exitCode, output, process) = await ExecuteCommand("dpkg-query", [$"-W", "-f=${Status}; ${Version}\n", $"{package}"]);            
+            var (exitCode, output, process) = await ExecuteCommand("dpkg-query", [$"-W", "-f=${Status}; ${Version}\n", $"{package}"]);
             tcs.TrySetResult(exitCode == 0 && output.StartsWith("install ok installed"));
         });
 
@@ -213,7 +213,7 @@ public class AppService
             FileName = fileName,
             UseShellExecute = false,
             RedirectStandardOutput = true,
-            RedirectStandardError = true            
+            RedirectStandardError = true
         };
 
         using Process process = new()
@@ -296,7 +296,7 @@ public class AppService
         }
 
         return tcs.Task;
-    }    
+    }
 
     public static bool CheckRequirements()
     {
@@ -315,29 +315,22 @@ public class AppService
     {
         logger.Trace($"Opening external url '{url}'");
 
-        try
+        if (OperatingSystem.IsWindows())
         {
-            Process.Start(url);
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
         }
-        catch
+        else if (OperatingSystem.IsLinux())
         {
-            // hack because of this: https://github.com/dotnet/corefx/issues/10361
-            if (OperatingSystem.IsWindows())
-            {
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                Process.Start("xdg-open", url);
-            }
-            else if (OperatingSystem.IsMacOS())
-            {
-                Process.Start("open", url);
-            }
-            else
-            {
-                throw;
-            }
+            Process.Start("xdg-open", url);
         }
-    }    
+        else if (OperatingSystem.IsMacOS())
+        {
+            Process.Start("open", url);
+        }
+
+        logger.Trace($"External url '{url}' opened");
+    }
 }
