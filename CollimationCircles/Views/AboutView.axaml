@@ -8,32 +8,37 @@
         Title="{Binding Title}"
         xmlns:vm="using:CollimationCircles.ViewModels"
         x:DataType="vm:AboutViewModel"
-        Width="600" Height="190"
+        Width="650" Height="190"
         Icon="/Resources/Images/icon_256px.ico"
         WindowStartupLocation="CenterScreen">
   <StackPanel
     Orientation="Vertical">
     <controls:AboutTabUserControl />
     <Separator/>
-    <Grid
-      Margin="0 12 0 0"
+    <StackPanel      
       HorizontalAlignment="Right"
-      ColumnDefinitions="100,12,100,12">
+      Orientation="Horizontal"
+      Spacing="12"
+      Margin="0 12 12 0">
 
       <Button
-        Width="100"
-        HorizontalAlignment="Stretch"
+        Width="120"
+        HorizontalContentAlignment="Center"
+        Command="{Binding PayPalDonateCommand}"
+        Content="{DynamicResource Text.PayPalDonate}"/>
+
+      <Button
+        Width="120"
         HorizontalContentAlignment="Center"
         Command="{Binding OpenPatreonWebSiteCommand}"
         ToolTip.Tip="{DynamicResource Text.PatreonWebSite}"
         Content="{DynamicResource Text.Patreon}"/>
 
       <Button
-        Grid.Column="2"
-        HorizontalAlignment="Stretch"
+        Width="120"
         HorizontalContentAlignment="Center"
         Content="{DynamicResource Text.Close}"
         Command="{Binding CloseDialogCommand}"/>
-    </Grid>
+    </StackPanel>
   </StackPanel>
 </Window>

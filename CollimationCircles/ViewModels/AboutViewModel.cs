@@ -33,5 +33,17 @@ namespace CollimationCircles.ViewModels
         {
             dialogService.Close(this);
         }
+
+        [RelayCommand]
+        internal static void PayPalDonate()
+        {
+            string text = DynRes.TryGetString("PayPalDonation");
+
+            string encodedText = HttpUtility.UrlEncode(text);
+
+            string url = $"https://www.paypal.com/donate/?business=DBUQU9W2LNS2G&no_recurring=0&item_name={encodedText}&currency_code=EUR";
+
+            AppService.OpenUrl(url);
+        }
     }
 }

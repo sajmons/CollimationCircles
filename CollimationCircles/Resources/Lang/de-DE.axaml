@@ -110,4 +110,6 @@
   <system:String x:Key="Text.Close">Schließen</system:String>
   <system:String x:Key="Text.IncreaseInclination">Neigung erhöhen</system:String>
   <system:String x:Key="Text.DecreaseInclination">Neigung verringern</system:String>
+  <system:String x:Key="Text.PayPalDonation">Mit dieser Spende unterstützen Sie mich bei der Weiterentwicklung der Collimation Circles-Anwendung. Danke schön!</system:String>
+  <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
 </ResourceDictionary>
