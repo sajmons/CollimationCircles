@@ -44,5 +44,7 @@ namespace CollimationCircles.Helper
 
         internal const int LabelSizeMin = 5;
         internal const int LabelSizeMax = 1000;
+
+        internal const string MurlRegEx = "^(?:(?<protocol>tcp\\/h264|http|https):\\/\\/)?(?<host>[\\w\\.-]+)(?::(?<port>\\d+))?(?<path>\\/\\S*)?$";
     }
 }

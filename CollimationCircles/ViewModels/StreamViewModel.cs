@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using Avalonia.Threading;
 using CollimationCircles.Helper;
@@ -23,6 +24,9 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
+        [RegularExpression(
+            Ranges.MurlRegEx,
+            ErrorMessage = "Invalid URL address")]
         private string fullAddress;
 
         private string protocol = defaultProtocol;
@@ -92,7 +96,7 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
-            ButtonTitle = DynRes.TryGetString("Start");            
+            ButtonTitle = DynRes.TryGetString("Start");
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
@@ -115,12 +119,12 @@ namespace CollimationCircles.ViewModels
                         AppService.LIBCAMERA_VID,
                         [$"-t", "0", "--inline", "--nopreview", "--listen", "-o", $"tcp://{defaultLocalAddress}:{port}"], () =>
                         {
-                            
+
                         }, CameraStreamTimeout);
                     logger.Info("Camera video stream started");
                 }
-                
-                MediaPlayerPlay();                
+
+                MediaPlayerPlay();
             }
         }
 
@@ -224,13 +228,13 @@ namespace CollimationCircles.ViewModels
         }
 
         partial void OnCameraStreamTimeoutChanged(int oldValue, int newValue)
-        {            
+        {
             settingsViewModel.CameraStreamTimeout = newValue;
         }
 
         partial void OnFullAddressChanged(string? oldValue, string newValue)
         {
-            string url = @"^(?:(?<protocol>tcp\/h264|http|https):\/\/)?(?<host>[\w\.-]+)(?::(?<port>\d+))?(?<path>\/\S*)?$";
+            string url = Ranges.MurlRegEx;
 
             Match m = Regex.Match(FullAddress, url);
 
