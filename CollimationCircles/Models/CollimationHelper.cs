@@ -31,13 +31,13 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(1, 10)]
+        [Range(Ranges.ThicknessMin, Ranges.ThicknessMax)]
         [NotifyDataErrorInfo]
         private int thickness = 1;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(1, 2000)]
+        [Range(Ranges.RadiusMin, Ranges.RadiusMax)]
         [NotifyDataErrorInfo]
         private double radius = 300;
 
@@ -75,31 +75,31 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(-180, 180)]
+        [Range(Ranges.RotationAngleMin, Ranges.RotationAngleMax)]
         [NotifyDataErrorInfo]
         private double rotationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(-90, 90)]
+        [Range(Ranges.InclinationAngleMin, Ranges.InclinationAngleMax)]
         [NotifyDataErrorInfo]
         private double inclinationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(1, 100)]
+        [Range(Ranges.SizeMin, Ranges.SizeMax)]
         [NotifyDataErrorInfo]
         private double size = 10;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(1, 10)]
+        [Range(Ranges.CountMin, Ranges.CountMax)]
         [NotifyDataErrorInfo]
         private int count = 4;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(1, 10)]
+        [Range(Ranges.CountMin, Ranges.CountMax)]
         [NotifyDataErrorInfo]
         private int maxCount = 10;
 
@@ -108,7 +108,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(0.1, 1)]
+        [Range(Ranges.OpacityMin, Ranges.OpacityMax)]
         [NotifyDataErrorInfo]
         private double opacity = 1;
 

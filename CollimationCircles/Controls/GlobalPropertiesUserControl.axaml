@@ -15,42 +15,49 @@
     <NumericUpDown
       Increment="0.01"
       Value="{Binding Scale}"
-      Minimum="0.0" Maximum="4.0" />
+      Minimum="{Binding ScaleMin}" 
+      Maximum="{Binding ScaleMax}" />
 
     <TextBlock
       VerticalAlignment="Center"
       Text="{DynamicResource Text.Rotation}"/>
     <NumericUpDown
       Value="{Binding RotationAngle}"
-      Minimum="-180" Maximum="180" />
+      Minimum="{Binding RotationAngleMin}"
+      Maximum="{Binding RotationAngleMax}" />
 
     <TextBlock
       VerticalAlignment="Center"
       Text="{DynamicResource Text.MainWindowOpacity}" />
     <NumericUpDown
       Value="{Binding MainWindowOpacity}"
-      Minimum="0.1" Maximum="1" Increment="0.1"/>
+      Minimum="{Binding OpacityMin}"
+      Maximum="{Binding OpacityMax}"
+      Increment="0.1"/>
 
     <TextBlock
       VerticalAlignment="Center"
       Text="{DynamicResource Text.GlobalOffsetX}" />
     <NumericUpDown
       Value="{Binding GlobalOffsetX}"
-      Minimum="-1000" Maximum="1000"/>
+      Minimum="{Binding OffsetMin}"
+      Maximum="{Binding OffsetMax}"/>
 
     <TextBlock
       VerticalAlignment="Center"
       Text="{DynamicResource Text.GlobalOffsetY}" />
     <NumericUpDown
       Value="{Binding GlobalOffsetY}"
-      Minimum="-1000" Maximum="1000"/>
+      Minimum="{Binding OffsetMin}"
+      Maximum="{Binding OffsetMax}"/>
 
     <TextBlock
       VerticalAlignment="Center"
       Text="{DynamicResource Text.LabelSize}" />
     <NumericUpDown
       Value="{Binding LabelSize}"
-      Minimum="5" Maximum="20"/>    
+      Minimum="{Binding LabelSizeMin}"
+      Maximum="{Binding LabelSizeMax}"/>    
 
   </UniformGrid>
 

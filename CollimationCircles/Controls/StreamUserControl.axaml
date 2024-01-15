@@ -42,7 +42,8 @@
       <NumericUpDown
         Increment="100"
         Value="{Binding CameraStreamTimeout}"
-        Minimum="100" Maximum="5000"/>
+        Minimum="{Binding CameraStreamTimeoutMin}"
+        Maximum="{Binding CameraStreamTimeoutMax}"/>
     </StackPanel>
     <CheckBox
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"

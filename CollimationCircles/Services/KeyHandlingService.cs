@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using CollimationCircles.Helper;
 using CollimationCircles.ViewModels;
 
 namespace CollimationCircles.Services
@@ -57,11 +58,13 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.R:
-                            rotation += 1;
+                            if (vm.RotationAngle < Ranges.RotationAngleMax)
+                                rotation += 1;
                             e.Handled = true;
                             break;
                         case Key.F:
-                            rotation -= 1;
+                            if (vm.RotationAngle > Ranges.RotationAngleMin)
+                                rotation -= 1;
                             e.Handled = true;
                             break;
                     }
@@ -86,13 +89,15 @@ namespace CollimationCircles.Services
                     {
                         case Key.Add:
                         case Key.OemPlus:
-                            increment += 0.01;
+                            if (vm.Scale < Ranges.ScaleMax)
+                                increment += 0.01;
                             e.Handled = true;
                             break;
 
                         case Key.Subtract:
                         case Key.OemMinus:
-                            increment -= 0.01;
+                            if (vm.Scale > Ranges.ScaleMin)
+                                increment -= 0.01;
                             e.Handled = true;
                             break;
                     }
@@ -114,12 +119,14 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.W:
-                            vm.SelectedItem.Radius += 1;
+                            if (vm.SelectedItem.Radius < Ranges.RadiusMax)
+                                vm.SelectedItem.Radius += 1;
                             e.Handled = true;
                             break;
 
                         case Key.S:
-                            vm.SelectedItem.Radius -= 1;
+                            if (vm.SelectedItem.Radius > Ranges.RadiusMin)
+                                vm.SelectedItem.Radius -= 1;
                             e.Handled = true;
                             break;
                     }
@@ -135,15 +142,17 @@ namespace CollimationCircles.Services
                 {
                     switch (e.Key)
                     {
-                        case Key.Q:
-                            vm.SelectedItem.RotationAngle -= 1;
+                        case Key.A:
+                            if (vm.SelectedItem.RotationAngle < Ranges.RotationAngleMax)
+                                vm.SelectedItem.RotationAngle += 1;
                             e.Handled = true;
                             break;
 
-                        case Key.A:
-                            vm.SelectedItem.RotationAngle += 1;
+                        case Key.Q:
+                            if (vm.SelectedItem.RotationAngle > Ranges.RotationAngleMin)
+                                vm.SelectedItem.RotationAngle -= 1;
                             e.Handled = true;
-                            break;
+                            break;                        
                     }
                 }
             }
@@ -164,7 +173,7 @@ namespace CollimationCircles.Services
                             break;
 
                         case Key.G:
-                            if (vm.SelectedItem.Count > 1)
+                            if (vm.SelectedItem.Count > Ranges.CountMin)
                                 vm.SelectedItem.Count -= 1;
                             e.Handled = true;
                             break;
@@ -182,12 +191,14 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.Z:
-                            vm.SelectedItem.Size += 1;
+                            if (vm.SelectedItem.Size < Ranges.SpacingMax)
+                                vm.SelectedItem.Size += 1;
                             e.Handled = true;
                             break;
 
                         case Key.H:
-                            vm.SelectedItem.Size -= 1;
+                            if (vm.SelectedItem.Size > Ranges.SpacingMin)
+                                vm.SelectedItem.Size -= 1;
                             e.Handled = true;
                             break;
                     }
@@ -204,12 +215,14 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.E:
-                            vm.SelectedItem.Thickness += 1;
+                            if (vm.SelectedItem.Thickness < Ranges.ThicknessMax)
+                                vm.SelectedItem.Thickness += 1;
                             e.Handled = true;
                             break;
 
                         case Key.D:
-                            vm.SelectedItem.Thickness -= 1;
+                            if (vm.SelectedItem.Thickness > Ranges.ThicknessMin)
+                                vm.SelectedItem.Thickness -= 1;
                             e.Handled = true;
                             break;
                     }
@@ -226,12 +239,14 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.U:
-                            vm.SelectedItem.InclinationAngle += .1;
+                            if (vm.SelectedItem.InclinationAngle < Ranges.InclinationAngleMax)
+                                vm.SelectedItem.InclinationAngle += .1;
                             e.Handled = true;
                             break;
 
                         case Key.J:
-                            vm.SelectedItem.InclinationAngle -= .1;
+                            if (vm.SelectedItem.InclinationAngle > Ranges.InclinationAngleMin)
+                                vm.SelectedItem.InclinationAngle -= .1;
                             e.Handled = true;
                             break;
                     }

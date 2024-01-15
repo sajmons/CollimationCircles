@@ -132,7 +132,8 @@
           <NumericUpDown
             Increment="1"
             Value="{ReflectionBinding #list.SelectedItem.Radius}"
-            Minimum="1" Maximum="2000"/>
+            Minimum="{Binding RadiusMin}"
+            Maximum="{Binding RadiusMax}"/>
         </UniformGrid>
 
         <UniformGrid
@@ -143,7 +144,8 @@
           <NumericUpDown
             Increment="1"
             Value="{ReflectionBinding #list.SelectedItem.Thickness}"
-            Minimum="1" Maximum="10"/>
+            Minimum="{Binding ThicknessMin}"
+            Maximum="{Binding ThicknessMax}"/>
         </UniformGrid>
 
         <UniformGrid
@@ -155,7 +157,8 @@
           <NumericUpDown
             Increment="{ReflectionBinding #list.SelectedItem.RotationIncrement}"
             Value="{ReflectionBinding #list.SelectedItem.RotationAngle}"
-            Minimum="-180" Maximum="180"/>
+            Minimum="{Binding RotationAngleMin}"
+            Maximum="{Binding RotationAngleMax}"/>
         </UniformGrid>
 
         <UniformGrid
@@ -167,7 +170,8 @@
           <NumericUpDown
             Increment="{ReflectionBinding #list.SelectedItem.InclinationIncrement}"
             Value="{ReflectionBinding #list.SelectedItem.InclinationAngle}"
-            Minimum="-180" Maximum="180"/>
+            Minimum="{Binding InclinationAngleMin}"
+            Maximum="{Binding InclinationAngleMax}"/>
         </UniformGrid>
 
         <UniformGrid
@@ -179,7 +183,8 @@
           <NumericUpDown
             Increment="1"
             Value="{ReflectionBinding #list.SelectedItem.Size}"
-            Minimum="1" Maximum="100"/>
+            Minimum="{Binding SpacingMin}"
+            Maximum="{Binding SpacingMax}" />
         </UniformGrid>
 
         <UniformGrid
@@ -191,7 +196,8 @@
           <NumericUpDown
             Increment="1"
             Value="{ReflectionBinding #list.SelectedItem.Count}"
-            Minimum="1" Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
+            Minimum="{Binding CountMin}" 
+            Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
         </UniformGrid>
 
         <UniformGrid
@@ -202,7 +208,8 @@
           <NumericUpDown
             Increment="0.1"
             Value="{ReflectionBinding #list.SelectedItem.Opacity}"
-            Minimum="0.1" Maximum="1" />
+            Minimum="{Binding OpacityMin}"
+            Maximum="{Binding OpacityMax}" />
         </UniformGrid>
 
         <UniformGrid
