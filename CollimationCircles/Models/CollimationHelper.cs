@@ -162,10 +162,10 @@ namespace CollimationCircles.Models
                             var pVal = Property.GetPropValue(this, e.PropertyName);
 
                             logger.Debug($"Shape '{vm.SelectedItem.Label}' property '{e.PropertyName}' changed to '{pVal}'");
-                        }                        
+                        }
                     }
                     break;
             }
-        }        
+        }
     }
 }

@@ -1,13 +1,13 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
-using Avalonia.Threading;
+﻿using Avalonia.Threading;
 using CollimationCircles.Helper;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace CollimationCircles.ViewModels
 {

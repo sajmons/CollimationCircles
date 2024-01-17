@@ -14,7 +14,7 @@ namespace CollimationCircles.ViewModels
         public string title = string.Empty;
 
         [ObservableProperty]
-        public string mainTitle = string.Empty;        
+        public string mainTitle = string.Empty;
 
         [RelayCommand]
         public static void Translate(string targetLanguage)
@@ -37,6 +37,6 @@ namespace CollimationCircles.ViewModels
                     }
                 );
             }
-        }        
+        }
     }
 }

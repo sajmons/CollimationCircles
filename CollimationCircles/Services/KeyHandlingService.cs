@@ -152,7 +152,7 @@ namespace CollimationCircles.Services
                             if (vm.SelectedItem.RotationAngle > Constraints.RotationAngleMin)
                                 vm.SelectedItem.RotationAngle -= 1;
                             e.Handled = true;
-                            break;                        
+                            break;
                     }
                 }
             }

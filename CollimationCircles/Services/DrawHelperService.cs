@@ -272,6 +272,6 @@ namespace CollimationCircles.Services
                 using (context.PushTransform(translate.Invert() * rotate2 * translate))
                     DrawBahtinovMask(context, vm, item, translate, i == 0);
             }
-        }        
+        }
     }
 }

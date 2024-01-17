@@ -2,7 +2,6 @@ using CollimationCircles.Helper;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
-using System;
 using System.Web;
 
 namespace CollimationCircles.ViewModels
@@ -10,7 +9,7 @@ namespace CollimationCircles.ViewModels
     internal partial class AboutViewModel : BaseViewModel, IModalDialogViewModel
     {
         public bool? DialogResult => true;
-        
+
         private readonly IDialogService dialogService;
 
 

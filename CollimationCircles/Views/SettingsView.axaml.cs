@@ -26,7 +26,7 @@ namespace CollimationCircles.Views
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                Topmost = m.Value.AlwaysOnTop;                
+                Topmost = m.Value.AlwaysOnTop;
             });
 
             khs = Ioc.Default.GetService<IKeyHandlingService>();
@@ -60,7 +60,7 @@ namespace CollimationCircles.Views
                     khs?.HandleMovement(desktop.MainWindow, vm, e);
                 }
             }
-            
+
             khs?.HandleGlobalScale(vm, e);
             khs?.HandleHelperRadius(vm, e);
             khs?.HandleGlobalRotation(vm, e);

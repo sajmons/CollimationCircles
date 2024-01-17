@@ -29,7 +29,7 @@ namespace CollimationCircles.Helper
             {
                 throw new Exception($"Resource key '{resourceKey}' not found.");
             }
-        }        
+        }
 
         public static string TryGet(string resourceKey)
         {

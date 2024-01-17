@@ -180,12 +180,12 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         [Range(Constraints.CameraStreamTimeoutMin, Constraints.CameraStreamTimeoutMax)]
-        private int cameraStreamTimeout = 700;        
+        private int cameraStreamTimeout = 700;
 
         public SettingsViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-            
+
             Initialize();
         }
 

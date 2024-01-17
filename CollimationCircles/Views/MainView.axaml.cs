@@ -70,7 +70,7 @@ namespace CollimationCircles.Views
                     {
                         dhs?.DrawShortcuts(context, vm.GlobalShortcuts, new Point(5, 0));
                         dhs?.DrawShortcuts(context, vm.ShapeShortcuts, new Point(5, 80));
-                    }                    
+                    }
 
                     if (items is not null)
                     {

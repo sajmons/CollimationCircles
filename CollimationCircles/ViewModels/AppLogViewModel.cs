@@ -27,7 +27,7 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         public AppLogViewModel(SettingsViewModel settingsViewModel)
-        {            
+        {
             ShowApplicationLog = settingsViewModel.ShowApplicationLog;
 
             memoryTarget = (MemoryTarget)LogManager.Configuration.FindTargetByName("memory");
