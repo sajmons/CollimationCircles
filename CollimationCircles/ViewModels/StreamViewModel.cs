@@ -48,10 +48,10 @@ namespace CollimationCircles.ViewModels
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsEnabled))]
+        [NotifyPropertyChangedFor(nameof(AreControlsEnabled))]
         private bool isPlaying = false;
 
-        public bool IsEnabled => !IsPlaying;
+        public bool AreControlsEnabled => (LocalConnectionPossible || LibCameraAvaliable) && !IsPlaying;
 
         private readonly SettingsViewModel settingsViewModel;
 
@@ -62,7 +62,10 @@ namespace CollimationCircles.ViewModels
         private bool localConnectionPossible = false;
 
         [ObservableProperty]
-        private int cameraStreamTimeout = 1000;
+        private bool libCameraAvaliable = false;
+
+        [ObservableProperty]
+        private int cameraStreamTimeout = 600;
 
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
@@ -72,7 +75,9 @@ namespace CollimationCircles.ViewModels
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
             CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
 
-            LocalConnectionPossible = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
+            LibCameraAvaliable = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
+
+            LocalConnectionPossible = LibCameraAvaliable;
 
             address = LocalConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
             pathAndQuery = string.Empty;
@@ -112,6 +117,7 @@ namespace CollimationCircles.ViewModels
                 {
                     logger.Info($"Just in case kill '{AppService.LIBCAMERA_VID}' process");
                     AppService.ExecuteCommand("pkill", [AppService.LIBCAMERA_VID]);
+                    //AppService.ExecuteCommand("fuser", ["-k", "/dev/video0"]);
 
                     // proc = await AppService.StartTCPCameraStream($"0.0.0.0:{port}");
                     logger.Info("Starting camera video stream");

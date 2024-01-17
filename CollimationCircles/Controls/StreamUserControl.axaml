@@ -31,7 +31,7 @@
       <CheckBox
         Name="autoStartCamStream"
         Content="{DynamicResource Text.AutoStartCameraStream}"
-        IsEnabled="{Binding LocalConnectionPossible}"
+        IsEnabled="{Binding AreControlsEnabled}"
         IsChecked="{Binding LocalConnectionPossible}" />
       <PathIcon
         Grid.Column="1"
@@ -40,8 +40,8 @@
         Data="{StaticResource IconData.Help}" />
     </Grid>
     <StackPanel
-          Orientation="Vertical"
-          IsEnabled="{Binding LocalConnectionPossible}">
+      Orientation="Vertical"
+      IsEnabled="{Binding AreControlsEnabled}">
       <TextBlock
         VerticalAlignment="Bottom"
         TextWrapping="WrapWithOverflow"
