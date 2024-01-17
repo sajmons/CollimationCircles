@@ -113,4 +113,5 @@
   <system:String x:Key="Text.PayPalDonation">Mit dieser Spende unterstützen Sie mich bei der Weiterentwicklung der Collimation Circles-Anwendung. Danke schön!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Zeitüberschreitung beim Warten auf den Videostream</system:String>
+  <system:String x:Key="Text.LibcameraVidCommand">Führen Sie den folgenden Befehl im Linux-Terminal aus, bevor Sie auf die Schaltfläche Start klicken: libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
 </ResourceDictionary>

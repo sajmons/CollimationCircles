@@ -14,13 +14,20 @@
     <TextBox
       Text="{Binding FullAddress, Mode=TwoWay}"
       IsEnabled="{Binding !#autoStartCamStream.IsChecked}"
-      VerticalAlignment="Center"/>    
-    <Button
-      HorizontalContentAlignment="Center"
-      HorizontalAlignment="Stretch"
-      Content="{Binding ButtonTitle}"
-      Command="{Binding PlayPauseCommand}"/>
-    <Grid ColumnDefinitions="*,20">
+      VerticalAlignment="Center"/>
+    <Grid ColumnDefinitions="*,30">
+      <Button
+        HorizontalContentAlignment="Center"
+        HorizontalAlignment="Stretch"
+        Content="{Binding ButtonTitle}"
+        Command="{Binding PlayPauseCommand}"/>
+      <PathIcon
+        Grid.Column="1"
+        ToolTip.Tip="{DynamicResource Text.LibcameraVidCommand}"
+        Foreground="{DynamicResource Color2}"
+        Data="{StaticResource IconData.Help}" />
+    </Grid>
+    <Grid ColumnDefinitions="*,30">
       <CheckBox
         Name="autoStartCamStream"
         Content="{DynamicResource Text.AutoStartCameraStream}"
@@ -47,7 +54,7 @@
     </StackPanel>
     <CheckBox
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"
-      IsChecked="{Binding PinVideoWindowToMainWindow}" />    
+      IsChecked="{Binding PinVideoWindowToMainWindow}" />
 
   </StackPanel>
 
