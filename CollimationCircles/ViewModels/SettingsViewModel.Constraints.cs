@@ -63,6 +63,6 @@ namespace CollimationCircles.ViewModels
         private int labelSizeMin = Constraints.LabelSizeMin;
 
         [ObservableProperty]
-        private int labelSizeMax = Constraints.LabelSizeMax;        
+        private int labelSizeMax = Constraints.LabelSizeMax;
     }
 }
