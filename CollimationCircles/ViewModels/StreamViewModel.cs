@@ -25,7 +25,7 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
         [RegularExpression(
-            Ranges.MurlRegEx,
+            Constraints.MurlRegEx,
             ErrorMessage = "Invalid URL address")]
         private string fullAddress;
 
@@ -234,7 +234,7 @@ namespace CollimationCircles.ViewModels
 
         partial void OnFullAddressChanged(string? oldValue, string newValue)
         {
-            string url = Ranges.MurlRegEx;
+            string url = Constraints.MurlRegEx;
 
             Match m = Regex.Match(FullAddress, url);
 

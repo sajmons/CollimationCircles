@@ -6,63 +6,63 @@ namespace CollimationCircles.ViewModels
     public partial class SettingsViewModel
     {
         [ObservableProperty]
-        private int thicknessMin = Ranges.ThicknessMin;
+        private int thicknessMin = Constraints.ThicknessMin;
 
         [ObservableProperty]
-        private int thicknessMax = Ranges.ThicknessMax;
+        private int thicknessMax = Constraints.ThicknessMax;
 
         [ObservableProperty]
-        private int radiusMin = Ranges.RadiusMin;
+        private int radiusMin = Constraints.RadiusMin;
 
         [ObservableProperty]
-        private int radiusMax = Ranges.RadiusMax;
+        private int radiusMax = Constraints.RadiusMax;
 
         [ObservableProperty]
-        private int rotationAngleMin = Ranges.RotationAngleMin;
+        private int rotationAngleMin = Constraints.RotationAngleMin;
 
         [ObservableProperty]
-        private int rotationAngleMax = Ranges.RotationAngleMax;
+        private int rotationAngleMax = Constraints.RotationAngleMax;
 
         [ObservableProperty]
-        private int inclinationAngleMin = Ranges.InclinationAngleMin;
+        private int inclinationAngleMin = Constraints.InclinationAngleMin;
 
         [ObservableProperty]
-        private int inclinationAngleMax = Ranges.InclinationAngleMax;
+        private int inclinationAngleMax = Constraints.InclinationAngleMax;
 
         [ObservableProperty]
-        private int spacingMin = Ranges.SpacingMin;
+        private int spacingMin = Constraints.SpacingMin;
 
         [ObservableProperty]
-        private int spacingMax = Ranges.SpacingMax;
+        private int spacingMax = Constraints.SpacingMax;
 
         [ObservableProperty]
-        private int countMin = Ranges.CountMin;
+        private int countMin = Constraints.CountMin;
 
         [ObservableProperty]
-        private int countMax = Ranges.CountMax;
+        private int countMax = Constraints.CountMax;
 
         [ObservableProperty]
-        private double opacityMin = Ranges.OpacityMin;
+        private double opacityMin = Constraints.OpacityMin;
 
         [ObservableProperty]
-        private double opacityMax = Ranges.OpacityMax;
+        private double opacityMax = Constraints.OpacityMax;
 
         [ObservableProperty]
-        private double scaleMin = Ranges.ScaleMin;
+        private double scaleMin = Constraints.ScaleMin;
 
         [ObservableProperty]
-        private double scaleMax = Ranges.ScaleMax;
+        private double scaleMax = Constraints.ScaleMax;
 
         [ObservableProperty]
-        private int offsetMin = Ranges.OffsetMin;
+        private int offsetMin = Constraints.OffsetMin;
 
         [ObservableProperty]
-        private int offsetMax = Ranges.OffsetMax;
+        private int offsetMax = Constraints.OffsetMax;
 
         [ObservableProperty]
-        private int labelSizeMin = Ranges.LabelSizeMin;
+        private int labelSizeMin = Constraints.LabelSizeMin;
 
         [ObservableProperty]
-        private int labelSizeMax = Ranges.LabelSizeMax;        
+        private int labelSizeMax = Constraints.LabelSizeMax;        
     }
 }

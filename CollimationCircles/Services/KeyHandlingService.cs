@@ -58,12 +58,12 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.R:
-                            if (vm.RotationAngle < Ranges.RotationAngleMax)
+                            if (vm.RotationAngle < Constraints.RotationAngleMax)
                                 rotation += 1;
                             e.Handled = true;
                             break;
                         case Key.F:
-                            if (vm.RotationAngle > Ranges.RotationAngleMin)
+                            if (vm.RotationAngle > Constraints.RotationAngleMin)
                                 rotation -= 1;
                             e.Handled = true;
                             break;
@@ -89,14 +89,14 @@ namespace CollimationCircles.Services
                     {
                         case Key.Add:
                         case Key.OemPlus:
-                            if (vm.Scale < Ranges.ScaleMax)
+                            if (vm.Scale < Constraints.ScaleMax)
                                 increment += 0.01;
                             e.Handled = true;
                             break;
 
                         case Key.Subtract:
                         case Key.OemMinus:
-                            if (vm.Scale > Ranges.ScaleMin)
+                            if (vm.Scale > Constraints.ScaleMin)
                                 increment -= 0.01;
                             e.Handled = true;
                             break;
@@ -119,13 +119,13 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.W:
-                            if (vm.SelectedItem.Radius < Ranges.RadiusMax)
+                            if (vm.SelectedItem.Radius < Constraints.RadiusMax)
                                 vm.SelectedItem.Radius += 1;
                             e.Handled = true;
                             break;
 
                         case Key.S:
-                            if (vm.SelectedItem.Radius > Ranges.RadiusMin)
+                            if (vm.SelectedItem.Radius > Constraints.RadiusMin)
                                 vm.SelectedItem.Radius -= 1;
                             e.Handled = true;
                             break;
@@ -143,13 +143,13 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.A:
-                            if (vm.SelectedItem.RotationAngle < Ranges.RotationAngleMax)
+                            if (vm.SelectedItem.RotationAngle < Constraints.RotationAngleMax)
                                 vm.SelectedItem.RotationAngle += 1;
                             e.Handled = true;
                             break;
 
                         case Key.Q:
-                            if (vm.SelectedItem.RotationAngle > Ranges.RotationAngleMin)
+                            if (vm.SelectedItem.RotationAngle > Constraints.RotationAngleMin)
                                 vm.SelectedItem.RotationAngle -= 1;
                             e.Handled = true;
                             break;                        
@@ -173,7 +173,7 @@ namespace CollimationCircles.Services
                             break;
 
                         case Key.G:
-                            if (vm.SelectedItem.Count > Ranges.CountMin)
+                            if (vm.SelectedItem.Count > Constraints.CountMin)
                                 vm.SelectedItem.Count -= 1;
                             e.Handled = true;
                             break;
@@ -191,13 +191,13 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.Z:
-                            if (vm.SelectedItem.Size < Ranges.SpacingMax)
+                            if (vm.SelectedItem.Size < Constraints.SpacingMax)
                                 vm.SelectedItem.Size += 1;
                             e.Handled = true;
                             break;
 
                         case Key.H:
-                            if (vm.SelectedItem.Size > Ranges.SpacingMin)
+                            if (vm.SelectedItem.Size > Constraints.SpacingMin)
                                 vm.SelectedItem.Size -= 1;
                             e.Handled = true;
                             break;
@@ -215,13 +215,13 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.E:
-                            if (vm.SelectedItem.Thickness < Ranges.ThicknessMax)
+                            if (vm.SelectedItem.Thickness < Constraints.ThicknessMax)
                                 vm.SelectedItem.Thickness += 1;
                             e.Handled = true;
                             break;
 
                         case Key.D:
-                            if (vm.SelectedItem.Thickness > Ranges.ThicknessMin)
+                            if (vm.SelectedItem.Thickness > Constraints.ThicknessMin)
                                 vm.SelectedItem.Thickness -= 1;
                             e.Handled = true;
                             break;
@@ -239,13 +239,13 @@ namespace CollimationCircles.Services
                     switch (e.Key)
                     {
                         case Key.U:
-                            if (vm.SelectedItem.InclinationAngle < Ranges.InclinationAngleMax)
+                            if (vm.SelectedItem.InclinationAngle < Constraints.InclinationAngleMax)
                                 vm.SelectedItem.InclinationAngle += .1;
                             e.Handled = true;
                             break;
 
                         case Key.J:
-                            if (vm.SelectedItem.InclinationAngle > Ranges.InclinationAngleMin)
+                            if (vm.SelectedItem.InclinationAngle > Constraints.InclinationAngleMin)
                                 vm.SelectedItem.InclinationAngle -= .1;
                             e.Handled = true;
                             break;

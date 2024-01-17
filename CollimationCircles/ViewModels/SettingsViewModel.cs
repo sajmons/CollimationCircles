@@ -58,7 +58,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.ScaleMin, Ranges.ScaleMax)]
+        [Range(Constraints.ScaleMin, Constraints.ScaleMax)]
         [NotifyDataErrorInfo]
         private double scale = 1.0;
 
@@ -68,7 +68,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.RotationAngleMin, Ranges.RotationAngleMax)]
+        [Range(Constraints.RotationAngleMin, Constraints.RotationAngleMax)]
         [NotifyDataErrorInfo]
         private double rotationAngle = 0;
 
@@ -132,17 +132,17 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.OffsetMin, Ranges.OffsetMax)]
+        [Range(Constraints.OffsetMin, Constraints.OffsetMax)]
         private int globalOffsetX = 0;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.OffsetMin, Ranges.OffsetMax)]
+        [Range(Constraints.OffsetMin, Constraints.OffsetMax)]
         private int globalOffsetY = 0;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.OpacityMin, Ranges.OpacityMax)]
+        [Range(Constraints.OpacityMin, Constraints.OpacityMax)]
         private double mainWindowOpacity = 0.8;
 
         [JsonProperty]
@@ -179,7 +179,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.CameraStreamTimeoutMin, Ranges.CameraStreamTimeoutMax)]
+        [Range(Constraints.CameraStreamTimeoutMin, Constraints.CameraStreamTimeoutMax)]
         private int cameraStreamTimeout = 700;        
 
         public SettingsViewModel(IDialogService dialogService)

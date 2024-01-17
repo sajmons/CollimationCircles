@@ -1,13 +1,6 @@
-﻿using Avalonia;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CollimationCircles.Helper
+﻿namespace CollimationCircles.Helper
 {
-    internal class Ranges
+    internal class Constraints
     {
         internal const int ThicknessMin = 1;
         internal const int ThicknessMax = 10;

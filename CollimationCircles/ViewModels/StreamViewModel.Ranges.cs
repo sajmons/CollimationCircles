@@ -6,9 +6,9 @@ namespace CollimationCircles.ViewModels
     public partial class StreamViewModel
     {
         [ObservableProperty]
-        private int cameraStreamTimeoutMin = Ranges.CameraStreamTimeoutMin;
+        private int cameraStreamTimeoutMin = Constraints.CameraStreamTimeoutMin;
 
         [ObservableProperty]
-        private int cameraStreamTimeoutMax = Ranges.CameraStreamTimeoutMax;
+        private int cameraStreamTimeoutMax = Constraints.CameraStreamTimeoutMax;
     }
 }

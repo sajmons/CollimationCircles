@@ -31,13 +31,13 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.ThicknessMin, Ranges.ThicknessMax)]
+        [Range(Constraints.ThicknessMin, Constraints.ThicknessMax)]
         [NotifyDataErrorInfo]
         private int thickness = 1;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.RadiusMin, Ranges.RadiusMax)]
+        [Range(Constraints.RadiusMin, Constraints.RadiusMax)]
         [NotifyDataErrorInfo]
         private double radius = 300;
 
@@ -75,31 +75,31 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.RotationAngleMin, Ranges.RotationAngleMax)]
+        [Range(Constraints.RotationAngleMin, Constraints.RotationAngleMax)]
         [NotifyDataErrorInfo]
         private double rotationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.InclinationAngleMin, Ranges.InclinationAngleMax)]
+        [Range(Constraints.InclinationAngleMin, Constraints.InclinationAngleMax)]
         [NotifyDataErrorInfo]
         private double inclinationAngle = 0;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.SizeMin, Ranges.SizeMax)]
+        [Range(Constraints.SizeMin, Constraints.SizeMax)]
         [NotifyDataErrorInfo]
         private double size = 10;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.CountMin, Ranges.CountMax)]
+        [Range(Constraints.CountMin, Constraints.CountMax)]
         [NotifyDataErrorInfo]
         private int count = 4;
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.CountMin, Ranges.CountMax)]
+        [Range(Constraints.CountMin, Constraints.CountMax)]
         [NotifyDataErrorInfo]
         private int maxCount = 10;
 
@@ -108,7 +108,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Ranges.OpacityMin, Ranges.OpacityMax)]
+        [Range(Constraints.OpacityMin, Constraints.OpacityMax)]
         [NotifyDataErrorInfo]
         private double opacity = 1;
 
