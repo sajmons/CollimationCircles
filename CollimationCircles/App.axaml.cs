@@ -49,9 +49,11 @@ public partial class App : Application
             .AddSingleton<SettingsViewModel>()
             .AddSingleton<StreamViewModel>()
             .AddSingleton<AppLogViewModel>()
-            .AddTransient<AboutViewModel>()
+            .AddSingleton<SSHViewModel>()
+            .AddTransient<AboutViewModel>()            
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
+            .AddSingleton<IVideoStreamService, VideoStreamService>()
             .BuildServiceProvider());
     }
 }

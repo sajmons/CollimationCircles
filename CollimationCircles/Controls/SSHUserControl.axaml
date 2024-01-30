@@ -1,0 +1,33 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.SSHUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:SSHViewModel">
+
+  <StackPanel
+    Orientation="Vertical"
+    Spacing="10">
+
+    <TextBox
+      Text="{Binding Hostname}"
+      Watermark="Hostname"/>
+    <TextBox
+      Text="{Binding Port}"
+      Watermark="Port"/>
+    <TextBox
+      Text="{Binding Username}"
+      Watermark="Username"/>
+    <TextBox
+      Text="{Binding Password}"
+      Watermark="Password"
+      PasswordChar="*" />
+    <Button
+        Content="Connect"
+        Command="{Binding SSHConnectCommand}"/>    
+
+  </StackPanel>
+
+</UserControl>

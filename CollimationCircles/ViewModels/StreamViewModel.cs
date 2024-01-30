@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
+using Renci.SshNet;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
@@ -13,14 +14,18 @@ namespace CollimationCircles.ViewModels
 {
     public partial class StreamViewModel : BaseViewModel
     {
-        const string defaultProtocol = "tcp/h264";
+        //const string defaultProtocol = "tcp/h264";
+        const string defaultProtocol = "http";
         const string defaultLocalAddress = "0.0.0.0";
         const string defaultRemoteAddress = "192.168.1.174";
         const string defaultPort = "8080";
+        const int defaultSshPort = 22;
 
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IDialogService dialogService;
+        private readonly IVideoStreamService videoStreamService;
         private readonly LibVLC libVLC;
+        private SshClient? sslClient = null;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
@@ -67,10 +72,11 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private int cameraStreamTimeout = 600;
 
-        public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
+        public StreamViewModel(IDialogService dialogService, IVideoStreamService videoStreamService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
+            this.videoStreamService = videoStreamService;
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
             CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
@@ -129,6 +135,13 @@ namespace CollimationCircles.ViewModels
                         }, CameraStreamTimeout);
                     logger.Info("Camera video stream started");
                 }
+                else
+                {
+                    //SshClient sshChannel = new("192.168.1.174", 22, $"{username}", "24pi12?");
+                    sslClient = videoStreamService.CreateSslClient(defaultRemoteAddress, defaultSshPort, "simon", "24pi12?");
+                    videoStreamService.OpenVLCStream(sslClient, "video0");
+                    logger.Info("VLC camera video stream started");
+                }
 
                 MediaPlayerPlay();
             }
@@ -182,6 +195,7 @@ namespace CollimationCircles.ViewModels
             CloseWebCamStream();
             ButtonTitle = DynRes.TryGetString("Start");
             IsPlaying = MediaPlayer.IsPlaying;
+            videoStreamService.CloseSslClient(sslClient!);
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]

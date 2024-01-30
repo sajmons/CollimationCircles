@@ -43,6 +43,13 @@
               IsExpanded="{Binding CameraVideoStreamExpanded}">
               <controls:StreamUserControl/>
             </Expander>
+            <Expander
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              Width="{Binding SettingsWidth}"
+              Header="SSH">
+              <controls:SSHUserControl/>
+            </Expander>
           </StackPanel>
         </ScrollViewer>
       </TabItem>
