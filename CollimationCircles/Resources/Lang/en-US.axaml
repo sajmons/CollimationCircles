@@ -119,5 +119,5 @@
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">json</system:String>  
+  <system:String x:Key="Text.StarJson">json</system:String>
 </ResourceDictionary>
