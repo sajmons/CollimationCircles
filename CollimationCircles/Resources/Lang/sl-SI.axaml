@@ -114,4 +114,8 @@
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Čas čakanja na video tok</system:String>
   <system:String x:Key="Text.LibcameraVidCommand">Izvedite naslednji ukaz v Linux terminalu, preden pritisnete gumb Start: libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
+
+  <!-- Non translatable -->
+  <system:String x:Key="Text.StarChar">*</system:String>
+  <system:String x:Key="Text.StarJson">json</system:String>
 </ResourceDictionary>
