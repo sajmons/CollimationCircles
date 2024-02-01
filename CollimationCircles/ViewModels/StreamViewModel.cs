@@ -13,12 +13,10 @@ namespace CollimationCircles.ViewModels
 {
     public partial class StreamViewModel : BaseViewModel
     {
-        //const string defaultProtocol = "tcp/h264";
+        const string tcpH264Protocol = "tcp/h264";
         const string defaultProtocol = "http";
         const string defaultLocalAddress = "0.0.0.0";
-        const string defaultRemoteAddress = "192.168.1.174";
-        const string defaultPort = "8080";
-        const int defaultSshPort = 22;
+        const string defaultPort = "8080";        
 
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IDialogService dialogService;
@@ -42,27 +40,21 @@ namespace CollimationCircles.ViewModels
 
         public MediaPlayer MediaPlayer { get; }
 
-        [ObservableProperty]
-        private string buttonTitle = string.Empty;
+        //[ObservableProperty]
+        //private string buttonTitle = string.Empty;
 
         public bool CanExecutePlayPause
         {
             get => !string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address);
         }
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(AreControlsEnabled))]
-        private bool isPlaying = false;
-
-        public bool AreControlsEnabled => (LibCameraAvaliable) && !IsPlaying;
+        [ObservableProperty]        
+        private bool isPlaying = false;        
 
         private readonly SettingsViewModel settingsViewModel;
 
         [ObservableProperty]
-        private bool pinVideoWindowToMainWindow = true;
-
-        [ObservableProperty]
-        private bool libCameraAvaliable = false;
+        private bool pinVideoWindowToMainWindow = true;        
 
         [ObservableProperty]
         private int cameraStreamTimeout = 600;
@@ -71,9 +63,7 @@ namespace CollimationCircles.ViewModels
         private bool remoteConnection = false;
 
         [ObservableProperty]
-        private bool isUVCCamera = true;
-
-        private bool IsNotUVCCamera => !IsUVCCamera;
+        private bool isUVCCamera = true;        
 
         [ObservableProperty]
         private bool isNotWindows = !OperatingSystem.IsWindows();
@@ -86,8 +76,6 @@ namespace CollimationCircles.ViewModels
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
             CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
-
-            LibCameraAvaliable = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
 
             address = AppService.GetLocalIPAddress() ?? string.Empty;
             pathAndQuery = string.Empty;
@@ -111,7 +99,7 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
 
-            ButtonTitle = DynRes.TryGetString("Start");
+            //ButtonTitle = DynRes.TryGet("Play");
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
@@ -125,13 +113,13 @@ namespace CollimationCircles.ViewModels
             {
                 if (address == AppService.GetLocalIPAddress())
                 {
-                    string device = "v4l2:///dev/video0";
+                    string uvcDevice = "v4l2:///dev/video0";
                     if (OperatingSystem.IsWindows() && !RemoteConnection)
                     {
-                        device = "dshow://";
+                        uvcDevice = "dshow://";
                     }
 
-                    videoStreamService.OpenVideoStream(device, IsUVCCamera, $"{defaultLocalAddress}:{defaultPort}");                    
+                    videoStreamService.OpenVideoStream(uvcDevice, IsUVCCamera, $"{defaultLocalAddress}:{defaultPort}");                    
                 }
 
                 MediaPlayerPlay();
@@ -165,7 +153,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            ButtonTitle = DynRes.TryGetString("Stop");
+            //ButtonTitle = DynRes.TryGet("Stop");
             IsPlaying = MediaPlayer.IsPlaying;
         }
 
@@ -184,7 +172,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer stopped");
 
             CloseWebCamStream();
-            ButtonTitle = DynRes.TryGetString("Start");
+            //ButtonTitle = DynRes.TryGet("Play");
             IsPlaying = MediaPlayer.IsPlaying;
         }
 
@@ -226,7 +214,7 @@ namespace CollimationCircles.ViewModels
 
         private string GetFullUrlFromParts()
         {
-            string newRemoteAddress = address ?? defaultRemoteAddress;
+            string newRemoteAddress = address;
             string addr = newRemoteAddress;
             string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
             string prt = string.IsNullOrWhiteSpace(port) ? "" : $":{port}";
@@ -269,6 +257,20 @@ namespace CollimationCircles.ViewModels
                 port = string.Empty;
                 pathAndQuery = string.Empty;
             }
+        }
+
+        partial void OnIsUVCCameraChanged(bool oldValue, bool newValue)
+        {
+            protocol = newValue ? tcpH264Protocol : defaultProtocol;
+        }
+
+        [RelayCommand]
+        private void ResetAddress()
+        {
+            address = AppService.GetLocalIPAddress() ?? string.Empty;
+            protocol = defaultProtocol;
+            port = defaultPort;
+            FullAddress = GetFullUrlFromParts();
         }
     }
 }

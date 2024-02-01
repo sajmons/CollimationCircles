@@ -115,9 +115,9 @@
   <system:String x:Key="Text.PayPalDonation">With this donation you will support me to continue developing of Collimation Circles application. Thank you!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Video stream wait time timeout</system:String>
-  <system:String x:Key="Text.LibcameraVidCommand">Execute following command in Linux terminal before pressing Start button: libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
-  <system:String x:Key="Text.RemoteSSHConnection">Use SSH for remote connection</system:String>
-  
+  <system:String x:Key="Text.ResetCameraStreamAddress">Reset camera video stream address to default value</system:String>
+  <system:String x:Key="Text.PlayStopCameraVideoStream">Start or stop camera video stream</system:String>  
+
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>  

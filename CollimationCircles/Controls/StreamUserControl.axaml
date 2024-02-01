@@ -12,23 +12,54 @@
     Spacing="10">
 
     <TextBox
+      IsEnabled="{Binding !IsPlaying}"
       Text="{Binding FullAddress, Mode=TwoWay}"
-      VerticalAlignment="Center"/>
-    <Grid ColumnDefinitions="*,30">
+      VerticalAlignment="Center" />
+    <StackPanel
+      Orientation="Horizontal"
+      Spacing="10">
+      <ToggleButton
+        IsChecked="{Binding IsPlaying}"
+        Command="{Binding PlayPauseCommand}"
+        ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}">
+        <Panel>
+          <PathIcon
+            Foreground="{DynamicResource Color2}"
+            Classes="visibility-on"
+            Data="{StaticResource IconData.Stop}" />
+          <PathIcon
+            Foreground="{DynamicResource Color2}"
+            Classes="visibility-off"
+            Data="{StaticResource IconData.Play}" />
+        </Panel>
+        <ToggleButton.Styles>
+          <Style Selector="ToggleButton PathIcon.visibility-on">
+            <Setter Property="IsVisible" Value="False"/>
+          </Style>
+          <Style Selector="ToggleButton:checked PathIcon.visibility-on">
+            <Setter Property="IsVisible" Value="True"/>
+          </Style>
+          <Style Selector="ToggleButton PathIcon.visibility-off">
+            <Setter Property="IsVisible" Value="True"/>
+          </Style>
+          <Style Selector="ToggleButton:checked PathIcon.visibility-off">
+            <Setter Property="IsVisible" Value="False"/>
+          </Style>
+        </ToggleButton.Styles>
+      </ToggleButton>
       <Button
-        HorizontalContentAlignment="Center"
-        HorizontalAlignment="Stretch"
-        Content="{Binding ButtonTitle}"
-        Command="{Binding PlayPauseCommand}"/>
-      <PathIcon
-        Grid.Column="1"
-        ToolTip.Tip="{DynamicResource Text.LibcameraVidCommand}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Help}" />
-    </Grid>
-    <StackPanel 
+          Command="{Binding ResetAddressCommand}"
+          ToolTip.Tip="{DynamicResource Text.ResetCameraStreamAddress}"
+          Grid.Column="2">
+        <PathIcon
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Reset}" />
+      </Button>
+    </StackPanel>
+    <StackPanel
       Orientation="Vertical"
-      IsVisible="{Binding IsNotWindows}">
+      IsVisible="{Binding IsNotWindows}"
+      IsEnabled="{Binding !IsPlaying}">
       <TextBlock>Camera type</TextBlock>
       <StackPanel
         Orientation="Horizontal"
@@ -36,7 +67,7 @@
         <RadioButton
           GroupName="CameraType"
           Content="Raspberry PI"
-          IsChecked="{Binding IsNotUVCCamera}"/>
+          IsChecked="{Binding !IsUVCCamera}"/>
         <RadioButton
           GroupName="CameraType"
           Content="UVC"

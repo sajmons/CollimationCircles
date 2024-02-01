@@ -6,6 +6,6 @@
 
         public void CloseVideoStream(bool isUVCCamera);
 
-        public void OpenVideoStream(string device, bool isUVCCamera, string address);
+        public void OpenVideoStream(string uvcDevice, bool isUVCCamera, string address);
     }
 }

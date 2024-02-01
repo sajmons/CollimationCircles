@@ -35,16 +35,12 @@ namespace CollimationCircles.Services
             }
         }
 
-        public void OpenVideoStream(string device, bool isUVCCamera, string address)
+        public void OpenVideoStream(string uvcDevice, bool isUVCCamera, string address)
         {
             try
             {
-                logger.Info($"Opening video stream for device '{device}'");
-
                 if (isUVCCamera)
                 {
-                    logger.Info("Camera type is UVC camera");
-
                     string? windowsVLCPath = AppService.FindVLC();
 
                     if (OperatingSystem.IsWindows() && string.IsNullOrWhiteSpace(windowsVLCPath))
@@ -54,19 +50,18 @@ namespace CollimationCircles.Services
                     }
 
                     string command = OperatingSystem.IsWindows() ? $"\"{windowsVLCPath}\"" : "cvlc";
-                    //string parameters = $"{device} --sout \"#transcode{{vcodec=wmv2,vb=4096,acodec=none}}:http{{mux=asf,dst={address}}}\""
-                    //    + (OperatingSystem.IsWindows() ? " -I null --play-and-exit" : string.Empty);
 
-                    List<string> parameters = [device,
+                    List<string> parameters = [uvcDevice,
                         "--sout",
                         $"\"#transcode{{vcodec=wmv2,vb=4096,acodec=none}}:http{{mux=asf,dst={address}}}\"",
                         "-I",
                         "null",
-                        "--play-and-exit"];
+                        "--play-and-exit"
+                    ];
 
                     AppService.ExecuteCommand(
                     command,
-                    parameters, timeout: -1);
+                    parameters, timeout: 0);
 
                     Thread.Sleep(1000);
 
@@ -81,14 +76,21 @@ namespace CollimationCircles.Services
                     }
 
                     string command = AppService.LIBCAMERA_VID;
-                    string parameters = $"-t 0 --inline --nopreview --listen -o tcp://{address}";
+                    List<string> parameters = [
+                        "-t",
+                        "0",
+                        "--inline",
+                        "--nopreview",
+                        "--listen",
+                        "-o",
+                        $"tcp://{address}"];
 
                     AppService.ExecuteCommand(
                     command,
-                    [parameters], null, 1000);
+                    parameters, timeout: 1000);
 
                     logger.Info("Raspberry PI camera video stream started");
-                }                
+                }
             }
             catch (Exception exc)
             {
