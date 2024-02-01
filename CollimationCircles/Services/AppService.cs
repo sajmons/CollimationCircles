@@ -1,10 +1,13 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Win32;
+using Newtonsoft.Json;
 using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
+using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -213,8 +216,9 @@ public class AppService
             FileName = fileName,
             UseShellExecute = false,
             RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };        
 
         using Process process = new()
         {
@@ -279,7 +283,7 @@ public class AppService
                 {
                     // Timed out.
                     logger.Warn($"Timeout '{fileName} {argStr}'");
-                    tcs.TrySetResult((process.ExitCode, string.Empty, process));
+                    tcs.TrySetResult((-1, string.Empty, process));
                 }
             }
             else
@@ -332,5 +336,32 @@ public class AppService
         }
 
         logger.Trace($"External url '{url}' opened");
+    }
+
+    public static string? FindVLC()
+    {
+        string vlcPath = "\\VideoLAN\\VLC\\vlc.exe";
+        string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%") + vlcPath;
+        string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%") + vlcPath;
+
+        if (File.Exists(programFiles))
+        {
+            return programFiles;
+        }
+
+        if (File.Exists(programFilesX86))
+        {
+            return programFilesX86;
+        }
+
+        return null;
+    }
+
+    public static string? GetLocalIPAddress()
+    {
+        using Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, 0);
+        socket.Connect("8.8.8.8", 65530);
+        IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
+        return endPoint?.Address.ToString();
     }
 }

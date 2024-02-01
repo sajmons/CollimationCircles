@@ -13,7 +13,6 @@
 
     <TextBox
       Text="{Binding FullAddress, Mode=TwoWay}"
-      IsEnabled="{Binding !#autoStartCamStream.IsChecked}"
       VerticalAlignment="Center"/>
     <Grid ColumnDefinitions="*,30">
       <Button
@@ -27,30 +26,22 @@
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Help}" />
     </Grid>
-    <Grid ColumnDefinitions="*,30">
-      <CheckBox
-        Name="autoStartCamStream"
-        Content="{DynamicResource Text.AutoStartCameraStream}"
-        IsEnabled="{Binding AreControlsEnabled}"
-        IsChecked="{Binding LocalConnectionPossible}" />
-      <PathIcon
-        Grid.Column="1"
-        ToolTip.Tip="{DynamicResource Text.AutoStartCameraStreamHelp}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Help}" />
-    </Grid>
-    <StackPanel
+    <StackPanel 
       Orientation="Vertical"
-      IsEnabled="{Binding AreControlsEnabled}">
-      <TextBlock
-        VerticalAlignment="Bottom"
-        TextWrapping="WrapWithOverflow"
-        Text="{DynamicResource Text.CameraStreamTimeout}" />
-      <NumericUpDown
-        Increment="100"
-        Value="{Binding CameraStreamTimeout}"
-        Minimum="{Binding CameraStreamTimeoutMin}"
-        Maximum="{Binding CameraStreamTimeoutMax}"/>
+      IsVisible="{Binding IsNotWindows}">
+      <TextBlock>Camera type</TextBlock>
+      <StackPanel
+        Orientation="Horizontal"
+        Spacing="10">
+        <RadioButton
+          GroupName="CameraType"
+          Content="Raspberry PI"
+          IsChecked="{Binding IsNotUVCCamera}"/>
+        <RadioButton
+          GroupName="CameraType"
+          Content="UVC"
+          IsChecked="{Binding IsUVCCamera}"/>
+      </StackPanel>
     </StackPanel>
     <CheckBox
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"

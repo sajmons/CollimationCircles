@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
-using Renci.SshNet;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
@@ -25,7 +24,6 @@ namespace CollimationCircles.ViewModels
         private readonly IDialogService dialogService;
         private readonly IVideoStreamService videoStreamService;
         private readonly LibVLC libVLC;
-        private SshClient? sslClient = null;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
@@ -56,7 +54,7 @@ namespace CollimationCircles.ViewModels
         [NotifyPropertyChangedFor(nameof(AreControlsEnabled))]
         private bool isPlaying = false;
 
-        public bool AreControlsEnabled => (LocalConnectionPossible || LibCameraAvaliable) && !IsPlaying;
+        public bool AreControlsEnabled => (LibCameraAvaliable) && !IsPlaying;
 
         private readonly SettingsViewModel settingsViewModel;
 
@@ -64,13 +62,21 @@ namespace CollimationCircles.ViewModels
         private bool pinVideoWindowToMainWindow = true;
 
         [ObservableProperty]
-        private bool localConnectionPossible = false;
-
-        [ObservableProperty]
         private bool libCameraAvaliable = false;
 
         [ObservableProperty]
         private int cameraStreamTimeout = 600;
+
+        [ObservableProperty]
+        private bool remoteConnection = false;
+
+        [ObservableProperty]
+        private bool isUVCCamera = true;
+
+        private bool IsNotUVCCamera => !IsUVCCamera;
+
+        [ObservableProperty]
+        private bool isNotWindows = !OperatingSystem.IsWindows();
 
         public StreamViewModel(IDialogService dialogService, IVideoStreamService videoStreamService, SettingsViewModel settingsViewModel)
         {
@@ -83,9 +89,7 @@ namespace CollimationCircles.ViewModels
 
             LibCameraAvaliable = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
 
-            LocalConnectionPossible = LibCameraAvaliable;
-
-            address = LocalConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
+            address = AppService.GetLocalIPAddress() ?? string.Empty;
             pathAndQuery = string.Empty;
 
             FullAddress = GetFullUrlFromParts();
@@ -119,28 +123,15 @@ namespace CollimationCircles.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address))
             {
-                if (LocalConnectionPossible)
+                if (address == AppService.GetLocalIPAddress())
                 {
-                    logger.Info($"Just in case kill '{AppService.LIBCAMERA_VID}' process");
-                    AppService.ExecuteCommand("pkill", [AppService.LIBCAMERA_VID]);
-                    //AppService.ExecuteCommand("fuser", ["-k", "/dev/video0"]);
+                    string device = "v4l2:///dev/video0";
+                    if (OperatingSystem.IsWindows() && !RemoteConnection)
+                    {
+                        device = "dshow://";
+                    }
 
-                    // proc = await AppService.StartTCPCameraStream($"0.0.0.0:{port}");
-                    logger.Info("Starting camera video stream");
-                    AppService.ExecuteCommand(
-                        AppService.LIBCAMERA_VID,
-                        [$"-t", "0", "--inline", "--nopreview", "--listen", "-o", $"tcp://{defaultLocalAddress}:{port}"], () =>
-                        {
-
-                        }, CameraStreamTimeout);
-                    logger.Info("Camera video stream started");
-                }
-                else
-                {
-                    //SshClient sshChannel = new("192.168.1.174", 22, $"{username}", "24pi12?");
-                    sslClient = videoStreamService.CreateSslClient(defaultRemoteAddress, defaultSshPort, "simon", "24pi12?");
-                    videoStreamService.OpenVLCStream(sslClient, "video0");
-                    logger.Info("VLC camera video stream started");
+                    videoStreamService.OpenVideoStream(device, IsUVCCamera, $"{defaultLocalAddress}:{defaultPort}");                    
                 }
 
                 MediaPlayerPlay();
@@ -195,7 +186,6 @@ namespace CollimationCircles.ViewModels
             CloseWebCamStream();
             ButtonTitle = DynRes.TryGetString("Start");
             IsPlaying = MediaPlayer.IsPlaying;
-            videoStreamService.CloseSslClient(sslClient!);
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
@@ -230,12 +220,14 @@ namespace CollimationCircles.ViewModels
                 dialogService?.Close(this);
                 logger.Trace($"Closed web camera stream window");
             });
+
+            videoStreamService.CloseVideoStream(IsUVCCamera);
         }
 
         private string GetFullUrlFromParts()
         {
             string newRemoteAddress = address ?? defaultRemoteAddress;
-            string addr = LocalConnectionPossible ? defaultLocalAddress : newRemoteAddress;
+            string addr = newRemoteAddress;
             string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
             string prt = string.IsNullOrWhiteSpace(port) ? "" : $":{port}";
 

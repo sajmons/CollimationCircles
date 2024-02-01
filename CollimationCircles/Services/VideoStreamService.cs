@@ -1,5 +1,6 @@
-﻿using Renci.SshNet;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace CollimationCircles.Services
 {
@@ -7,39 +8,87 @@ namespace CollimationCircles.Services
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public SshClient CreateSslClient(string sshHost, int sshPort, string username, string password)
+        public void CloseVideoStream(bool isUVCCamera)
         {
-            SshClient sshClient = new(sshHost, sshPort, username, password);
-            sshClient.Connect();
+            // kill video stream running in background
 
-            logger.Info($"SSL client connection for user '{sshClient?.ConnectionInfo.Username}' opened");
-
-            return sshClient!;
+            if (OperatingSystem.IsWindows())
+            {
+                AppService.ExecuteCommand(
+                "taskkill",
+                ["/f", "/t", "/im", "vlc.exe"]);
+            }
+            else
+            {
+                if (isUVCCamera)
+                {
+                    AppService.ExecuteCommand(
+                    "pkill",
+                    ["-9", "cvlc"]);
+                }
+                else
+                {
+                    AppService.ExecuteCommand(
+                    "pkill",
+                    [AppService.LIBCAMERA_VID]);
+                }
+            }
         }
 
-        public void CloseSslClient(SshClient sslClient)
-        {
-            sslClient?.Disconnect();
-            sslClient?.Dispose();
-
-            logger.Info($"SSL client connection closed");
-        }
-
-        public void OpenVLCStream(SshClient sslClient, string device)
+        public void OpenVideoStream(string device, bool isUVCCamera, string address)
         {
             try
             {
-                if (sslClient.IsConnected)
+                logger.Info($"Opening video stream for device '{device}'");
+
+                if (isUVCCamera)
                 {
-                    logger.Info(sslClient.ConnectionInfo.ServerVersion);
-                    logger.Info($"Remote SSH connected with user '{sslClient.ConnectionInfo.Username}'");
+                    logger.Info("Camera type is UVC camera");
 
-                    var commandString = $"cvlc 'v4l2:///dev/{device}' --sout '#transcode{{vcodec=wmv2, vb=4096}}:http{{mux=asf, dst=0.0.0.0:8080}}'";
-                    var cmd = sslClient.CreateCommand(commandString);
-                    var cmdResult = cmd.BeginExecute();
+                    string? windowsVLCPath = AppService.FindVLC();
 
-                    logger.Info($"SSH Command '{commandString}' executed");                    
+                    if (OperatingSystem.IsWindows() && string.IsNullOrWhiteSpace(windowsVLCPath))
+                    {
+                        logger.Warn($"VLC not found. Please install VLC to use camera video streaming feature.");
+                        return;
+                    }
+
+                    string command = OperatingSystem.IsWindows() ? $"\"{windowsVLCPath}\"" : "cvlc";
+                    //string parameters = $"{device} --sout \"#transcode{{vcodec=wmv2,vb=4096,acodec=none}}:http{{mux=asf,dst={address}}}\""
+                    //    + (OperatingSystem.IsWindows() ? " -I null --play-and-exit" : string.Empty);
+
+                    List<string> parameters = [device,
+                        "--sout",
+                        $"\"#transcode{{vcodec=wmv2,vb=4096,acodec=none}}:http{{mux=asf,dst={address}}}\"",
+                        "-I",
+                        "null",
+                        "--play-and-exit"];
+
+                    AppService.ExecuteCommand(
+                    command,
+                    parameters, timeout: -1);
+
+                    Thread.Sleep(1000);
+
+                    logger.Info("VLC UVC camera video stream started");
                 }
+                else
+                {
+                    if (OperatingSystem.IsWindows())
+                    {
+                        logger.Warn("Raspberry PI camera is not supported on Windows");
+                        return;
+                    }
+
+                    string command = AppService.LIBCAMERA_VID;
+                    string parameters = $"-t 0 --inline --nopreview --listen -o tcp://{address}";
+
+                    AppService.ExecuteCommand(
+                    command,
+                    [parameters], null, 1000);
+
+                    logger.Info("Raspberry PI camera video stream started");
+                }                
             }
             catch (Exception exc)
             {

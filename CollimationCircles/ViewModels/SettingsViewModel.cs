@@ -50,7 +50,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private double settingsWindowWidth = 560;
+        private double settingsWindowWidth = 580;
 
         [JsonProperty]
         [ObservableProperty]

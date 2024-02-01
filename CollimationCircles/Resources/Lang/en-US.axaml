@@ -116,6 +116,7 @@
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Video stream wait time timeout</system:String>
   <system:String x:Key="Text.LibcameraVidCommand">Execute following command in Linux terminal before pressing Start button: libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
+  <system:String x:Key="Text.RemoteSSHConnection">Use SSH for remote connection</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
