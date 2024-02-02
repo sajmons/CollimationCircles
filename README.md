@@ -28,6 +28,7 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - multilanguage (English, Slovenian, German)
 - always on top option
 - up to date online help available
+- 3.x and newer camera video stream support to display video from your telescope in background
 
 # Prebuild binaries
 Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
