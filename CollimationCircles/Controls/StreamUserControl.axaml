@@ -12,9 +12,9 @@
     Spacing="10">
 
     <TextBox
-      IsEnabled="{Binding !IsPlaying}"
       Text="{Binding FullAddress, Mode=TwoWay}"
-      VerticalAlignment="Center" />
+      VerticalAlignment="Center"
+      FocusAdorner=""/>
     <StackPanel
       Orientation="Horizontal"
       Spacing="10">
@@ -57,22 +57,27 @@
       </Button>
     </StackPanel>
     <StackPanel
-      Orientation="Vertical"
-      IsVisible="{Binding IsNotWindows}"
+      Orientation="Vertical"      
       IsEnabled="{Binding !IsPlaying}">
-      <TextBlock>Camera type</TextBlock>
-      <StackPanel
-        Orientation="Horizontal"
-        Spacing="10">
+      <TextBlock Text="{DynamicResource Text.CameraType}"/>
+      <WrapPanel
+        Orientation="Horizontal">
         <RadioButton
-          GroupName="CameraType"
-          Content="Raspberry PI"
-          IsChecked="{Binding !IsUVCCamera}"/>
-        <RadioButton
+          Margin="0 0 10 0"
           GroupName="CameraType"
           Content="UVC"
-          IsChecked="{Binding IsUVCCamera}"/>
-      </StackPanel>
+          IsChecked="{Binding IsUVC}"/>
+        <RadioButton       
+          Margin="0 0 10 0"
+          GroupName="CameraType"
+          Content="Raspberry PI"
+          IsChecked="{Binding IsRaspberryPi}"
+          IsEnabled="{Binding !IsWindows}"/>
+        <RadioButton          
+          GroupName="CameraType"
+          Content="{DynamicResource Text.RemoteCameraType}"
+          IsChecked="{Binding IsRemote}"/>
+      </WrapPanel>
     </StackPanel>
     <CheckBox
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"

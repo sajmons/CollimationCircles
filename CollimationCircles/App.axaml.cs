@@ -52,7 +52,6 @@ public partial class App : Application
             .AddTransient<AboutViewModel>()            
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
-            .AddSingleton<IVideoStreamService, VideoStreamService>()
             .BuildServiceProvider());
     }
 }

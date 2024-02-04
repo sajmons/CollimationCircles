@@ -216,8 +216,7 @@ public class AppService
             FileName = fileName,
             UseShellExecute = false,
             RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
+            RedirectStandardError = true
         };        
 
         using Process process = new()
