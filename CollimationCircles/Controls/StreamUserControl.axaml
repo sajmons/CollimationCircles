@@ -50,7 +50,8 @@
       <Button
           Command="{Binding ResetAddressCommand}"
           ToolTip.Tip="{DynamicResource Text.ResetCameraStreamAddress}"
-          Grid.Column="2">
+          Grid.Column="2"
+          IsEnabled="{Binding !IsPlaying}">
         <PathIcon
           Foreground="{DynamicResource Color2}"
           Data="{StaticResource IconData.Reset}" />
