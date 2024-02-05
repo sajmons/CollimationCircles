@@ -117,4 +117,8 @@
   <system:String x:Key="Text.PlayStopCameraVideoStream">Starten oder stoppen Sie den Videostream der Kamera</system:String>
   <system:String x:Key="Text.CameraType">Kameratyp</system:String>
   <system:String x:Key="Text.RemoteCameraType">Fernbedienung</system:String>
+  
+  <!-- Non translatable -->
+  <system:String x:Key="Text.StarChar">*</system:String>
+  <system:String x:Key="Text.StarJson">json</system:String>
 </ResourceDictionary>

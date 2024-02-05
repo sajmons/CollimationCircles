@@ -117,4 +117,8 @@
   <system:String x:Key="Text.PlayStopCameraVideoStream">Začne ali ustavi video tok kamere</system:String>
   <system:String x:Key="Text.CameraType">Tip kamere</system:String>
   <system:String x:Key="Text.RemoteCameraType">Oddaljen</system:String>
+
+  <!-- Non translatable -->
+  <system:String x:Key="Text.StarChar">*</system:String>
+  <system:String x:Key="Text.StarJson">json</system:String>
 </ResourceDictionary>
