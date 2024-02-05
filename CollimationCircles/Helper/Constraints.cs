@@ -38,6 +38,6 @@
         internal const int LabelSizeMin = 5;
         internal const int LabelSizeMax = 1000;
 
-        internal const string MurlRegEx = "^(?:(?<protocol>tcp\\/h264|http|https):\\/\\/)?(?<host>[\\w\\.-]+)(?::(?<port>\\d+))?(?<path>\\/\\S*)?$";
+        internal const string MurlRegEx = "^(?:(?<protocol>tcp\\/h264|http|https|dshow|v4l2|qtcapture):\\/\\/)?(?<host>[\\w\\.-]+)?(?::(?<port>\\d+))?(?<path>\\/\\S*)?$";
     }
 }

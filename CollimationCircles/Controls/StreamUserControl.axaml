@@ -13,44 +13,72 @@
 
     <TextBox
       Text="{Binding FullAddress, Mode=TwoWay}"
-      IsEnabled="{Binding !#autoStartCamStream.IsChecked}"
-      VerticalAlignment="Center"/>
-    <Grid ColumnDefinitions="*,30">
-      <Button
-        HorizontalContentAlignment="Center"
-        HorizontalAlignment="Stretch"
-        Content="{Binding ButtonTitle}"
-        Command="{Binding PlayPauseCommand}"/>
-      <PathIcon
-        Grid.Column="1"
-        ToolTip.Tip="{DynamicResource Text.LibcameraVidCommand}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Help}" />
-    </Grid>
-    <Grid ColumnDefinitions="*,30">
-      <CheckBox
-        Name="autoStartCamStream"
-        Content="{DynamicResource Text.AutoStartCameraStream}"
-        IsEnabled="{Binding AreControlsEnabled}"
-        IsChecked="{Binding LocalConnectionPossible}" />
-      <PathIcon
-        Grid.Column="1"
-        ToolTip.Tip="{DynamicResource Text.AutoStartCameraStreamHelp}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Help}" />
-    </Grid>
+      VerticalAlignment="Center"
+      FocusAdorner=""/>
     <StackPanel
-      Orientation="Vertical"
-      IsEnabled="{Binding AreControlsEnabled}">
-      <TextBlock
-        VerticalAlignment="Bottom"
-        TextWrapping="WrapWithOverflow"
-        Text="{DynamicResource Text.CameraStreamTimeout}" />
-      <NumericUpDown
-        Increment="100"
-        Value="{Binding CameraStreamTimeout}"
-        Minimum="{Binding CameraStreamTimeoutMin}"
-        Maximum="{Binding CameraStreamTimeoutMax}"/>
+      Orientation="Horizontal"
+      Spacing="10">
+      <ToggleButton
+        IsChecked="{Binding IsPlaying}"
+        Command="{Binding PlayPauseCommand}"
+        ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}">
+        <Panel>
+          <PathIcon
+            Foreground="{DynamicResource Color2}"
+            Classes="visibility-on"
+            Data="{StaticResource IconData.Stop}" />
+          <PathIcon
+            Foreground="{DynamicResource Color2}"
+            Classes="visibility-off"
+            Data="{StaticResource IconData.Play}" />
+        </Panel>
+        <ToggleButton.Styles>
+          <Style Selector="ToggleButton PathIcon.visibility-on">
+            <Setter Property="IsVisible" Value="False"/>
+          </Style>
+          <Style Selector="ToggleButton:checked PathIcon.visibility-on">
+            <Setter Property="IsVisible" Value="True"/>
+          </Style>
+          <Style Selector="ToggleButton PathIcon.visibility-off">
+            <Setter Property="IsVisible" Value="True"/>
+          </Style>
+          <Style Selector="ToggleButton:checked PathIcon.visibility-off">
+            <Setter Property="IsVisible" Value="False"/>
+          </Style>
+        </ToggleButton.Styles>
+      </ToggleButton>
+      <Button
+          Command="{Binding ResetAddressCommand}"
+          ToolTip.Tip="{DynamicResource Text.ResetCameraStreamAddress}"
+          Grid.Column="2"
+          IsEnabled="{Binding !IsPlaying}">
+        <PathIcon
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Reset}" />
+      </Button>
+    </StackPanel>
+    <StackPanel
+      Orientation="Vertical"      
+      IsEnabled="{Binding !IsPlaying}">
+      <TextBlock Text="{DynamicResource Text.CameraType}"/>
+      <WrapPanel
+        Orientation="Horizontal">
+        <RadioButton
+          Margin="0 0 10 0"
+          GroupName="CameraType"
+          Content="UVC"
+          IsChecked="{Binding IsUVC}"/>
+        <RadioButton       
+          Margin="0 0 10 0"
+          GroupName="CameraType"
+          Content="Raspberry PI"
+          IsChecked="{Binding IsRaspberryPi}"
+          IsEnabled="{Binding !IsWindows}"/>
+        <RadioButton          
+          GroupName="CameraType"
+          Content="{DynamicResource Text.RemoteCameraType}"
+          IsChecked="{Binding IsRemote}"/>
+      </WrapPanel>
     </StackPanel>
     <CheckBox
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"

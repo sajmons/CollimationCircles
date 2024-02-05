@@ -113,7 +113,10 @@
   <system:String x:Key="Text.PayPalDonation">S to donacijo me boste podprli pri nadaljnjem razvoju aplikacije Collimation Circles. Hvala vam!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Čas čakanja na video tok</system:String>
-  <system:String x:Key="Text.LibcameraVidCommand">Izvedite naslednji ukaz v Linux terminalu, preden pritisnete gumb Start: libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
+  <system:String x:Key="Text.ResetCameraStreamAddress">Ponastavi naslov video toka kamere na privzeto vrednost</system:String>
+  <system:String x:Key="Text.PlayStopCameraVideoStream">Začne ali ustavi video tok kamere</system:String>
+  <system:String x:Key="Text.CameraType">Tip kamere</system:String>
+  <system:String x:Key="Text.RemoteCameraType">Oddaljen</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

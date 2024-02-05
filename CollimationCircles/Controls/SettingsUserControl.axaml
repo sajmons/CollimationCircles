@@ -42,7 +42,7 @@
               Header="{DynamicResource Text.WebCamStream}"
               IsExpanded="{Binding CameraVideoStreamExpanded}">
               <controls:StreamUserControl/>
-            </Expander>
+            </Expander>            
           </StackPanel>
         </ScrollViewer>
       </TabItem>

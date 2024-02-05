@@ -113,7 +113,10 @@
   <system:String x:Key="Text.PayPalDonation">Mit dieser Spende unterstützen Sie mich bei der Weiterentwicklung der Collimation Circles-Anwendung. Danke schön!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Zeitüberschreitung beim Warten auf den Videostream</system:String>
-  <system:String x:Key="Text.LibcameraVidCommand">Führen Sie den folgenden Befehl im Linux-Terminal aus, bevor Sie auf die Schaltfläche Start klicken: libcamera-vid -t 0 --inline --nopreview --listen -o tcp://0.0.0.0:8080</system:String>
+  <system:String x:Key="Text.ResetCameraStreamAddress">Setzen Sie die Videostream-Adresse der Kamera auf den Standardwert zurück</system:String>
+  <system:String x:Key="Text.PlayStopCameraVideoStream">Starten oder stoppen Sie den Videostream der Kamera</system:String>
+  <system:String x:Key="Text.CameraType">Kameratyp</system:String>
+  <system:String x:Key="Text.RemoteCameraType">Fernbedienung</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

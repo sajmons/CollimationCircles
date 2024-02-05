@@ -6,17 +6,16 @@ using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class StreamViewModel : BaseViewModel
     {
-        const string defaultProtocol = "tcp/h264";
-        const string defaultLocalAddress = "0.0.0.0";
-        const string defaultRemoteAddress = "192.168.1.174";
-        const string defaultPort = "8080";
+        private const string rpiPort = "49555";
 
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IDialogService dialogService;
@@ -24,34 +23,28 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
-        [RegularExpression(
-            Constraints.MurlRegEx,
-            ErrorMessage = "Invalid URL address")]
-        private string fullAddress;
+        //[RegularExpression(
+        //    Constraints.MurlRegEx,
+        //    ErrorMessage = "Invalid URL address")]
+        private string fullAddress = string.Empty;
 
-        private string protocol = defaultProtocol;
+        private string protocol = string.Empty;
 
-        private string address;
+        private string address = string.Empty;
 
-        private string port = defaultPort;
+        private string port = string.Empty;
 
-        private string pathAndQuery;
+        private string pathAndQuery = string.Empty;
 
         public MediaPlayer MediaPlayer { get; }
 
-        [ObservableProperty]
-        private string buttonTitle = string.Empty;
-
         public bool CanExecutePlayPause
         {
-            get => !string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address);
+            get => !string.IsNullOrWhiteSpace(FullAddress);
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(AreControlsEnabled))]
         private bool isPlaying = false;
-
-        public bool AreControlsEnabled => (LocalConnectionPossible || LibCameraAvaliable) && !IsPlaying;
 
         private readonly SettingsViewModel settingsViewModel;
 
@@ -59,27 +52,32 @@ namespace CollimationCircles.ViewModels
         private bool pinVideoWindowToMainWindow = true;
 
         [ObservableProperty]
-        private bool localConnectionPossible = false;
-
-        [ObservableProperty]
-        private bool libCameraAvaliable = false;
-
-        [ObservableProperty]
         private int cameraStreamTimeout = 600;
+
+        [ObservableProperty]
+        private bool remoteConnection = false;
+
+        [ObservableProperty]
+        private bool isUVC = true;
+
+        [ObservableProperty]
+        private bool isRaspberryPi = false;
+
+        [ObservableProperty]
+        private bool isRemote = false;
+
+        [ObservableProperty]
+        private bool isWindows = OperatingSystem.IsWindows();        
 
         public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
-
+            
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
             CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
 
-            LibCameraAvaliable = AppService.IsPackageInstalled(AppService.LIBCAMERA_APPS).GetAwaiter().GetResult();
-
-            LocalConnectionPossible = LibCameraAvaliable;
-
-            address = LocalConnectionPossible ? defaultLocalAddress : defaultRemoteAddress;
+            //address = AppService.GetLocalIPAddress() ?? string.Empty;
             pathAndQuery = string.Empty;
 
             FullAddress = GetFullUrlFromParts();
@@ -100,8 +98,6 @@ namespace CollimationCircles.ViewModels
             MediaPlayer.Opening += MediaPlayer_Opening;
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
-
-            ButtonTitle = DynRes.TryGetString("Start");
         }
 
         private void LibVLC_Log(object? sender, LogEventArgs e)
@@ -111,32 +107,36 @@ namespace CollimationCircles.ViewModels
 
         private void Play()
         {
-            if (!string.IsNullOrWhiteSpace(protocol) && !string.IsNullOrWhiteSpace(address))
+            if (IsRaspberryPi)
             {
-                if (LocalConnectionPossible)
-                {
-                    logger.Info($"Just in case kill '{AppService.LIBCAMERA_VID}' process");
-                    AppService.ExecuteCommand("pkill", [AppService.LIBCAMERA_VID]);
-                    //AppService.ExecuteCommand("fuser", ["-k", "/dev/video0"]);
+                //rpicam-vid -t 0 --inline -n -o udp://0.0.0.0:5000
 
-                    // proc = await AppService.StartTCPCameraStream($"0.0.0.0:{port}");
-                    logger.Info("Starting camera video stream");
-                    AppService.ExecuteCommand(
-                        AppService.LIBCAMERA_VID,
-                        [$"-t", "0", "--inline", "--nopreview", "--listen", "-o", $"tcp://{defaultLocalAddress}:{port}"], () =>
-                        {
+                List<string> parameters = [
+                    "-t",
+                    "0",
+                    "--inline",
+                    "--listen",
+                    "-n",
+                    "-o",
+                    $"tcp://0.0.0.0:{rpiPort}"
+                ];
 
-                        }, CameraStreamTimeout);
-                    logger.Info("Camera video stream started");
-                }
+                AppService.ExecuteCommand(
+                    "rpicam-vid",
+                    parameters, timeout: 0);
 
+                Thread.Sleep(1000);
+            }
+
+            if (!string.IsNullOrWhiteSpace(FullAddress))
+            {
                 MediaPlayerPlay();
             }
         }
 
         private void MediaPlayerPlay()
         {
-            string mrl = GetFullUrlFromParts();
+            string mrl = FullAddress;
 
             string[] mediaAdditionalOptions = [
                 //$"--osd",
@@ -161,7 +161,6 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            ButtonTitle = DynRes.TryGetString("Stop");
             IsPlaying = MediaPlayer.IsPlaying;
         }
 
@@ -180,7 +179,6 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer stopped");
 
             CloseWebCamStream();
-            ButtonTitle = DynRes.TryGetString("Start");
             IsPlaying = MediaPlayer.IsPlaying;
         }
 
@@ -213,15 +211,53 @@ namespace CollimationCircles.ViewModels
         {
             Dispatcher.UIThread.Post(() =>
             {
-                dialogService?.Close(this);
-                logger.Trace($"Closed web camera stream window");
+                try
+                {
+                    dialogService?.Close(this);
+                    logger.Trace($"Closed web camera stream window");
+                }
+                catch (Exception exc)
+                {
+                    logger.Warn($"Unable to close video dialog. Probably closed by a user. {exc.Message}");
+                }
             });
         }
 
         private string GetFullUrlFromParts()
         {
-            string newRemoteAddress = address ?? defaultRemoteAddress;
-            string addr = LocalConnectionPossible ? defaultLocalAddress : newRemoteAddress;
+            pathAndQuery = string.Empty;
+            port = string.Empty;
+            address = string.Empty;
+
+            if (IsUVC)
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    protocol = "dshow";
+                }
+                else if (OperatingSystem.IsMacOS())
+                {
+                    protocol = "qtcapture";
+                }
+                else
+                {
+                    protocol = "v4l2";
+                    address = "/dev/video0";
+                }
+            }
+            if (IsRaspberryPi)
+            {
+                protocol = "tcp/h264";
+                address = "localhost";
+                port = rpiPort;
+            }
+            else if (IsRemote)
+            {
+                protocol = "http";
+            }
+
+            string newRemoteAddress = address;
+            string addr = newRemoteAddress;
             string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
             string prt = string.IsNullOrWhiteSpace(port) ? "" : $":{port}";
 
@@ -236,33 +272,27 @@ namespace CollimationCircles.ViewModels
         partial void OnCameraStreamTimeoutChanged(int oldValue, int newValue)
         {
             settingsViewModel.CameraStreamTimeout = newValue;
+        }        
+
+        [RelayCommand]
+        private void ResetAddress()
+        {
+            FullAddress = GetFullUrlFromParts();
         }
 
-        partial void OnFullAddressChanged(string? oldValue, string newValue)
+        partial void OnIsUVCChanged(bool oldValue, bool newValue)
         {
-            string url = Constraints.MurlRegEx;
+            FullAddress = GetFullUrlFromParts();
+        }
 
-            Match m = Regex.Match(FullAddress, url);
+        partial void OnIsRaspberryPiChanged(bool oldValue, bool newValue)
+        {
+            FullAddress = GetFullUrlFromParts();
+        }
 
-            if (m.Success)
-            {
-                logger.Debug($"Media URL parsed sucessfully '{FullAddress}'");
-                protocol = m.Groups["protocol"].Value;
-                address = m.Groups["host"].Value;
-
-                string p = m.Groups["port"].Value;
-
-                port = string.IsNullOrWhiteSpace(p) ? string.Empty : $"{p}";
-                pathAndQuery = m.Groups["path"].Value;
-            }
-            else
-            {
-                logger.Warn($"Please check media URL for errors '{FullAddress}'");
-                protocol = string.Empty;
-                address = string.Empty;
-                port = string.Empty;
-                pathAndQuery = string.Empty;
-            }
+        partial void OnIsRemoteChanged(bool oldValue, bool newValue)
+        {
+            FullAddress = GetFullUrlFromParts();
         }
     }
 }
