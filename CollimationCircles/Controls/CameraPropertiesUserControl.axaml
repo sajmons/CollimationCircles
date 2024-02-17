@@ -3,11 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="250"
-             d:DesignHeight="650"
+             d:DesignHeight="750"
              x:Class="CollimationCircles.Controls.CameraPropertiesUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:CameraControlsViewModel">
-  <StackPanel Orientation="Vertical">
+  <StackPanel
+    Orientation="Vertical"
+    IsEnabled="{Binding IsOpened}">
     <StackPanel Orientation="Horizontal">
       <TextBlock>Brightness:</TextBlock>
       <TextBox Text="{Binding Brightness}" />
@@ -80,11 +82,12 @@
       Value="{Binding Gain}"
       Minimum="{Binding GainMin}"
       Maximum="{Binding GainMax}"/>
-    <Grid
-      ColumnDefinitions="40,5,*,5,70,5,10">
+    <StackPanel
+      Orientation="Horizontal"
+      Spacing="5">
       <TextBlock Text="Focus:"/>      
       <Slider
-        Grid.Column="2"        
+        Width="110"
         Value="{Binding Focus}"
         Minimum="{Binding FocusMin}"
         Maximum="{Binding FocusMax}"/>
@@ -94,7 +97,7 @@
       <CheckBox        
         Grid.Column="5"
         IsChecked="{Binding Autofocus}"/>
-    </Grid>
+    </StackPanel>
 
   </StackPanel>
 </UserControl>

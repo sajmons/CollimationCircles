@@ -9,38 +9,41 @@ namespace CollimationCircles.Services
     {
         readonly VideoCapture videoCapture = new();
 
+        public event EventHandler? OnOpened;
+        public event EventHandler? OnClosed;
+
         [Range(Constraints.BrightnessMin, Constraints.BrightnessMax)]
-        public double Brightness
+        public int Brightness
         {
-            get => videoCapture.Brightness;
+            get => (int)videoCapture.Brightness;
             set => videoCapture.Brightness = value;
         }
 
         [Range(Constraints.ContrastMin, Constraints.ContrastMax)]
-        public double Contrast
+        public int Contrast
         {
-            get => videoCapture.Contrast;
+            get => (int)videoCapture.Contrast;
             set => videoCapture.Contrast = value;
         }
 
         [Range(Constraints.SaturationMin, Constraints.SaturationMax)]
-        public double Saturation
+        public int Saturation
         {
-            get => videoCapture.Saturation;
+            get => (int)videoCapture.Saturation;
             set => videoCapture.Saturation = value;
         }
 
         [Range(Constraints.HueMin, Constraints.HueMax)]
-        public double Hue
+        public int Hue
         {
-            get => videoCapture.Hue;
+            get => (int)videoCapture.Hue;
             set => videoCapture.Hue = value;
         }
 
         [Range(Constraints.GainMin, Constraints.GainMax)]
-        public double Gain
+        public int Gain
         {
-            get => videoCapture.Gain;
+            get => (int)videoCapture.Gain;
             set => videoCapture.Gain = value;
         }
 
@@ -51,11 +54,11 @@ namespace CollimationCircles.Services
         }
 
         [Range(Constraints.FocusMin, Constraints.FocusMax)]
-        public double Focus
+        public int Focus
         {
-            get => videoCapture.Focus;
+            get => (int)videoCapture.Focus;
             set => videoCapture.Focus = value;
-        }        
+        }
 
         [Range(Constraints.BrightnessMin, Constraints.BrightnessMax)]
         public bool Monochrome
@@ -65,23 +68,23 @@ namespace CollimationCircles.Services
         }
 
         [Range(Constraints.GammaMin, Constraints.GammaMax)]
-        public double Gamma
+        public int Gamma
         {
-            get => videoCapture.Gamma;
+            get => (int)videoCapture.Gamma;
             set => videoCapture.Gamma = value;
         }
 
         [Range(Constraints.SharpnessMin, Constraints.SharpnessMax)]
-        public double Sharpness
+        public int Sharpness
         {
-            get => videoCapture.Sharpness;
+            get => (int)videoCapture.Sharpness;
             set => videoCapture.Sharpness = value;
         }
 
         [Range(Constraints.ZoomMin, Constraints.ZoomMax)]
-        public double Zoom
+        public int Zoom
         {
-            get => videoCapture.Zoom;
+            get => (int)videoCapture.Zoom;
             set => videoCapture.Zoom = value;
         }        
 
@@ -93,11 +96,13 @@ namespace CollimationCircles.Services
         public void Open()
         {
             videoCapture.Open(0);
+            OnOpened?.Invoke(this, new EventArgs());
         }
 
         public void Release()
         {
             videoCapture.Release();
+            OnClosed?.Invoke(this, new EventArgs());
         }
     }
 }
