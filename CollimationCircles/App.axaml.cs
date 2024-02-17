@@ -49,9 +49,11 @@ public partial class App : Application
             .AddSingleton<SettingsViewModel>()
             .AddSingleton<StreamViewModel>()
             .AddSingleton<AppLogViewModel>()
+            .AddSingleton<CameraControlsViewModel>()
             .AddTransient<AboutViewModel>()            
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
+            .AddSingleton<ICameraControlService, CameraControlService>()
             .BuildServiceProvider());
     }
 }

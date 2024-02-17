@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="250"
+             d:DesignHeight="650"
+             x:Class="CollimationCircles.Controls.CameraPropertiesUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:CameraControlsViewModel">
+  <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Brightness:</TextBlock>
+      <TextBox Text="{Binding Brightness}" />
+    </StackPanel>
+    <Slider
+      Name="brightness"
+      Value="{Binding Brightness}"
+      Minimum="{Binding BrightnessMin}"
+      Maximum="{Binding BrightnessMax}"/>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Contrast:</TextBlock>
+      <TextBox Text="{Binding Contrast}" />
+    </StackPanel>
+    <Slider
+      Name="contrast"
+      Value="{Binding Contrast}"
+      Minimum="{Binding ContrastMin}"
+      Maximum="{Binding ContrastMax}"/>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Saturation:</TextBlock>
+      <TextBox Text="{Binding Saturation}"/>
+    </StackPanel>
+    <Slider
+      Name="saturation"
+      Value="{Binding Saturation}"
+      Minimum="{Binding SaturationMin}"
+      Maximum="{Binding SaturationMax}"/>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Gamma:</TextBlock>
+      <TextBox Text="{Binding Gamma}" />
+    </StackPanel>
+    <Slider
+      Name="gamma"
+      Value="{Binding Gamma}"
+      Minimum="{Binding GammaMin}"
+      Maximum="{Binding GammaMax}"/>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Hue:</TextBlock>
+      <TextBox Text="{Binding Hue}" />
+    </StackPanel>
+    <Slider
+      Name="hue"
+      Value="{Binding Hue}"
+      Minimum="{Binding HueMin}"
+      Maximum="{Binding HueMax}"/>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Sharpness:</TextBlock>
+      <TextBox Text="{Binding Sharpness}" />
+    </StackPanel>
+    <Slider
+      Name="sharpness"
+      Value="{Binding Sharpness}"
+      Minimum="{Binding SharpnessMin}"
+      Maximum="{Binding SharpnessMax}"/>    
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Zoom:</TextBlock>
+      <TextBox Text="{Binding Zoom}" />
+    </StackPanel>
+    <Slider
+      Name="zoom"
+      Value="{Binding Zoom}"
+      Minimum="{Binding ZoomMin}"
+      Maximum="{Binding ZoomMax}"/>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Gain:</TextBlock>
+      <TextBox Text="{Binding Gain}" />
+    </StackPanel>
+    <Slider
+      Name="gain"
+      Value="{Binding Gain}"
+      Minimum="{Binding GainMin}"
+      Maximum="{Binding GainMax}"/>
+    <Grid
+      ColumnDefinitions="40,5,*,5,70,5,10">
+      <TextBlock Text="Focus:"/>      
+      <Slider
+        Grid.Column="2"        
+        Value="{Binding Focus}"
+        Minimum="{Binding FocusMin}"
+        Maximum="{Binding FocusMax}"/>
+      <TextBox
+        Grid.Column="4"
+        Text="{Binding Focus}" />
+      <CheckBox        
+        Grid.Column="5"
+        IsChecked="{Binding Autofocus}"/>
+    </Grid>
+
+  </StackPanel>
+</UserControl>

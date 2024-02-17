@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
+using NLog.Filters;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +22,7 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IDialogService dialogService;
         private readonly LibVLC libVLC;
+        private readonly ICameraControlService cameraControlService;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
@@ -67,13 +70,14 @@ namespace CollimationCircles.ViewModels
         private bool isRemote = false;
 
         [ObservableProperty]
-        private bool isWindows = OperatingSystem.IsWindows();        
+        private bool isWindows = OperatingSystem.IsWindows();
 
-        public StreamViewModel(IDialogService dialogService, SettingsViewModel settingsViewModel)
+        public StreamViewModel(IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
-            
+            this.cameraControlService = cameraControlService;
+
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
             CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
 
@@ -89,12 +93,19 @@ namespace CollimationCircles.ViewModels
                 //$"--height=240",
                 //$"--zoom=1.5",
                 //$"--log-verbose=0"
+                "--video-filter=adjust{contrast=1.0,brightness=1.0,hue=0,saturation=1.0,gamma=1.0}"
             ];
 
             libVLC = new(libVLCOptions);
             //libVLC.Log += LibVLC_Log;
 
-            MediaPlayer = new(libVLC);
+            MediaPlayer = new(libVLC)
+            {
+                FileCaching = 0,
+                NetworkCaching = 0,
+                EnableHardwareDecoding = true
+            };
+
             MediaPlayer.Opening += MediaPlayer_Opening;
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Stopped += MediaPlayer_Stopped;
@@ -142,7 +153,7 @@ namespace CollimationCircles.ViewModels
                 //$"--osd",
                 //$"--video-title=my title",
                 //$"--avcodec-hw=any",
-                //$"--zoom=0.25"
+                //$"--zoom=0.25"                
             ];
 
             using var media = new Media(
@@ -151,8 +162,8 @@ namespace CollimationCircles.ViewModels
                     FromType.FromLocation,
                     mediaAdditionalOptions
                     );
-
-            MediaPlayer.Play(media);
+            cameraControlService.Open();
+            MediaPlayer.Play(media);            
             logger.Info($"Playing web camera stream: '{media.Mrl}'");
         }
 
@@ -171,7 +182,7 @@ namespace CollimationCircles.ViewModels
 
             //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Enable, 1);
             //MediaPlayer.SetAdjustInt(VideoAdjustOption.Enable, 1);
-            //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Gamma, 0.1f);
+            //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Brightness, 2.0f);                  
         }
 
         private void MediaPlayer_Stopped(object? sender, EventArgs e)
@@ -202,7 +213,7 @@ namespace CollimationCircles.ViewModels
         {
             Dispatcher.UIThread.Post(() =>
             {
-                dialogService?.Show<StreamViewModel>(null, this);
+                dialogService?.Show<StreamViewModel>(null, this);                
                 logger.Trace($"Opened web camera stream window");
             });
         }
@@ -213,6 +224,7 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
+                    cameraControlService.Release();
                     dialogService?.Close(this);
                     logger.Trace($"Closed web camera stream window");
                 }
@@ -272,7 +284,7 @@ namespace CollimationCircles.ViewModels
         partial void OnCameraStreamTimeoutChanged(int oldValue, int newValue)
         {
             settingsViewModel.CameraStreamTimeout = newValue;
-        }        
+        }
 
         [RelayCommand]
         private void ResetAddress()

@@ -41,7 +41,10 @@
               Width="{Binding SettingsWidth}"
               Header="{DynamicResource Text.WebCamStream}"
               IsExpanded="{Binding CameraVideoStreamExpanded}">
+              <StackPanel Orientation="Vertical">
               <controls:StreamUserControl/>
+              <controls:CameraPropertiesUserControl/>
+              </StackPanel>
             </Expander>            
           </StackPanel>
         </ScrollViewer>

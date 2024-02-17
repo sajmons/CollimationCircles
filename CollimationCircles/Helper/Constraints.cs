@@ -39,5 +39,34 @@
         internal const int LabelSizeMax = 1000;
 
         internal const string MurlRegEx = "^(?:(?<protocol>tcp\\/h264|http|https|dshow|v4l2|qtcapture):\\/\\/)?(?<host>[\\w\\.-]+)?(?::(?<port>\\d+))?(?<path>\\/\\S*)?$";
+
+        // BRIGHTNESS,CONTRAST,SATURATION,HUE,GAIN,EXPOSURE,FOCUS,AUTOFOCUS,AUTO_EXPOSURE
+
+        internal const double BrightnessMin = -65;
+        internal const double BrightnessMax = 65;        
+
+        internal const double ContrastMin = -65;
+        internal const double ContrastMax = 65;
+
+        internal const double SaturationMin = 0;
+        internal const double SaturationMax = 255;
+
+        internal const double HueMin = -65;
+        internal const double HueMax = 65;
+
+        internal const double GainMin = -65;
+        internal const double GainMax = 65;
+
+        internal const double FocusMin = -255;
+        internal const double FocusMax = 255;
+
+        internal const double GammaMin = 0;
+        internal const double GammaMax = 255;
+
+        internal const double SharpnessMin = 0;
+        internal const double SharpnessMax = 128;
+
+        internal const double ZoomMin = 0;
+        internal const double ZoomMax = 2;
     }
 }
