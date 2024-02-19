@@ -124,7 +124,7 @@
   <system:String x:Key="Text.Hue">Odtenek</system:String>
   <system:String x:Key="Text.Sharpness">Ostrina</system:String>
   <system:String x:Key="Text.Zoom">Povečava</system:String>
-  <system:String x:Key="Text.Gain">Dobiček</system:String>
+  <system:String x:Key="Text.Gain">Občutljivost</system:String>
   <system:String x:Key="Text.Focus">Fokus</system:String>
   <system:String x:Key="Text.Auto">Samodejno</system:String>
 

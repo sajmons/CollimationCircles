@@ -68,5 +68,8 @@
 
         internal const int ZoomMin = 1;
         internal const int ZoomMax = 2;
+
+        internal const double ExposureMin = 0.01;
+        internal const double ExposureMax = 255;
     }
 }

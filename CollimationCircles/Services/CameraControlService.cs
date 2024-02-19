@@ -59,8 +59,7 @@ namespace CollimationCircles.Services
             get => (int)videoCapture.Focus;
             set => videoCapture.Focus = value;
         }
-
-        [Range(Constraints.BrightnessMin, Constraints.BrightnessMax)]
+        
         public bool Monochrome
         {
             get => videoCapture.Monocrome == 1;
@@ -86,7 +85,20 @@ namespace CollimationCircles.Services
         {
             get => (int)videoCapture.Zoom;
             set => videoCapture.Zoom = value;
-        }        
+        }
+
+        public bool AutoExposure
+        {
+            get => videoCapture.AutoExposure == 1;
+            set => videoCapture.AutoExposure = value ? 1.0 : 0.0;
+        }
+
+        [Range(Constraints.ExposureMin, Constraints.ExposureMax)]
+        public double Exposure
+        {
+            get => videoCapture.Exposure;
+            set => videoCapture.Exposure = value;
+        }
 
         public void Dispose()
         {
