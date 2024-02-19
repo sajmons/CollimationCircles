@@ -20,7 +20,7 @@
     </Style>
     <Style Selector="Slider">
       <Setter Property="MinHeight" Value="0" />
-      <Setter Property="Height" Value="35" />
+      <Setter Property="Height" Value="35" />      
     </Style>
   </UserControl.Styles>
   <StackPanel
@@ -28,124 +28,120 @@
     IsEnabled="{Binding IsOpened}">
     <Grid
       ColumnDefinitions="*,Auto"
-      RowDefinitions="20,22">
+      RowDefinitions="20,22">      
       <TextBlock >Brightness:</TextBlock>
-      <TextBox
-        Text="{Binding Brightness}"
-        Grid.Column="1"/>
       <Slider
-        Grid.RowSpan="2"
+        Grid.RowSpan="2"        
         Grid.ColumnSpan="2"
         Value="{Binding Brightness}"
         Minimum="{Binding BrightnessMin}"
         Maximum="{Binding BrightnessMax}" />
+      <TextBox
+        Text="{Binding Brightness}"
+        Grid.Column="1"/>      
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Contrast:</TextBlock>
-      <TextBox
-        Text="{Binding Contrast}"
-        Grid.Column="1"/>
+      <TextBlock>Contrast:</TextBlock>      
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Contrast}"
         Minimum="{Binding ContrastMin}"
         Maximum="{Binding ContrastMax}"/>
+      <TextBox
+        Text="{Binding Contrast}"
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Saturation:</TextBlock>
-      <TextBox
-        Text="{Binding Saturation}"
-        Grid.Column="1"/>
+      <TextBlock>Saturation:</TextBlock>      
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Saturation}"
         Minimum="{Binding SaturationMin}"
         Maximum="{Binding SaturationMax}"/>
+      <TextBox
+        Text="{Binding Saturation}"
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Gamma:</TextBlock>
-      <TextBox
-        Text="{Binding Gamma}"
-        Grid.Column="1"/>
+      <TextBlock>Gamma:</TextBlock>      
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Gamma}"
         Minimum="{Binding GammaMin}"
         Maximum="{Binding GammaMax}"/>
+      <TextBox
+        Text="{Binding Gamma}"
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Hue:</TextBlock>
-      <TextBox
-        Text="{Binding Hue}"
-        Grid.Column="1"/>
+      <TextBlock>Hue:</TextBlock>      
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Hue}"
         Minimum="{Binding HueMin}"
         Maximum="{Binding HueMax}"/>
+      <TextBox
+        Text="{Binding Hue}"
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Sharpness:</TextBlock>
-      <TextBox
-        Text="{Binding Sharpness}"
-        Grid.Column="1"/>
+      <TextBlock>Sharpness:</TextBlock>      
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Sharpness}"
         Minimum="{Binding SharpnessMin}"
         Maximum="{Binding SharpnessMax}"/>
+      <TextBox
+        Text="{Binding Sharpness}"
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Zoom:</TextBlock>
-      <TextBox
-        Text="{Binding Zoom}"
-        Grid.Column="1"/>
+      <TextBlock>Zoom:</TextBlock>      
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Zoom}"
         Minimum="{Binding ZoomMin}"
         Maximum="{Binding ZoomMax}"/>
+      <TextBox
+        Text="{Binding Zoom}"
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Gain:</TextBlock>
-      <TextBox
-        Text="{Binding Gain}"
-        Grid.Column="1"/>
+      <TextBlock>Gain:</TextBlock>      
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Gain}"
         Minimum="{Binding GainMin}"
         Maximum="{Binding GainMax}"/>
+      <TextBox
+        Text="{Binding Gain}"
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="Auto,*,Auto"
       RowDefinitions="20,22">
-      <TextBlock Text="Focus:"/>
-      <TextBox
-        IsEnabled="{Binding !#autoFocus.IsChecked}"
-        Text="{Binding Focus}"
-        Grid.Column="2"/>
+      <TextBlock Text="Focus:"/>      
       <Slider
         IsEnabled="{Binding !#autoFocus.IsChecked}"
         Grid.RowSpan="2"
@@ -153,6 +149,10 @@
         Value="{Binding Focus}"
         Minimum="{Binding FocusMin}"
         Maximum="{Binding FocusMax}"/>
+      <TextBox
+        IsEnabled="{Binding !#autoFocus.IsChecked}"
+        Text="{Binding Focus}"
+        Grid.Column="2"/>
       <CheckBox
         Name="autoFocus"
         HorizontalAlignment="Right"
