@@ -36,7 +36,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="brightness"
         Value="{Binding Brightness}"
         Minimum="{Binding BrightnessMin}"
         Maximum="{Binding BrightnessMax}" />
@@ -51,7 +50,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="contrast"
         Value="{Binding Contrast}"
         Minimum="{Binding ContrastMin}"
         Maximum="{Binding ContrastMax}"/>
@@ -66,7 +64,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="saturation"
         Value="{Binding Saturation}"
         Minimum="{Binding SaturationMin}"
         Maximum="{Binding SaturationMax}"/>
@@ -81,7 +78,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="gamma"
         Value="{Binding Gamma}"
         Minimum="{Binding GammaMin}"
         Maximum="{Binding GammaMax}"/>
@@ -96,7 +92,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="hue"
         Value="{Binding Hue}"
         Minimum="{Binding HueMin}"
         Maximum="{Binding HueMax}"/>
@@ -111,7 +106,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="sharpness"
         Value="{Binding Sharpness}"
         Minimum="{Binding SharpnessMin}"
         Maximum="{Binding SharpnessMax}"/>
@@ -126,7 +120,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="zoom"
         Value="{Binding Zoom}"
         Minimum="{Binding ZoomMin}"
         Maximum="{Binding ZoomMax}"/>
@@ -141,7 +134,6 @@
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
-        Name="gain"
         Value="{Binding Gain}"
         Minimum="{Binding GainMin}"
         Maximum="{Binding GainMax}"/>
@@ -151,20 +143,22 @@
       RowDefinitions="20,22">
       <TextBlock Text="Focus:"/>
       <TextBox
+        IsEnabled="{Binding !#autoFocus.IsChecked}"
         Text="{Binding Focus}"
         Grid.Column="2"/>
       <Slider
+        IsEnabled="{Binding !#autoFocus.IsChecked}"
         Grid.RowSpan="2"
         Grid.ColumnSpan="3"
         Value="{Binding Focus}"
         Minimum="{Binding FocusMin}"
         Maximum="{Binding FocusMax}"/>
       <CheckBox
+        Name="autoFocus"
         HorizontalAlignment="Right"
         Content="Auto"        
         Grid.Column="1"
         IsChecked="{Binding Autofocus}"/>
     </Grid>
-
   </StackPanel>
 </UserControl>
