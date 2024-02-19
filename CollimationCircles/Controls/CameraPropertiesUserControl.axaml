@@ -20,7 +20,7 @@
     </Style>
     <Style Selector="Slider">
       <Setter Property="MinHeight" Value="0" />
-      <Setter Property="Height" Value="35" />      
+      <Setter Property="Height" Value="35" />
     </Style>
   </UserControl.Styles>
   <StackPanel
@@ -28,22 +28,22 @@
     IsEnabled="{Binding IsOpened}">
     <Grid
       ColumnDefinitions="*,Auto"
-      RowDefinitions="20,22">      
-      <TextBlock >Brightness:</TextBlock>
+      RowDefinitions="20,22">
+      <TextBlock Text="{DynamicResource Text.Brightness}"/>
       <Slider
-        Grid.RowSpan="2"        
+        Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Brightness}"
         Minimum="{Binding BrightnessMin}"
         Maximum="{Binding BrightnessMax}" />
       <TextBox
         Text="{Binding Brightness}"
-        Grid.Column="1"/>      
+        Grid.Column="1"/>
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Contrast:</TextBlock>      
+      <TextBlock Text="{DynamicResource Text.Contrast}"/>
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
@@ -57,7 +57,7 @@
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Saturation:</TextBlock>      
+      <TextBlock Text="{DynamicResource Text.Saturation}"/>
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
@@ -71,7 +71,7 @@
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Gamma:</TextBlock>      
+      <TextBlock Text="{DynamicResource Text.Gamma}"/>
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
@@ -85,7 +85,7 @@
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Hue:</TextBlock>      
+      <TextBlock Text="{DynamicResource Text.Hue}"/>
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
@@ -99,7 +99,7 @@
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Sharpness:</TextBlock>      
+      <TextBlock Text="{DynamicResource Text.Sharpness}"/>
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
@@ -113,7 +113,7 @@
     <Grid
       ColumnDefinitions="*,Auto"
       RowDefinitions="20,22">
-      <TextBlock>Zoom:</TextBlock>      
+      <TextBlock Text="{DynamicResource Text.Zoom}"/>
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
@@ -126,8 +126,8 @@
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
-      RowDefinitions="20,22">
-      <TextBlock>Gain:</TextBlock>      
+      RowDefinitions="20,22">      
+      <TextBlock Text="{DynamicResource Text.Gain}"/>
       <Slider
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
@@ -141,7 +141,7 @@
     <Grid
       ColumnDefinitions="Auto,*,Auto"
       RowDefinitions="20,22">
-      <TextBlock Text="Focus:"/>      
+      <TextBlock Text="{DynamicResource Text.Focus}"/>
       <Slider
         IsEnabled="{Binding !#autoFocus.IsChecked}"
         Grid.RowSpan="2"
@@ -155,8 +155,9 @@
         Grid.Column="2"/>
       <CheckBox
         Name="autoFocus"
+        Margin="0 0 10 0"
         HorizontalAlignment="Right"
-        Content="Auto"        
+        Content="{DynamicResource Text.Auto}"
         Grid.Column="1"
         IsChecked="{Binding Autofocus}"/>
     </Grid>

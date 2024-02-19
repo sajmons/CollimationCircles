@@ -117,6 +117,16 @@
   <system:String x:Key="Text.PlayStopCameraVideoStream">Starten oder stoppen Sie den Videostream der Kamera</system:String>
   <system:String x:Key="Text.CameraType">Kameratyp</system:String>
   <system:String x:Key="Text.RemoteCameraType">Fernbedienung</system:String>
+  <system:String x:Key="Text.Brightness">Helligkeit</system:String>
+  <system:String x:Key="Text.Contrast">Kontrast</system:String>
+  <system:String x:Key="Text.Saturation">Sättigung</system:String>
+  <system:String x:Key="Text.Gamma">Gamma</system:String>
+  <system:String x:Key="Text.Hue">Farbton</system:String>
+  <system:String x:Key="Text.Sharpness">Schärfe</system:String>
+  <system:String x:Key="Text.Zoom">Zoomen</system:String>
+  <system:String x:Key="Text.Gain">Gewinnen</system:String>
+  <system:String x:Key="Text.Focus">Fokus</system:String>
+  <system:String x:Key="Text.Auto">Automatisch</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

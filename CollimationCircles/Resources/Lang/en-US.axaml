@@ -6,7 +6,7 @@
   <system:String x:Key="Text.AddNewItem">Add new shape</system:String>
   <system:String x:Key="Text.AllFiles">All Files</system:String>
   <system:String x:Key="Text.AllItemsControls">Global properties</system:String>
-  <system:String x:Key="Text.AppDescription">Application for electronicaly asisted telescope collimation © 2023 Simon Šander</system:String>  
+  <system:String x:Key="Text.AppDescription">Application for electronicaly asisted telescope collimation © 2023 Simon Šander</system:String>
   <system:String x:Key="Text.BahtinovMask">Bahtinov mask</system:String>
   <system:String x:Key="Text.ChangeLanguage">Change language</system:String>
   <system:String x:Key="Text.ChangeTo">Change to {0}</system:String>
@@ -74,7 +74,7 @@
   <system:String x:Key="Text.ItemColor">Color</system:String>
   <system:String x:Key="Text.Secondary">Secondary</system:String>
   <system:String x:Key="Text.FocuserTube">Focuser tube</system:String>
-  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>  
+  <system:String x:Key="Text.CollimationCircles">Collimation Circles</system:String>
   <system:String x:Key="Text.StayOnTop">Window always stays on top</system:String>
   <system:String x:Key="Text.DockInMainWindow">Dock in main window</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Show mark at selected shape</system:String>
@@ -106,7 +106,7 @@
   <system:String x:Key="Text.ShowApplicationLog">Show application log</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Show application log file location</system:String>
   <system:String x:Key="Text.AutoStartCameraStream">Automatically start camera stream if possible</system:String>
-  <system:String x:Key="Text.AutoStartCameraStreamHelp">Works only with Libcamera and Linux. For other cases user must provide URL address of video stream.</system:String>  
+  <system:String x:Key="Text.AutoStartCameraStreamHelp">Works only with Libcamera and Linux. For other cases user must provide URL address of video stream.</system:String>
   <system:String x:Key="Text.Tools">Tools</system:String>
   <system:String x:Key="Text.ShowAboutDialog">About this application</system:String>
   <system:String x:Key="Text.Close">Close</system:String>
@@ -118,7 +118,17 @@
   <system:String x:Key="Text.ResetCameraStreamAddress">Reset camera video stream address to default value</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Start or stop camera video stream</system:String>
   <system:String x:Key="Text.CameraType">Camera type</system:String>
-  <system:String x:Key="Text.RemoteCameraType">Remote</system:String>  
+  <system:String x:Key="Text.RemoteCameraType">Remote</system:String>
+  <system:String x:Key="Text.Brightness">Brightness</system:String>
+  <system:String x:Key="Text.Contrast">Contrast</system:String>
+  <system:String x:Key="Text.Saturation">Saturation</system:String>
+  <system:String x:Key="Text.Gamma">Gamma</system:String>
+  <system:String x:Key="Text.Hue">Hue</system:String>
+  <system:String x:Key="Text.Sharpness">Sharpness</system:String>
+  <system:String x:Key="Text.Zoom">Zoom</system:String>
+  <system:String x:Key="Text.Gain">Gain</system:String>
+  <system:String x:Key="Text.Focus">Focus</system:String>
+  <system:String x:Key="Text.Auto">Auto</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

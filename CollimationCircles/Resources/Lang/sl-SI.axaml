@@ -117,6 +117,16 @@
   <system:String x:Key="Text.PlayStopCameraVideoStream">Začne ali ustavi video tok kamere</system:String>
   <system:String x:Key="Text.CameraType">Tip kamere</system:String>
   <system:String x:Key="Text.RemoteCameraType">Oddaljen</system:String>
+  <system:String x:Key="Text.Brightness">Svetlost</system:String>
+  <system:String x:Key="Text.Contrast">Kontrast</system:String>
+  <system:String x:Key="Text.Saturation">Nasičenost</system:String>
+  <system:String x:Key="Text.Gamma">Gama</system:String>
+  <system:String x:Key="Text.Hue">Odtenek</system:String>
+  <system:String x:Key="Text.Sharpness">Ostrina</system:String>
+  <system:String x:Key="Text.Zoom">Povečava</system:String>
+  <system:String x:Key="Text.Gain">Dobiček</system:String>
+  <system:String x:Key="Text.Focus">Fokus</system:String>
+  <system:String x:Key="Text.Auto">Samodejno</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
