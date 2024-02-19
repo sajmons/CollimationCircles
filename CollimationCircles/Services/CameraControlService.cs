@@ -58,19 +58,26 @@ namespace CollimationCircles.Services
         {
             get => (int)videoCapture.Focus;
             set => videoCapture.Focus = value;
-        }
-        
-        public bool Monochrome
-        {
-            get => videoCapture.Monocrome == 1;
-            set => videoCapture.Monocrome = value ? 1.0 : 0.0;
-        }
+        }        
 
         [Range(Constraints.GammaMin, Constraints.GammaMax)]
         public int Gamma
         {
             get => (int)videoCapture.Gamma;
             set => videoCapture.Gamma = value;
+        }
+
+        public bool AutoWhiteBalance
+        {
+            get => (int)videoCapture.XI_AutoWB == 1;
+            set => videoCapture.XI_AutoWB = value ? 1.0 : 0.0;
+        }
+
+        [Range(Constraints.TemperatureMin, Constraints.TemperatureMax)]
+        public int Temperature
+        {
+            get => (int)videoCapture.Temperature;
+            set => videoCapture.Temperature = value;
         }
 
         [Range(Constraints.SharpnessMin, Constraints.SharpnessMax)]
@@ -93,12 +100,12 @@ namespace CollimationCircles.Services
             set => videoCapture.AutoExposure = value ? 1.0 : 0.0;
         }
 
-        [Range(Constraints.ExposureMin, Constraints.ExposureMax)]
-        public double Exposure
+        [Range(Constraints.ExposureTimeMin, Constraints.ExposureTimeMax)]
+        public int ExposureTime
         {
-            get => videoCapture.Exposure;
+            get => (int)videoCapture.Exposure;
             set => videoCapture.Exposure = value;
-        }
+        }        
 
         public void Dispose()
         {

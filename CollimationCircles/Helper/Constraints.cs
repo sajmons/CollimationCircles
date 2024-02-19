@@ -42,17 +42,17 @@
 
         // BRIGHTNESS,CONTRAST,SATURATION,HUE,GAIN,EXPOSURE,FOCUS,AUTOFOCUS,AUTO_EXPOSURE
 
-        internal const int BrightnessMin = -65;
-        internal const int BrightnessMax = 65;        
+        internal const int BrightnessMin = -64;
+        internal const int BrightnessMax = 64;        
 
-        internal const int ContrastMin = -65;
-        internal const int ContrastMax = 65;
+        internal const int ContrastMin = 0;
+        internal const int ContrastMax = 30;
 
         internal const int SaturationMin = 0;
-        internal const int SaturationMax = 255;
+        internal const int SaturationMax = 127;
 
-        internal const int HueMin = -65;
-        internal const int HueMax = 65;
+        internal const int HueMin = -16000;
+        internal const int HueMax = 16000;
 
         internal const int GainMin = -65;
         internal const int GainMax = 65;
@@ -60,16 +60,19 @@
         internal const int FocusMin = -255;
         internal const int FocusMax = 255;
 
-        internal const int GammaMin = 0;
-        internal const int GammaMax = 255;
+        internal const int GammaMin = 20;
+        internal const int GammaMax = 250;
 
         internal const int SharpnessMin = 0;
-        internal const int SharpnessMax = 128;
+        internal const int SharpnessMax = 100;
 
         internal const int ZoomMin = 1;
         internal const int ZoomMax = 2;
 
-        internal const double ExposureMin = 0.01;
-        internal const double ExposureMax = 255;
+        internal const int ExposureTimeMin = 2;
+        internal const int ExposureTimeMax = 5000;
+
+        internal const int TemperatureMin = 2800;
+        internal const int TemperatureMax = 6500;
     }
 }

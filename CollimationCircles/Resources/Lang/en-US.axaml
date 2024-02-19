@@ -129,7 +129,9 @@
   <system:String x:Key="Text.Gain">Gain</system:String>
   <system:String x:Key="Text.Focus">Focus</system:String>
   <system:String x:Key="Text.Auto">Auto</system:String>
-
+  <system:String x:Key="Text.ExposureTime">Exposure time</system:String>
+  <system:String x:Key="Text.Temperature">Temperature</system:String>
+  
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>

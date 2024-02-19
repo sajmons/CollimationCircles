@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="250"
-             d:DesignHeight="400"
+             d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.CameraPropertiesUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:CameraControlsViewModel">
@@ -14,7 +14,7 @@
       <Setter Property="Margin" Value="0" />
       <Setter Property="MinHeight" Value="0" />
       <Setter Property="MinWidth" Value="0" />
-      <Setter Property="Width" Value="30" />
+      <Setter Property="Width" Value="40" />
       <Setter Property="VerticalContentAlignment" Value="Center" />
       <Setter Property="HorizontalContentAlignment" Value="Center" />
     </Style>
@@ -126,7 +126,7 @@
     </Grid>
     <Grid
       ColumnDefinitions="*,Auto"
-      RowDefinitions="20,22">      
+      RowDefinitions="20,22">
       <TextBlock Text="{DynamicResource Text.Gain}"/>
       <Slider
         Grid.RowSpan="2"
@@ -136,6 +136,20 @@
         Maximum="{Binding GainMax}"/>
       <TextBox
         Text="{Binding Gain}"
+        Grid.Column="1"/>
+    </Grid>
+    <Grid
+      ColumnDefinitions="*,Auto"
+      RowDefinitions="20,22">
+      <TextBlock Text="{DynamicResource Text.Temperature}"/>
+      <Slider
+        Grid.RowSpan="2"
+        Grid.ColumnSpan="2"
+        Value="{Binding Temperature}"
+        Minimum="{Binding TemperatureMin}"
+        Maximum="{Binding TemperatureMax}"/>
+      <TextBox
+        Text="{Binding Temperature}"
         Grid.Column="1"/>
     </Grid>
     <Grid
@@ -160,6 +174,29 @@
         Content="{DynamicResource Text.Auto}"
         Grid.Column="1"
         IsChecked="{Binding Autofocus}"/>
+    </Grid>
+    <Grid
+      ColumnDefinitions="Auto,*,Auto"
+      RowDefinitions="20,22">
+      <TextBlock Text="{DynamicResource Text.ExposureTime}"/>
+      <Slider
+        IsEnabled="{Binding !#exposureTime.IsChecked}"
+        Grid.RowSpan="2"
+        Grid.ColumnSpan="3"
+        Value="{Binding ExposureTime}"
+        Minimum="{Binding ExposureTimeMin}"
+        Maximum="{Binding ExposureTimeMax}"/>
+      <TextBox
+        IsEnabled="{Binding !#exposureTime.IsChecked}"
+        Text="{Binding ExposureTime}"
+        Grid.Column="2"/>
+      <CheckBox
+        Name="exposureTime"
+        Margin="0 0 10 0"
+        HorizontalAlignment="Right"
+        Content="{DynamicResource Text.Auto}"
+        Grid.Column="1"
+        IsChecked="{Binding AutoExposure}"/>
     </Grid>
   </StackPanel>
 </UserControl>

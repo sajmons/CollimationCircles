@@ -11,6 +11,8 @@ namespace CollimationCircles.ViewModels
     {
         readonly ICameraControlService cameraControlService;
 
+        // user controls
+
         [ObservableProperty]
         [Range(Constraints.BrightnessMin, Constraints.BrightnessMax)]
         private int brightness = 0;
@@ -28,6 +30,10 @@ namespace CollimationCircles.ViewModels
         private int hue = 0;
 
         [ObservableProperty]
+        [Range(Constraints.GammaMin, Constraints.GammaMax)]
+        private int gamma = 100;
+
+        [ObservableProperty]
         [Range(Constraints.GainMin, Constraints.GainMax)]
         private int gain = -1;
 
@@ -39,25 +45,37 @@ namespace CollimationCircles.ViewModels
         private int focus = -1;
 
         [ObservableProperty]
-        [Range(Constraints.GammaMin, Constraints.GammaMax)]
-        private int gamma = 100;
+        private bool autoWhiteBalance;
+
+        [ObservableProperty]
+        [Range(Constraints.TemperatureMin, Constraints.TemperatureMax)]
+        private int temperature = 5000;
 
         [ObservableProperty]
         [Range(Constraints.SharpnessMin, Constraints.SharpnessMax)]
         private int sharpness = 35;
+
+        // camera controls
+
+        [ObservableProperty]
+        private bool autoExposure;
+
+        [ObservableProperty]
+        [Range(Constraints.ExposureTimeMin, Constraints.ExposureTimeMax)]
+        private int exposureTime = 312;        
 
         [ObservableProperty]
         [Range(Constraints.ZoomMin, Constraints.ZoomMax)]
         private int zoom = 1;
 
         [ObservableProperty]
-        private bool isOpened = false;
+        private bool isOpened = false;        
 
         public CameraControlsViewModel(ICameraControlService cameraControlService)
         {
             this.cameraControlService = cameraControlService;
             this.cameraControlService.OnOpened += (sender, e) => IsOpened = true;
-            this.cameraControlService.OnClosed += (sender, e) => IsOpened = false;
+            this.cameraControlService.OnClosed += (sender, e) => IsOpened = false;            
         }
 
         partial void OnBrightnessChanged(int value)
@@ -108,6 +126,21 @@ namespace CollimationCircles.ViewModels
         partial void OnSharpnessChanged(int value)
         {
             cameraControlService.Sharpness = value;
+        }
+
+        partial void OnExposureTimeChanged(int value)
+        {
+            cameraControlService.ExposureTime = value;
+        }        
+
+        partial void OnAutoExposureChanged(bool value)
+        {
+            cameraControlService.AutoExposure = value;
+        }
+
+        partial void OnTemperatureChanged(int value)
+        {
+            cameraControlService.Temperature = value;
         }
     }
 }
