@@ -189,23 +189,7 @@ public class AppService
         folderOpener.StartInfo.UseShellExecute = true;
         folderOpener.Start();
         await folderOpener.WaitForExitAsync();
-    }
-
-    public static Task<bool> IsPackageInstalled(string package)
-    {
-        var tcs = new TaskCompletionSource<bool>();
-
-        var t1 = Task.Run(async () =>
-        {
-            // dpkg-query -W -f='${Status} ${Version}\n' vlc
-            var (exitCode, output, process) = await ExecuteCommand("dpkg-query", [$"-W", "-f=${Status}; ${Version}\n", $"{package}"]);
-            tcs.TrySetResult(exitCode == 0 && output.StartsWith("install ok installed"));
-        });
-
-        t1.Wait();
-
-        return tcs.Task;
-    }
+    }    
 
     public static Task<(int, string, Process)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
     {
@@ -299,20 +283,7 @@ public class AppService
         }
 
         return tcs.Task;
-    }
-
-    public static bool CheckRequirements()
-    {
-        bool result = true;
-
-        if (OperatingSystem.IsLinux())
-        {
-            result &= IsPackageInstalled(VLC).GetAwaiter().GetResult();
-            result &= IsPackageInstalled(LIBVLC_DEV).GetAwaiter().GetResult();
-        }
-
-        return result;
-    }
+    }    
 
     public static void OpenUrl(string url)
     {

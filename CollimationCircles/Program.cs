@@ -16,15 +16,8 @@ namespace CollimationCircles
         {
             try
             {
-                if (AppService.CheckRequirements())
-                {
-                    BuildAvaloniaApp()
-                    .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
-                }
-                else
-                {
-                    throw new Exception("Application requirements are not met. Try to set 'minLevel' to 'Trace' for 'logconsole' in NLog.config, for more information.");
-                }
+                BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
             }
             catch (Exception ex)
             {
