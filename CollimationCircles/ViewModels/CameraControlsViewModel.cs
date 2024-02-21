@@ -2,6 +2,7 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using OpenCvSharp;
 using System;
@@ -19,58 +20,58 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         [Range(Constraints.BrightnessMin, Constraints.BrightnessMax)]
-        private int brightness = 0;
+        private int brightness = Constraints.BrightnessDefault;
 
         [ObservableProperty]
         [Range(Constraints.ContrastMin, Constraints.ContrastMax)]
-        private int contrast = 13;
+        private int contrast = Constraints.ContrastDefault;
 
         [ObservableProperty]
         [Range(Constraints.SaturationMin, Constraints.SaturationMax)]
-        private int saturation = 38;
+        private int saturation = Constraints.SaturationDefault;
 
         [ObservableProperty]
         [Range(Constraints.HueMin, Constraints.HueMax)]
-        private int hue = 0;
+        private int hue = Constraints.HueDefault;
 
         [ObservableProperty]
         [Range(Constraints.GammaMin, Constraints.GammaMax)]
-        private int gamma = 100;
+        private int gamma = Constraints.GammaDefault;
 
         [ObservableProperty]
         [Range(Constraints.GainMin, Constraints.GainMax)]
-        private int gain = -1;
+        private int gain = Constraints.GainDefault;
 
         [ObservableProperty]
-        private bool autoFocus = true;
+        private bool autoFocus = Constraints.AutoFocusDefault;
 
         [ObservableProperty]
         [Range(Constraints.FocusMin, Constraints.FocusMax)]
-        private int focus = -1;
+        private int focus = Constraints.FocusDefault;
 
         [ObservableProperty]
-        private bool autoWhiteBalance = true;
+        private bool autoWhiteBalance = Constraints.AutoWhiteBalanceDefault;
 
         [ObservableProperty]
         [Range(Constraints.TemperatureMin, Constraints.TemperatureMax)]
-        private int temperature = 5000;
+        private int temperature = Constraints.TemperatureDefault;
 
         [ObservableProperty]
         [Range(Constraints.SharpnessMin, Constraints.SharpnessMax)]
-        private int sharpness = 35;
+        private int sharpness = Constraints.SharpnessDefault;
 
         // camera controls
 
         [ObservableProperty]
-        private bool autoExposure = true;
+        private bool autoExposure = Constraints.AutoExposureTimeDefault;
 
         [ObservableProperty]
         [Range(Constraints.ExposureTimeMin, Constraints.ExposureTimeMax)]
-        private int exposureTime = 312;
+        private int exposureTime = Constraints.ExposureTimeDefault;
 
         [ObservableProperty]
         [Range(Constraints.ZoomMin, Constraints.ZoomMax)]
-        private int zoom = 1;
+        private int zoom = Constraints.ZoomDefault;
 
         [ObservableProperty]
         private bool isOpened = true;
@@ -121,6 +122,25 @@ namespace CollimationCircles.ViewModels
                     }
                     break;
             }
+        }
+        
+        [RelayCommand]
+        private void Default()
+        {
+            Brightness = Constraints.BrightnessDefault;
+            Contrast = Constraints.ContrastDefault;
+            Saturation = Constraints.SaturationDefault;
+            Hue = Constraints.HueDefault;
+            Gamma = Constraints.GammaDefault;
+            Gain = Constraints.GainDefault;
+            AutoFocus = Constraints.AutoFocusDefault;
+            Focus = Constraints.FocusDefault;
+            AutoWhiteBalance = Constraints.AutoWhiteBalanceDefault;
+            Temperature = Constraints.TemperatureDefault;
+            Sharpness = Constraints.SharpnessDefault;
+            AutoExposure = Constraints.AutoExposureTimeDefault;
+            ExposureTime = Constraints.ExposureTimeDefault;
+            Zoom = Constraints.ZoomDefault;
         }
     }
 }

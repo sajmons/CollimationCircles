@@ -130,6 +130,7 @@
   <system:String x:Key="Text.ExposureTime">Expositionszeit</system:String>
   <system:String x:Key="Text.Temperature">Temperatur</system:String>
   <system:String x:Key="Text.CameraControls">Kamerasteuerung</system:String>
+  <system:String x:Key="Text.Default">Standard</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

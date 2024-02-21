@@ -2,8 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="250"
-             d:DesignHeight="450"
+             mc:Ignorable="d"
+             d:DesignWidth="350"
+             d:DesignHeight="550"
              x:Class="CollimationCircles.Controls.CameraControlsUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:CameraControlsViewModel">
@@ -207,5 +208,10 @@
         Grid.Column="1"
         IsChecked="{Binding AutoExposure}"/>
     </Grid>
+    <Separator Margin="0 10 0 10" />
+    <Button
+      HorizontalAlignment="Right"
+      Content="{DynamicResource Text.Default}"
+      Command="{Binding DefaultCommand}"/>
   </StackPanel>
 </UserControl>
