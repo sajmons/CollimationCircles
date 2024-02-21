@@ -129,7 +129,7 @@
   <system:String x:Key="Text.Auto">Samodejno</system:String>
   <system:String x:Key="Text.ExposureTime">Čas osvetlitve</system:String>
   <system:String x:Key="Text.Temperature">Temperatura</system:String>
-  <system:String x:Key="Text.CameraSettings">Nastavitve kamere</system:String>
+  <system:String x:Key="Text.CameraControls">Lastnosti kamere</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

@@ -14,6 +14,7 @@
         MinWidth="400"
         MinHeight="500"
         MaxWidth="400"
-        MaxHeight="500">
+        MaxHeight="500"
+        Title="{Binding Title}">
   <controls:CameraControlsUserControl Padding="16"/>
 </Window>

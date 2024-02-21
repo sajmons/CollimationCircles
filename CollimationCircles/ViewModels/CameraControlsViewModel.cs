@@ -84,7 +84,7 @@ namespace CollimationCircles.ViewModels
                 IsOpened = m.Value;
             });
 
-            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("CameraSettings")}";
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("CameraControls")}";
         }
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {

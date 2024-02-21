@@ -128,9 +128,9 @@
   <system:String x:Key="Text.Gain">Gagner</system:String>
   <system:String x:Key="Text.Focus">Se concentrer</system:String>
   <system:String x:Key="Text.Auto">Automatique</system:String>
-  <system:String x:Key="Text.ExposureTime">Exposure time</system:String>
-  <system:String x:Key="Text.Temperature">Temperature</system:String>
-  <system:String x:Key="Text.CameraSettings">Camera settings</system:String>
+  <system:String x:Key="Text.ExposureTime">Délai d'exposition</system:String>
+  <system:String x:Key="Text.Temperature">Température</system:String>
+  <system:String x:Key="Text.CameraControls">Commandes de la caméra</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
