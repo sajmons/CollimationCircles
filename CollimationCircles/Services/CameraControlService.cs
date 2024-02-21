@@ -1,4 +1,6 @@
-﻿using OpenCvSharp;
+﻿using CollimationCircles.Messages;
+using CommunityToolkit.Mvvm.Messaging;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 
@@ -45,9 +47,6 @@ namespace CollimationCircles.Services
             { "ExposureTime", VideoCaptureProperties.Exposure },
             { "Zoom", VideoCaptureProperties.Zoom }
         };
-
-        public event EventHandler? OnOpened;
-        public event EventHandler? OnReleased;
 
         public CameraControlService()
         {
@@ -101,7 +100,7 @@ namespace CollimationCircles.Services
                 ((VideoCapture)vc).Open(0);                
             }
 
-            OnOpened?.Invoke(this, new EventArgs());
+            WeakReferenceMessenger.Default.Send(new CameraStateMessage(true));            
         }
 
         public void Release()
@@ -111,7 +110,7 @@ namespace CollimationCircles.Services
                 ((VideoCapture)vc).Release();                
             }
 
-            OnReleased?.Invoke(this, new EventArgs());
+            WeakReferenceMessenger.Default.Send(new CameraStateMessage(false));
         }
     }
 }

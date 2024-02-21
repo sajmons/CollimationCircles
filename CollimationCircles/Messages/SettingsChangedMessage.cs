@@ -3,10 +3,7 @@ using CommunityToolkit.Mvvm.Messaging.Messages;
 
 namespace CollimationCircles.Messages
 {
-    public class SettingsChangedMessage : ValueChangedMessage<SettingsViewModel>
+    public class SettingsChangedMessage(SettingsViewModel settings) : ValueChangedMessage<SettingsViewModel>(settings)
     {
-        public SettingsChangedMessage(SettingsViewModel settings) : base(settings)
-        {
-        }
     }
 }

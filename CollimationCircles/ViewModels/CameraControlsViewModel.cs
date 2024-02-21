@@ -1,6 +1,8 @@
 using CollimationCircles.Helper;
+using CollimationCircles.Messages;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using OpenCvSharp;
 using System;
 using System.ComponentModel;
@@ -71,13 +73,16 @@ namespace CollimationCircles.ViewModels
         private int zoom = 1;
 
         [ObservableProperty]
-        private bool isOpened = false;
+        private bool isOpened = true;
 
         public CameraControlsViewModel(ICameraControlService cameraControlService)
         {
             this.cameraControlService = cameraControlService;
-            this.cameraControlService.OnOpened += (sender, e) => IsOpened = true;
-            this.cameraControlService.OnReleased += (sender, e) => IsOpened = false;
+            
+            WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
+            {
+                IsOpened = m.Value;
+            });
 
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("CameraSettings")}";
         }
