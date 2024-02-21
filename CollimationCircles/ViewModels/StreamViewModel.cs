@@ -1,21 +1,17 @@
 ﻿using Avalonia.Threading;
-using CollimationCircles.Helper;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using LibVLCSharp.Shared;
-using NLog.Filters;
-using OpenCvSharp;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.RegularExpressions;
+using System.ComponentModel;
 using System.Threading;
 
 namespace CollimationCircles.ViewModels
 {
-    public partial class StreamViewModel : BaseViewModel
+    public partial class StreamViewModel : BaseViewModel, IViewClosed
     {
         private const string rpiPort = "49555";
 
@@ -72,6 +68,8 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool isWindows = OperatingSystem.IsWindows();
 
+        [ObservableProperty]
+        private INotifyPropertyChanged? settingsDialogViewModel;
         public StreamViewModel(IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
             this.dialogService = dialogService;
@@ -120,7 +118,7 @@ namespace CollimationCircles.ViewModels
         {
             if (IsRaspberryPi)
             {
-                //rpicam-vid -t 0 --inline -n -o udp://0.0.0.0:5000
+                //rpicam-vid -t 0 --inline --listen -n -o tcp://0.0.0.0:5000
 
                 List<string> parameters = [
                     "-t",
@@ -305,6 +303,26 @@ namespace CollimationCircles.ViewModels
         partial void OnIsRemoteChanged(bool oldValue, bool newValue)
         {
             FullAddress = GetFullUrlFromParts();
+        }
+
+        [RelayCommand]
+        private void CameraSettings()
+        {
+            if (SettingsDialogViewModel is null)
+            {
+                SettingsDialogViewModel = dialogService?.CreateViewModel<CameraControlsViewModel>();
+
+                if (SettingsDialogViewModel is not null)
+                {
+                    dialogService?.Show(null, SettingsDialogViewModel);
+                    logger.Info("Opened camera settings window");
+                }
+            }
+        }
+
+        public void OnClosed()
+        {
+            SettingsDialogViewModel = null;
         }
     }
 }

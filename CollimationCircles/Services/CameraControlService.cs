@@ -1,127 +1,117 @@
-﻿using CollimationCircles.Helper;
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using System;
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace CollimationCircles.Services
 {
     internal class CameraControlService : ICameraControlService, IDisposable
     {
-        readonly VideoCapture videoCapture = new();
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private readonly object vc = new();
+
+        private readonly Dictionary<string, string> v4l2Properties = new()
+        {
+            { "Brightness", "brightness" },
+            { "Contrast", "contrast" },
+            { "Saturation", "saturation" },
+            { "Hue", "hue" },
+            { "Gamma", "gamma" },
+            { "Gain", "gain" },
+            { "Autofocus", "focus_auto" },
+            { "Focus", "focus_absolute" },
+            { "AutoWhiteBalance", "white_balance_temperature_auto" },
+            { "Temperature", "white_balance_temperature" },
+            { "Sharpness", "sharpness" },
+            { "AutoExposure", "exposure_auto" },
+            { "ExposureTime", "exposure_absolute" },
+            { "Zoom", "zoom_absolute" }
+        };
+
+        private readonly Dictionary<string, VideoCaptureProperties> OpenCVProperties = new()
+        {
+            { "Brightness", VideoCaptureProperties.Brightness },
+            { "Contrast", VideoCaptureProperties.Contrast },
+            { "Saturation", VideoCaptureProperties.Saturation },
+            { "Hue", VideoCaptureProperties.Hue },
+            { "Gamma", VideoCaptureProperties.Gamma },
+            { "Gain", VideoCaptureProperties.Gain },
+            { "Autofocus", VideoCaptureProperties.AutoFocus },
+            { "Focus", VideoCaptureProperties.Focus },
+            { "AutoWhiteBalance", VideoCaptureProperties.AutoWB },
+            { "Temperature", VideoCaptureProperties.Temperature },
+            { "Sharpness", VideoCaptureProperties.Sharpness },
+            { "AutoExposure", VideoCaptureProperties.AutoExposure },
+            { "ExposureTime", VideoCaptureProperties.Exposure },
+            { "Zoom", VideoCaptureProperties.Zoom }
+        };
 
         public event EventHandler? OnOpened;
-        public event EventHandler? OnClosed;
+        public event EventHandler? OnReleased;
 
-        [Range(Constraints.BrightnessMin, Constraints.BrightnessMax)]
-        public int Brightness
+        public CameraControlService()
         {
-            get => (int)videoCapture.Brightness;
-            set => videoCapture.Brightness = value;
+            if (OperatingSystem.IsWindows())
+            {
+                vc = new VideoCapture();                
+            }
         }
-
-        [Range(Constraints.ContrastMin, Constraints.ContrastMax)]
-        public int Contrast
+        public void Set(string propertyname, double value)
         {
-            get => (int)videoCapture.Contrast;
-            set => videoCapture.Contrast = value;
+            if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
+            {
+                AppService.ExecuteCommand("v4l2-ctl", [
+                    $"--set-ctrl={v4l2Properties[propertyname]}={value}"
+                ]);
+                logger.Info($"v4l2-ctl property '{propertyname}' set to '{value}'");
+            }
+
+            if (OperatingSystem.IsWindows())
+            {
+                try
+                {
+                    if (((VideoCapture)vc).IsOpened())
+                    {
+                        ((VideoCapture)vc).Set(OpenCVProperties[propertyname], value);
+                        logger.Info($"OpenCvSharp.VideoCapture property '{propertyname}' set to '{value}'");
+                    }
+                }
+                catch (Exception exc)
+                {
+                    logger.Error(exc);
+                }
+            }
         }
-
-        [Range(Constraints.SaturationMin, Constraints.SaturationMax)]
-        public int Saturation
-        {
-            get => (int)videoCapture.Saturation;
-            set => videoCapture.Saturation = value;
-        }
-
-        [Range(Constraints.HueMin, Constraints.HueMax)]
-        public int Hue
-        {
-            get => (int)videoCapture.Hue;
-            set => videoCapture.Hue = value;
-        }
-
-        [Range(Constraints.GainMin, Constraints.GainMax)]
-        public int Gain
-        {
-            get => (int)videoCapture.Gain;
-            set => videoCapture.Gain = value;
-        }
-
-        public bool Autofocus
-        {
-            get => videoCapture.AutoFocus;
-            set => videoCapture.AutoFocus = value;
-        }
-
-        [Range(Constraints.FocusMin, Constraints.FocusMax)]
-        public int Focus
-        {
-            get => (int)videoCapture.Focus;
-            set => videoCapture.Focus = value;
-        }        
-
-        [Range(Constraints.GammaMin, Constraints.GammaMax)]
-        public int Gamma
-        {
-            get => (int)videoCapture.Gamma;
-            set => videoCapture.Gamma = value;
-        }
-
-        public bool AutoWhiteBalance
-        {
-            get => (int)videoCapture.XI_AutoWB == 1;
-            set => videoCapture.XI_AutoWB = value ? 1.0 : 0.0;
-        }
-
-        [Range(Constraints.TemperatureMin, Constraints.TemperatureMax)]
-        public int Temperature
-        {
-            get => (int)videoCapture.Temperature;
-            set => videoCapture.Temperature = value;
-        }
-
-        [Range(Constraints.SharpnessMin, Constraints.SharpnessMax)]
-        public int Sharpness
-        {
-            get => (int)videoCapture.Sharpness;
-            set => videoCapture.Sharpness = value;
-        }
-
-        [Range(Constraints.ZoomMin, Constraints.ZoomMax)]
-        public int Zoom
-        {
-            get => (int)videoCapture.Zoom;
-            set => videoCapture.Zoom = value;
-        }
-
-        public bool AutoExposure
-        {
-            get => videoCapture.AutoExposure == 1;
-            set => videoCapture.AutoExposure = value ? 1.0 : 0.0;
-        }
-
-        [Range(Constraints.ExposureTimeMin, Constraints.ExposureTimeMax)]
-        public int ExposureTime
-        {
-            get => (int)videoCapture.Exposure;
-            set => videoCapture.Exposure = value;
-        }        
-
         public void Dispose()
         {
-            videoCapture.Dispose();
+            if (OperatingSystem.IsWindows())
+            {
+                if (vc is not null)
+                {
+                    ((VideoCapture)vc).Release();
+                    ((VideoCapture)vc).Dispose();
+                }
+            }
         }
 
         public void Open()
         {
-            videoCapture.Open(0);
+            if (OperatingSystem.IsWindows())
+            {
+                ((VideoCapture)vc).Open(0);                
+            }
+
             OnOpened?.Invoke(this, new EventArgs());
         }
 
         public void Release()
         {
-            videoCapture.Release();
-            OnClosed?.Invoke(this, new EventArgs());
+            if (OperatingSystem.IsWindows())
+            {
+                ((VideoCapture)vc).Release();                
+            }
+
+            OnReleased?.Invoke(this, new EventArgs());
         }
     }
 }

@@ -56,6 +56,15 @@
           Foreground="{DynamicResource Color2}"
           Data="{StaticResource IconData.Reset}" />
       </Button>
+      <Button
+          Command="{Binding CameraSettingsCommand}"
+          ToolTip.Tip="{DynamicResource Text.CameraSettings}"
+          Grid.Column="2"
+          IsEnabled="{Binding IsPlaying}">
+        <PathIcon
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Settings}" />
+      </Button>
     </StackPanel>
     <StackPanel
       Orientation="Vertical"      

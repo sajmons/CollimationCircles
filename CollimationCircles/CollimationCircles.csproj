@@ -11,7 +11,7 @@
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>3.1.0</Version>
+    <Version>3.2.0</Version>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
@@ -32,10 +32,10 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.7" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.0.9" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.7" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.7">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.9" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.9">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
@@ -46,11 +46,7 @@
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="Octokit" Version="9.1.2" />
     <PackageReference Include="OpenCvSharp4" Version="4.9.0.20240103" />
-
-    <PackageReference Condition="$(RuntimeIdentifier.StartsWith('linux')) And '$(Configuration)' == 'Release'" Include="OpenCvSharp4.runtime.linux-arm" Version="4.9.0.20240103" />
-    <PackageReference Condition="$(RuntimeIdentifier.StartsWith('osx')) And '$(Configuration)' == 'Release'" Include="OpenCvSharp4.runtime.osx.10.15-x64" Version="4.6.0.20230105" />
-    <PackageReference Condition="$(RuntimeIdentifier.StartsWith('win')) And '$(Configuration)' == 'Release'" Include="OpenCvSharp4.runtime.win" Version="4.9.0.20240103" />
-    <PackageReference Condition="$([MSBuild]::IsOsPlatform('Windows')) And '$(Configuration)' == 'Debug'" Include="OpenCvSharp4.runtime.win" Version="4.9.0.20240103" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.9.0.20240103" />
 
     <PackageReference Condition="$(RuntimeIdentifier.StartsWith('win')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
     <PackageReference Condition="$(RuntimeIdentifier.StartsWith('osx')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />
@@ -59,6 +55,12 @@
   <ItemGroup>
     <Compile Update="Controls\AboutUserControl.axaml.cs">
       <DependentUpon>AboutUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\CameraControlsUserControl.axaml.cs">
+      <DependentUpon>CameraControlsUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\CameraControlsView.axaml.cs">
+      <DependentUpon>CameraControlsView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

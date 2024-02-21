@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="250"
              d:DesignHeight="450"
-             x:Class="CollimationCircles.Controls.CameraPropertiesUserControl"
+             x:Class="CollimationCircles.Controls.CameraControlsUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:CameraControlsViewModel">
   <UserControl.Styles>
@@ -139,18 +139,27 @@
         Grid.Column="1"/>
     </Grid>
     <Grid
-      ColumnDefinitions="*,Auto"
+      ColumnDefinitions="Auto,*,Auto"
       RowDefinitions="20,22">
       <TextBlock Text="{DynamicResource Text.Temperature}"/>
       <Slider
+        IsEnabled="{Binding !#temperatureAuto.IsChecked}"
         Grid.RowSpan="2"
         Grid.ColumnSpan="2"
         Value="{Binding Temperature}"
         Minimum="{Binding TemperatureMin}"
         Maximum="{Binding TemperatureMax}"/>
       <TextBox
+        IsEnabled="{Binding !#temperatureAuto.IsChecked}"
         Text="{Binding Temperature}"
-        Grid.Column="1"/>
+        Grid.Column="2"/>
+      <CheckBox
+        Name="temperatureAuto"
+        Margin="0 0 10 0"
+        HorizontalAlignment="Right"
+        Content="{DynamicResource Text.Auto}"
+        Grid.Column="1"
+        IsChecked="{Binding AutoWhiteBalance}"/>
     </Grid>
     <Grid
       ColumnDefinitions="Auto,*,Auto"
@@ -173,7 +182,7 @@
         HorizontalAlignment="Right"
         Content="{DynamicResource Text.Auto}"
         Grid.Column="1"
-        IsChecked="{Binding Autofocus}"/>
+        IsChecked="{Binding AutoFocus}"/>
     </Grid>
     <Grid
       ColumnDefinitions="Auto,*,Auto"

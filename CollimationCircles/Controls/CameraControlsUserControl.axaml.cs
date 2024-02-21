@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Controls
 {
-    public partial class CameraPropertiesUserControl : UserControl
+    public partial class CameraControlsUserControl : UserControl
     {
-        public CameraPropertiesUserControl()
+        public CameraControlsUserControl()
         {
             InitializeComponent();
 

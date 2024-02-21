@@ -3,12 +3,14 @@ using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using OpenCvSharp;
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class CameraControlsViewModel : BaseViewModel
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         readonly ICameraControlService cameraControlService;
 
         // user controls
@@ -38,14 +40,14 @@ namespace CollimationCircles.ViewModels
         private int gain = -1;
 
         [ObservableProperty]
-        private bool autofocus;
+        private bool autoFocus = true;
 
         [ObservableProperty]
         [Range(Constraints.FocusMin, Constraints.FocusMax)]
         private int focus = -1;
 
         [ObservableProperty]
-        private bool autoWhiteBalance;
+        private bool autoWhiteBalance = true;
 
         [ObservableProperty]
         [Range(Constraints.TemperatureMin, Constraints.TemperatureMax)]
@@ -58,89 +60,62 @@ namespace CollimationCircles.ViewModels
         // camera controls
 
         [ObservableProperty]
-        private bool autoExposure;
+        private bool autoExposure = true;
 
         [ObservableProperty]
         [Range(Constraints.ExposureTimeMin, Constraints.ExposureTimeMax)]
-        private int exposureTime = 312;        
+        private int exposureTime = 312;
 
         [ObservableProperty]
         [Range(Constraints.ZoomMin, Constraints.ZoomMax)]
         private int zoom = 1;
 
         [ObservableProperty]
-        private bool isOpened = false;        
+        private bool isOpened = false;
 
         public CameraControlsViewModel(ICameraControlService cameraControlService)
         {
             this.cameraControlService = cameraControlService;
             this.cameraControlService.OnOpened += (sender, e) => IsOpened = true;
-            this.cameraControlService.OnClosed += (sender, e) => IsOpened = false;            
+            this.cameraControlService.OnReleased += (sender, e) => IsOpened = false;
+
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("CameraSettings")}";
         }
-
-        partial void OnBrightnessChanged(int value)
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            cameraControlService.Brightness = value;
-        }
+            base.OnPropertyChanged(e);
 
-        partial void OnSaturationChanged(int value)
-        {
-            cameraControlService.Saturation = value;
-        }
+            switch (e.PropertyName)
+            {
+                case nameof(Brightness):
+                case nameof(Contrast):
+                case nameof(Saturation):
+                case nameof(Hue):
+                case nameof(Gamma):
+                case nameof(Gain):
+                case nameof(AutoFocus):
+                case nameof(Focus):
+                case nameof(AutoWhiteBalance):
+                case nameof(Temperature):
+                case nameof(Sharpness):
+                case nameof(AutoExposure):
+                case nameof(ExposureTime):
+                case nameof(Zoom):
+                    if (!HasErrors)
+                    {
+                        base.OnPropertyChanged(e);
 
-        partial void OnContrastChanged(int value)
-        {
-            cameraControlService.Contrast = value;
-        }
+                        var pVal = Property.GetPropValue(this, e.PropertyName);
 
-        partial void OnHueChanged(int value)
-        {
-            cameraControlService.Hue = value;
-        }
+                        if (double.TryParse(pVal, out double valDouble))
+                        {
+                            cameraControlService.Set(e.PropertyName, valDouble);
+                        }
 
-        partial void OnGainChanged(int value)
-        {
-            cameraControlService.Gain = value;
-        }
-
-        partial void OnAutofocusChanged(bool value)
-        {
-            cameraControlService.Autofocus = value;
-        }
-
-        partial void OnFocusChanged(int value)
-        {
-            cameraControlService.Focus = value;
-        }
-
-        partial void OnZoomChanged(int value)
-        {
-            cameraControlService.Zoom = value;
-        }
-
-        partial void OnGammaChanged(int value)
-        {
-            cameraControlService.Gamma = value;
-        }
-
-        partial void OnSharpnessChanged(int value)
-        {
-            cameraControlService.Sharpness = value;
-        }
-
-        partial void OnExposureTimeChanged(int value)
-        {
-            cameraControlService.ExposureTime = value;
-        }        
-
-        partial void OnAutoExposureChanged(bool value)
-        {
-            cameraControlService.AutoExposure = value;
-        }
-
-        partial void OnTemperatureChanged(int value)
-        {
-            cameraControlService.Temperature = value;
+                        logger.Debug($"{e.PropertyName} changed to '{pVal}'");
+                    }
+                    break;
+            }
         }
     }
 }
