@@ -318,6 +318,11 @@ namespace CollimationCircles.ViewModels
                     logger.Info("Opened camera settings window");
                 }
             }
+            else
+            {
+                dialogService?.Close(SettingsDialogViewModel);
+                dialogService?.Show(null, SettingsDialogViewModel);
+            }
         }
 
         public void OnClosed()
