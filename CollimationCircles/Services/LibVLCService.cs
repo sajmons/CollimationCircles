@@ -126,7 +126,7 @@ namespace CollimationCircles.Services
                     address = "/dev/video0";
                 }
             }
-            if (streamSource == StreamSource.RaspberryPi)
+            else if (streamSource == StreamSource.RaspberryPi)
             {
                 protocol = "tcp/h264";
                 address = "localhost";

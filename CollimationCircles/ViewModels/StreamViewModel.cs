@@ -22,7 +22,7 @@ namespace CollimationCircles.ViewModels
         //[RegularExpression(
         //    Constraints.MurlRegEx,
         //    ErrorMessage = "Invalid URL address")]
-        private string fullAddress = string.Empty;        
+        private string fullAddress = string.Empty;
 
         public bool CanExecutePlayPause
         {
@@ -84,8 +84,8 @@ namespace CollimationCircles.ViewModels
                         MediaPlayer_Playing();
                         break;
                 }
-            });            
-        }        
+            });
+        }
 
         private void MediaPlayer_Opening()
         {
@@ -96,7 +96,7 @@ namespace CollimationCircles.ViewModels
         }
 
         private void MediaPlayer_Playing()
-        {            
+        {
             logger.Trace($"MediaPlayer playing");
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
         }
@@ -128,7 +128,7 @@ namespace CollimationCircles.ViewModels
         private void ShowWebCamStream()
         {
             Dispatcher.UIThread.Post(() =>
-            {                
+            {
                 dialogService?.Show<StreamViewModel>(null, this);
                 cameraControlService.Open();
                 logger.Trace($"Opened web camera stream window");
@@ -165,7 +165,15 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void ResetAddress()
         {
-            FullAddress = libVLCService.DefaultAddress(StreamSource.Undefined);
+            StreamSource ss = StreamSource.UVC;
+
+            if (IsRaspberryPi)
+                ss = StreamSource.RaspberryPi;
+
+            if (IsRemote)
+                ss = StreamSource.Remote;
+
+            FullAddress = libVLCService.DefaultAddress(ss);
         }
 
         partial void OnIsUVCChanged(bool value)
@@ -179,7 +187,7 @@ namespace CollimationCircles.ViewModels
         }
 
         partial void OnIsRemoteChanged(bool value)
-        {            
+        {
             FullAddress = libVLCService.DefaultAddress(value ? StreamSource.Remote : StreamSource.Undefined);
         }
 
@@ -211,6 +219,6 @@ namespace CollimationCircles.ViewModels
         public void OnClosed()
         {
             SettingsDialogViewModel = null;
-        }        
+        }
     }
 }
