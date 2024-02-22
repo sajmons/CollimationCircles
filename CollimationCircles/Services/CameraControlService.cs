@@ -1,6 +1,4 @@
-﻿using CollimationCircles.Messages;
-using CommunityToolkit.Mvvm.Messaging;
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 
@@ -52,7 +50,7 @@ namespace CollimationCircles.Services
         {
             if (OperatingSystem.IsWindows())
             {
-                vc = new VideoCapture();                
+                vc = new VideoCapture();
             }
         }
         public void Set(string propertyname, double value)
@@ -97,20 +95,16 @@ namespace CollimationCircles.Services
         {
             if (OperatingSystem.IsWindows())
             {
-                ((VideoCapture)vc).Open(0);                
+                ((VideoCapture)vc)?.Open(0);
             }
-
-            WeakReferenceMessenger.Default.Send(new CameraStateMessage(true));            
         }
 
         public void Release()
         {
             if (OperatingSystem.IsWindows())
             {
-                ((VideoCapture)vc).Release();                
+                ((VideoCapture)vc)?.Release();
             }
-
-            WeakReferenceMessenger.Default.Send(new CameraStateMessage(false));
         }
     }
 }

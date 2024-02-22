@@ -2,7 +2,15 @@
 
 namespace CollimationCircles.Messages
 {
-    public class CameraStateMessage(bool isOpened) : ValueChangedMessage<bool>(isOpened)
+    public enum CameraState
+    { 
+        Opening,
+        Playing,
+        Paused,
+        Stopped
+    }
+
+    public class CameraStateMessage(CameraState cameraState) : ValueChangedMessage<CameraState>(cameraState)
     {
     }
 }

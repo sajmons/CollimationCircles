@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -42,12 +41,7 @@ public class AppService
         var assemblyVersion = entryAssembly?.GetName().Version;
 
         return assemblyVersion?.ToString() ?? "0.0.0";
-    }
-
-    public static bool SameVersion(string v1, string v2)
-    {
-        return new Version(v1) == new Version(v2);
-    }
+    }    
 
     public static T? Deserialize<T>(string jsonState)
     {
@@ -306,26 +300,7 @@ public class AppService
         }
 
         logger.Trace($"External url '{url}' opened");
-    }
-
-    public static string? FindVLC()
-    {
-        string vlcPath = "\\VideoLAN\\VLC\\vlc.exe";
-        string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%") + vlcPath;
-        string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%") + vlcPath;
-
-        if (File.Exists(programFiles))
-        {
-            return programFiles;
-        }
-
-        if (File.Exists(programFilesX86))
-        {
-            return programFilesX86;
-        }
-
-        return null;
-    }
+    }    
 
     public static string? GetLocalIPAddress()
     {

@@ -82,7 +82,7 @@ namespace CollimationCircles.ViewModels
             
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
-                IsOpened = m.Value;
+                IsOpened = m.Value != CameraState.Stopped;
             });
 
             Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("CameraControls")}";

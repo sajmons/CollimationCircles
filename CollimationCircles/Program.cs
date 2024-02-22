@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using CollimationCircles.Services;
 using System;
 
 namespace CollimationCircles
@@ -21,19 +20,11 @@ namespace CollimationCircles
             }
             catch (Exception ex)
             {
-                // here we can work with the exception, for example add it to our log file
-                //Log.Fatal(e, "Something very bad happened");
-                //var ds = Ioc.Default.GetService<IDialogService>();
-                //var vm = Ioc.Default.GetService<MainViewModel>();
-                //ds?.ShowMessageBoxAsync(vm, e.Message, "Error");                
                 logger.Fatal(ex.Message);
                 throw;
             }
             finally
             {
-                // This block is optional. 
-                // Use the finally-block if you need to clean things up or similar
-                //Log.CloseAndFlush();
                 NLog.LogManager.Shutdown();
             }
         }

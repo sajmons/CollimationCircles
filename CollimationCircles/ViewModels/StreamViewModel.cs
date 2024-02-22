@@ -1,41 +1,28 @@
-﻿using Avalonia.Threading;
+﻿using System;
+using Avalonia.Threading;
+using CollimationCircles.Messages;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
-using LibVLCSharp.Shared;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class StreamViewModel : BaseViewModel, IViewClosed
     {
-        private const string rpiPort = "49555";
-
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly IDialogService dialogService;
-        private readonly LibVLC libVLC;
         private readonly ICameraControlService cameraControlService;
+        private readonly ILibVLCService libVLCService;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
         //[RegularExpression(
         //    Constraints.MurlRegEx,
         //    ErrorMessage = "Invalid URL address")]
-        private string fullAddress = string.Empty;
-
-        private string protocol = string.Empty;
-
-        private string address = string.Empty;
-
-        private string port = string.Empty;
-
-        private string pathAndQuery = string.Empty;
-
-        public MediaPlayer MediaPlayer { get; }
+        private string fullAddress = string.Empty;        
 
         public bool CanExecutePlayPause
         {
@@ -70,139 +57,70 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
-        public StreamViewModel(IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
+
+        public StreamViewModel(ILibVLCService libVLCService, IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
+            this.libVLCService = libVLCService;
             this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
             this.cameraControlService = cameraControlService;
 
+            FullAddress = this.libVLCService.FullAddress;
+
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
             CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
 
-            //address = AppService.GetLocalIPAddress() ?? string.Empty;
-            pathAndQuery = string.Empty;
-
-            FullAddress = GetFullUrlFromParts();
-
-            // https://wiki.videolan.org/VLC_command-line_help/
-
-            string[] libVLCOptions = [
-                //$"--width=320",
-                //$"--height=240",
-                //$"--zoom=1.5",
-                //$"--log-verbose=0"
-                "--video-filter=adjust{contrast=1.0,brightness=1.0,hue=0,saturation=1.0,gamma=1.0}"
-            ];
-
-            libVLC = new(libVLCOptions);
-            //libVLC.Log += LibVLC_Log;
-
-            MediaPlayer = new(libVLC)
+            WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
-                FileCaching = 0,
-                NetworkCaching = 0,
-                EnableHardwareDecoding = true
-            };
+                switch (m.Value)
+                {
+                    case CameraState.Opening:
+                        MediaPlayer_Opening();
+                        break;
+                    case CameraState.Stopped:
+                        MediaPlayer_Closed();
+                        break;
+                    case CameraState.Playing:
+                        MediaPlayer_Playing();
+                        break;
+                }
+            });            
+        }        
 
-            MediaPlayer.Opening += MediaPlayer_Opening;
-            MediaPlayer.Playing += MediaPlayer_Playing;
-            MediaPlayer.Stopped += MediaPlayer_Stopped;
-        }
-
-        private void LibVLC_Log(object? sender, LogEventArgs e)
-        {
-            logger.Debug(e.Message);
-        }
-
-        private void Play()
-        {
-            if (IsRaspberryPi)
-            {
-                //rpicam-vid -t 0 --inline --listen -n -o tcp://0.0.0.0:5000
-
-                List<string> parameters = [
-                    "-t",
-                    "0",
-                    "--inline",
-                    "--listen",
-                    "-n",
-                    "-o",
-                    $"tcp://0.0.0.0:{rpiPort}"
-                ];
-
-                AppService.ExecuteCommand(
-                    "rpicam-vid",
-                    parameters, timeout: 0);
-
-                Thread.Sleep(1000);
-            }
-
-            if (!string.IsNullOrWhiteSpace(FullAddress))
-            {
-                MediaPlayerPlay();
-            }
-        }
-
-        private void MediaPlayerPlay()
-        {
-            string mrl = FullAddress;
-
-            string[] mediaAdditionalOptions = [
-                //$"--osd",
-                //$"--video-title=my title",
-                //$"--avcodec-hw=any",
-                //$"--zoom=0.25"                
-            ];
-
-            using var media = new Media(
-                    libVLC,
-                    mrl,
-                    FromType.FromLocation,
-                    mediaAdditionalOptions
-                    );
-            cameraControlService.Open();
-            MediaPlayer.Play(media);            
-            logger.Info($"Playing web camera stream: '{media.Mrl}'");
-        }
-
-        private void MediaPlayer_Opening(object? sender, EventArgs e)
+        private void MediaPlayer_Opening()
         {
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            IsPlaying = MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
         }
 
-        private void MediaPlayer_Playing(object? sender, EventArgs e)
-        {
+        private void MediaPlayer_Playing()
+        {            
             logger.Trace($"MediaPlayer playing");
-            IsPlaying = MediaPlayer.IsPlaying;
-
-            //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Enable, 1);
-            //MediaPlayer.SetAdjustInt(VideoAdjustOption.Enable, 1);
-            //MediaPlayer.SetAdjustFloat(VideoAdjustOption.Brightness, 2.0f);                  
+            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
         }
 
-        private void MediaPlayer_Stopped(object? sender, EventArgs e)
+        private void MediaPlayer_Closed()
         {
-            logger.Trace($"MediaPlayer stopped");
+            logger.Trace($"MediaPlayer closed");
 
             CloseWebCamStream();
-            IsPlaying = MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
         private void PlayPause()
         {
-            if (MediaPlayer != null)
+            if (libVLCService.MediaPlayer != null)
             {
-                if (!MediaPlayer.IsPlaying)
+                if (!libVLCService.MediaPlayer.IsPlaying)
                 {
-                    Play();
+                    libVLCService.Play();
                 }
                 else
                 {
-                    MediaPlayer.Stop();
+                    libVLCService.MediaPlayer.Stop();
                 }
             }
         }
@@ -210,8 +128,9 @@ namespace CollimationCircles.ViewModels
         private void ShowWebCamStream()
         {
             Dispatcher.UIThread.Post(() =>
-            {
-                dialogService?.Show<StreamViewModel>(null, this);                
+            {                
+                dialogService?.Show<StreamViewModel>(null, this);
+                cameraControlService.Open();
                 logger.Trace($"Opened web camera stream window");
             });
         }
@@ -233,47 +152,6 @@ namespace CollimationCircles.ViewModels
             });
         }
 
-        private string GetFullUrlFromParts()
-        {
-            pathAndQuery = string.Empty;
-            port = string.Empty;
-            address = string.Empty;
-
-            if (IsUVC)
-            {
-                if (OperatingSystem.IsWindows())
-                {
-                    protocol = "dshow";
-                }
-                else if (OperatingSystem.IsMacOS())
-                {
-                    protocol = "qtcapture";
-                }
-                else
-                {
-                    protocol = "v4l2";
-                    address = "/dev/video0";
-                }
-            }
-            if (IsRaspberryPi)
-            {
-                protocol = "tcp/h264";
-                address = "localhost";
-                port = rpiPort;
-            }
-            else if (IsRemote)
-            {
-                protocol = "http";
-            }
-
-            string newRemoteAddress = address;
-            string addr = newRemoteAddress;
-            string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
-            string prt = string.IsNullOrWhiteSpace(port) ? "" : $":{port}";
-
-            return $"{protocol}://{addr}{prt}{pth}";
-        }
-
         partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)
         {
             settingsViewModel.PinVideoWindowToMainWindow = newValue;
@@ -287,22 +165,27 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void ResetAddress()
         {
-            FullAddress = GetFullUrlFromParts();
+            FullAddress = libVLCService.DefaultAddress(StreamSource.Undefined);
         }
 
-        partial void OnIsUVCChanged(bool oldValue, bool newValue)
+        partial void OnIsUVCChanged(bool value)
         {
-            FullAddress = GetFullUrlFromParts();
+            FullAddress = libVLCService.DefaultAddress(value ? StreamSource.UVC : StreamSource.Undefined);
         }
 
-        partial void OnIsRaspberryPiChanged(bool oldValue, bool newValue)
+        partial void OnIsRaspberryPiChanged(bool value)
         {
-            FullAddress = GetFullUrlFromParts();
+            FullAddress = libVLCService.DefaultAddress(value ? StreamSource.RaspberryPi : StreamSource.Undefined);
         }
 
-        partial void OnIsRemoteChanged(bool oldValue, bool newValue)
+        partial void OnIsRemoteChanged(bool value)
+        {            
+            FullAddress = libVLCService.DefaultAddress(value ? StreamSource.Remote : StreamSource.Undefined);
+        }
+
+        partial void OnFullAddressChanged(string value)
         {
-            FullAddress = GetFullUrlFromParts();
+            libVLCService.FullAddress = value;
         }
 
         [RelayCommand]
@@ -328,6 +211,6 @@ namespace CollimationCircles.ViewModels
         public void OnClosed()
         {
             SettingsDialogViewModel = null;
-        }
+        }        
     }
 }

@@ -54,6 +54,7 @@ public partial class App : Application
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
+            .AddSingleton<ILibVLCService, LibVLCService>()
             .BuildServiceProvider());
     }
 }
