@@ -41,7 +41,7 @@ public class AppService
         var assemblyVersion = entryAssembly?.GetName().Version;
 
         return assemblyVersion?.ToString() ?? "0.0.0";
-    }    
+    }
 
     public static T? Deserialize<T>(string jsonState)
     {
@@ -183,7 +183,7 @@ public class AppService
         folderOpener.StartInfo.UseShellExecute = true;
         folderOpener.Start();
         await folderOpener.WaitForExitAsync();
-    }    
+    }
 
     public static Task<(int, string, Process)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
     {
@@ -195,7 +195,7 @@ public class AppService
             UseShellExecute = false,
             RedirectStandardOutput = true,
             RedirectStandardError = true
-        };        
+        };
 
         using Process process = new()
         {
@@ -277,7 +277,7 @@ public class AppService
         }
 
         return tcs.Task;
-    }    
+    }
 
     public static void OpenUrl(string url)
     {
@@ -300,7 +300,7 @@ public class AppService
         }
 
         logger.Trace($"External url '{url}' opened");
-    }    
+    }
 
     public static string? GetLocalIPAddress()
     {
@@ -308,5 +308,33 @@ public class AppService
         socket.Connect("8.8.8.8", 65530);
         IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
         return endPoint?.Address.ToString();
+    }
+
+    public static void StartRaspberryPIStream(string port, List<string>? streamArgs = null)
+    {
+        //rpicam-vid -t 0 --inline --listen -n -o tcp://0.0.0.0:5000
+
+        ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
+
+        List<string> parameters = [
+            "-t",
+            "0",
+            "--inline",
+            "--listen",
+            "-n",
+            "-o",
+            $"tcp://0.0.0.0:{port}"            
+        ];
+
+        if (streamArgs != null)
+        {
+            parameters.AddRange(streamArgs);
+        }
+
+        ExecuteCommand(
+            "rpicam-vid",
+            parameters, timeout: 0);
+
+        Thread.Sleep(1000);
     }
 }

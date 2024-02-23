@@ -11,7 +11,8 @@ namespace CollimationCircles.Services
     {
         public string FullAddress { get; set; }
         public MediaPlayer MediaPlayer { get; }
-        public void Play();
+        public StreamSource StreamSource { get; set; }
+        public void Play(List<string> controlsArgs);
         public string DefaultAddress(StreamSource streamSource);
     }
 }

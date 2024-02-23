@@ -3,7 +3,6 @@ using CollimationCircles.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace CollimationCircles.Services
 {
@@ -28,8 +27,7 @@ namespace CollimationCircles.Services
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
-
-        private StreamSource streamSource;
+        public StreamSource StreamSource { get; set; }
 
         public LibVLCService()
         {
@@ -60,27 +58,11 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public void Play()
+        public void Play(List<string> controlsArgs)
         {
-            if (streamSource == StreamSource.RaspberryPi)
-            {
-                //rpicam-vid -t 0 --inline --listen -n -o tcp://0.0.0.0:5000
-
-                List<string> parameters = [
-                    "-t",
-                    "0",
-                    "--inline",
-                    "--listen",
-                    "-n",
-                    "-o",
-                    $"tcp://0.0.0.0:{rpiPort}"
-                ];
-
-                AppService.ExecuteCommand(
-                    "rpicam-vid",
-                    parameters, timeout: 0);
-
-                Thread.Sleep(1000);
+            if (StreamSource == StreamSource.RaspberryPi)
+            {                
+                AppService.StartRaspberryPIStream(rpiPort, controlsArgs);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
@@ -110,7 +92,7 @@ namespace CollimationCircles.Services
             port = string.Empty;
             address = string.Empty;
 
-            if (streamSource == StreamSource.UVC)
+            if (StreamSource == StreamSource.UVC)
             {
                 if (OperatingSystem.IsWindows())
                 {
@@ -126,13 +108,13 @@ namespace CollimationCircles.Services
                     address = "/dev/video0";
                 }
             }
-            else if (streamSource == StreamSource.RaspberryPi)
+            else if (StreamSource == StreamSource.RaspberryPi)
             {
                 protocol = "tcp/h264";
                 address = "localhost";
                 port = rpiPort;
             }
-            else if (streamSource == StreamSource.Remote)
+            else if (StreamSource == StreamSource.Remote)
             {
                 protocol = "http";
             }
@@ -147,7 +129,7 @@ namespace CollimationCircles.Services
 
         public string DefaultAddress(StreamSource streamSource)
         {
-            this.streamSource = streamSource;
+            StreamSource = streamSource;
             FullAddress = GetFullUrlFromParts();
             return FullAddress;
         }
