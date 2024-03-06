@@ -15,6 +15,7 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         readonly ICameraControlService cameraControlService;
+        readonly ILibVLCService libVLCService;
 
         // user controls
 
@@ -76,9 +77,10 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool isOpened = true;
 
-        public CameraControlsViewModel(ICameraControlService cameraControlService)
+        public CameraControlsViewModel(ICameraControlService cameraControlService, ILibVLCService libVLCService)
         {
             this.cameraControlService = cameraControlService;
+            this.libVLCService = libVLCService;
             
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -115,7 +117,7 @@ namespace CollimationCircles.ViewModels
 
                         if (double.TryParse(pVal, out double valDouble))
                         {
-                            cameraControlService.Set(e.PropertyName, valDouble);
+                            cameraControlService.Set(e.PropertyName, valDouble, libVLCService.StreamSource);
                         }
 
                         logger.Debug($"{e.PropertyName} changed to '{pVal}'");
