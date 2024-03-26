@@ -3,6 +3,7 @@ using CollimationCircles.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -58,11 +59,11 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public void Play(List<string> controlsArgs)
+        public async Task Play(List<string> controlsArgs)
         {
             if (StreamSource == StreamSource.RaspberryPi)
             {                
-                AppService.StartRaspberryPIStream(rpiPort, controlsArgs);
+                await AppService.StartRaspberryPIStream(rpiPort, controlsArgs);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
@@ -117,6 +118,8 @@ namespace CollimationCircles.Services
             else if (StreamSource == StreamSource.Remote)
             {
                 protocol = "http";
+                address = OperatingSystem.IsLinux() ? string.Empty : RaspberryPiDiscoverService.DetectRaspberryPIIPAddress();
+                port = OperatingSystem.IsLinux() ? string.Empty : rpiPort;
             }
 
             string newRemoteAddress = address;
