@@ -114,10 +114,8 @@
   <system:String x:Key="Text.PayPalDonation">Avec ce don, vous me soutiendrez dans la poursuite du développement de l'application Collimation Circles. Merci!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Délai d'attente du flux vidéo</system:String>
-  <system:String x:Key="Text.ResetCameraStreamAddress">Réinitialiser l'adresse du flux vidéo de la caméra à sa valeur par défaut</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Démarrer ou arrêter le flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.CameraType">Sélectionnez la caméra</system:String>
-  <system:String x:Key="Text.RemoteCameraType">Télécommande</system:String>
   <system:String x:Key="Text.Brightness">Luminosité</system:String>
   <system:String x:Key="Text.Contrast">Contraste</system:String>
   <system:String x:Key="Text.Saturation">Saturation</system:String>
@@ -132,6 +130,7 @@
   <system:String x:Key="Text.Temperature">Température</system:String>
   <system:String x:Key="Text.CameraControls">Commandes de la caméra</system:String>
   <system:String x:Key="Text.Default">Défaut</system:String>
+  <system:String x:Key="Text.EnterRemoteAddress">Entrer l'adresse</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

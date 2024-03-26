@@ -31,10 +31,16 @@
             </DataTemplate>
           </ComboBox.ItemTemplate>
         </ComboBox>
-        <TextBox
-        Text="{Binding FullAddress}"
-        VerticalAlignment="Center"
-        IsVisible="{Binding RemoteConnection}" />
+        <StackPanel
+          Orientation="Vertical"
+          IsVisible="{Binding RemoteConnection}">
+          <TextBlock
+            Text="{DynamicResource Text.EnterRemoteAddress}"
+            VerticalAlignment="Center" />
+          <TextBox
+            Text="{Binding FullAddress}"
+            VerticalAlignment="Center" />
+        </StackPanel>
       </StackPanel>
       <StackPanel Orientation="Horizontal">
         <ToggleButton

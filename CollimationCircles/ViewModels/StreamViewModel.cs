@@ -10,6 +10,7 @@ using System.ComponentModel;
 using CollimationCircles.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace CollimationCircles.ViewModels
 {
@@ -67,6 +68,8 @@ namespace CollimationCircles.ViewModels
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
             
             CameraList = new ObservableCollection<Camera>(CameraControlService.GetCameraList());
+
+            SelectedCamera = CameraList.FirstOrDefault();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {

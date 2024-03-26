@@ -115,10 +115,8 @@
   <system:String x:Key="Text.PayPalDonation">With this donation you will support me to continue developing of Collimation Circles application. Thank you!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Video stream wait time timeout</system:String>
-  <system:String x:Key="Text.ResetCameraStreamAddress">Reset camera video stream address to default value</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Start or stop camera video stream</system:String>
   <system:String x:Key="Text.CameraType">Select camera</system:String>
-  <system:String x:Key="Text.RemoteCameraType">Remote</system:String>
   <system:String x:Key="Text.Brightness">Brightness</system:String>
   <system:String x:Key="Text.Contrast">Contrast</system:String>
   <system:String x:Key="Text.Saturation">Saturation</system:String>
@@ -133,6 +131,7 @@
   <system:String x:Key="Text.Temperature">Temperature</system:String>
   <system:String x:Key="Text.CameraControls">Camera controls</system:String>
   <system:String x:Key="Text.Default">Default</system:String>
+  <system:String x:Key="Text.EnterRemoteAddress">Enter address</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
