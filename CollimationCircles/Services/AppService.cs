@@ -19,12 +19,7 @@ public class AppService
     private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     private const string stateFile = "appstate.json";
     private static readonly string owner = "sajmons";
-    private static readonly string reponame = "CollimationCircles";
-
-    public const string LIBCAMERA_VID = "libcamera-vid";
-    public const string LIBCAMERA_APPS = "libcamera-apps";
-    public const string VLC = "vlc";
-    public const string LIBVLC_DEV = "libvlc-dev";
+    private static readonly string reponame = "CollimationCircles";    
 
     public const string WebPage = "https://saimons-astronomy.webador.com/software/collimation-circles";
     public const string ContactPage = "https://saimons-astronomy.webador.com/about";
@@ -194,7 +189,8 @@ public class AppService
             FileName = fileName,
             UseShellExecute = false,
             RedirectStandardOutput = true,
-            RedirectStandardError = true
+            RedirectStandardError = true,
+            CreateNoWindow = true
         };
 
         using Process process = new()
@@ -253,7 +249,7 @@ public class AppService
 
                     // Process completed. Check process.ExitCode and output here.
                     string outputStr = $"{output}";
-                    logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}");
+                    logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}, Error: {error}");
                     tcs.TrySetResult((process.ExitCode, outputStr, process));
                 }
                 else
@@ -310,11 +306,12 @@ public class AppService
         return endPoint?.Address.ToString();
     }
 
-    public static void StartRaspberryPIStream(string port, List<string>? streamArgs = null)
+    public static async Task StartRaspberryPIStream(string port, List<string>? streamArgs = null)
     {
         //rpicam-vid -t 0 --inline --listen -n -o tcp://0.0.0.0:5000
+        //raspivid -t 0 -l -md 1 -w 1280 -h 720 -b 15000000 -pf high -lev 4.2 -qp 25 -fl -fps 30 -o tcp://0.0.0.0:3333
 
-        ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
+        await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
 
         List<string> parameters = [
             "-t",
@@ -328,13 +325,12 @@ public class AppService
 
         if (streamArgs != null)
         {
-            parameters.AddRange(streamArgs);
+            // FIXME: parametri morajo biti filtrirani glede na to kaj katera kamera podpira
+            //parameters.AddRange(streamArgs);
         }
 
-        ExecuteCommand(
+        await ExecuteCommand(
             "rpicam-vid",
-            parameters, timeout: 0);
-
-        Thread.Sleep(1000);
+            parameters, timeout: 1000);
     }
 }
