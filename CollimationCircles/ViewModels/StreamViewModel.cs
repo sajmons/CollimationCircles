@@ -7,6 +7,9 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using System.ComponentModel;
+using CollimationCircles.Models;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace CollimationCircles.ViewModels
 {
@@ -38,25 +41,19 @@ namespace CollimationCircles.ViewModels
         private bool pinVideoWindowToMainWindow = true;
 
         [ObservableProperty]
-        private int cameraStreamTimeout = 600;
-
-        [ObservableProperty]
-        private bool remoteConnection = false;
-
-        [ObservableProperty]
-        private bool isUVC = true;
-
-        [ObservableProperty]
-        private bool isRaspberryPi = false;
-
-        [ObservableProperty]
-        private bool isRemote = false;
+        private bool remoteConnection = false;        
 
         [ObservableProperty]
         private bool isWindows = OperatingSystem.IsWindows();
 
         [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
+
+        [ObservableProperty]
+        private ObservableCollection<Camera> cameraList =  [];
+
+        [ObservableProperty]
+        private Camera selectedCamera;
 
         public StreamViewModel(ILibVLCService libVLCService, IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
@@ -68,7 +65,8 @@ namespace CollimationCircles.ViewModels
             FullAddress = this.libVLCService.FullAddress;
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
-            CameraStreamTimeout = settingsViewModel.CameraStreamTimeout;
+            
+            CameraList = new ObservableCollection<Camera>(CameraControlService.GetCameraList());
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -158,45 +156,6 @@ namespace CollimationCircles.ViewModels
             settingsViewModel.PinVideoWindowToMainWindow = newValue;
         }
 
-        partial void OnCameraStreamTimeoutChanged(int oldValue, int newValue)
-        {
-            settingsViewModel.CameraStreamTimeout = newValue;
-        }
-
-        [RelayCommand]
-        private void ResetAddress()
-        {
-            StreamSource ss = StreamSource.UVC;
-
-            if (IsRaspberryPi)
-                ss = StreamSource.RaspberryPi;
-
-            if (IsRemote)
-                ss = StreamSource.Remote;
-
-            FullAddress = libVLCService.DefaultAddress(ss);
-        }
-
-        partial void OnIsUVCChanged(bool value)
-        {
-            FullAddress = libVLCService.DefaultAddress(value ? StreamSource.UVC : StreamSource.Undefined);
-        }
-
-        partial void OnIsRaspberryPiChanged(bool value)
-        {
-            FullAddress = libVLCService.DefaultAddress(value ? StreamSource.RaspberryPi : StreamSource.Undefined);
-        }
-
-        partial void OnIsRemoteChanged(bool value)
-        {
-            FullAddress = libVLCService.DefaultAddress(value ? StreamSource.Remote : StreamSource.Undefined);
-        }
-
-        partial void OnFullAddressChanged(string value)
-        {
-            libVLCService.FullAddress = value;
-        }
-
         [RelayCommand]
         private void CameraSettings()
         {
@@ -220,6 +179,19 @@ namespace CollimationCircles.ViewModels
         public void OnClosed()
         {
             SettingsDialogViewModel = null;
+        }
+
+        partial void OnSelectedCameraChanged(Camera oldValue, Camera newValue)
+        {
+            FullAddress = libVLCService.DefaultAddress(newValue);
+            RemoteConnection = SelectedCamera.APIType == APIType.Remote;
+        }
+
+        partial void OnFullAddressChanged(string? oldValue, string newValue)
+        {
+            //FullAddress = libVLCService.DefaultAddress(new Camera() { APIType = APIType.Remote, Path = newValue });
+            FullAddress = newValue;
+            libVLCService.FullAddress = newValue;
         }
     }
 }

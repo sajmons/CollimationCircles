@@ -115,7 +115,7 @@
   <system:String x:Key="Text.CameraStreamTimeout">Zeitüberschreitung beim Warten auf den Videostream</system:String>
   <system:String x:Key="Text.ResetCameraStreamAddress">Setzen Sie die Videostream-Adresse der Kamera auf den Standardwert zurück</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Starten oder stoppen Sie den Videostream der Kamera</system:String>
-  <system:String x:Key="Text.CameraType">Kameratyp</system:String>
+  <system:String x:Key="Text.CameraType">Kamera auswählen</system:String>
   <system:String x:Key="Text.RemoteCameraType">Fernbedienung</system:String>
   <system:String x:Key="Text.Brightness">Helligkeit</system:String>
   <system:String x:Key="Text.Contrast">Kontrast</system:String>

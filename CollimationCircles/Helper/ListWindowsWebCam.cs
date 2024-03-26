@@ -1,3 +1,4 @@
+using CollimationCircles.Models;
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -31,9 +32,9 @@ namespace CollimationCircles.Helper
             int CreateClassEnumerator([In] ref Guid type, [Out] out IEnumMoniker enumMoniker, [In] int flags);
         }
 
-        public static List<string> Load()
+        public static List<Camera> Load()
         {
-            List<string> cameras = [];
+            List<Camera> cameras = [];
 
             if (OperatingSystem.IsWindows())
             {
@@ -68,7 +69,7 @@ namespace CollimationCircles.Helper
                         bag.Read("FriendlyName", ref val, IntPtr.Zero);
 
                         //list in box
-                        cameras.Add((string)val);
+                        cameras.Add(new Camera() { APIType = APIType.Dshow, Path = $"{val}" });
                     }
 
                 }

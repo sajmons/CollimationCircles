@@ -331,6 +331,8 @@ public class AppService
 
         await ExecuteCommand(
             "rpicam-vid",
-            parameters, timeout: 1000);
+            parameters, timeout: 0);
+
+        Thread.Sleep(1000);
     }
 }

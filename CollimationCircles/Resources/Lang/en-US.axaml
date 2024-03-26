@@ -117,7 +117,7 @@
   <system:String x:Key="Text.CameraStreamTimeout">Video stream wait time timeout</system:String>
   <system:String x:Key="Text.ResetCameraStreamAddress">Reset camera video stream address to default value</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Start or stop camera video stream</system:String>
-  <system:String x:Key="Text.CameraType">Camera type</system:String>
+  <system:String x:Key="Text.CameraType">Select camera</system:String>
   <system:String x:Key="Text.RemoteCameraType">Remote</system:String>
   <system:String x:Key="Text.Brightness">Brightness</system:String>
   <system:String x:Key="Text.Contrast">Contrast</system:String>

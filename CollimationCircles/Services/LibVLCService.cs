@@ -4,17 +4,10 @@ using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CollimationCircles.Models;
 
 namespace CollimationCircles.Services
 {
-    public enum StreamSource
-    {
-        UVC,
-        RaspberryPi,
-        Remote,
-        Undefined
-    }
-
     internal class LibVLCService : ILibVLCService
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
@@ -28,7 +21,7 @@ namespace CollimationCircles.Services
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
-        public StreamSource StreamSource { get; set; }
+        public Camera Camera { get; set; }
 
         public LibVLCService()
         {
@@ -61,7 +54,7 @@ namespace CollimationCircles.Services
 
         public async Task Play(List<string> controlsArgs)
         {
-            if (StreamSource == StreamSource.RaspberryPi)
+            if (Camera.APIType == APIType.LibCamera)
             {                
                 await AppService.StartRaspberryPIStream(rpiPort, controlsArgs);
             }
@@ -93,33 +86,30 @@ namespace CollimationCircles.Services
             port = string.Empty;
             address = string.Empty;
 
-            if (StreamSource == StreamSource.UVC)
+            if (Camera.APIType == APIType.Dshow)
             {
-                if (OperatingSystem.IsWindows())
-                {
-                    protocol = "dshow";
-                }
-                else if (OperatingSystem.IsMacOS())
-                {
-                    protocol = "qtcapture";
-                }
-                else
-                {
-                    protocol = "v4l2";
-                    address = "/dev/video0";
-                }
+                protocol = "dshow";
+                address = Camera.Path;
             }
-            else if (StreamSource == StreamSource.RaspberryPi)
+            else if (Camera.APIType == APIType.QTCapture)
+            {
+                protocol = "qtcapture";
+                address = Camera.Path;
+            }
+            else if (Camera.APIType == APIType.V4l2)
+            {
+                protocol = "v4l2";
+                address = Camera.Path;
+            }
+            else if (Camera.APIType == APIType.LibCamera)
             {
                 protocol = "tcp/h264";
                 address = "localhost";
                 port = rpiPort;
             }
-            else if (StreamSource == StreamSource.Remote)
+            else if (Camera.APIType == APIType.Remote)
             {
                 protocol = "http";
-                address = OperatingSystem.IsLinux() ? string.Empty : RaspberryPiDiscoverService.DetectRaspberryPIIPAddress();
-                port = OperatingSystem.IsLinux() ? string.Empty : rpiPort;
             }
 
             string newRemoteAddress = address;
@@ -130,9 +120,9 @@ namespace CollimationCircles.Services
             return $"{protocol}://{addr}{prt}{pth}";
         }
 
-        public string DefaultAddress(StreamSource streamSource)
+        public string DefaultAddress(Camera camera)
         {
-            StreamSource = streamSource;
+            Camera = camera;
             FullAddress = GetFullUrlFromParts();
             return FullAddress;
         }

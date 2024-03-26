@@ -116,7 +116,7 @@
   <system:String x:Key="Text.CameraStreamTimeout">Délai d'attente du flux vidéo</system:String>
   <system:String x:Key="Text.ResetCameraStreamAddress">Réinitialiser l'adresse du flux vidéo de la caméra à sa valeur par défaut</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Démarrer ou arrêter le flux vidéo de la caméra</system:String>
-  <system:String x:Key="Text.CameraType">Type de caméra</system:String>
+  <system:String x:Key="Text.CameraType">Sélectionnez la caméra</system:String>
   <system:String x:Key="Text.RemoteCameraType">Télécommande</system:String>
   <system:String x:Key="Text.Brightness">Luminosité</system:String>
   <system:String x:Key="Text.Contrast">Contraste</system:String>

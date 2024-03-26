@@ -1,4 +1,5 @@
-﻿using LibVLCSharp.Shared;
+﻿using CollimationCircles.Models;
+using LibVLCSharp.Shared;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,8 +9,8 @@ namespace CollimationCircles.Services
     {
         public string FullAddress { get; set; }
         public MediaPlayer MediaPlayer { get; }
-        public StreamSource StreamSource { get; set; }
         public Task Play(List<string> controlsArgs);
-        public string DefaultAddress(StreamSource streamSource);
+        public Camera Camera { get; set; }
+        public string DefaultAddress(Camera camera);
     }
 }

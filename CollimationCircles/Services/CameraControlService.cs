@@ -1,6 +1,10 @@
-﻿using OpenCvSharp;
+﻿using CollimationCircles.Helper;
+using CollimationCircles.Models;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CollimationCircles.Services
 {
@@ -67,20 +71,17 @@ namespace CollimationCircles.Services
                 vc = new VideoCapture();
             }
         }
-        public void Set(string propertyname, double value, StreamSource streamSource)
+        public void Set(string propertyname, double value, Camera camera)
         {
-            if (OperatingSystem.IsLinux() || OperatingSystem.IsMacOS())
-            {
-                if (streamSource is StreamSource.UVC)
-                {
-                    AppService.ExecuteCommand("v4l2-ctl", [
-                        $"--set-ctrl={v4l2controls[propertyname]}={value}"
-                    ]);
-                    logger.Info($"v4l2-ctl property '{propertyname}' set to '{value}'");
-                }
-            }
 
-            if (OperatingSystem.IsWindows())
+            if (camera.APIType is APIType.V4l2 || camera.APIType is APIType.QTCapture)
+            {
+                AppService.ExecuteCommand("v4l2-ctl", [
+                    $"--set-ctrl={v4l2controls[propertyname]}={value}"
+                ]);
+                logger.Info($"v4l2-ctl property '{propertyname}' set to '{value}'");
+            }
+            else if (camera.APIType is APIType.Dshow)
             {
                 try
                 {
@@ -94,6 +95,10 @@ namespace CollimationCircles.Services
                 {
                     logger.Error(exc);
                 }
+            }
+            else if (camera.APIType is APIType.LibCamera)
+            { 
+                // TODO: implement libcamera camera controls set
             }
         }
         public void Dispose()
@@ -181,6 +186,61 @@ namespace CollimationCircles.Services
                 controls.Add($"--{rpiControls["Zoom"]} {roi},{roi},{roi},{roi}");
 
             return controls;
+        }
+
+        public static List<CameraControl> GetV4L2Controls(string inputText)
+        {
+            string pattern = @"(?<name>\w+)\s(?<hex>0x\w+)\s\((?<type>\w+)\)\s*:\s*(min=(?<min>-?\d+))?\s*(max=(?<max>-?\d+))?\s*(step=(?<step>-?\d+))?\s*(default=(?<default>-?\d+))?\s*(value=(?<value>-?\d+))?\s*(flags=(?<flags>\w+))?";
+
+            List<CameraControl> controls = [];
+
+            var matches = Regex.Matches(inputText, pattern);
+
+            foreach (Match m in matches.Cast<Match>())
+            {
+                _ = int.TryParse(m.Groups["min"].Value, out int min);
+                _ = int.TryParse(m.Groups["max"].Value, out int max);
+                _ = int.TryParse(m.Groups["step"].Value, out int step);
+                _ = int.TryParse(m.Groups["default"].Value, out int deflt);
+                _ = int.TryParse(m.Groups["value"].Value, out int value);
+
+                var cameraControl = new CameraControl()
+                {
+                    Name = m.Groups["name"].Value,
+                    Min = min,
+                    Max = max,
+                    Step = step,
+                    Default = deflt,
+                    Value = value,
+                    Flags = m.Groups["flags"].Value
+                };
+
+                controls.Add(cameraControl);
+            }
+
+            return controls;
+        }
+
+        public static List<Camera> GetCameraList()
+        {
+            List<Camera> cameras = [];
+
+            if (OperatingSystem.IsWindows())
+            {
+                cameras.AddRange(ListWindowsWebCam.Load());
+            }
+            else
+            {
+                cameras.AddRange([
+                    new Camera() { APIType = APIType.LibCamera, Path = "/base/soc/i2c0mux/i2c@1/imx477@1a" },
+                    new Camera() { APIType = APIType.V4l2, Path = "/dev/video0" },
+                    new Camera() { APIType = APIType.V4l2, Path = "/dev/video1" }
+                    ]);
+            }
+
+            cameras.Add(new Camera() { APIType = APIType.Remote, Path = "http://" });
+
+            return cameras;
         }
     }
 }

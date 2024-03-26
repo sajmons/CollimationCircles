@@ -175,12 +175,7 @@ namespace CollimationCircles.ViewModels
         private Dictionary<string, string> globalShortcuts = [];
 
         [ObservableProperty]
-        private Dictionary<string, string> shapeShortcuts = [];
-
-        [JsonProperty]
-        [ObservableProperty]
-        [Range(Constraints.CameraStreamTimeoutMin, Constraints.CameraStreamTimeoutMax)]
-        private int cameraStreamTimeout = 700;
+        private Dictionary<string, string> shapeShortcuts = [];        
 
         public SettingsViewModel(IDialogService dialogService)
         {
@@ -559,8 +554,7 @@ namespace CollimationCircles.ViewModels
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
-                    CameraStreamTimeout = vm.CameraStreamTimeout;
-
+                    
                     if (!DockInMainWindow)
                     {
                         ShowSettings();
@@ -685,8 +679,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(PinVideoWindowToMainWindow):
                 case nameof(ShowApplicationLog):
                 case nameof(ShowKeyboardShortcuts):
-                case nameof(SelectedLanguage):
-                case nameof(CameraStreamTimeout):
+                case nameof(SelectedLanguage):                
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);

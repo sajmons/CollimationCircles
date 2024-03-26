@@ -117,7 +117,7 @@ namespace CollimationCircles.ViewModels
 
                         if (double.TryParse(pVal, out double valDouble))
                         {
-                            cameraControlService.Set(e.PropertyName, valDouble, libVLCService.StreamSource);
+                            cameraControlService.Set(e.PropertyName, valDouble, libVLCService.Camera);
                         }
 
                         logger.Debug($"{e.PropertyName} changed to '{pVal}'");
