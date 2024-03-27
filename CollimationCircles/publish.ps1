@@ -187,6 +187,7 @@ Function PublishOne
 
 	$xml = [Xml] (Get-Content $Project)
 	$version = [Version] $xml.Project.PropertyGroup.Version
+    $versionInfo = [String] $xml.Project.PropertyGroup.InformationalVersion
 	
     $commandRestore = "dotnet restore -r $Runtime"
 
@@ -222,7 +223,7 @@ Function PublishOne
     # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
     # That's why I aded number infront of file name to maintain correct order.
     # You must always specify win-x64 as first runtime in $runtimes list
-	Compress-Archive -Force $outputDir $Output/$Index-$appName-$version-$Runtime.zip
+	Compress-Archive -Force $outputDir $Output/$Index-$appName-$version-$versionInfo-$Runtime.zip
 
     if ($Runtime -eq "osx-x64")
     {
