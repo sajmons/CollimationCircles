@@ -32,10 +32,20 @@ public class AppService
     public static string GetAppVersion()
     {
         var entryAssembly = Assembly.GetEntryAssembly();
-
+        
         var assemblyVersion = entryAssembly?.GetName().Version;
 
         return assemblyVersion?.ToString() ?? "0.0.0";
+    }
+
+    public static string GetAppVersionTitle()
+    {
+        var infoVersion = Assembly.GetExecutingAssembly()?
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+        var infoVer = infoVersion?.Split("+")?.FirstOrDefault();
+        
+        return GetAppVersion() + " " + infoVer ?? "0.0.0";
     }
 
     public static T? Deserialize<T>(string jsonState)

@@ -17,7 +17,7 @@ namespace CollimationCircles.ViewModels
         {
             this.dialogService = dialogService;
 
-            Title = $"{DynRes.TryGetString("About")} - {DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersion()}";
+            Title = $"{DynRes.TryGetString("About")} - {DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 
         [RelayCommand]

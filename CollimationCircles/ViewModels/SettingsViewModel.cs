@@ -191,7 +191,7 @@ namespace CollimationCircles.ViewModels
             InitializeColors();
             InitializeKeyboardShortcuts();
 
-            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersion()}";
+            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 
         private void InitializeKeyboardShortcuts()
