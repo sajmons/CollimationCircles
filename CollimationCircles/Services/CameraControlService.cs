@@ -1,10 +1,12 @@
-﻿using CollimationCircles.Helper;
+﻿using Avalonia.Controls;
+using CollimationCircles.Helper;
 using CollimationCircles.Models;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -97,7 +99,7 @@ namespace CollimationCircles.Services
                 }
             }
             else if (camera.APIType is APIType.LibCamera)
-            { 
+            {
                 // TODO: implement libcamera camera controls set
             }
         }
@@ -231,14 +233,114 @@ namespace CollimationCircles.Services
             }
             else
             {
-                cameras.AddRange([
-                    new Camera() { APIType = APIType.LibCamera, Path = "/base/soc/i2c0mux/i2c@1/imx477@1a" },
-                    new Camera() { APIType = APIType.V4l2, Path = "/dev/video0" },
-                    new Camera() { APIType = APIType.V4l2, Path = "/dev/video1" }
-                    ]);
+                var raspiCameras = GetLibCameraCameras().GetAwaiter().GetResult();
+                cameras.AddRange(raspiCameras);
+
+                var v4l2Cameras = GetV4L2Cameras().GetAwaiter().GetResult();
+                cameras.AddRange(v4l2Cameras);
             }
 
-            cameras.Add(new Camera() { APIType = APIType.Remote, Path = "http://" });
+            cameras.Add(new Camera() { APIType = APIType.Remote });
+
+            return cameras;
+        }
+
+        public static async Task<List<Camera>> GetLibCameraCameras()
+        {
+            List<Camera> cameras = [];
+
+            var (errorCode, result, process) = await AppService.ExecuteCommand(
+                "libcamera-vid",
+                ["--list-cameras"]);
+
+            logger.Info($"libcamera-vid --list-cameras result: {result}");
+
+            if (errorCode == 0)
+            {
+                string pattern = @"^(?<index>\d+)\s:\s(?<name>\w+)\s\[?.+\]\s\((?<path>.+)\)$";
+
+                var matches = Regex.Matches(result, pattern, RegexOptions.Multiline);
+
+                if (matches.Count > 0)
+                {
+                    logger.Info($"Parsed {matches.Count} LibCamera cameras");
+
+                    foreach (Match m in matches.Cast<Match>())
+                    {
+                        _ = int.TryParse(m.Groups["index"].Value, out int index);
+
+                        var camera = new Camera()
+                        {
+                            Index = index,
+                            APIType = APIType.LibCamera,
+                            Name = m.Groups["name"].Value,
+                            Path = m.Groups["path"].Value
+                        };
+
+                        cameras.Add(camera);
+
+                        logger.Info($"Adding camera: '{camera.Path}'");
+                    }
+                }
+                else
+                {
+                    logger.Info($"No LibCamera camera parsed!");
+                }
+            }
+            else
+            {
+                logger.Info($"No LibCamera compatible cameras detected!");
+            }
+
+            return cameras;
+        }
+
+        public static async Task<List<Camera>> GetV4L2Cameras()
+        {
+            List<Camera> cameras = [];
+
+            var (errorCode, result, process) = await AppService.ExecuteCommand(
+                "v4l2-ctl",
+                ["--list-devices"]);
+
+            logger.Info($"v4l2-ctl --list-devices result: {result}");
+
+            if (errorCode == 0)
+            {
+                string pattern = @"^(.*usb.*):\n((\s*\/dev\/.*\n)*)\s*$";
+
+                var match = Regex.Match(result, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    string[] camStr = match.Groups[2].Value.Trim().Split("\t");
+
+                    logger.Info($"Parsed {camStr.Length} V4L2 cameras");
+
+                    for (int i = 0; i < camStr.Length; i++)
+                    {
+                        string cam = camStr[i].Trim();
+
+                        cameras.Add(new Camera()
+                        {
+                            Index = i,
+                            APIType = APIType.V4l2,
+                            Name = cam,
+                            Path = cam
+                        });
+
+                        logger.Info($"Adding camera: '{camStr[i]}'");
+                    }
+                }
+                else
+                {
+                    logger.Info($"No V4L2 camera parsed!");
+                }
+            }
+            else
+            {
+                logger.Warn($"No V4L2 compatible cameras detected!");
+            }
 
             return cameras;
         }

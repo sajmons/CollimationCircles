@@ -192,7 +192,6 @@ namespace CollimationCircles.ViewModels
 
         partial void OnFullAddressChanged(string? oldValue, string newValue)
         {
-            //FullAddress = libVLCService.DefaultAddress(new Camera() { APIType = APIType.Remote, Path = newValue });
             FullAddress = newValue;
             libVLCService.FullAddress = newValue;
         }

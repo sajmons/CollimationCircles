@@ -259,7 +259,15 @@ public class AppService
 
                     // Process completed. Check process.ExitCode and output here.
                     string outputStr = $"{output}";
-                    logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}, Error: {error}");
+                    
+                    string logMessage = $"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}";
+
+                    if (!string.IsNullOrWhiteSpace($"{error}"))
+                    {
+                        logMessage += $", Error: {error}";
+                    }
+
+                    logger.Debug(logMessage);
                     tcs.TrySetResult((process.ExitCode, outputStr, process));
                 }
                 else

@@ -82,6 +82,7 @@ namespace CollimationCircles.Services
 
         private string GetFullUrlFromParts()
         {
+            protocol = string.Empty;
             pathAndQuery = string.Empty;
             port = string.Empty;
             address = string.Empty;
@@ -107,17 +108,18 @@ namespace CollimationCircles.Services
                 address = "localhost";
                 port = rpiPort;
             }
-            else if (Camera.APIType == APIType.Remote)
-            {
-                protocol = "http";
-            }
 
             string newRemoteAddress = address;
             string addr = newRemoteAddress;
             string pth = string.IsNullOrWhiteSpace(pathAndQuery) ? "" : pathAndQuery;
             string prt = string.IsNullOrWhiteSpace(port) ? "" : $":{port}";
 
-            return $"{protocol}://{addr}{prt}{pth}";
+            if (!string.IsNullOrWhiteSpace(protocol))
+            {
+                protocol += "://";
+            }
+
+            return $"{protocol}{addr}{prt}{pth}";
         }
 
         public string DefaultAddress(Camera camera)
