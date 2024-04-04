@@ -253,8 +253,6 @@ namespace CollimationCircles.Services
                 "libcamera-vid",
                 ["--list-cameras"]);
 
-            logger.Info($"libcamera-vid --list-cameras result: {result}");
-
             if (errorCode == 0)
             {
                 string pattern = @"^(?<index>\d+)\s:\s(?<name>\w+)\s\[?.+\]\s\((?<path>.+)\)$";
@@ -307,7 +305,7 @@ namespace CollimationCircles.Services
 
             if (errorCode == 0)
             {
-                string pattern = @"^(.*usb.*):\n((\s*\/dev\/.*\n)*)\s*$";
+                string pattern = @"^(.*usb.*):\n((\s*\/dev\/.*\n)*).*$";
 
                 var match = Regex.Match(result, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
