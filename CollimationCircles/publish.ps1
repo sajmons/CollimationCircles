@@ -194,7 +194,7 @@ Function PublishOne
     Write-Host $commandRestore -ForegroundColor green
     Invoke-Expression $commandRestore
 
-    $commandPublish = "dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
+    $commandPublish = "dotnet publish $Project -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
 
     if ($Runtime -eq "osx-x64")
     {
