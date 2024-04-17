@@ -332,13 +332,13 @@ public class AppService
         await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
 
         List<string> parameters = [
-            "-t",
-            "0",
+            "-t", "0",
             "--inline",
             "--listen",
-            "-n",
-            "-o",
-            $"tcp://0.0.0.0:{port}"            
+            "--n",
+            "--o", $"tcp://0.0.0.0:{port}",
+            "--shutter", "60000",
+            "--gain", "22"
         ];
 
         if (streamArgs != null)
