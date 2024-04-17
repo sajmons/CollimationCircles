@@ -202,6 +202,8 @@ namespace CollimationCircles.Services
 
             var matches = Regex.Matches(result, pattern);
 
+            logger.Info($"Parsed {matches.Count} controls for '{camera.Name}'");
+
             foreach (Match m in matches.Cast<Match>())
             {
                 _ = int.TryParse(m.Groups["min"].Value, out int min);
@@ -222,6 +224,7 @@ namespace CollimationCircles.Services
                 };
 
                 controls.Add(cameraControl);
+                logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' for '{camera.Name}' added");
             }
 
             return controls;
