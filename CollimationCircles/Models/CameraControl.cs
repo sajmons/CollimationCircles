@@ -2,7 +2,7 @@
 
 namespace CollimationCircles.Models
 {
-    internal class CameraControl
+    public class CameraControl
     {        
         public string Name { get; set; }
         public int Min { get; set; }
