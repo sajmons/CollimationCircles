@@ -79,9 +79,9 @@ namespace CollimationCircles.Services
             if (camera.APIType is APIType.V4l2 || camera.APIType is APIType.QTCapture)
             {
                 AppService.ExecuteCommand("v4l2-ctl", [
+                    "--device", camera.Path,
                     $"--set-ctrl={v4l2controls[propertyname]}={value}"
-                ]);
-                logger.Info($"v4l2-ctl property '{propertyname}' set to '{value}'");
+                ]);                
             }
             else if (camera.APIType is APIType.Dshow)
             {
@@ -190,13 +190,17 @@ namespace CollimationCircles.Services
             return controls;
         }
 
-        public static List<CameraControl> GetV4L2Controls(string inputText)
+        public static async Task<List<CameraControl>> GetV4L2CameraControls(Camera camera)
         {
+            var (errorCode, result, process) = await AppService.ExecuteCommand(
+                "v4l2-ctl",
+                ["--list-ctrls", "--device", $"{camera.Path}"]);
+
             string pattern = @"(?<name>\w+)\s(?<hex>0x\w+)\s\((?<type>\w+)\)\s*:\s*(min=(?<min>-?\d+))?\s*(max=(?<max>-?\d+))?\s*(step=(?<step>-?\d+))?\s*(default=(?<default>-?\d+))?\s*(value=(?<value>-?\d+))?\s*(flags=(?<flags>\w+))?";
 
             List<CameraControl> controls = [];
 
-            var matches = Regex.Matches(inputText, pattern);
+            var matches = Regex.Matches(result, pattern);
 
             foreach (Match m in matches.Cast<Match>())
             {
@@ -319,13 +323,17 @@ namespace CollimationCircles.Services
                     {
                         string cam = camStr[i].Trim();
 
-                        cameras.Add(new Camera()
+                        Camera c = new()
                         {
                             Index = i,
                             APIType = APIType.V4l2,
                             Name = cam,
-                            Path = cam
-                        });
+                            Path = cam                            
+                        };
+
+                        c.Controls = await GetV4L2CameraControls(c);
+
+                        cameras.Add(c);
 
                         logger.Info($"Adding camera: '{camStr[i]}'");
                     }
