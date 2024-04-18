@@ -54,7 +54,7 @@ namespace CollimationCircles.ViewModels
         private ObservableCollection<Camera> cameraList =  [];
 
         [ObservableProperty]
-        private Camera selectedCamera;
+        private Camera? selectedCamera;
 
         public StreamViewModel(ILibVLCService libVLCService, IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
@@ -184,10 +184,13 @@ namespace CollimationCircles.ViewModels
             SettingsDialogViewModel = null;
         }
 
-        partial void OnSelectedCameraChanged(Camera oldValue, Camera newValue)
+        partial void OnSelectedCameraChanged(Camera? oldValue, Camera? newValue)
         {
-            FullAddress = libVLCService.DefaultAddress(newValue);
-            RemoteConnection = SelectedCamera.APIType == APIType.Remote;
+            if (newValue is not null)
+            {
+                FullAddress = libVLCService.DefaultAddress(newValue);
+                RemoteConnection = SelectedCamera?.APIType == APIType.Remote;
+            }
         }
 
         partial void OnFullAddressChanged(string? oldValue, string newValue)

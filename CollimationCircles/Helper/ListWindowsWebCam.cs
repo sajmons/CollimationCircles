@@ -43,35 +43,37 @@ namespace CollimationCircles.Helper
                 object? comObj = null;
                 ICreateDevEnum? enumDev = null;
                 IEnumMoniker? enumMon = null;
-                IMoniker[] moniker = new IMoniker[100];
+                IMoniker[]? moniker = new IMoniker[100];
                 IPropertyBag? bag = null;
                 try
                 {
                     // Get the system device enumerator
-                    Type srvType = Type.GetTypeFromCLSID(SystemDeviceEnum);
+                    Type? srvType = Type.GetTypeFromCLSID(SystemDeviceEnum);
 
-                    // create device enumerator
-                    comObj = Activator.CreateInstance(srvType);
-                    enumDev = comObj as ICreateDevEnum;
-
-                    // Create an enumerator to find filters of specified category
-                    enumDev?.CreateClassEnumerator(VideoInputDevice, out enumMon, 0);
-                    Guid bagId = typeof(IPropertyBag).GUID;
-
-                    while (enumMon?.Next(1, moniker, IntPtr.Zero) == 0)
+                    if (srvType is not null)
                     {
-                        // get property bag of the moniker
-                        moniker[0].BindToStorage(null, null, ref bagId, out bagObj);
-                        bag = (IPropertyBag)bagObj;
+                        // create device enumerator
+                        comObj = Activator.CreateInstance(srvType);
+                        enumDev = comObj as ICreateDevEnum;
 
-                        // read FriendlyName
-                        object val = "";
-                        bag.Read("FriendlyName", ref val, IntPtr.Zero);
+                        // Create an enumerator to find filters of specified category
+                        enumDev?.CreateClassEnumerator(VideoInputDevice, out enumMon, 0);
+                        Guid bagId = typeof(IPropertyBag).GUID;
 
-                        //list in box
-                        cameras.Add(new Camera() { APIType = APIType.Dshow, Path = $"{val}" });
+                        while (enumMon?.Next(1, moniker, IntPtr.Zero) == 0)
+                        {
+                            // get property bag of the moniker
+                            moniker[0].BindToStorage(null, null, ref bagId, out bagObj);
+                            bag = (IPropertyBag)bagObj;
+
+                            // read FriendlyName
+                            object val = "";
+                            bag.Read("FriendlyName", ref val, IntPtr.Zero);
+
+                            //list in box
+                            cameras.Add(new Camera() { APIType = APIType.Dshow, Path = $"{val}" });
+                        }
                     }
-
                 }
                 catch (Exception)
                 {

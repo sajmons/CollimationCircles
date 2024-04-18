@@ -21,7 +21,7 @@ namespace CollimationCircles.Services
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
-        public Camera Camera { get; set; }
+        public Camera Camera { get; set; } = new();
 
         public LibVLCService()
         {
