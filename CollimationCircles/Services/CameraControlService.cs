@@ -312,13 +312,15 @@ namespace CollimationCircles.Services
 
             if (errorCode == 0)
             {
-                string pattern = @"^(.*usb.*):\n((\s*\/dev\/.*\n)*).*$";
+                string pattern = @"(.*):.*(.*usb.*):\n((\s*\/dev\/.*\n)*).*";
 
                 var match = Regex.Match(result, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
                 if (match.Success)
                 {
-                    string[] camStr = match.Groups[2].Value.Trim().Split("\t");
+                    string name = match.Groups[2].Value.Trim();
+
+                    string[] camStr = match.Groups[3].Value.Trim().Split("\t");
 
                     logger.Info($"Parsed {camStr.Length} V4L2 cameras");
 
@@ -330,7 +332,7 @@ namespace CollimationCircles.Services
                         {
                             Index = i,
                             APIType = APIType.V4l2,
-                            Name = cam,
+                            Name = name,
                             Path = cam                            
                         };
 
@@ -338,7 +340,7 @@ namespace CollimationCircles.Services
 
                         cameras.Add(c);
 
-                        logger.Info($"Adding camera: '{camStr[i]}'");
+                        logger.Info($"Adding camera: '{c.Name} {c.Path}'");
                     }
                 }
                 else
