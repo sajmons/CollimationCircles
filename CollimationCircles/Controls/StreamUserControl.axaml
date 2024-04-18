@@ -27,6 +27,8 @@
                 <TextBlock Text="{Binding APIType}" />
                 <TextBlock Text=": " />
                 <TextBlock Text="{Binding Path}" />
+                <TextBlock Text=" " />
+                <TextBlock Text="{Binding Name}" />
               </StackPanel>
             </DataTemplate>
           </ComboBox.ItemTemplate>
