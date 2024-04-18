@@ -202,7 +202,7 @@ namespace CollimationCircles.Services
 
             var matches = Regex.Matches(result, pattern);
 
-            logger.Info($"Parsed {matches.Count} controls for '{camera.Name}'");
+            logger.Info($"Parsed {matches.Count} controls for '{camera.Name} {camera.Path}'");
 
             foreach (Match m in matches.Cast<Match>())
             {
@@ -318,7 +318,7 @@ namespace CollimationCircles.Services
 
                 if (match.Success)
                 {
-                    string name = match.Groups[2].Value.Trim();
+                    string name = match.Groups[1].Value.Trim();
 
                     string[] camStr = match.Groups[3].Value.Trim().Split("\t");
 
@@ -338,9 +338,11 @@ namespace CollimationCircles.Services
 
                         c.Controls = await GetV4L2CameraControls(c);
 
-                        cameras.Add(c);
-
-                        logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                        if (c.Controls.Count > 0)
+                        {
+                            cameras.Add(c);
+                            logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                        }
                     }
                 }
                 else
