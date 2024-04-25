@@ -313,7 +313,7 @@ namespace CollimationCircles.Services
 
             if (errorCode == 0)
             {
-                string pattern = @"(.*):.*(.*usb.*):\n((\s*\/dev\/.*\n)*).*";
+                string pattern = @"(.*).*(.*usb.*):\n((\s*\/dev\/.*\n)*).*";
 
                 var match = Regex.Match(result, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
