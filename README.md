@@ -33,8 +33,14 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 # Dependancies
 Colimation circles depends on some external software for handling video streams. 
 
-- VLC for playing video streams. ```sudo apt-get install -y libvlc-dev```
-- v4l-utils for detecting UVC cameras and their capabilities. ```sudo apt-get install -y v4l-utils```
+- VLC for playing video streams.
+```
+sudo apt-get install -y libvlc-dev
+```
+- v4l-utils for detecting UVC cameras and their capabilities.
+```
+sudo apt-get install -y v4l-utils
+```
 - libcamera-vid for detecting Raspberry Pi Cameras. It should already be installed on Raspberry Pi OS by default.
 
 # Prebuild binaries
