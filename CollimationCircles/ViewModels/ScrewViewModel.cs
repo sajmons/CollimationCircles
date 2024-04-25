@@ -1,5 +1,4 @@
 ﻿using Avalonia.Media;
-using CollimationCircles.Helper;
 using CollimationCircles.Models;
 
 namespace CollimationCircles.ViewModels
@@ -9,7 +8,7 @@ namespace CollimationCircles.ViewModels
         public ScrewViewModel()
         {
             ItemColor = Colors.Lime;
-            Label = DynRes.TryGetString("PrimaryScrew");
+            Label = ResSvc.TryGetString("PrimaryScrew");
             Radius = 230;
             IsRotatable = true;
             IsInclinatable = false;

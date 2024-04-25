@@ -1,10 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Markup.Xaml.Styling;
+﻿using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using System;
-using System.Linq;
-using System.Reflection;
 
 namespace CollimationCircles.ViewModels
 {
@@ -16,27 +13,17 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public string mainTitle = string.Empty;
 
-        [RelayCommand]
-        public static void Translate(string targetLanguage)
+        internal IResourceService ResSvc { get; set; }
+
+        public BaseViewModel()
         {
-            var translations = Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>().FirstOrDefault(x => x.Source?.OriginalString?.Contains("/Lang/") ?? false);
+            ResSvc = Ioc.Default.GetRequiredService<IResourceService>();
+        }
 
-            if (translations != null)
-                Application.Current?.Resources.MergedDictionaries.Remove(translations);
-
-            string? assemblyName = Assembly.GetEntryAssembly()?.GetName().Name;
-
-            if (assemblyName is not null)
-            {
-                var uri = new Uri($"avares://{assemblyName}/Resources/Lang/{targetLanguage}.axaml");
-
-                Application.Current?.Resources.MergedDictionaries.Add(
-                    new ResourceInclude(uri)
-                    {
-                        Source = uri
-                    }
-                );
-            }
+        [RelayCommand]
+        public void Translate(string targetLanguage)
+        {            
+            ResSvc.Translate(targetLanguage);
         }
     }
 }

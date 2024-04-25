@@ -324,12 +324,12 @@ public class AppService
         return endPoint?.Address.ToString();
     }
 
-    public static async Task StartRaspberryPIStream(string port, List<string>? streamArgs = null)
+    public static void StartRaspberryPIStream(string port, List<string>? streamArgs = null)
     {
         //rpicam-vid -t 0 --inline --listen -n -o tcp://0.0.0.0:5000
-        //raspivid -t 0 -l -md 1 -w 1280 -h 720 -b 15000000 -pf high -lev 4.2 -qp 25 -fl -fps 30 -o tcp://0.0.0.0:3333
+        //rpicam-vid -t 0 -l -md 1 -w 1280 -h 720 -b 15000000 -pf high -lev 4.2 -qp 25 -fl -fps 30 -o tcp://0.0.0.0:3333
 
-        await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
+        //_ = ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
 
         List<string> parameters = [
             "-t", "0",
@@ -347,7 +347,7 @@ public class AppService
             //parameters.AddRange(streamArgs);
         }
 
-        await ExecuteCommand(
+        ExecuteCommand(
             "rpicam-vid",
             parameters, timeout: 0);
 

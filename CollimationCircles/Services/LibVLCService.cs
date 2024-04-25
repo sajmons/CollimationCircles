@@ -1,5 +1,4 @@
-﻿using System;
-using CollimationCircles.Messages;
+﻿using CollimationCircles.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace CollimationCircles.Services
         private string address = string.Empty;
         private string port = string.Empty;
         private string pathAndQuery = string.Empty;
-        private const string rpiPort = "49555";
+        private const string rpiPort = "3333";
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
@@ -56,7 +55,7 @@ namespace CollimationCircles.Services
         {
             if (Camera.APIType == APIType.LibCamera)
             {                
-                await AppService.StartRaspberryPIStream(rpiPort, controlsArgs);
+                AppService.StartRaspberryPIStream(rpiPort, controlsArgs);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))

@@ -1,5 +1,4 @@
 ﻿using Avalonia.Media;
-using CollimationCircles.Helper;
 using CollimationCircles.Models;
 
 namespace CollimationCircles.ViewModels
@@ -9,7 +8,7 @@ namespace CollimationCircles.ViewModels
         public SpiderViewModel()
         {
             ItemColor = Colors.Red;
-            Label = DynRes.TryGetString("Spider");
+            Label = ResSvc.TryGetString("Spider");
             Radius = 250;
             RotationAngle = 45;
             Size = 5;

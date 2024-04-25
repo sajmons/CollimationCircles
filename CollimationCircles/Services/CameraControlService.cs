@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using CollimationCircles.Helper;
+﻿using CollimationCircles.Helper;
 using CollimationCircles.Models;
 using OpenCvSharp;
 using System;
@@ -75,7 +74,7 @@ namespace CollimationCircles.Services
         }
         public void Set(string propertyname, double value, Camera camera)
         {
-
+            // set camera control for V4L2
             if (camera.APIType is APIType.V4l2 || camera.APIType is APIType.QTCapture)
             {
                 AppService.ExecuteCommand("v4l2-ctl", [
@@ -83,6 +82,7 @@ namespace CollimationCircles.Services
                     $"--set-ctrl={v4l2controls[propertyname]}={value}"
                 ]);                
             }
+            // set camera control for DirectShow
             else if (camera.APIType is APIType.Dshow)
             {
                 try
@@ -98,6 +98,7 @@ namespace CollimationCircles.Services
                     logger.Error(exc);
                 }
             }
+            // set camera control for Raspberry PI Camera
             else if (camera.APIType is APIType.LibCamera)
             {
                 // TODO: implement libcamera camera controls set

@@ -36,6 +36,8 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
+    public static string LangDir = "CollimationCircles/Resources/Lang";
+
     private static void ConfigureServices()
     {
         Ioc.Default.ConfigureServices(
@@ -55,6 +57,7 @@ public partial class App : Application
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
+            .AddSingleton<IResourceService>(new ResourceService(LangDir))
             .BuildServiceProvider());
     }
 }
