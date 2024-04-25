@@ -8,9 +8,11 @@ namespace CollimationCircles.Helper
 {
     public static class DynRes
     {
+        private static ResourceInclude? translations;
+
         public static string TryGetString(string resourceKey)
         {
-            var translations = Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>()
+            translations ??= Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>()
                 .FirstOrDefault(x => x.Source?.OriginalString?.Contains("/Lang/") ?? false);
 
             if (translations is null)
