@@ -31,8 +31,11 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - 3.x and newer camera video stream support to display video from your telescope in background
 
 # Dependancies
-Colimation circles depends on VLC for playing video streams. On Linux you should open terminal and run this command before first run:
-```sudo apt-get install -y libvlc-dev```
+Colimation circles depends on some external software for handling video streams. 
+
+- VLC for playing video streams. On Linux you should open terminal and run this command before first run: ```sudo apt-get install -y libvlc-dev```
+- v4l-utils for detecting UVC cameras and their capabilities ```sudo apt-get install -y v4l-utils```
+- libcamera-vid for detecting Raspberry Pi Cameras. It should already be installed on Raspberry Pi OS by default.
 
 # Prebuild binaries
 Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
