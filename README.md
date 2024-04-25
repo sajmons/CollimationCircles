@@ -42,7 +42,7 @@ sudo apt-get install -y libvlc-dev
 sudo apt-get install -y v4l-utils
 ```
 - libcamera-vid for detecting Raspberry Pi Cameras. It should already be installed on Raspberry Pi OS by default.
-  - see here for instalation https://libcamera.org/getting-started.html
+  - instalation instructions https://libcamera.org/getting-started.html
 
 # Prebuild binaries
 Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
