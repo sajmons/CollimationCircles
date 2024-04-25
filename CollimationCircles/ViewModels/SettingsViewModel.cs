@@ -85,7 +85,7 @@ namespace CollimationCircles.ViewModels
         private ObservableCollection<Color> colorList = [];
 
         [ObservableProperty]
-        private CollimationHelper? selectedItem = new();
+        private CollimationHelper selectedItem = new();
 
         [JsonProperty]
         [ObservableProperty]

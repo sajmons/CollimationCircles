@@ -51,7 +51,7 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public async Task Play(List<string> controlsArgs)
+        public void Play(List<string> controlsArgs)
         {
             if (Camera.APIType == APIType.LibCamera)
             {                
