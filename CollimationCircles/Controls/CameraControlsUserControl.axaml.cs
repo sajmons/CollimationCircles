@@ -12,7 +12,7 @@ namespace CollimationCircles.Controls
 
             if (!Design.IsDesignMode)
             {
-                DataContext = Ioc.Default.GetService<CameraControlsViewModel>();
+                DataContext = Ioc.Default.GetRequiredService<CameraControlsViewModel>();
             }
         }    
     }

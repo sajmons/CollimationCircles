@@ -23,13 +23,13 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
+            SettingsViewModel vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-            vm?.LoadState();
+            vm.LoadState();
 
             desktop.MainWindow = new MainView
             {
-                Topmost = vm?.AlwaysOnTop ?? false
+                Topmost = vm.AlwaysOnTop
             };
         }
 

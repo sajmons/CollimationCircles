@@ -11,13 +11,13 @@ namespace CollimationCircles.Views
     public partial class StreamView : Window
     {
         private readonly VideoView videoViewer;
-        private readonly SettingsViewModel? svm;
+        private readonly SettingsViewModel svm;
 
         public StreamView()
         {
             InitializeComponent();
 
-            svm = Ioc.Default.GetService<SettingsViewModel>();
+            svm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             videoViewer = this.Get<VideoView>("VideoViewer");            
 
@@ -32,9 +32,9 @@ namespace CollimationCircles.Views
 
         private void WebCamStreamWindow_Opened(object? sender, System.EventArgs e)
         {
-            var mp = Ioc.Default.GetService<ILibVLCService>()?.MediaPlayer;
+            var mp = Ioc.Default.GetRequiredService<ILibVLCService>().MediaPlayer;
 
-            if (videoViewer != null && mp != null)
+            if (videoViewer != null)
             {
                 videoViewer.MediaPlayer = mp;
 
@@ -44,20 +44,20 @@ namespace CollimationCircles.Views
 
         private void UpdateWindowPosition()
         {
-            if (svm?.PinVideoWindowToMainWindow == false) return;
+            if (svm.PinVideoWindowToMainWindow == false) return;
 
-            Position = svm!.MainWindowPosition;
+            Position = svm.MainWindowPosition;
 
-            if (svm!.DockInMainWindow)
+            if (svm.DockInMainWindow)
             {
-                Width = svm!.MainWindowWidth - svm!.SettingsWindowWidth / 2;
+                Width = svm.MainWindowWidth - svm.SettingsWindowWidth / 2;
             }
             else
             {
-                Width = svm!.MainWindowWidth;
+                Width = svm.MainWindowWidth;
             }
 
-            Height = svm!.MainWindowHeight;
+            Height = svm.MainWindowHeight;
         }
     }
 }

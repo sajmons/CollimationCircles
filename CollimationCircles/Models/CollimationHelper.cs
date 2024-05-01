@@ -161,9 +161,9 @@ namespace CollimationCircles.Models
                     {
                         base.OnPropertyChanged(e);
 
-                        SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
+                        SettingsViewModel vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-                        if (vm is not null && vm?.SelectedItem?.Label is not null)
+                        if (vm.SelectedItem?.Label is not null)
                         {
                             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(vm));
 
