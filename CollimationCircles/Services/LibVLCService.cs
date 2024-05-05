@@ -1,8 +1,6 @@
 ﻿using CollimationCircles.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using CollimationCircles.Models;
 
 namespace CollimationCircles.Services
@@ -51,11 +49,12 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public void Play(List<string> controlsArgs)
+        public void Play()
         {
             if (Camera.APIType == APIType.LibCamera)
-            {                
-                AppService.StartRaspberryPIStream(rpiPort, controlsArgs);
+            {
+                var controls = CameraControlService.GetRaspberryPIControls();
+                AppService.StartRaspberryPIStream(rpiPort, controls);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))

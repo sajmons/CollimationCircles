@@ -1,7 +1,5 @@
 ﻿using CollimationCircles.Models;
 using LibVLCSharp.Shared;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -9,7 +7,7 @@ namespace CollimationCircles.Services
     {
         public string FullAddress { get; set; }
         public MediaPlayer MediaPlayer { get; }
-        public void Play(List<string> controlsArgs);
+        public void Play();
         public Camera Camera { get; set; }
         public string DefaultAddress(Camera camera);
     }

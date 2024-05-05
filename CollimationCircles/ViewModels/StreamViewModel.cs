@@ -116,9 +116,8 @@ namespace CollimationCircles.ViewModels
             if (libVLCService.MediaPlayer != null)
             {
                 if (!libVLCService.MediaPlayer.IsPlaying)
-                {
-                    var controls = CameraControlService.GetRaspberryPIControls();
-                    libVLCService.Play(controls);
+                {                    
+                    libVLCService.Play();
                 }
                 else
                 {
