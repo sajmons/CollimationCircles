@@ -2,19 +2,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" 
-        d:DesignWidth="400" 
+        mc:Ignorable="d"
+        d:DesignWidth="400"
         d:DesignHeight="550"
         x:Class="CollimationCircles.Views.CameraControlsView"
         xmlns:controls="clr-namespace:CollimationCircles.Controls"
         xmlns:vm="using:CollimationCircles.ViewModels"
         x:DataType="vm:CameraControlsViewModel"
         Width="400"
-        Height="550"
+        Height="420"
         MinWidth="400"
-        MinHeight="500"
+        MinHeight="420"
         MaxWidth="400"
-        MaxHeight="550"
+        MaxHeight="420"
         Title="{Binding Title}">
-  <controls:CameraControlsUserControl Padding="16"/>
+  <ScrollViewer>
+    <controls:DynamicCameraControlsUserControl Padding="16"/>
+  </ScrollViewer>
 </Window>

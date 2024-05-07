@@ -1,9 +1,10 @@
-﻿using CollimationCircles.Helper;
-using CollimationCircles.Models;
+﻿using CollimationCircles.Models;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -15,54 +16,54 @@ namespace CollimationCircles.Services
 
         private readonly object vc = new();
 
-        private readonly Dictionary<string, string> v4l2controls = new()
+        private readonly Dictionary<ControlType, string> v4l2controls = new()
         {
-            { "Brightness", "brightness" },
-            { "Contrast", "contrast" },
-            { "Saturation", "saturation" },
-            { "Hue", "hue" },
-            { "Gamma", "gamma" },
-            { "Gain", "gain" },
-            { "Autofocus", "focus_auto" },
-            { "Focus", "focus_absolute" },
-            { "AutoWhiteBalance", "white_balance_temperature_auto" },
-            { "Temperature", "white_balance_temperature" },
-            { "Sharpness", "sharpness" },
-            { "AutoExposure", "exposure_auto" },
-            { "ExposureTime", "exposure_absolute" },
-            { "Zoom", "zoom_absolute" }
+            { ControlType.Brightness, "brightness" },
+            { ControlType.Contrast, "contrast" },
+            { ControlType.Saturation, "saturation" },
+            { ControlType.Hue, "hue" },
+            { ControlType.Gamma, "gamma" },
+            { ControlType.Gain, "gain" },
+            //{ ControlType.AutoFocus, "focus_auto" },
+            { ControlType.Focus, "focus_absolute" },
+            //{ ControlType.AutoWhiteBalance, "white_balance_temperature_auto" },
+            { ControlType.Temperature, "white_balance_temperature" },
+            { ControlType.Sharpness, "sharpness" },
+            //{ ControlType.AutoExposure, "exposure_auto" },
+            { ControlType.ExposureTime, "exposure_absolute" },
+            { ControlType.Zoom, "zoom_absolute" }
         };
 
-        private readonly Dictionary<string, VideoCaptureProperties> uvcControls = new()
+        private readonly Dictionary<ControlType, VideoCaptureProperties> uvcControls = new()
         {
-            { "Brightness", VideoCaptureProperties.Brightness },
-            { "Contrast", VideoCaptureProperties.Contrast },
-            { "Saturation", VideoCaptureProperties.Saturation },
-            { "Hue", VideoCaptureProperties.Hue },
-            { "Gamma", VideoCaptureProperties.Gamma },
-            { "Gain", VideoCaptureProperties.Gain },
-            { "Autofocus", VideoCaptureProperties.AutoFocus },
-            { "Focus", VideoCaptureProperties.Focus },
-            { "AutoWhiteBalance", VideoCaptureProperties.AutoWB },
-            { "Temperature", VideoCaptureProperties.Temperature },
-            { "Sharpness", VideoCaptureProperties.Sharpness },
-            { "AutoExposure", VideoCaptureProperties.AutoExposure },
-            { "ExposureTime", VideoCaptureProperties.Exposure },
-            { "Zoom", VideoCaptureProperties.Zoom }
+            { ControlType.Brightness, VideoCaptureProperties.Brightness },
+            { ControlType.Contrast, VideoCaptureProperties.Contrast },
+            { ControlType.Saturation, VideoCaptureProperties.Saturation },
+            { ControlType.Hue, VideoCaptureProperties.Hue },
+            { ControlType.Gamma, VideoCaptureProperties.Gamma },
+            { ControlType.Gain, VideoCaptureProperties.Gain },
+            //{ ControlType.AutoFocus, VideoCaptureProperties.AutoFocus },
+            { ControlType.Focus, VideoCaptureProperties.Focus },
+            //{ ControlType.AutoWhiteBalance, VideoCaptureProperties.AutoWB },
+            { ControlType.Temperature, VideoCaptureProperties.Temperature },
+            { ControlType.Sharpness, VideoCaptureProperties.Sharpness },
+            //{ ControlType.AutoExposure, VideoCaptureProperties.AutoExposure },
+            { ControlType.ExposureTime, VideoCaptureProperties.Exposure },
+            { ControlType.Zoom, VideoCaptureProperties.Zoom }
         };
 
-        private static readonly Dictionary<string, string> rpiControls = new()
+        private static readonly Dictionary<ControlType, string> rpiControls = new()
         {
-            { "Brightness", "brightness" },
-            { "Contrast", "contrast" },
-            { "Saturation", "saturation" },
-            { "Gain", "gain" },
-            { "Autofocus", "autofocus-mode" },  // default or manual
-            { "Focus", "lens-position" },
-            { "AutoWhiteBalance", "awb" },      // auto 2500K to 8000K, incandescent 2500K to 3000K, tungsten 3000K to 3500K, fluorescent 4000K to 4700K, indoor 3000K to 5000K, daylight 5500K to 6500K, cloudy 7000K to 8500K
-            { "Sharpness", "sharpness" },
-            { "ExposureTime", "shutter" },
-            { "Zoom", "roi" }
+            { ControlType.Brightness, "brightness" },
+            { ControlType.Contrast, "contrast" },
+            { ControlType.Saturation, "saturation" },
+            { ControlType.Gain, "gain" },
+            //{ ControlType.AutoFocus, "autofocus-mode" },  // default or manual
+            { ControlType.Focus, "lens-position" },
+            //{ ControlType.AutoWhiteBalance, "awb" },      // auto 2500K to 8000K, incandescent 2500K to 3000K, tungsten 3000K to 3500K, fluorescent 4000K to 4700K, indoor 3000K to 5000K, daylight 5500K to 6500K, cloudy 7000K to 8500K
+            { ControlType.Sharpness, "sharpness" },
+            { ControlType.ExposureTime, "shutter" },
+            { ControlType.Zoom, "roi" }
         };
 
         public CameraControlService()
@@ -72,15 +73,16 @@ namespace CollimationCircles.Services
                 vc = new VideoCapture();
             }
         }
-        public void Set(string propertyname, double value, Camera camera)
+        public void Set(ControlType controlName, double value, Camera camera)
         {
             // set camera control for V4L2
             if (camera.APIType is APIType.V4l2 || camera.APIType is APIType.QTCapture)
             {
                 AppService.ExecuteCommand("v4l2-ctl", [
-                    "--device", camera.Path,
-                    $"--set-ctrl={v4l2controls[propertyname]}={value}"
-                ]);                
+                    "--device",
+                    camera.Path,
+                    $"--set-ctrl={v4l2controls[controlName]}={value}"
+                ]);
             }
             // set camera control for DirectShow
             else if (camera.APIType is APIType.Dshow)
@@ -89,8 +91,8 @@ namespace CollimationCircles.Services
                 {
                     if (((VideoCapture)vc).IsOpened())
                     {
-                        ((VideoCapture)vc).Set(uvcControls[propertyname], value);
-                        logger.Info($"OpenCvSharp.VideoCapture property '{propertyname}' set to '{value}'");
+                        ((VideoCapture)vc).Set(uvcControls[controlName], value);
+                        logger.Info($"OpenCvSharp.VideoCapture property '{controlName}' set to '{value}'");
                     }
                 }
                 catch (Exception exc)
@@ -120,7 +122,13 @@ namespace CollimationCircles.Services
         {
             if (OperatingSystem.IsWindows())
             {
-                ((VideoCapture)vc)?.Open(0);
+                ILibVLCService lib = Ioc.Default.GetRequiredService<ILibVLCService>();
+                ((VideoCapture)vc)?.Open(lib.Camera.Index);
+
+                if (vc is not null)
+                {
+                    lib.Camera.Controls = GetDShowCameraControls((VideoCapture)vc, lib.Camera);
+                }
             }
         }
 
@@ -139,59 +147,59 @@ namespace CollimationCircles.Services
             List<string> controls = new();
 
             if (brightness != null)
-                controls.Add($"--{rpiControls["Brightness"]} {brightness}");
+                controls.Add($"--{rpiControls[ControlType.Brightness]} {brightness}");
 
             if (contrast != null)
-                controls.Add($"--{rpiControls["Contrast"]} {contrast}");
+                controls.Add($"--{rpiControls[ControlType.Contrast]} {contrast}");
 
             if (saturation != null)
-                controls.Add($"--{rpiControls["Saturation"]} {contrast}");
+                controls.Add($"--{rpiControls[ControlType.Saturation]} {saturation}");
 
             if (gain != null)
-                controls.Add($"--{rpiControls["Gain"]} {contrast}");
+                controls.Add($"--{rpiControls[ControlType.Gain]} {gain}");
 
-            var afMode = autofocusMode ? "auto" : "manual";
-            controls.Add($"--{rpiControls["Autofocus"]} {afMode}");
+            //var afMode = autofocusMode ? "auto" : "manual";
+            //controls.Add($"--{rpiControls["Autofocus"]} {afMode}");
 
             if (focus != null)
-                controls.Add($"--{rpiControls["Focus"]} {focus}");
+                controls.Add($"--{rpiControls[ControlType.Focus]} {focus}");
 
-            string wb = "auto";
+            //string wb = "auto";
 
-            if (whiteBalance >= 2500 && whiteBalance <= 3000)
-                wb = "incandescent";
+            //if (whiteBalance >= 2500 && whiteBalance <= 3000)
+            //    wb = "incandescent";
 
-            if (whiteBalance >= 3000 && whiteBalance <= 3500)
-                wb = "tungsten";
+            //if (whiteBalance >= 3000 && whiteBalance <= 3500)
+            //    wb = "tungsten";
 
-            if (whiteBalance >= 4000 && whiteBalance <= 4700)
-                wb = "fluorescent";
+            //if (whiteBalance >= 4000 && whiteBalance <= 4700)
+            //    wb = "fluorescent";
 
-            if (whiteBalance >= 3000 && whiteBalance <= 5000)
-                wb = "indoor";
+            //if (whiteBalance >= 3000 && whiteBalance <= 5000)
+            //    wb = "indoor";
 
-            if (whiteBalance >= 5500 && whiteBalance <= 6500)
-                wb = "daylight";
+            //if (whiteBalance >= 5500 && whiteBalance <= 6500)
+            //    wb = "daylight";
 
-            if (whiteBalance >= 7000 && whiteBalance <= 8500)
-                wb = "cloudy";
+            //if (whiteBalance >= 7000 && whiteBalance <= 8500)
+            //    wb = "cloudy";
 
-            controls.Add($"--{rpiControls["AutoWhiteBalance"]} {wb}");
+            //controls.Add($"--{rpiControls[ControlType.AutoWhiteBalance]} {wb}");
 
             if (sharpness != null)
-                controls.Add($"--{rpiControls["Sharpness"]} {sharpness}");
+                controls.Add($"--{rpiControls[ControlType.Sharpness]} {sharpness}");
 
             if (exposureTime != null)
-                controls.Add($"--{rpiControls["ExposureTime"]} {exposureTime}");
+                controls.Add($"--{rpiControls[ControlType.ExposureTime]} {exposureTime}");
 
             decimal? roi = 1.0M / zoom;
             if (zoom != null)
-                controls.Add($"--{rpiControls["Zoom"]} {roi},{roi},{roi},{roi}");
+                controls.Add($"--{rpiControls[ControlType.Zoom]} {roi},{roi},{roi},{roi}");
 
             return controls;
         }
 
-        public static async Task<List<CameraControl>> GetV4L2CameraControls(Camera camera)
+        public async Task<List<CameraControl>> GetV4L2CameraControls(Camera camera)
         {
             var (errorCode, result, process) = await AppService.ExecuteCommand(
                 "v4l2-ctl",
@@ -213,31 +221,60 @@ namespace CollimationCircles.Services
                 _ = int.TryParse(m.Groups["default"].Value, out int deflt);
                 _ = int.TryParse(m.Groups["value"].Value, out int value);
 
-                var cameraControl = new CameraControl()
+                if (Enum.TryParse(m.Groups["name"].Value, out ControlType controlName))
                 {
-                    Name = m.Groups["name"].Value,
-                    Min = min,
-                    Max = max,
-                    Step = step,
-                    Default = deflt,
-                    Value = value,
-                    Flags = m.Groups["flags"].Value
-                };
+                    var cameraControl = new CameraControl(controlName)
+                    {
+                        Min = min,
+                        Max = max,
+                        Step = step,
+                        Default = deflt,
+                        Value = value,
+                        Flags = m.Groups["flags"].Value
+                    };
 
-                controls.Add(cameraControl);
-                logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' for '{camera.Name}' added");
+                    controls.Add(cameraControl);
+                    logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' for '{camera.Name}' added");
+                }
             }
 
             return controls;
         }
 
-        public static List<Camera> GetCameraList()
+        public List<CameraControl> GetDShowCameraControls(VideoCapture capture, Camera camera)
+        {
+            List<CameraControl> controls = [];
+
+            foreach (var prop in Enum.GetValues<VideoCaptureProperties>())
+            {
+                double propVal = capture.Get(prop);
+
+                if (propVal != -1)
+                {
+                    if (Enum.TryParse(prop.ToString(), out ControlType controlName))
+                    {
+                        var cameraControl = new CameraControl(controlName)
+                        {
+                            Value = (int)propVal,
+                        };
+
+                        controls.Add(cameraControl);
+                        logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' for '{camera.Name}' added");
+                    }
+                }
+            }
+
+            return controls;
+        }
+
+        public List<Camera> GetCameraList()
         {
             List<Camera> cameras = [];
 
             if (OperatingSystem.IsWindows())
             {
-                cameras.AddRange(ListWindowsWebCam.Load());
+                var dshowCameras = GetDShowCameras();
+                cameras.AddRange(dshowCameras);
             }
             else
             {
@@ -253,7 +290,40 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public static async Task<List<Camera>> GetLibCameraCameras()
+        private List<Camera> GetDShowCameras()
+        {
+            List<Camera> cameras = [];
+
+            if (OperatingSystem.IsWindows())
+            {
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE PNPClass = 'Camera'"))
+                {
+                    var devices = searcher.Get().Cast<ManagementObject>().ToList();
+
+                    foreach (var device in devices)
+                    {
+                        if (device != null)
+                        {
+                            string deviceName = (string)device.GetPropertyValue("Name");
+                            string deviceId = (string)device.GetPropertyValue("DeviceID");
+                            var c = new Camera()
+                            {
+                                Name = deviceName,
+                                Path = deviceId,
+                                APIType = APIType.Dshow
+                            };
+
+                            cameras.Add(c);
+                            logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                        }
+                    }
+                };
+            }
+
+            return cameras;
+        }
+
+        public async Task<List<Camera>> GetLibCameraCameras()
         {
             List<Camera> cameras = [];
 
@@ -301,7 +371,7 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public static async Task<List<Camera>> GetV4L2Cameras()
+        public async Task<List<Camera>> GetV4L2Cameras()
         {
             List<Camera> cameras = [];
 
@@ -334,10 +404,10 @@ namespace CollimationCircles.Services
                             Index = i,
                             APIType = APIType.V4l2,
                             Name = name,
-                            Path = cam                            
+                            Path = cam
                         };
 
-                        c.Controls = await GetV4L2CameraControls(c);
+                        c.Controls = new List<CameraControl>(await GetV4L2CameraControls(c));
 
                         if (c.Controls.Count > 0)
                         {

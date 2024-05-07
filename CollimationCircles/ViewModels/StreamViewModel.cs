@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using System.ComponentModel;
 using CollimationCircles.Models;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
@@ -42,7 +41,7 @@ namespace CollimationCircles.ViewModels
         private bool pinVideoWindowToMainWindow = true;
 
         [ObservableProperty]
-        private bool remoteConnection = false;        
+        private bool remoteConnection = false;
 
         [ObservableProperty]
         private bool isWindows = OperatingSystem.IsWindows();
@@ -51,10 +50,10 @@ namespace CollimationCircles.ViewModels
         private INotifyPropertyChanged? settingsDialogViewModel;
 
         [ObservableProperty]
-        private ObservableCollection<Camera> cameraList =  [];
+        private ObservableCollection<Camera> cameraList = [];
 
         [ObservableProperty]
-        private Camera? selectedCamera;
+        private Camera selectedCamera = new();
 
         public StreamViewModel(ILibVLCService libVLCService, IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
@@ -66,10 +65,10 @@ namespace CollimationCircles.ViewModels
             FullAddress = this.libVLCService.FullAddress;
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
-            
-            CameraList = new ObservableCollection<Camera>(CameraControlService.GetCameraList());
 
-            SelectedCamera = CameraList.FirstOrDefault();
+            CameraList = new ObservableCollection<Camera>(cameraControlService.GetCameraList());
+
+            SelectedCamera = CameraList.First();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -116,7 +115,7 @@ namespace CollimationCircles.ViewModels
             if (libVLCService.MediaPlayer != null)
             {
                 if (!libVLCService.MediaPlayer.IsPlaying)
-                {                    
+                {
                     libVLCService.Play();
                 }
                 else
@@ -130,7 +129,7 @@ namespace CollimationCircles.ViewModels
         {
             Dispatcher.UIThread.Post(() =>
             {
-                dialogService?.Show<StreamViewModel>(null, this);
+                dialogService.Show<StreamViewModel>(null, this);
                 cameraControlService.Open();
                 logger.Trace($"Opened web camera stream window");
             });
@@ -143,7 +142,7 @@ namespace CollimationCircles.ViewModels
                 try
                 {
                     cameraControlService.Release();
-                    dialogService?.Close(this);
+                    dialogService.Close(this);
                     logger.Trace($"Closed web camera stream window");
                 }
                 catch (Exception exc)
@@ -163,18 +162,18 @@ namespace CollimationCircles.ViewModels
         {
             if (SettingsDialogViewModel is null)
             {
-                SettingsDialogViewModel = dialogService?.CreateViewModel<CameraControlsViewModel>();
+                SettingsDialogViewModel = dialogService.CreateViewModel<CameraControlsViewModel>();
 
                 if (SettingsDialogViewModel is not null)
                 {
-                    dialogService?.Show(null, SettingsDialogViewModel);
-                    logger.Info("Opened camera settings window");
+                    dialogService.Show(null, SettingsDialogViewModel);
+                    logger.Info("Opened camera controls dialog");
                 }
             }
             else
             {
-                dialogService?.Close(SettingsDialogViewModel);
-                dialogService?.Show(null, SettingsDialogViewModel);
+                dialogService.Close(SettingsDialogViewModel);
+                dialogService.Show(null, SettingsDialogViewModel);
             }
         }
 
@@ -183,7 +182,7 @@ namespace CollimationCircles.ViewModels
             SettingsDialogViewModel = null;
         }
 
-        partial void OnSelectedCameraChanged(Camera? oldValue, Camera? newValue)
+        partial void OnSelectedCameraChanged(Camera? oldValue, Camera newValue)
         {
             if (newValue is not null)
             {
@@ -196,6 +195,12 @@ namespace CollimationCircles.ViewModels
         {
             FullAddress = newValue;
             libVLCService.FullAddress = newValue;
+        }
+
+        [RelayCommand]
+        private void Default()
+        {
+            SelectedCamera?.SetDefaultControls();
         }
     }
 }

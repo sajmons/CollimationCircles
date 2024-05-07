@@ -1,13 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.Generic;
 
 namespace CollimationCircles.Models
 {
-    public class Camera
+    public partial class Camera : ObservableObject
     {
         public int Index { get; set; }
         public string Name { get; set; } = string.Empty;
         public APIType APIType { get; set; }
         public string Path { get; set; } = string.Empty;
-        public List<CameraControl> Controls { get; set; } = [];
+
+        [ObservableProperty]
+        public List<CameraControl> controls = [];
+
+        public void SetDefaultControls()
+        {
+            Controls.ForEach(c => c.SetDefault());
+        }
     }
 }

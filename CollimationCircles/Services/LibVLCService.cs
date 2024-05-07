@@ -53,6 +53,7 @@ namespace CollimationCircles.Services
         {
             if (Camera.APIType == APIType.LibCamera)
             {
+                // with libcamera we need first to create video stream
                 var controls = CameraControlService.GetRaspberryPIControls();
                 AppService.StartRaspberryPIStream(rpiPort, controls);
             }
