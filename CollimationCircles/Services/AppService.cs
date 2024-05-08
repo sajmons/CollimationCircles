@@ -326,19 +326,23 @@ public class AppService
 
     public static async Task StartRaspberryPIStream(string port, List<string>? streamArgs = null)
     {
-        //rpicam-vid -t 0 --inline --listen -n -o tcp://0.0.0.0:5000
-        //rpicam-vid -t 0 -l -md 1 -w 1280 -h 720 -b 15000000 -pf high -lev 4.2 -qp 25 -fl -fps 30 -o tcp://0.0.0.0:3333
-
-        //_ = ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
+        _ = await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
 
         List<string> parameters = [
-            "-t", "0",
+            "--timeout", "0",
             "--inline",
             "--listen",
-            "-n",
-            "-o", $"tcp://0.0.0.0:{port}",
+            "--nopreview",
+            "--output", $"tcp://0.0.0.0:{port}",
             "--shutter", "60000",
-            "--gain", "22"
+            "--gain", "22",
+            "--width", "640",
+            "--height", "480",
+            "--framerate", "60",
+            "--quality", "25",
+            "--bitrate", "15000000",
+            "--denoise", "cdn_off",
+            "--level", "4.2"
         ];
 
         if (streamArgs != null)
@@ -348,9 +352,7 @@ public class AppService
         }
 
         await ExecuteCommand(
-            "libcamera-vid",
-            parameters, timeout: 0);
-
-        Thread.Sleep(1000);
+            "rpicam-vid",
+            parameters, timeout: 1500);
     }
 }

@@ -74,6 +74,7 @@ namespace CollimationCircles.Services
                 vc = new VideoCapture();
             }
         }
+
         public void Set(ControlType controlName, double value, Camera camera)
         {
             // set camera control for V4L2
@@ -330,7 +331,7 @@ namespace CollimationCircles.Services
             List<Camera> cameras = [];
 
             var (errorCode, result, process) = await AppService.ExecuteCommand(
-                "libcamera-vid",
+                "rpicam-vid",
                 ["--list-cameras"]);
 
             if (errorCode == 0)

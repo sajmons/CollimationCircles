@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using OpenCvSharp;
 
 namespace CollimationCircles.ViewModels
 {
@@ -13,19 +12,16 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private ICameraControlService cameraControlService;
-
         [ObservableProperty]
         private bool isOpened = true;
 
         [ObservableProperty]
-        private Camera camera = new();
+        private Camera camera = new();        
 
-        public CameraControlsViewModel(ICameraControlService cameraControlService)
+        public CameraControlsViewModel()
         {
-            this.cameraControlService = cameraControlService;
             Camera = Ioc.Default.GetRequiredService<ILibVLCService>().Camera;
-            
+
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
                 IsOpened = m.Value != CameraState.Stopped;                

@@ -55,6 +55,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private Camera selectedCamera = new();
 
+        [ObservableProperty]
+        private bool controlsEnabled = false;
+
         public StreamViewModel(ILibVLCService libVLCService, IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
             this.libVLCService = libVLCService;
@@ -75,13 +78,13 @@ namespace CollimationCircles.ViewModels
                 switch (m.Value)
                 {
                     case CameraState.Opening:
-                        MediaPlayer_Opening();
+                        MediaPlayer_Opening();                        
                         break;
                     case CameraState.Stopped:
                         MediaPlayer_Closed();
                         break;
                     case CameraState.Playing:
-                        MediaPlayer_Playing();
+                        MediaPlayer_Playing();                        
                         break;
                 }
             });
@@ -93,12 +96,14 @@ namespace CollimationCircles.ViewModels
 
             ShowWebCamStream();
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            ControlsEnabled = false;
         }
 
         private void MediaPlayer_Playing()
         {
             logger.Trace($"MediaPlayer playing");
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            ControlsEnabled = SelectedCamera.APIType != APIType.Remote && SelectedCamera.APIType != APIType.LibCamera;
         }
 
         private void MediaPlayer_Closed()
@@ -107,6 +112,7 @@ namespace CollimationCircles.ViewModels
 
             CloseWebCamStream();
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            ControlsEnabled = false;
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
