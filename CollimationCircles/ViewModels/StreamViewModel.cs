@@ -103,7 +103,7 @@ namespace CollimationCircles.ViewModels
         {
             logger.Trace($"MediaPlayer playing");
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
-            ControlsEnabled = SelectedCamera.APIType != APIType.Remote && SelectedCamera.APIType != APIType.LibCamera;
+            ControlsEnabled = IsPlaying && SelectedCamera.APIType == APIType.Dshow || SelectedCamera.APIType == APIType.V4l2;
         }
 
         private void MediaPlayer_Closed()
