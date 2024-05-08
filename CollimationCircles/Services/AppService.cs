@@ -326,7 +326,7 @@ public class AppService
 
     public static async Task StartRaspberryPIStream(string port, List<string>? streamArgs = null)
     {
-        _ = await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 0);
+        _ = await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 100);
 
         List<string> parameters = [
             "--timeout", "0",
@@ -338,7 +338,7 @@ public class AppService
             "--gain", "22",
             "--width", "640",
             "--height", "480",
-            "--framerate", "60",
+            "--framerate", "30",
             "--quality", "25",
             "--bitrate", "15000000",
             "--denoise", "cdn_off",
@@ -351,7 +351,7 @@ public class AppService
             //parameters.AddRange(streamArgs);
         }
 
-        await ExecuteCommand(
+        _ = await ExecuteCommand(
             "rpicam-vid",
             parameters, timeout: 1500);
     }

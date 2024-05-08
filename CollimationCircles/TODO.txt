@@ -6,3 +6,4 @@
 - increase height to get rid of vertical scrollbar
 - ad some basic analytics
 - add button to quickly turn off visibility for all items
+- add option to check for updates for beta versions
