@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
@@ -31,7 +32,7 @@ namespace CollimationCircles.Services
             { ControlType.Sharpness, "sharpness" },
             //{ ControlType.AutoExposure, "exposure_auto" },
             { ControlType.ExposureTime, "exposure_absolute" },
-            { ControlType.Zoom, "zoom_absolute" }
+            { ControlType.Zoom_Absolute, "zoom_absolute" }
         };
 
         private readonly Dictionary<ControlType, VideoCaptureProperties> uvcControls = new()
@@ -49,7 +50,7 @@ namespace CollimationCircles.Services
             { ControlType.Sharpness, VideoCaptureProperties.Sharpness },
             //{ ControlType.AutoExposure, VideoCaptureProperties.AutoExposure },
             { ControlType.ExposureTime, VideoCaptureProperties.Exposure },
-            { ControlType.Zoom, VideoCaptureProperties.Zoom }
+            { ControlType.Zoom_Absolute, VideoCaptureProperties.Zoom }
         };
 
         private static readonly Dictionary<ControlType, string> rpiControls = new()
@@ -63,7 +64,7 @@ namespace CollimationCircles.Services
             //{ ControlType.AutoWhiteBalance, "awb" },      // auto 2500K to 8000K, incandescent 2500K to 3000K, tungsten 3000K to 3500K, fluorescent 4000K to 4700K, indoor 3000K to 5000K, daylight 5500K to 6500K, cloudy 7000K to 8500K
             { ControlType.Sharpness, "sharpness" },
             { ControlType.ExposureTime, "shutter" },
-            { ControlType.Zoom, "roi" }
+            { ControlType.Zoom_Absolute, "roi" }
         };
 
         public CameraControlService()
@@ -194,7 +195,7 @@ namespace CollimationCircles.Services
 
             decimal? roi = 1.0M / zoom;
             if (zoom != null)
-                controls.Add($"--{rpiControls[ControlType.Zoom]} {roi},{roi},{roi},{roi}");
+                controls.Add($"--{rpiControls[ControlType.Zoom_Absolute]} {roi},{roi},{roi},{roi}");
 
             return controls;
         }
@@ -220,8 +221,9 @@ namespace CollimationCircles.Services
                 _ = int.TryParse(m.Groups["step"].Value, out int step);
                 _ = int.TryParse(m.Groups["default"].Value, out int deflt);
                 _ = int.TryParse(m.Groups["value"].Value, out int value);
+                string name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(m.Groups["name"].Value);
 
-                if (Enum.TryParse(m.Groups["name"].Value, out ControlType controlName))
+                if (Enum.TryParse(name, out ControlType controlName))
                 {
                     var cameraControl = new CameraControl(controlName)
                     {
@@ -407,7 +409,7 @@ namespace CollimationCircles.Services
                             Path = cam
                         };
 
-                        c.Controls = new List<CameraControl>(await GetV4L2CameraControls(c));
+                        c.Controls = await GetV4L2CameraControls(c);
 
                         if (c.Controls.Count > 0)
                         {

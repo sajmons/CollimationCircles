@@ -16,6 +16,6 @@
         Sharpness,        
         ExposureTime,
         //AutoExposure,
-        Zoom
+        Zoom_Absolute
     }
 }

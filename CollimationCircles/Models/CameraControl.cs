@@ -88,7 +88,7 @@ namespace CollimationCircles.Models
                 //case ControlType.AutoWhiteBalance:
                 //    Default = Constraints.AutoWhiteBalanceDefault ? 1 : 0;
                 //    break;                
-                case ControlType.Zoom:
+                case ControlType.Zoom_Absolute:
                     Value = Constraints.ZoomDefault;
                     Default = Constraints.ZoomDefault;
                     Min = Constraints.ZoomMin;
