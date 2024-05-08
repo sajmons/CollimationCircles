@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using CollimationCircles.Models;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -14,7 +15,7 @@ namespace CollimationCircles.Services
         private string address = string.Empty;
         private string port = string.Empty;
         private string pathAndQuery = string.Empty;
-        private const string rpiPort = "3333";
+        private const string rpiPort = "55555";
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
@@ -49,13 +50,13 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public void Play()
+        public async Task Play()
         {
             if (Camera.APIType == APIType.LibCamera)
             {
                 // with libcamera we need first to create video stream
                 var controls = CameraControlService.GetRaspberryPIControls();
-                AppService.StartRaspberryPIStream(rpiPort, controls);
+                await AppService.StartRaspberryPIStream(rpiPort, controls);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
