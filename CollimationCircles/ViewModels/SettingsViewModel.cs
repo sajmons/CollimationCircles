@@ -175,7 +175,7 @@ namespace CollimationCircles.ViewModels
         private Dictionary<string, string> globalShortcuts = [];
 
         [ObservableProperty]
-        private Dictionary<string, string> shapeShortcuts = [];        
+        private Dictionary<string, string> shapeShortcuts = [];
 
         public SettingsViewModel(IDialogService dialogService)
         {
@@ -554,7 +554,7 @@ namespace CollimationCircles.ViewModels
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
-                    
+
                     if (!DockInMainWindow)
                     {
                         ShowSettings();
@@ -679,7 +679,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(PinVideoWindowToMainWindow):
                 case nameof(ShowApplicationLog):
                 case nameof(ShowKeyboardShortcuts):
-                case nameof(SelectedLanguage):                
+                case nameof(SelectedLanguage):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);

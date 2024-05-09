@@ -1,7 +1,8 @@
 ﻿using CollimationCircles.Messages;
+using CollimationCircles.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
-using CollimationCircles.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
@@ -19,7 +20,7 @@ namespace CollimationCircles.Services
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
-        public Camera Camera { get; set; } = new();
+        public ICamera Camera { get; set; } = new Camera();
 
         public LibVLCService()
         {
@@ -52,25 +53,43 @@ namespace CollimationCircles.Services
 
         public async Task Play()
         {
+            List<string> parametersList = [];
+
             if (Camera.APIType == APIType.LibCamera)
             {
                 // with libcamera we need first to create video stream
-                var controls = CameraControlService.GetRaspberryPIControls();
+                List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(Camera);
                 await AppService.StartRaspberryPIStream(rpiPort, controls);
+            }
+            else if (Camera.APIType == APIType.V4l2)
+            {
+                parametersList = new V4L2CameraDetect().GetCommandLineParameters(Camera);
+            }
+            else if (Camera.APIType == APIType.Dshow)
+            {
+                parametersList = new DShowCameraDetect().GetCommandLineParameters(Camera);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
             {
-                string[] mediaAdditionalOptions = [
+                string[] mediaAdditionalOptions =
+                [
                     //$"--osd",
                     //$"--video-title=my title",
                     //$"--avcodec-hw=any",
                     //$"--zoom=0.25"
                 ];
 
+                string parametersString = string.Empty;
+
+                if (parametersList.Count > 0)
+                {
+                    parametersString = ":" + string.Join(":", parametersList);
+                }
+
                 using var media = new Media(
                         libVLC,
-                        FullAddress,
+                        FullAddress + parametersString,
                         FromType.FromLocation,
                         mediaAdditionalOptions
                         );
@@ -122,7 +141,7 @@ namespace CollimationCircles.Services
             return $"{protocol}{addr}{prt}{pth}";
         }
 
-        public string DefaultAddress(Camera camera)
+        public string DefaultAddress(ICamera camera)
         {
             Camera = camera;
             FullAddress = GetFullUrlFromParts();

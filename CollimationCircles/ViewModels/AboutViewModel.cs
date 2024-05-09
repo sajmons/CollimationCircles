@@ -1,4 +1,3 @@
-using CollimationCircles.Helper;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -11,11 +10,11 @@ namespace CollimationCircles.ViewModels
         public bool? DialogResult => true;
 
         private readonly IDialogService dialogService;
-        
+
         public AboutViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
-            
+
             Title = $"{ResSvc.TryGetString("About")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 

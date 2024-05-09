@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -19,7 +19,7 @@ public class AppService
     private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     private const string stateFile = "appstate.json";
     private static readonly string owner = "sajmons";
-    private static readonly string reponame = "CollimationCircles";    
+    private static readonly string reponame = "CollimationCircles";
 
     public const string WebPage = "https://saimons-astronomy.webador.com/software/collimation-circles";
     public const string ContactPage = "https://saimons-astronomy.webador.com/about";
@@ -32,7 +32,7 @@ public class AppService
     public static string GetAppVersion()
     {
         var entryAssembly = Assembly.GetEntryAssembly();
-        
+
         var assemblyVersion = entryAssembly?.GetName().Version;
 
         return assemblyVersion?.ToString() ?? "0.0.0";
@@ -44,7 +44,7 @@ public class AppService
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
         var infoVer = infoVersion?.Split("+")?.FirstOrDefault();
-        
+
         return GetAppVersion() + " " + infoVer ?? "0.0.0";
     }
 
@@ -259,7 +259,7 @@ public class AppService
 
                     // Process completed. Check process.ExitCode and output here.
                     string outputStr = $"{output}";
-                    
+
                     string logMessage = $"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}";
 
                     if (!string.IsNullOrWhiteSpace($"{error}"))
@@ -329,20 +329,31 @@ public class AppService
         _ = await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 100);
 
         List<string> parameters = [
-            "--timeout", "0",
+            "--timeout",
+            "0",
             "--inline",
             "--listen",
             "--nopreview",
-            "--output", $"tcp://0.0.0.0:{port}",
-            "--shutter", "60000",
-            "--gain", "22",
-            "--width", "640",
-            "--height", "480",
-            "--framerate", "30",
-            "--quality", "25",
-            "--bitrate", "15000000",
-            "--denoise", "cdn_off",
-            "--level", "4.2"
+            "--output",
+            $"tcp://0.0.0.0:{port}",
+            "--shutter",
+            "60000",
+            "--gain",
+            "22",
+            "--width",
+            "640",
+            "--height",
+            "480",
+            "--framerate",
+            "30",
+            "--quality",
+            "25",
+            "--bitrate",
+            "15000000",
+            "--denoise",
+            "cdn_off",
+            "--level",
+            "4.2"
         ];
 
         if (streamArgs != null)

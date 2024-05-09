@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CollimationCircles.Models
 {
-    public partial class Camera : ObservableObject
+    public partial class Camera : ObservableObject, ICamera
     {
         public int Index { get; set; }
         public string Name { get; set; } = string.Empty;
@@ -11,7 +11,7 @@ namespace CollimationCircles.Models
         public string Path { get; set; } = string.Empty;
 
         [ObservableProperty]
-        public List<CameraControl> controls = [];
+        public List<ICameraControl> controls = [];
 
         public void SetDefaultControls()
         {

@@ -22,7 +22,7 @@ namespace CollimationCircles.ViewModels
 
         [RelayCommand]
         public void Translate(string targetLanguage)
-        {            
+        {
             ResSvc.Translate(targetLanguage);
         }
     }

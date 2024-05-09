@@ -19,7 +19,7 @@ namespace CollimationCircles.Views
 
             svm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-            videoViewer = this.Get<VideoView>("VideoViewer");            
+            videoViewer = this.Get<VideoView>("VideoViewer");
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {

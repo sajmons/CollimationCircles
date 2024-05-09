@@ -1,7 +1,5 @@
 ﻿using Avalonia.Media;
-using CollimationCircles.Helper;
 using CollimationCircles.Models;
-using CollimationCircles.Services;
 
 namespace CollimationCircles.ViewModels
 {

@@ -6,8 +6,8 @@ namespace CollimationCircles.ViewModels
     {
         public int BrightnessMin => Constraints.BrightnessMin;
         public int BrightnessMax => Constraints.BrightnessMax;
-        
-        public int SaturationMin => Constraints.SaturationMin;        
+
+        public int SaturationMin => Constraints.SaturationMin;
         public int SaturationMax => Constraints.SaturationMax;
 
         public int ContrastMin => Constraints.ContrastMin;

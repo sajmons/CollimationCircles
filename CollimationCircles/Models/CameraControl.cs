@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Models
 {
-    public partial class CameraControl : ObservableObject
+    public partial class CameraControl : ObservableObject, ICameraControl
     {
         private readonly ICameraControlService cameraControlService;
         private readonly ILibVLCService libVLCService;
@@ -100,12 +100,12 @@ namespace CollimationCircles.Models
                     Min = Constraints.FocusMin;
                     Max = Constraints.FocusMax;
                     break;
-                //case ControlType.AutoFocus:
-                //    Default = Constraints.AutoFocusDefault ? 1 : 0;
-                //    break;
-                //case ControlType.AutoExposure:
-                //    Default = Constraints.AutoExposureTimeDefault ? 1 : 0;
-                //    break;
+                    //case ControlType.AutoFocus:
+                    //    Default = Constraints.AutoFocusDefault ? 1 : 0;
+                    //    break;
+                    //case ControlType.AutoExposure:
+                    //    Default = Constraints.AutoExposureTimeDefault ? 1 : 0;
+                    //    break;
             }
         }
 
@@ -114,7 +114,7 @@ namespace CollimationCircles.Models
             cameraControlService.Set(Name, newValue, libVLCService.Camera);
         }
 
-        internal void SetDefault()
+        public void SetDefault()
         {
             Initialize(Name);
         }

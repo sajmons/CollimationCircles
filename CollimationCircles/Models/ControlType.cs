@@ -13,7 +13,7 @@
         WhiteBalance,
         //AutoWhiteBalance,
         Temperature,
-        Sharpness,        
+        Sharpness,
         ExposureTime,
         //AutoExposure,
         Zoom_Absolute

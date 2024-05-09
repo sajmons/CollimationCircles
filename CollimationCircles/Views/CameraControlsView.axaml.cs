@@ -11,7 +11,7 @@ namespace CollimationCircles.Views
             InitializeComponent();
 
             var vm = Ioc.Default.GetRequiredService<CameraControlsViewModel>();
-            
+
             DataContext = vm;
         }
     }

@@ -5,9 +5,9 @@ namespace CollimationCircles.Services
 {
     public interface ICameraControlService
     {
-        public void Set(ControlType propertyname, double value, Camera camera);
+        public void Set(ControlType propertyname, double value, ICamera camera);
         public void Open();
         public void Release();
-        public List<Camera> GetCameraList();
+        public List<ICamera> GetCameraList();
     }
 }

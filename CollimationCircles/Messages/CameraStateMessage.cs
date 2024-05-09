@@ -3,7 +3,7 @@
 namespace CollimationCircles.Messages
 {
     public enum CameraState
-    { 
+    {
         Opening,
         Playing,
         Paused,

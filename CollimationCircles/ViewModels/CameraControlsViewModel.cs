@@ -16,7 +16,7 @@ namespace CollimationCircles.ViewModels
         private bool isOpened = true;
 
         [ObservableProperty]
-        private Camera camera = new();        
+        private ICamera camera = new Camera();
 
         public CameraControlsViewModel()
         {
@@ -24,7 +24,7 @@ namespace CollimationCircles.ViewModels
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
-                IsOpened = m.Value != CameraState.Stopped;                
+                IsOpened = m.Value != CameraState.Stopped;
             });
 
             Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("CameraControls")}";
