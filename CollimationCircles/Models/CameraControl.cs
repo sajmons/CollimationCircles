@@ -19,12 +19,24 @@ namespace CollimationCircles.Models
         private int value;
         public string Flags { get; set; } = string.Empty;
 
+        private readonly bool initialization = false;
+
         public CameraControl(ControlType controlName)
         {
             cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
             libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
             Name = controlName;
-            Initialize(controlName);
+
+            initialization = true;
+
+            try
+            {
+                Initialize(controlName);
+            }
+            finally
+            {
+                initialization = false;
+            }
         }
 
         private void Initialize(ControlType controlName)
@@ -94,6 +106,7 @@ namespace CollimationCircles.Models
                     Min = Constraints.ZoomMin;
                     Max = Constraints.ZoomMax;
                     break;
+                case ControlType.FocusAbsolute:
                 case ControlType.Focus:
                     Value = Constraints.FocusDefault;
                     Default = Constraints.FocusDefault;
@@ -111,7 +124,10 @@ namespace CollimationCircles.Models
 
         partial void OnValueChanged(int oldValue, int newValue)
         {
-            cameraControlService.Set(Name, newValue, libVLCService.Camera);
+            if (!initialization)
+            {
+                cameraControlService.Set(Name, newValue, libVLCService.Camera);
+            }
         }
 
         public void SetDefault()
