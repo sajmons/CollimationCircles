@@ -54,7 +54,7 @@ Download latest release as ZIP file, extract it and run executable.
 1. Open terminal application and enter this command:
 ```cd /Applications```
 2. Download file from jour MacOS terminal application using this command:
-```curl -LO url address from github releases page```
+```curl -LO <url address from github releases page>```
 For example:
 ```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/4-CollimationCircles-3.1.0-osx-x64.zip```
 4. When the download finishes, you should see the new file  4-CollimationCircles-3.1.0-osx-x64.zip
