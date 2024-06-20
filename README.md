@@ -50,6 +50,20 @@ https://github.com/sajmons/CollimationCircles/releases/
 
 Download latest release as ZIP file, extract it and run executable.
 
+## Instalation on MAcOS
+1. Open terminal application and enter this command:
+```cd /Applications```
+2. Download file from jour MacOS terminal application using this command:
+```curl -LO url address from github releases page```
+For example:
+```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/4-CollimationCircles-3.1.0-osx-x64.zip```
+4. When the download finishes, you should see the new file  4-CollimationCircles-3.1.0-osx-x64.zip
+5. Double click on it. Archiver utility will extract it for you and you should see CollimationCircles application
+6. Now run this command to make it executable:
+```chmod +x CollimationCircles.app/Contents/MacOS/*```
+7. Finally run this command or double click CollimationCircles app:
+```open CollimationCircles.app```
+
 # How to use
 
 Read my articles here:
