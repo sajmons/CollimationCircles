@@ -50,7 +50,7 @@ https://github.com/sajmons/CollimationCircles/releases/
 
 Download latest release as ZIP file, extract it and run executable.
 
-## Instalation on MAcOS
+## Instalation on MacOS
 1. Open terminal application and enter this command:
 ```cd /Applications```
 2. Download latest version from GitHub releases page https://github.com/sajmons/CollimationCircles/releases
