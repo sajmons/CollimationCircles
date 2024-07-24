@@ -20,7 +20,7 @@ namespace CollimationCircles.Services
             { ControlType.Gamma, "gamma" },
             { ControlType.Gain, "gain" },
             //{ ControlType.AutoFocus, "focus_auto" },
-            { ControlType.Focus, "focus_absolute" },
+            { ControlType.FocusAbsolute, "focus_absolute" },
             //{ ControlType.AutoWhiteBalance, "white_balance_temperature_auto" },
             { ControlType.Temperature, "white_balance_temperature" },
             { ControlType.Sharpness, "sharpness" },
@@ -35,13 +35,13 @@ namespace CollimationCircles.Services
 
             var (errorCode, result, process) = AppService.ExecuteCommand(
                 "v4l2-ctl",
-                ["--list-devices"]).GetAwaiter().GetResult();
+            ["--list-devices"]).GetAwaiter().GetResult();
 
             logger.Info($"v4l2-ctl --list-devices result: {result}");
 
             if (errorCode == 0)
             {
-                string pattern = @"(.*).*(.*usb.*):\n((\s*\/dev\/.*\n)*).*";
+                string pattern = @"(.*):.*.*usb.*:\n((\s*\/dev\/.*\n)*)";
 
                 var match = Regex.Match(result, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
@@ -49,7 +49,7 @@ namespace CollimationCircles.Services
                 {
                     string name = match.Groups[1].Value.Trim();
 
-                    string[] camStr = match.Groups[3].Value.Trim().Split("\t");
+                    string[] camStr = match.Groups[2].Value.Trim().Split("\t");
 
                     logger.Info($"Parsed {camStr.Length} V4L2 cameras");
 
@@ -108,9 +108,10 @@ namespace CollimationCircles.Services
                 _ = int.TryParse(m.Groups["step"].Value, out int step);
                 _ = int.TryParse(m.Groups["default"].Value, out int deflt);
                 _ = int.TryParse(m.Groups["value"].Value, out int value);
-                string name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(m.Groups["name"].Value);
+                _ = Enum.TryParse(m.Groups["type"].Value, out ControlValueType controlvalueType);
+                string name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(m.Groups["name"].Value);                
 
-                if (Enum.TryParse(name, out ControlType controlName))
+                if (Enum.TryParse(name, out ControlType controlName))                
                 {
                     var cameraControl = new CameraControl(controlName)
                     {
@@ -119,11 +120,12 @@ namespace CollimationCircles.Services
                         Step = step,
                         Default = deflt,
                         Value = value,
-                        Flags = m.Groups["flags"].Value
+                        Flags = m.Groups["flags"].Value,
+                        ValueType = controlvalueType
                     };
 
                     controls.Add(cameraControl);
-                    logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' for '{camera.Name}' added");
+                    logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
                 }
             }
 

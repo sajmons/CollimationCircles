@@ -21,7 +21,7 @@ namespace CollimationCircles.Services
             { ControlType.Hue, VideoCaptureProperties.Hue },
             { ControlType.Gamma, VideoCaptureProperties.Gamma },
             { ControlType.Gain, VideoCaptureProperties.Gain },
-            //{ ControlType.AutoFocus, VideoCaptureProperties.AutoFocus },
+            { ControlType.AutoFocus, VideoCaptureProperties.AutoFocus },
             { ControlType.Focus, VideoCaptureProperties.Focus },
             //{ ControlType.AutoWhiteBalance, VideoCaptureProperties.AutoWB },
             { ControlType.Temperature, VideoCaptureProperties.Temperature },
@@ -87,7 +87,7 @@ namespace CollimationCircles.Services
                         var cameraControl = new CameraControl(controlName);
 
                         controls.Add(cameraControl);
-                        logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' for '{camera.Name}' added");
+                        logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
                     }
                 }
             }
@@ -106,7 +106,7 @@ namespace CollimationCircles.Services
                         if (Enum.TryParse(ControlMapping[controlName].ToString(), out VideoCaptureProperties control))
                         {
                             videoCapture.Set(control, value);
-                            logger.Info($"{nameof(OpenCvSharp.VideoCaptureProperties)} property '{controlName}' set to '{value}'");
+                            logger.Info($"{nameof(VideoCaptureProperties)} property '{controlName}' set to '{value}'");
                         }
                     }
                 }

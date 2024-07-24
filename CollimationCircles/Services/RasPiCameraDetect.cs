@@ -16,7 +16,7 @@ namespace CollimationCircles.Services
             { ControlType.Saturation, "saturation" },
             { ControlType.Gain, "gain" },
             //{ ControlType.AutoFocus, "autofocus-mode" },  // default or manual
-            { ControlType.Focus, "lens-position" },
+            { ControlType.FocusAbsolute, "lens-position" },
             //{ ControlType.AutoWhiteBalance, "awb" },      // auto 2500K to 8000K, incandescent 2500K to 3000K, tungsten 3000K to 3500K, fluorescent 4000K to 4700K, indoor 3000K to 5000K, daylight 5500K to 6500K, cloudy 7000K to 8500K
             { ControlType.Sharpness, "sharpness" },
             { ControlType.ExposureTime, "shutter" },

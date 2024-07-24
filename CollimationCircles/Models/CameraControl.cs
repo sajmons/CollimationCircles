@@ -2,6 +2,7 @@
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using System;
 
 namespace CollimationCircles.Models
 {
@@ -13,11 +14,12 @@ namespace CollimationCircles.Models
         public int Min { get; set; }
         public int Max { get; set; }
         public int Step { get; set; } = 1;
-        public int Default { get; set; }
+        public int Default { get; set; }        
+        public ControlValueType ValueType { get; set; }
 
         [ObservableProperty]
         private int value;
-        public string Flags { get; set; } = string.Empty;
+        public string Flags { get; set; } = string.Empty;        
 
         private readonly bool initialization = false;
 

@@ -10,9 +10,7 @@ namespace CollimationCircles.Services
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private object? vc;
-
-
+        private readonly object? vc;
 
         public CameraControlService()
         {
