@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Version>3.2.0</Version>
-    <InformationalVersion>beta6</InformationalVersion>    
+    <InformationalVersion>beta7</InformationalVersion>    
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
@@ -33,21 +33,21 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.10" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.0" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
-    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.8.2" />
+    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.8.5" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.3.2" />
-    <PackageReference Include="Octokit" Version="11.0.1" />
-    <PackageReference Include="OpenCvSharp4" Version="4.9.0.20240103" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.9.0.20240103" />
+    <PackageReference Include="Octokit" Version="13.0.1" />
+    <PackageReference Include="OpenCvSharp4" Version="4.10.0.20240616" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20240616" />
     <PackageReference Include="System.Management" Version="8.0.0" />
 
     <PackageReference Condition="$(RuntimeIdentifier.StartsWith('win')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
