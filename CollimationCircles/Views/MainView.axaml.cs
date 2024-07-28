@@ -49,7 +49,7 @@ namespace CollimationCircles.Views
 
         static void CheckForUpdate(SettingsViewModel? vm)
         {
-            if (vm.CheckForNewVersionOnStartup is true)
+            if (vm?.CheckForNewVersionOnStartup is true)
             {
                 vm.CheckForUpdateCommand.ExecuteAsync(null);
             }
