@@ -72,6 +72,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Contrast)
             {
+                Default = 100,
+                Value = 1,
                 Min = 0,
                 Max = 2,
                 Step = 0.1
@@ -80,6 +82,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Brightness)
             {
+                Default = 50,
+                Value = 1,
                 Min = 0,
                 Max = 2,
                 Step = 0.1
@@ -88,6 +92,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Hue)
             {
+                Default = 0,
+                Value = 100,
                 Min = 0,
                 Max = 360,
                 Step = 1
@@ -96,6 +102,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Saturation)
             {
+                Default = 50,
+                Value = 1,
                 Min = 0,
                 Max = 3,
                 Step = 0.1
@@ -104,6 +112,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Gamma)
             {
+                Default = 10,
+                Value = 1,
                 Min = 0,
                 Max = 10,
                 Step = 0.1
@@ -148,7 +158,7 @@ namespace CollimationCircles.Services
 
         public List<string> GetCommandLineParameters(ICamera camera)
         {
-            return [$":dshow-vdev={camera.Name}", ":dshow-size=640x480", ":dshow-fps=30", ":dshow-adev=none", ":live-caching=300"];
+            return [$":dshow-vdev={camera.Name}", ":dshow-size=1024x768", ":dshow-fps=30", ":dshow-adev=none", ":live-caching=300"];
         }
     }
 }
