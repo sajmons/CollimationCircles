@@ -136,7 +136,6 @@ namespace CollimationCircles.ViewModels
             Dispatcher.UIThread.Post(() =>
             {
                 dialogService.Show<StreamViewModel>(null, this);
-                cameraControlService.Open();
                 logger.Trace($"Opened web camera stream window");
             });
         }
@@ -147,7 +146,6 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
-                    cameraControlService.Release();
                     dialogService.Close(this);
                     logger.Trace($"Closed web camera stream window");
                 }

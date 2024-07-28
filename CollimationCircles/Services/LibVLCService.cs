@@ -80,19 +80,19 @@ namespace CollimationCircles.Services
                     //$"--zoom=0.25"
                 ];
 
-                string parametersString = string.Empty;
-
-                if (parametersList.Count > 0)
-                {
-                    parametersString = ":" + string.Join(":", parametersList);
-                }
-
                 using var media = new Media(
                         libVLC,
-                        FullAddress + parametersString,
+                        FullAddress,
                         FromType.FromLocation,
                         mediaAdditionalOptions
                         );
+
+                foreach (string parameter in parametersList)
+                {
+                    media.AddOption(parameter);
+                }
+
+                MediaPlayer.SetAdjustFloat(VideoAdjustOption.Enable, 1);
 
                 MediaPlayer.Play(media);
                 logger.Info($"Playing web camera stream: '{media.Mrl}'");
@@ -109,7 +109,6 @@ namespace CollimationCircles.Services
             if (Camera.APIType == APIType.Dshow)
             {
                 protocol = "dshow";
-                address = Camera.Path;
             }
             else if (Camera.APIType == APIType.QTCapture)
             {

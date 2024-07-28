@@ -39,8 +39,8 @@
               Grid.RowSpan="2"
               Grid.ColumnSpan="2"
               Value="{Binding Value}"
-              Minimum="{Binding Min}"
-              Maximum="{Binding Max}" />
+              Minimum="0"
+              Maximum="100" />
             <TextBox
               Grid.Column="1"
               Text="{Binding Value}"/>

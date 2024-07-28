@@ -1,24 +1,12 @@
 ﻿using CollimationCircles.Models;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 
 namespace CollimationCircles.Services
 {
-    internal class CameraControlService : ICameraControlService, IDisposable
+    internal class CameraControlService : ICameraControlService
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-        private readonly object? vc;
-
-        public CameraControlService()
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                vc = new VideoCapture();
-            }
-        }
 
         public void Set(ControlType controlName, double value, ICamera camera)
         {
@@ -30,47 +18,12 @@ namespace CollimationCircles.Services
             // set camera control for DirectShow
             else if (camera.APIType is APIType.Dshow)
             {
-                if (vc is not null)
-                {
-                    new DShowCameraDetect((VideoCapture)vc).SetControl(camera, controlName, value);
-                }
-                else
-                {
-                    logger.Error("videoCapture is null");
-                }
+                new DShowCameraDetect().SetControl(camera, controlName, value);
             }
             // set camera control for Raspberry PI Camera
             else if (camera.APIType is APIType.LibCamera)
             {
                 new RasPiCameraDetect().SetControl(camera, controlName, value);
-            }
-        }
-        public void Dispose()
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                if (vc is not null)
-                {
-                    ((VideoCapture)vc).Release();
-                    ((VideoCapture)vc).Dispose();
-                }
-            }
-        }
-
-        public void Open()
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                ILibVLCService lib = Ioc.Default.GetRequiredService<ILibVLCService>();
-                (vc as VideoCapture)?.Open(lib.Camera.Index);
-            }
-        }
-
-        public void Release()
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                (vc as VideoCapture)?.Release();
             }
         }
 
@@ -80,11 +33,8 @@ namespace CollimationCircles.Services
 
             if (OperatingSystem.IsWindows())
             {
-                if (vc is not null)
-                {
-                    var dshowCameras = new DShowCameraDetect((VideoCapture)vc).GetCameras();
-                    cameras.AddRange(dshowCameras);
-                }
+                var dshowCameras = new DShowCameraDetect().GetCameras();
+                cameras.AddRange(dshowCameras);
             }
             else
             {

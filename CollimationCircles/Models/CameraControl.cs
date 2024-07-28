@@ -13,7 +13,7 @@ namespace CollimationCircles.Models
         public ControlType Name { get; set; }
         public int Min { get; set; }
         public int Max { get; set; }
-        public int Step { get; set; } = 1;
+        public double Step { get; set; } = 0.1;
         public int Default { get; set; }        
         public ControlValueType ValueType { get; set; }
 
