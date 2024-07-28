@@ -18,16 +18,7 @@ namespace CollimationCircles.Services
             { ControlType.Contrast, "Contrast" },
             { ControlType.Saturation, "Saturation" },
             { ControlType.Hue, "Hue" },
-            { ControlType.Gamma, "Gamma" },
-            { ControlType.Gain, "gain" },
-            //{ ControlType.AutoFocus, "focus_auto" },
-            { ControlType.FocusAbsolute, "focus_absolute" },
-            //{ ControlType.AutoWhiteBalance, "white_balance_temperature_auto" },
-            { ControlType.Temperature, "white_balance_temperature" },
-            { ControlType.Sharpness, "sharpness" },
-            //{ ControlType.AutoExposure, "exposure_auto" },
-            { ControlType.ExposureTime, "exposure_absolute" },
-            { ControlType.Zoom_Absolute, "zoom_absolute" }
+            { ControlType.Gamma, "Gamma" }
         };
 
         public List<ICamera> GetCameras()
