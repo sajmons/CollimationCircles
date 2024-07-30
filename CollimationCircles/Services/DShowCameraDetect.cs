@@ -72,8 +72,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Contrast)
             {
-                Default = 100,
-                Value = 1,
+                Default = 50,
+                Value = 50,
                 Min = 0,
                 Max = 2,
                 Step = 0.1
@@ -83,7 +83,7 @@ namespace CollimationCircles.Services
             controls.Add(cameraControl = new CameraControl(ControlType.Brightness)
             {
                 Default = 50,
-                Value = 1,
+                Value = 50,
                 Min = 0,
                 Max = 2,
                 Step = 0.1
@@ -93,7 +93,7 @@ namespace CollimationCircles.Services
             controls.Add(cameraControl = new CameraControl(ControlType.Hue)
             {
                 Default = 0,
-                Value = 100,
+                Value = 0,
                 Min = 0,
                 Max = 360,
                 Step = 1
@@ -102,8 +102,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Saturation)
             {
-                Default = 50,
-                Value = 1,
+                Default = 40,
+                Value = 40,
                 Min = 0,
                 Max = 3,
                 Step = 0.1
@@ -112,8 +112,8 @@ namespace CollimationCircles.Services
 
             controls.Add(cameraControl = new CameraControl(ControlType.Gamma)
             {
-                Default = 10,
-                Value = 1,
+                Default = 8,
+                Value = 8,
                 Min = 0,
                 Max = 10,
                 Step = 0.1
