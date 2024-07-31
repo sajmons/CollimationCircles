@@ -72,27 +72,21 @@ namespace CollimationCircles.Services
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
             {
-                string[] mediaAdditionalOptions =
-                [
-                    //$"--osd",
-                    //$"--video-title=my title",
-                    //$"--avcodec-hw=any",
-                    //$"--zoom=0.25"
-                ];
+                string[] mediaAdditionalOptions = [];
 
                 using var media = new Media(
-                        libVLC,
-                        FullAddress,
-                        FromType.FromLocation,
-                        mediaAdditionalOptions
-                        );
+                    libVLC,
+                    FullAddress,
+                    FromType.FromLocation,
+                    mediaAdditionalOptions
+                    );
+
+                MediaPlayer.SetAdjustFloat(VideoAdjustOption.Enable, 1);
 
                 foreach (string parameter in parametersList)
                 {
                     media.AddOption(parameter);
                 }
-
-                MediaPlayer.SetAdjustFloat(VideoAdjustOption.Enable, 1);
 
                 MediaPlayer.Play(media);
                 logger.Info($"Playing web camera stream: '{media.Mrl}'");
