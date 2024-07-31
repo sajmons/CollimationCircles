@@ -33,7 +33,7 @@ namespace CollimationCircles.Models
 
             try
             {
-                Initialize(controlName);
+                Initialize();
             }
             finally
             {
@@ -41,7 +41,7 @@ namespace CollimationCircles.Models
             }
         }
 
-        private void Initialize(ControlType controlName)
+        private void Initialize()
         {
             Value = Default;
         }
@@ -56,7 +56,7 @@ namespace CollimationCircles.Models
 
         public void SetDefault()
         {
-            Initialize(Name);
+            Initialize();
         }
     }
 }
