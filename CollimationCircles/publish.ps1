@@ -97,7 +97,7 @@ Function CreateInfoPlistFile
             $XmlObjectWriter.WriteElementString("string", $AppVersion)
 
             $XmlObjectWriter.WriteElementString("key", "LSMinimumSystemVersion")
-            $XmlObjectWriter.WriteElementString("string", "12")
+            $XmlObjectWriter.WriteElementString("string", "11")
 
             $XmlObjectWriter.WriteElementString("key", "CFBundleExecutable")
             $XmlObjectWriter.WriteElementString("string", $Appname)
