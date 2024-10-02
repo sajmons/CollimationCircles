@@ -13,7 +13,8 @@
       Margin="11 0 0 0"
       VerticalAlignment="Stretch"
       Content="{DynamicResource Text.Add}"
-      ToolTip.Tip="{DynamicResource Text.AddNewItem}">
+      ToolTip.Tip="{DynamicResource Text.AddNewItem}"
+      Width="93">
       <SplitButton.Flyout>
         <MenuFlyout Placement="BottomEdgeAlignedLeft">
           <MenuItem Header="{DynamicResource Text.Circle}"
