@@ -14,49 +14,28 @@ namespace CollimationCircles.Models
         public int Min { get; set; }
         public int Max { get; set; }
         public double Step { get; set; } = 0.1;
-        public int Default { get; set; }        
+        public int Default { get; set; }
         public ControlValueType ValueType { get; set; }
 
         [ObservableProperty]
         private int value;
-        public string Flags { get; set; } = string.Empty;        
-
-        private readonly bool initialization = false;
+        public string Flags { get; set; } = string.Empty;
 
         public CameraControl(ControlType controlName)
         {
             cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
             libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
             Name = controlName;
-
-            initialization = true;
-
-            try
-            {
-                Initialize();
-            }
-            finally
-            {
-                initialization = false;
-            }
-        }
-
-        private void Initialize()
-        {
-            Value = Default;
-        }
+        }        
 
         partial void OnValueChanged(int oldValue, int newValue)
         {
-            if (!initialization)
-            {
-                cameraControlService.Set(Name, newValue, libVLCService.Camera);
-            }
+            cameraControlService.Set(Name, newValue, libVLCService.Camera);
         }
 
         public void SetDefault()
         {
-            Initialize();
+            Value = Default;
         }
     }
 }

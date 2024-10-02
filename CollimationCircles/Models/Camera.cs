@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
 using System.Collections.Generic;
 
 namespace CollimationCircles.Models
@@ -12,6 +13,22 @@ namespace CollimationCircles.Models
 
         [ObservableProperty]
         public List<ICameraControl> controls = [];
+
+        public Camera()
+        { 
+            if(OperatingSystem.IsWindows())
+            {
+                APIType = APIType.Dshow;
+            }
+            else if(OperatingSystem.IsLinux())
+            {
+                APIType = APIType.V4l2;
+            }
+            else if (OperatingSystem.IsMacOS())
+            {
+                APIType = APIType.QTCapture;
+            }
+        }
 
         public void SetDefaultControls()
         {
