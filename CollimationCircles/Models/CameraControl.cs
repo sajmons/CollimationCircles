@@ -1,8 +1,6 @@
-﻿using CollimationCircles.Helper;
-using CollimationCircles.Services;
+﻿using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using System;
 
 namespace CollimationCircles.Models
 {
