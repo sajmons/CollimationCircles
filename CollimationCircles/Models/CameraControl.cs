@@ -24,7 +24,7 @@ namespace CollimationCircles.Models
             cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
             libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
             Name = controlName;
-        }        
+        }
 
         partial void OnValueChanged(int oldValue, int newValue)
         {

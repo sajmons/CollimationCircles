@@ -6,8 +6,6 @@ namespace CollimationCircles.Services
 {
     internal class CameraControlService : ICameraControlService
     {
-        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
         public void Set(ControlType controlName, double value, ICamera camera)
         {
             // set camera control for V4L2

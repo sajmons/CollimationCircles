@@ -128,7 +128,7 @@ namespace CollimationCircles.Services
             try
             {
                 ILibVLCService vlc = Ioc.Default.GetRequiredService<ILibVLCService>();
-                
+
                 if (Enum.TryParse(ControlMapping[controlName].ToString(), out VideoAdjustOption control))
                 {
                     ICameraControl? cameraControl = camera.Controls.FirstOrDefault(c => c.Name == controlName);
@@ -140,7 +140,7 @@ namespace CollimationCircles.Services
                         vlc.MediaPlayer.SetAdjustFloat(control, val);
                         logger.Info($"{nameof(VideoAdjustOption)} property '{controlName}' set to '{value}'");
                     }
-                }                
+                }
             }
             catch (Exception exc)
             {

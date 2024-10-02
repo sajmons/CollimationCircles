@@ -15,12 +15,12 @@ namespace CollimationCircles.Models
         public List<ICameraControl> controls = [];
 
         public Camera()
-        { 
-            if(OperatingSystem.IsWindows())
+        {
+            if (OperatingSystem.IsWindows())
             {
                 APIType = APIType.Dshow;
             }
-            else if(OperatingSystem.IsLinux())
+            else if (OperatingSystem.IsLinux())
             {
                 APIType = APIType.V4l2;
             }

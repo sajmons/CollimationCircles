@@ -109,9 +109,9 @@ namespace CollimationCircles.Services
                 _ = int.TryParse(m.Groups["default"].Value, out int deflt);
                 _ = int.TryParse(m.Groups["value"].Value, out int value);
                 _ = Enum.TryParse(m.Groups["type"].Value, out ControlValueType controlvalueType);
-                string name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(m.Groups["name"].Value);                
+                string name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(m.Groups["name"].Value);
 
-                if (Enum.TryParse(name, out ControlType controlName))                
+                if (Enum.TryParse(name, out ControlType controlName))
                 {
                     var cameraControl = new CameraControl(controlName)
                     {
