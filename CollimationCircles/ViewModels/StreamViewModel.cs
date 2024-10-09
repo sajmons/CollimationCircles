@@ -71,7 +71,7 @@ namespace CollimationCircles.ViewModels
 
             CameraList = new ObservableCollection<ICamera>(cameraControlService.GetCameraList());
 
-            SelectedCamera = CameraList.First();
+            SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -192,6 +192,8 @@ namespace CollimationCircles.ViewModels
             {
                 FullAddress = libVLCService.DefaultAddress(newValue);
                 RemoteConnection = SelectedCamera?.APIType == APIType.Remote;
+                this.settingsViewModel.LastSelectedCamera = newValue.Name;
+                logger.Info($"Selected camera changed to '{newValue.Name}'");
             }
         }
 

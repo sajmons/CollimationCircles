@@ -177,6 +177,10 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private Dictionary<string, string> shapeShortcuts = [];
 
+        [JsonProperty]
+        [ObservableProperty]
+        private string lastSelectedCamera = string.Empty;
+
         public SettingsViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
@@ -554,6 +558,7 @@ namespace CollimationCircles.ViewModels
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
+                    LastSelectedCamera = vm.LastSelectedCamera;
 
                     if (!DockInMainWindow)
                     {
