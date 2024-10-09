@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using CollimationCircles.Services;
 using System;
 
 namespace CollimationCircles
@@ -16,31 +15,16 @@ namespace CollimationCircles
         {
             try
             {
-                if (AppService.CheckRequirements())
-                {
-                    BuildAvaloniaApp()
-                    .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
-                }
-                else
-                {
-                    throw new Exception("Application requirements are not met. Try to set 'minLevel' to 'Trace' for 'logconsole' in NLog.config, for more information.");
-                }
+                BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
             }
             catch (Exception ex)
             {
-                // here we can work with the exception, for example add it to our log file
-                //Log.Fatal(e, "Something very bad happened");
-                //var ds = Ioc.Default.GetService<IDialogService>();
-                //var vm = Ioc.Default.GetService<MainViewModel>();
-                //ds?.ShowMessageBoxAsync(vm, e.Message, "Error");                
                 logger.Fatal(ex.Message);
                 throw;
             }
             finally
             {
-                // This block is optional. 
-                // Use the finally-block if you need to clean things up or similar
-                //Log.CloseAndFlush();
                 NLog.LogManager.Shutdown();
             }
         }

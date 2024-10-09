@@ -1,13 +1,12 @@
-﻿using Microsoft.Win32;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -21,11 +20,6 @@ public class AppService
     private const string stateFile = "appstate.json";
     private static readonly string owner = "sajmons";
     private static readonly string reponame = "CollimationCircles";
-
-    public const string LIBCAMERA_VID = "libcamera-vid";
-    public const string LIBCAMERA_APPS = "libcamera-apps";
-    public const string VLC = "vlc";
-    public const string LIBVLC_DEV = "libvlc-dev";
 
     public const string WebPage = "https://saimons-astronomy.webador.com/software/collimation-circles";
     public const string ContactPage = "https://saimons-astronomy.webador.com/about";
@@ -44,9 +38,14 @@ public class AppService
         return assemblyVersion?.ToString() ?? "0.0.0";
     }
 
-    public static bool SameVersion(string v1, string v2)
+    public static string GetAppVersionTitle()
     {
-        return new Version(v1) == new Version(v2);
+        var infoVersion = Assembly.GetExecutingAssembly()?
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+        var infoVer = infoVersion?.Split("+")?.FirstOrDefault();
+
+        return infoVer ?? "0.0.0";
     }
 
     public static T? Deserialize<T>(string jsonState)
@@ -191,22 +190,6 @@ public class AppService
         await folderOpener.WaitForExitAsync();
     }
 
-    public static Task<bool> IsPackageInstalled(string package)
-    {
-        var tcs = new TaskCompletionSource<bool>();
-
-        var t1 = Task.Run(async () =>
-        {
-            // dpkg-query -W -f='${Status} ${Version}\n' vlc
-            var (exitCode, output, process) = await ExecuteCommand("dpkg-query", [$"-W", "-f=${Status}; ${Version}\n", $"{package}"]);
-            tcs.TrySetResult(exitCode == 0 && output.StartsWith("install ok installed"));
-        });
-
-        t1.Wait();
-
-        return tcs.Task;
-    }
-
     public static Task<(int, string, Process)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
     {
         var tcs = new TaskCompletionSource<(int, string, Process)>();
@@ -216,8 +199,9 @@ public class AppService
             FileName = fileName,
             UseShellExecute = false,
             RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };        
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
 
         using Process process = new()
         {
@@ -275,7 +259,15 @@ public class AppService
 
                     // Process completed. Check process.ExitCode and output here.
                     string outputStr = $"{output}";
-                    logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}");
+
+                    string logMessage = $"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}";
+
+                    if (!string.IsNullOrWhiteSpace($"{error}"))
+                    {
+                        logMessage += $", Error: {error}";
+                    }
+
+                    logger.Debug(logMessage);
                     tcs.TrySetResult((process.ExitCode, outputStr, process));
                 }
                 else
@@ -301,19 +293,6 @@ public class AppService
         return tcs.Task;
     }
 
-    public static bool CheckRequirements()
-    {
-        bool result = true;
-
-        if (OperatingSystem.IsLinux())
-        {
-            result &= IsPackageInstalled(VLC).GetAwaiter().GetResult();
-            result &= IsPackageInstalled(LIBVLC_DEV).GetAwaiter().GetResult();
-        }
-
-        return result;
-    }
-
     public static void OpenUrl(string url)
     {
         logger.Trace($"Opening external url '{url}'");
@@ -337,30 +316,54 @@ public class AppService
         logger.Trace($"External url '{url}' opened");
     }
 
-    public static string? FindVLC()
-    {
-        string vlcPath = "\\VideoLAN\\VLC\\vlc.exe";
-        string programFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%") + vlcPath;
-        string programFilesX86 = Environment.ExpandEnvironmentVariables("%ProgramFiles(x86)%") + vlcPath;
-
-        if (File.Exists(programFiles))
-        {
-            return programFiles;
-        }
-
-        if (File.Exists(programFilesX86))
-        {
-            return programFilesX86;
-        }
-
-        return null;
-    }
-
     public static string? GetLocalIPAddress()
     {
         using Socket socket = new(AddressFamily.InterNetwork, SocketType.Dgram, 0);
         socket.Connect("8.8.8.8", 65530);
         IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
         return endPoint?.Address.ToString();
+    }
+
+    public static async Task StartRaspberryPIStream(string port, List<string>? streamArgs = null)
+    {
+        _ = await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 100);
+
+        List<string> parameters = [
+            "--timeout",
+            "0",
+            "--inline",
+            "--listen",
+            "--nopreview",
+            "--output",
+            $"tcp://0.0.0.0:{port}",
+            "--shutter",
+            "60000",
+            "--gain",
+            "22",
+            "--width",
+            "640",
+            "--height",
+            "480",
+            "--framerate",
+            "30",
+            "--quality",
+            "25",
+            "--bitrate",
+            "15000000",
+            "--denoise",
+            "cdn_off",
+            "--level",
+            "4.2"
+        ];
+
+        if (streamArgs != null)
+        {
+            // FIXME: parametri morajo biti filtrirani glede na to kaj katera kamera podpira
+            //parameters.AddRange(streamArgs);
+        }
+
+        _ = await ExecuteCommand(
+            "rpicam-vid",
+            parameters, timeout: 1500);
     }
 }

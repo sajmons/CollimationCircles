@@ -113,10 +113,23 @@
   <system:String x:Key="Text.PayPalDonation">Mit dieser Spende unterstützen Sie mich bei der Weiterentwicklung der Collimation Circles-Anwendung. Danke schön!</system:String>
   <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Zeitüberschreitung beim Warten auf den Videostream</system:String>
-  <system:String x:Key="Text.ResetCameraStreamAddress">Setzen Sie die Videostream-Adresse der Kamera auf den Standardwert zurück</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Starten oder stoppen Sie den Videostream der Kamera</system:String>
-  <system:String x:Key="Text.CameraType">Kameratyp</system:String>
-  <system:String x:Key="Text.RemoteCameraType">Fernbedienung</system:String>
+  <system:String x:Key="Text.CameraType">Kamera auswählen</system:String>
+  <system:String x:Key="Text.Brightness">Helligkeit</system:String>
+  <system:String x:Key="Text.Contrast">Kontrast</system:String>
+  <system:String x:Key="Text.Saturation">Sättigung</system:String>
+  <system:String x:Key="Text.Gamma">Gamma</system:String>
+  <system:String x:Key="Text.Hue">Farbton</system:String>
+  <system:String x:Key="Text.Sharpness">Schärfe</system:String>
+  <system:String x:Key="Text.Zoom">Zoomen</system:String>
+  <system:String x:Key="Text.Gain">Gewinnen</system:String>
+  <system:String x:Key="Text.Focus">Fokus</system:String>
+  <system:String x:Key="Text.Auto">Automatisch</system:String>
+  <system:String x:Key="Text.ExposureTime">Expositionszeit</system:String>
+  <system:String x:Key="Text.Temperature">Temperatur</system:String>
+  <system:String x:Key="Text.CameraControls">Kamerasteuerung</system:String>
+  <system:String x:Key="Text.Default">Standard</system:String>
+  <system:String x:Key="Text.EnterRemoteAddress">Adresse eingeben</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using CollimationCircles.Messages;
+using CollimationCircles.Services;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,20 +11,19 @@ namespace CollimationCircles.Views
     public partial class StreamView : Window
     {
         private readonly VideoView videoViewer;
-        private readonly StreamViewModel? vm;
-        private readonly SettingsViewModel? svm;
+        private readonly SettingsViewModel svm;
 
         public StreamView()
         {
             InitializeComponent();
 
-            vm = Ioc.Default.GetService<StreamViewModel>();
-            svm = Ioc.Default.GetService<SettingsViewModel>();
+            svm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             videoViewer = this.Get<VideoView>("VideoViewer");
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
+                // FIXME: here is probably some room for optimization
                 UpdateWindowPosition();
             });
 
@@ -32,9 +32,11 @@ namespace CollimationCircles.Views
 
         private void WebCamStreamWindow_Opened(object? sender, System.EventArgs e)
         {
-            if (videoViewer != null && vm!.MediaPlayer != null)
+            var mp = Ioc.Default.GetRequiredService<ILibVLCService>().MediaPlayer;
+
+            if (videoViewer != null)
             {
-                videoViewer.MediaPlayer = vm?.MediaPlayer;
+                videoViewer.MediaPlayer = mp;
 
                 UpdateWindowPosition();
             }
@@ -42,20 +44,20 @@ namespace CollimationCircles.Views
 
         private void UpdateWindowPosition()
         {
-            if (svm?.PinVideoWindowToMainWindow == false) return;
+            if (svm.PinVideoWindowToMainWindow == false) return;
 
-            Position = svm!.MainWindowPosition;
+            Position = svm.MainWindowPosition;
 
-            if (svm!.DockInMainWindow)
+            if (svm.DockInMainWindow)
             {
-                Width = svm!.MainWindowWidth - svm!.SettingsWindowWidth / 2;
+                Width = svm.MainWindowWidth - svm.SettingsWindowWidth / 2;
             }
             else
             {
-                Width = svm!.MainWindowWidth;
+                Width = svm.MainWindowWidth;
             }
 
-            Height = svm!.MainWindowHeight;
+            Height = svm.MainWindowHeight;
         }
     }
 }

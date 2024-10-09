@@ -1,4 +1,3 @@
-using CollimationCircles.Helper;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
@@ -12,12 +11,11 @@ namespace CollimationCircles.ViewModels
 
         private readonly IDialogService dialogService;
 
-
         public AboutViewModel(IDialogService dialogService)
         {
             this.dialogService = dialogService;
 
-            Title = $"{DynRes.TryGetString("About")} - {DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersion()}";
+            Title = $"{ResSvc.TryGetString("About")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 
         [RelayCommand]
@@ -33,9 +31,9 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal static void PayPalDonate()
+        internal void PayPalDonate()
         {
-            string text = DynRes.TryGetString("PayPalDonation");
+            string text = ResSvc.TryGetString("PayPalDonation");
 
             string encodedText = HttpUtility.UrlEncode(text);
 

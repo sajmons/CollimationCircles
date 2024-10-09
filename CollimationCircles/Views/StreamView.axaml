@@ -2,10 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d"
+        d:DesignWidth="320" 
+        d:DesignHeight="240"
         xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
         x:Class="CollimationCircles.Views.StreamView"
-        Title="{DynamicResource Text.CameraStreamWindowTitle}">
+        Title="{DynamicResource Text.CameraStreamWindowTitle}"
+        Width="640"
+        Height="480">
   <Grid>
     <vlc:VideoView      
       RelativePanel.AlignHorizontalCenterWithPanel="True"

@@ -23,18 +23,20 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
+            SettingsViewModel vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-            vm?.LoadState();
+            vm.LoadState();
 
             desktop.MainWindow = new MainView
             {
-                Topmost = vm?.AlwaysOnTop ?? false
+                Topmost = vm.AlwaysOnTop
             };
         }
 
         base.OnFrameworkInitializationCompleted();
     }
+
+    public static string LangDir = "CollimationCircles/Resources/Lang";
 
     private static void ConfigureServices()
     {
@@ -49,9 +51,13 @@ public partial class App : Application
             .AddSingleton<SettingsViewModel>()
             .AddSingleton<StreamViewModel>()
             .AddSingleton<AppLogViewModel>()
-            .AddTransient<AboutViewModel>()            
+            .AddSingleton<CameraControlsViewModel>()
+            .AddTransient<AboutViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
+            .AddSingleton<ICameraControlService, CameraControlService>()
+            .AddSingleton<ILibVLCService, LibVLCService>()
+            .AddSingleton<IResourceService>(new ResourceService(LangDir))
             .BuildServiceProvider());
     }
 }

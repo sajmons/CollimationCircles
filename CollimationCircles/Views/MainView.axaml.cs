@@ -14,19 +14,19 @@ namespace CollimationCircles.Views
 {
     public partial class MainView : Window
     {
-        private readonly IDrawHelperService? dhs;
-        private readonly SettingsViewModel? vm;
-        private readonly IKeyHandlingService? khs;
+        private readonly IDrawHelperService dhs;
+        private readonly SettingsViewModel vm;
+        private readonly IKeyHandlingService khs;
 
         public MainView()
         {
             InitializeComponent();
 
-            vm = Ioc.Default.GetService<SettingsViewModel>();
+            vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             DataContext = vm;
 
-            Position = vm?.MainWindowPosition ?? new PixelPoint();
+            Position = vm.MainWindowPosition;
 
             CheckForUpdate(vm);
 
@@ -36,15 +36,15 @@ namespace CollimationCircles.Views
                 InvalidateVisual();
             });
 
-            dhs = Ioc.Default.GetService<IDrawHelperService>();
-            khs = Ioc.Default.GetService<IKeyHandlingService>();
+            dhs = Ioc.Default.GetRequiredService<IDrawHelperService>();
+            khs = Ioc.Default.GetRequiredService<IKeyHandlingService>();
 
             PositionChanged += MainView_PositionChanged;
         }
 
         private void MainView_PositionChanged(object? sender, PixelPointEventArgs e)
         {
-            vm!.MainWindowPosition = Position;
+            vm.MainWindowPosition = Position;
         }
 
         static void CheckForUpdate(SettingsViewModel? vm)
@@ -59,58 +59,56 @@ namespace CollimationCircles.Views
         {
             try
             {
-                SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
+                SettingsViewModel vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-                if (vm is not null)
+                int dockedWidth = vm.DockInMainWindow ? vm.SettingsMinWidth / 2 : 0;
+                var items = vm.Items;
+
+                if (vm.ShowKeyboardShortcuts == true)
                 {
-                    int dockedWidth = vm.DockInMainWindow ? vm.SettingsMinWidth / 2 : 0;
-                    var items = vm?.Items;
+                    dhs.DrawShortcuts(context, vm.GlobalShortcuts, new Point(5, 0));
+                    dhs.DrawShortcuts(context, vm.ShapeShortcuts, new Point(5, 80));
+                }
 
-                    if (vm?.ShowKeyboardShortcuts == true)
+                if (items is not null)
+                {
+                    double width2 = Width / 2 - dockedWidth;
+                    double height2 = Height / 2;
+                    double scaleOrDefault = vm.Scale;
+                    double rotAngleOrDefault = vm.RotationAngle;
+                    double offsetX = vm.GlobalOffsetX;
+                    double offsetY = vm.GlobalOffsetY;
+
+                    Matrix scaleMat = Matrix.CreateScale(scaleOrDefault, scaleOrDefault);
+                    Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
+                    Matrix translateMat = Matrix.CreateTranslation(width2 + offsetX, height2 + offsetY);
+
+                    foreach (ICollimationHelper item in items)
                     {
-                        dhs?.DrawShortcuts(context, vm.GlobalShortcuts, new Point(5, 0));
-                        dhs?.DrawShortcuts(context, vm.ShapeShortcuts, new Point(5, 80));
-                    }
-
-                    if (items is not null)
-                    {
-                        double width2 = Width / 2 - dockedWidth;
-                        double height2 = Height / 2;
-                        double scaleOrDefault = vm?.Scale ?? 1.0;
-                        double rotAngleOrDefault = vm?.RotationAngle ?? 0;
-                        double offsetX = vm?.GlobalOffsetX ?? 0;
-                        double offsetY = vm?.GlobalOffsetY ?? 0;
-
-                        Matrix scaleMat = Matrix.CreateScale(scaleOrDefault, scaleOrDefault);
-                        Matrix rotationMat = Matrix.CreateRotation(rotAngleOrDefault * Math.PI / 180);
-                        Matrix translateMat = Matrix.CreateTranslation(width2 + offsetX, height2 + offsetY);
-
-                        foreach (ICollimationHelper item in items)
+                        using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
                         {
-                            using (context.PushTransform(translateMat.Invert() * scaleMat * rotationMat * translateMat))
+                            switch (item)
                             {
-                                switch (item)
-                                {
-                                    case CircleViewModel civm:
-                                        dhs?.DrawMask(context, vm, civm, translateMat);
-                                        break;
-                                    case ScrewViewModel scvm:
-                                        dhs?.DrawMask(context, vm, scvm, translateMat);
-                                        break;
-                                    case PrimaryClipViewModel pcvm:
-                                        dhs?.DrawMask(context, vm, pcvm, translateMat);
-                                        break;
-                                    case SpiderViewModel spvm:
-                                        dhs?.DrawMask(context, vm, spvm, translateMat);
-                                        break;
-                                    case BahtinovMaskViewModel bmvm:
-                                        dhs?.DrawMask(context, vm, bmvm, translateMat);
-                                        break;
-                                };
-                            }
+                                case CircleViewModel civm:
+                                    dhs.DrawMask(context, vm, civm, translateMat);
+                                    break;
+                                case ScrewViewModel scvm:
+                                    dhs.DrawMask(context, vm, scvm, translateMat);
+                                    break;
+                                case PrimaryClipViewModel pcvm:
+                                    dhs.DrawMask(context, vm, pcvm, translateMat);
+                                    break;
+                                case SpiderViewModel spvm:
+                                    dhs.DrawMask(context, vm, spvm, translateMat);
+                                    break;
+                                case BahtinovMaskViewModel bmvm:
+                                    dhs.DrawMask(context, vm, bmvm, translateMat);
+                                    break;
+                            };
                         }
                     }
                 }
+
             }
             catch
             {
@@ -120,35 +118,32 @@ namespace CollimationCircles.Views
 
         protected override void OnClosing(WindowClosingEventArgs e)
         {
-            if (vm is not null)
-            {
-                // Remember window position and Size
-                vm.MainWindowPosition = Position;
-                vm.MainWindowWidth = Width;
-                vm.MainWindowHeight = Height;
-            }
+            // Remember window position and Size
+            vm.MainWindowPosition = Position;
+            vm.MainWindowWidth = Width;
+            vm.MainWindowHeight = Height;
 
             base.OnClosing(e);
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            vm?.SaveState();
+            vm.SaveState();
 
             base.OnClosed(e);
         }
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
-            khs?.HandleMovement(this, vm, e);
-            khs?.HandleGlobalScale(vm, e);
-            khs?.HandleHelperRadius(vm, e);
-            khs?.HandleGlobalRotation(vm, e);
-            khs?.HandleHelperRotation(vm, e);
-            khs?.HandleHelperCount(vm, e);
-            khs?.HandleHelperThickness(vm, e);
-            khs?.HandleHelperSpacing(vm, e);
-            khs?.HandleHelperInclination(vm, e);
+            khs.HandleMovement(this, vm, e);
+            khs.HandleGlobalScale(vm, e);
+            khs.HandleHelperRadius(vm, e);
+            khs.HandleGlobalRotation(vm, e);
+            khs.HandleHelperRotation(vm, e);
+            khs.HandleHelperCount(vm, e);
+            khs.HandleHelperThickness(vm, e);
+            khs.HandleHelperSpacing(vm, e);
+            khs.HandleHelperInclination(vm, e);
 
             base.OnKeyDown(e);
         }

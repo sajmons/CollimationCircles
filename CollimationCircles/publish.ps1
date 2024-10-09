@@ -8,9 +8,9 @@ Param(
     # Runtime
     [Parameter(Mandatory=$False)]
     [ValidateNotNullOrEmpty()]
-	[ValidateSet("win-x64","linux-x64","linux-arm64","osx-x64")]
+	[ValidateSet("win-x64","linux-x64","linux-arm64","osx-x64", "win-arm64")]
     [Alias("r")]
-    [string[]]$Runtimes = @("win-x64","linux-x64","linux-arm64","osx-x64"),
+    [string[]]$Runtimes = @("win-x64","linux-x64","linux-arm64","osx-x64", "win-arm64"),
     # Framework
     [Parameter(Mandatory=$False)]
     [ValidateNotNullOrEmpty()]
@@ -97,7 +97,7 @@ Function CreateInfoPlistFile
             $XmlObjectWriter.WriteElementString("string", $AppVersion)
 
             $XmlObjectWriter.WriteElementString("key", "LSMinimumSystemVersion")
-            $XmlObjectWriter.WriteElementString("string", "12")
+            $XmlObjectWriter.WriteElementString("string", "11")
 
             $XmlObjectWriter.WriteElementString("key", "CFBundleExecutable")
             $XmlObjectWriter.WriteElementString("string", $Appname)
@@ -187,13 +187,14 @@ Function PublishOne
 
 	$xml = [Xml] (Get-Content $Project)
 	$version = [Version] $xml.Project.PropertyGroup.Version
+    $versionInfo = [String] $xml.Project.PropertyGroup.InformationalVersion
 	
     $commandRestore = "dotnet restore -r $Runtime"
 
     Write-Host $commandRestore -ForegroundColor green
     Invoke-Expression $commandRestore
 
-    $commandPublish = "dotnet publish -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
+    $commandPublish = "dotnet publish $Project -c Release -f $Framework -r $Runtime -o $Output/$Runtime --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true /p:DebugType=None /p:DebugSymbols=false"
 
     if ($Runtime -eq "osx-x64")
     {
@@ -222,7 +223,7 @@ Function PublishOne
     # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
     # That's why I aded number infront of file name to maintain correct order.
     # You must always specify win-x64 as first runtime in $runtimes list
-	Compress-Archive -Force $outputDir $Output/$Index-$appName-$version-$Runtime.zip
+	Compress-Archive -Force $outputDir $Output/$Index-$appName-$version-$versionInfo-$Runtime.zip
 
     if ($Runtime -eq "osx-x64")
     {

@@ -41,8 +41,10 @@
               Width="{Binding SettingsWidth}"
               Header="{DynamicResource Text.WebCamStream}"
               IsExpanded="{Binding CameraVideoStreamExpanded}">
-              <controls:StreamUserControl/>
-            </Expander>            
+              <StackPanel Orientation="Vertical">
+                <controls:StreamUserControl/>
+              </StackPanel>
+            </Expander>
           </StackPanel>
         </ScrollViewer>
       </TabItem>
@@ -55,7 +57,7 @@
         <ScrollViewer>
           <controls:SettingsTabUserControl />
         </ScrollViewer>
-      </TabItem>      
+      </TabItem>
     </TabControl>
     <controls:SocialButtonBarUserControl
       Grid.Row="1"/>

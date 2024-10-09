@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using CollimationCircles.Helper;
 using CollimationCircles.Messages;
+using CollimationCircles.Services;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -112,6 +113,13 @@ namespace CollimationCircles.Models
         [NotifyDataErrorInfo]
         private double opacity = 1;
 
+        internal readonly IResourceService ResSvc;
+
+        public CollimationHelper()
+        {
+            ResSvc = Ioc.Default.GetRequiredService<IResourceService>();
+        }
+
         public string ResourceString
         {
             get
@@ -131,7 +139,7 @@ namespace CollimationCircles.Models
                 else
                     dynRes += string.Empty;
 
-                return DynRes.TryGet($"IconData.{dynRes}");
+                return ResSvc.TryGet($"IconData.{dynRes}") ?? throw new Exception($"Resurce not found '{dynRes}'.");
             }
         }
 
@@ -153,9 +161,9 @@ namespace CollimationCircles.Models
                     {
                         base.OnPropertyChanged(e);
 
-                        SettingsViewModel? vm = Ioc.Default.GetService<SettingsViewModel>();
+                        SettingsViewModel vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
-                        if (vm is not null && vm?.SelectedItem?.Label is not null)
+                        if (vm.SelectedItem?.Label is not null)
                         {
                             WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(vm));
 

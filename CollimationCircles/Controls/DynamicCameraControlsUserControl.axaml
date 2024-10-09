@@ -1,0 +1,59 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="350"
+             d:DesignHeight="550"
+             x:Class="CollimationCircles.Controls.DynamicCameraControlsUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:CameraControlsViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBox">
+      <Setter Property="FontSize" Value="10" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="Margin" Value="0" />
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="MinWidth" Value="0" />
+      <Setter Property="Width" Value="40" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="Slider">
+      <Setter Property="MinHeight" Value="0" />
+      <Setter Property="Height" Value="35" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel
+    Orientation="Vertical"
+    Spacing="20"
+    IsEnabled="{Binding IsOpened}">
+    <ItemsControl ItemsSource="{Binding Camera.Controls}" >
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Grid
+            ColumnDefinitions="*,Auto"
+            RowDefinitions="20,22">
+            <TextBlock Text="{Binding Name}"/>
+            <Slider
+              Grid.RowSpan="2"
+              Grid.ColumnSpan="2"
+              Value="{Binding Value}"
+              Minimum="0"
+              Maximum="100" />
+            <TextBox
+              Grid.Column="1"
+              Text="{Binding Value}"/>
+          </Grid>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
+    <Button
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom"
+      Content="{DynamicResource Text.Default}"
+      Command="{Binding DefaultCommand}"/>
+
+  </StackPanel>
+</UserControl>

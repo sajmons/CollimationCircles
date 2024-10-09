@@ -11,43 +11,38 @@ namespace CollimationCircles.Views
 {
     public partial class SettingsView : Window
     {
-        private readonly IKeyHandlingService? khs;
-        private readonly SettingsViewModel? vm;
+        private readonly IKeyHandlingService khs;
+        private readonly SettingsViewModel vm;
 
         public SettingsView()
         {
             InitializeComponent();
 
-            vm = Ioc.Default.GetService<SettingsViewModel>();
+            vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             DataContext = vm;
 
-            Position = vm?.SettingsWindowPosition ?? new Avalonia.PixelPoint();
+            Position = vm.SettingsWindowPosition;
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
                 Topmost = m.Value.AlwaysOnTop;
             });
 
-            khs = Ioc.Default.GetService<IKeyHandlingService>();
+            khs = Ioc.Default.GetRequiredService<IKeyHandlingService>();
         }
 
         protected override void OnClosing(WindowClosingEventArgs e)
         {
             base.OnClosing(e);
 
-            var vm = Ioc.Default.GetService<SettingsViewModel>();
+            vm.SettingsWindowPosition = Position;
+            vm.SettingsWindowWidth = Width;
+            vm.SettingsWindowHeight = Height;
 
-            if (vm is not null)
+            if (e.CloseReason == WindowCloseReason.WindowClosing)
             {
-                vm.SettingsWindowPosition = Position;
-                vm.SettingsWindowWidth = Width;
-                vm.SettingsWindowHeight = Height;
-
-                if (e.CloseReason == WindowCloseReason.WindowClosing)
-                {
-                    vm.DockInMainWindow = true;
-                }
+                vm.DockInMainWindow = true;
             }
         }
 
@@ -57,17 +52,17 @@ namespace CollimationCircles.Views
             {
                 if (desktop.MainWindow != null)
                 {
-                    khs?.HandleMovement(desktop.MainWindow, vm, e);
+                    khs.HandleMovement(desktop.MainWindow, vm, e);
                 }
             }
 
-            khs?.HandleGlobalScale(vm, e);
-            khs?.HandleHelperRadius(vm, e);
-            khs?.HandleGlobalRotation(vm, e);
-            khs?.HandleHelperRotation(vm, e);
-            khs?.HandleHelperCount(vm, e);
-            khs?.HandleHelperThickness(vm, e);
-            khs?.HandleHelperSpacing(vm, e);
+            khs.HandleGlobalScale(vm, e);
+            khs.HandleHelperRadius(vm, e);
+            khs.HandleGlobalRotation(vm, e);
+            khs.HandleHelperRotation(vm, e);
+            khs.HandleHelperCount(vm, e);
+            khs.HandleHelperThickness(vm, e);
+            khs.HandleHelperSpacing(vm, e);
 
             base.OnKeyDown(e);
         }

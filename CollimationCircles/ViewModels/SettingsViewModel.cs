@@ -179,8 +179,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        [Range(Constraints.CameraStreamTimeoutMin, Constraints.CameraStreamTimeoutMax)]
-        private int cameraStreamTimeout = 700;
+        private string lastSelectedCamera = string.Empty;
 
         public SettingsViewModel(IDialogService dialogService)
         {
@@ -196,33 +195,33 @@ namespace CollimationCircles.ViewModels
             InitializeColors();
             InitializeKeyboardShortcuts();
 
-            Title = $"{DynRes.TryGetString("CollimationCircles")} - {DynRes.TryGetString("Version")} {AppService.GetAppVersion()}";
+            Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 
         private void InitializeKeyboardShortcuts()
         {
             GlobalShortcuts = new()
             {
-                { DynRes.TryGetString("GlobalRotationCW"), "CTRL R" },
-                { DynRes.TryGetString("GlobalRotationCCW"), "CTRL F" },
-                { DynRes.TryGetString("GlobalScaleUp"), "CTRL +" },
-                { DynRes.TryGetString("GlobalScaleDown"), "CTRL -" }
+                { ResSvc.TryGetString("GlobalRotationCW"), "CTRL R" },
+                { ResSvc.TryGetString("GlobalRotationCCW"), "CTRL F" },
+                { ResSvc.TryGetString("GlobalScaleUp"), "CTRL +" },
+                { ResSvc.TryGetString("GlobalScaleDown"), "CTRL -" }
             };
 
             ShapeShortcuts = new()
             {
-                { DynRes.TryGetString("IncreaseHelperRadius"), "CTRL W" },
-                { DynRes.TryGetString("DecreaseHelperRadius"), "CTRL S" },
-                { DynRes.TryGetString("IncreaseItemThichness"), "CTRL E" },
-                { DynRes.TryGetString("DecreaseItemThickness"), "CTRL D" },
-                { DynRes.TryGetString("RotateHelperCW"), "CTRL Q" },
-                { DynRes.TryGetString("RotateHelperCCW"), "CTRL A" },
-                { DynRes.TryGetString("IncreaseInclination"), "CTRL U" },
-                { DynRes.TryGetString("DecreaseInclination"), "CTRL J" },
-                { DynRes.TryGetString("IncreaseHelperSpacing"), "CTRL Z" },
-                { DynRes.TryGetString("DecreaseHelperSpacing"), "CTRL H" },
-                { DynRes.TryGetString("IncreaseHelperCount"), "CTRL T" },
-                { DynRes.TryGetString("DecreaseHelperCount"), "CTRL G" }
+                { ResSvc.TryGetString("IncreaseHelperRadius"), "CTRL W" },
+                { ResSvc.TryGetString("DecreaseHelperRadius"), "CTRL S" },
+                { ResSvc.TryGetString("IncreaseItemThichness"), "CTRL E" },
+                { ResSvc.TryGetString("DecreaseItemThickness"), "CTRL D" },
+                { ResSvc.TryGetString("RotateHelperCW"), "CTRL Q" },
+                { ResSvc.TryGetString("RotateHelperCCW"), "CTRL A" },
+                { ResSvc.TryGetString("IncreaseInclination"), "CTRL U" },
+                { ResSvc.TryGetString("DecreaseInclination"), "CTRL J" },
+                { ResSvc.TryGetString("IncreaseHelperSpacing"), "CTRL Z" },
+                { ResSvc.TryGetString("DecreaseHelperSpacing"), "CTRL H" },
+                { ResSvc.TryGetString("IncreaseHelperCount"), "CTRL T" },
+                { ResSvc.TryGetString("DecreaseHelperCount"), "CTRL G" }
             };
 
             logger.Info("Keyboard shortcuts initialized");
@@ -294,8 +293,8 @@ namespace CollimationCircles.ViewModels
             List<CollimationHelper> list =
             [
                 // Circles
-                new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = DynRes.TryGetString("Secondary") },
-                new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = DynRes.TryGetString("FocuserTube") },
+                new CircleViewModel() { ItemColor = Colors.LightGreen, Radius = 100, Thickness = 2, Label = ResSvc.TryGetString("Secondary") },
+                new CircleViewModel() { ItemColor = Colors.LightBlue, Radius = 250, Thickness = 3, Label = ResSvc.TryGetString("FocuserTube") },
 
                 // Spider
                 new SpiderViewModel(),
@@ -401,13 +400,13 @@ namespace CollimationCircles.ViewModels
         {
             var settings = new SaveFileDialogSettings
             {
-                Title = DynRes.TryGetString("SaveFile"),
+                Title = ResSvc.TryGetString("SaveFile"),
                 Filters =
                 [
-                    new(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
-                    new(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar"))
+                    new(ResSvc.TryGetString("JSONDocuments"), ResSvc.TryGetString("StarJson")),
+                    new(ResSvc.TryGetString("AllFiles"), ResSvc.TryGetString("StarChar"))
                 ],
-                DefaultExtension = DynRes.TryGetString("StarJson")
+                DefaultExtension = ResSvc.TryGetString("StarJson")
             };
 
             var path = await dialogService.ShowSaveFileDialogAsync(this, settings);
@@ -423,11 +422,11 @@ namespace CollimationCircles.ViewModels
         {
             var settings = new OpenFileDialogSettings
             {
-                Title = DynRes.TryGetString("OpenFile"),
+                Title = ResSvc.TryGetString("OpenFile"),
                 Filters =
                 [
-                    new(DynRes.TryGetString("JSONDocuments"), DynRes.TryGetString("StarJson")),
-                    new(DynRes.TryGetString("AllFiles"), DynRes.TryGetString("StarChar")),
+                    new(ResSvc.TryGetString("JSONDocuments"), ResSvc.TryGetString("StarJson")),
+                    new(ResSvc.TryGetString("AllFiles"), ResSvc.TryGetString("StarChar")),
                 ]
             };
 
@@ -437,7 +436,7 @@ namespace CollimationCircles.ViewModels
             {
                 if (!LoadState(path: path?.Path?.LocalPath))
                 {
-                    await dialogService.ShowMessageBoxAsync(this, DynRes.TryGetString("UnableToOpenFile"), DynRes.TryGetString("Error"));
+                    await dialogService.ShowMessageBoxAsync(this, ResSvc.TryGetString("UnableToOpenFile"), ResSvc.TryGetString("Error"));
                 }
             }
         }
@@ -494,7 +493,7 @@ namespace CollimationCircles.ViewModels
                 DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
 
                 var dialogResult = await dialogService.ShowMessageBoxAsync(null,
-                    DynRes.TryGetString("NewVersionDownload").F(newVersion), DynRes.TryGetString("NewVersion"), MessageBoxButton.YesNo);
+                    ResSvc.TryGetString("NewVersionDownload").F(newVersion), ResSvc.TryGetString("NewVersion"), MessageBoxButton.YesNo);
 
                 if (dialogResult is true)
                 {
@@ -506,7 +505,7 @@ namespace CollimationCircles.ViewModels
             else if (!success)
             {
                 DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
-                await dialogService.ShowMessageBoxAsync(null, result, DynRes.TryGetString("Error"));
+                await dialogService.ShowMessageBoxAsync(null, result, ResSvc.TryGetString("Error"));
                 RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
         }
@@ -559,7 +558,7 @@ namespace CollimationCircles.ViewModels
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
-                    CameraStreamTimeout = vm.CameraStreamTimeout;
+                    LastSelectedCamera = vm.LastSelectedCamera;
 
                     if (!DockInMainWindow)
                     {
@@ -686,7 +685,6 @@ namespace CollimationCircles.ViewModels
                 case nameof(ShowApplicationLog):
                 case nameof(ShowKeyboardShortcuts):
                 case nameof(SelectedLanguage):
-                case nameof(CameraStreamTimeout):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);
