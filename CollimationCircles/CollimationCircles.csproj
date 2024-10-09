@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Version>3.2.0</Version>
-    <InformationalVersion>beta8</InformationalVersion>    
+    <InformationalVersion>$(Version)</InformationalVersion>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
