@@ -132,6 +132,7 @@
   <system:String x:Key="Text.CameraControls">Camera controls</system:String>
   <system:String x:Key="Text.Default">Default</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Enter address</system:String>
+  <system:String x:Key="Text.RefreshCameras">Refresh camera list</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

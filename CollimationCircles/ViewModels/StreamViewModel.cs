@@ -181,6 +181,13 @@ namespace CollimationCircles.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void CameraRefresh()
+        {
+            CameraList = new ObservableCollection<ICamera>(cameraControlService.GetCameraList());
+            SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
+        }
+
         public void OnClosed()
         {
             SettingsDialogViewModel = null;

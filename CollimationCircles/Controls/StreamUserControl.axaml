@@ -18,19 +18,32 @@
         Orientation="Vertical"
         IsEnabled="{Binding !IsPlaying}">
         <TextBlock Text="{DynamicResource Text.CameraType}"/>
-        <ComboBox
-          ItemsSource="{Binding CameraList}"
-          SelectedItem="{Binding SelectedCamera}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <StackPanel Orientation="Horizontal">
-                <TextBlock Text="{Binding APIType}" />
-                <TextBlock Text=": " />
-                <TextBlock Text="{Binding Name}" />
-              </StackPanel>
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
+        <DockPanel>
+          <ComboBox
+            Width="180"
+            HorizontalAlignment="Left"
+            ItemsSource="{Binding CameraList}"
+            SelectedItem="{Binding SelectedCamera}"
+            DockPanel.Dock="Left">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <TextBlock Text="{Binding APIType}" />
+                  <TextBlock Text=": " />
+                  <TextBlock Text="{Binding Name}" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <Button
+            HorizontalAlignment="Right"
+            Command="{Binding CameraRefreshCommand}"
+            ToolTip.Tip="{DynamicResource Text.RefreshCameras}">
+            <PathIcon
+              Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Reset}" />
+          </Button>
+        </DockPanel>
         <StackPanel
           Orientation="Vertical"
           IsVisible="{Binding RemoteConnection}">
