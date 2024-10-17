@@ -22,7 +22,7 @@ namespace CollimationCircles.Services
         };
 
         public List<ICamera> GetCameras()
-        {
+        {            
             List<ICamera> cameras = [];
 
             if (OperatingSystem.IsWindows())
@@ -158,7 +158,14 @@ namespace CollimationCircles.Services
 
         public List<string> GetCommandLineParameters(ICamera camera)
         {
-            return [$":dshow-vdev={camera.Name}", ":dshow-size=1024x768", ":dshow-fps=30", ":dshow-adev=none", ":live-caching=300"];
+            return [
+                $":dshow-vdev={camera.Name}"
+                , ":dshow-size=1024x768"
+                , ":dshow-fps=30"
+                , ":dshow-adev=none"
+                , ":live-caching=300"
+                //, ":dshow-config"
+            ];
         }
     }
 }
