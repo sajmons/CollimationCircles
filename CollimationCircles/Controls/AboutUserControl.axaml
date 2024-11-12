@@ -32,6 +32,14 @@
       VerticalAlignment="Center"
       Text="{DynamicResource Text.PatreonDesc}" />
 
+    <TextBlock
+      Margin="8"
+      Text="{DynamicResource Text.ClientId}"/>
+    <TextBox
+      IsReadOnly="True"
+      Margin="8"      
+      Text="{ReflectionBinding ClientId}"/>
+
   </WrapPanel>
 
 </UserControl>
