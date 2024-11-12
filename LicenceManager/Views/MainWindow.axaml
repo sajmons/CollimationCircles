@@ -1,0 +1,77 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:LicenceManager.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="650"
+        x:Class="LicenceManager.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="LicenceManager"
+        Height="600"
+        Width="800">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <StackPanel
+    Orientation="Vertical"
+    Spacing="10"
+    Margin="10">
+
+    <StackPanel Orientation="Vertical" Spacing="10">
+      <TextBlock>Pass phrase:</TextBlock>
+      <TextBox
+        Text="{ReflectionBinding PassPhrase}"
+        Watermark="Enter pass phrase here"/>
+      <TextBlock>Private Key:</TextBlock>
+      <TextBox
+        IsReadOnly="True"
+        Text="{ReflectionBinding PrivateKey}"
+        Watermark="Private key will appear here"/>        
+      <TextBlock>Public Key:</TextBlock>
+      <TextBox
+        IsReadOnly="True"
+        Watermark="Public key will appear here"
+        Text="{ReflectionBinding PublicKey}" />
+    </StackPanel>
+    <Button
+      Content="Create Keys"
+      Command="{ReflectionBinding CreateKeysCommand}"/>
+
+    <TextBlock>Client ID:</TextBlock>
+    <TextBox
+      Text="{ReflectionBinding ClientId}"
+      Watermark="Enter client ID here"/>
+
+    <TextBlock>Licensed To:</TextBlock>
+    <TextBox
+      Text="{ReflectionBinding LicensedTo}"
+      Watermark="Enter user name and lastname"/>
+
+    <TextBlock>Email:</TextBlock>
+    <TextBox
+      Text="{ReflectionBinding LicensedToEmail}"
+      Watermark="Enter user email"/>
+
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Is trial</TextBlock>
+      <CheckBox
+        Name="trialLicence"
+        IsChecked="{ReflectionBinding TrialLicence}" />
+
+      <TextBlock>licence is valid for</TextBlock>
+      <TextBox
+        IsEnabled="{ReflectionBinding #trialLicence.IsChecked}"
+        Margin="5 0 5 0"
+        Text="{ReflectionBinding TrialLicenceDaysUntilExpiration}" />
+      <TextBlock>days</TextBlock>
+
+    </StackPanel>
+
+    <Button
+      Content="Create Licence"
+      Command="{ReflectionBinding CreateLicenceCommand}"/>
+  </StackPanel>
+
+</Window>
