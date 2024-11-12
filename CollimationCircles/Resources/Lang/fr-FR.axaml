@@ -131,6 +131,8 @@
   <system:String x:Key="Text.CameraControls">Commandes de la caméra</system:String>
   <system:String x:Key="Text.Default">Défaut</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Entrer l'adresse</system:String>
+  <system:String x:Key="Text.RefreshCameras">Refresh camera list</system:String>
+  <system:String x:Key="Text.ClientId">Client Id:</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
