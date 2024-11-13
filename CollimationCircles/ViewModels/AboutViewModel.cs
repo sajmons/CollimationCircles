@@ -13,6 +13,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string clientId;
 
+        [ObservableProperty]
+        private string license;
+
         private readonly IDialogService dialogService;
 
         public AboutViewModel(IDialogService dialogService)
@@ -20,6 +23,7 @@ namespace CollimationCircles.ViewModels
             this.dialogService = dialogService;
             
             ClientId = libc.hwid.HwId.Generate();
+            License = $"{LicenseService}";
             Title = $"{ResSvc.TryGetString("About")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 

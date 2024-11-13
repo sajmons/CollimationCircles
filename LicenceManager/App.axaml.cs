@@ -1,8 +1,12 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using HanumanInstitute.MvvmDialogs.Avalonia;
+using HanumanInstitute.MvvmDialogs;
 using LicenceManager.ViewModels;
 using LicenceManager.Views;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LicenceManager
 {
@@ -15,6 +19,8 @@ namespace LicenceManager
 
         public override void OnFrameworkInitializationCompleted()
         {
+            ConfigureServices();
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow
@@ -24,6 +30,18 @@ namespace LicenceManager
             }
 
             base.OnFrameworkInitializationCompleted();
+        }
+
+        private static void ConfigureServices()
+        {
+            Ioc.Default.ConfigureServices(
+            new ServiceCollection()
+                .AddSingleton<IDialogService>(new DialogService(
+                    new DialogManager(
+                        viewLocator: new ViewLocator(),
+                        dialogFactory: new DialogFactory().AddMessageBox()),
+                    viewModelFactory: x => Ioc.Default.GetService(x)))
+                .BuildServiceProvider());
         }
     }
 }

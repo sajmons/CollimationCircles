@@ -134,6 +134,7 @@
   <system:String x:Key="Text.EnterRemoteAddress">Enter address</system:String>
   <system:String x:Key="Text.RefreshCameras">Refresh camera list</system:String>
   <system:String x:Key="Text.ClientId">Client Id:</system:String>
+  <system:String x:Key="Text.License">License:</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

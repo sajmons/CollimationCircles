@@ -2,13 +2,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="250"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="390"
         x:Class="CollimationCircles.Views.AboutView"
         xmlns:controls="clr-namespace:CollimationCircles.Controls"
         Title="{Binding Title}"
         xmlns:vm="using:CollimationCircles.ViewModels"
         x:DataType="vm:AboutViewModel"
-        Width="650" Height="190"
+        Width="500" Height="390"
         Icon="/Resources/Images/icon_256px.ico"
         WindowStartupLocation="CenterScreen">
   <StackPanel

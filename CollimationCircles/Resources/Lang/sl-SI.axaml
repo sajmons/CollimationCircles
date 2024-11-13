@@ -130,8 +130,9 @@
   <system:String x:Key="Text.CameraControls">Lastnosti kamere</system:String>
   <system:String x:Key="Text.Default">Privzeto</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Vpišite naslov</system:String>
-  <system:String x:Key="Text.RefreshCameras">Refresh camera list</system:String>
-  <system:String x:Key="Text.ClientId">Client Id:</system:String>
+  <system:String x:Key="Text.RefreshCameras">Osveži kamere</system:String>
+  <system:String x:Key="Text.ClientId">Id Odjemalca:</system:String>
+  <system:String x:Key="Text.License">Licenca:</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

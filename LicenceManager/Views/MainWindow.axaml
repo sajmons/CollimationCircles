@@ -26,12 +26,10 @@
         Watermark="Enter pass phrase here"/>
       <TextBlock>Private Key:</TextBlock>
       <TextBox
-        IsReadOnly="True"
         Text="{ReflectionBinding PrivateKey}"
         Watermark="Private key will appear here"/>        
       <TextBlock>Public Key:</TextBlock>
       <TextBox
-        IsReadOnly="True"
         Watermark="Public key will appear here"
         Text="{ReflectionBinding PublicKey}" />
     </StackPanel>
@@ -72,6 +70,8 @@
     <Button
       Content="Create Licence"
       Command="{ReflectionBinding CreateLicenceCommand}"/>
+
+    <TextBlock Text="{ReflectionBinding SerializedLicense}" />
   </StackPanel>
 
 </Window>

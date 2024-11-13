@@ -6,6 +6,7 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CollimationCirclesFeatures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -26,8 +27,6 @@ namespace CollimationCircles.ViewModels
     public partial class SettingsViewModel : BaseViewModel, IViewClosed
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-        private readonly IDialogService dialogService;
 
         [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
@@ -181,21 +180,24 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string lastSelectedCamera = string.Empty;
 
-        public SettingsViewModel(IDialogService dialogService)
+        public SettingsViewModel()
         {
-            this.dialogService = dialogService;
-
             Initialize();
         }
 
         public void Initialize()
         {
+            InitializeLicenses();
             InitializeLanguage();
             InitializeThemes();
             InitializeColors();
             InitializeKeyboardShortcuts();
 
             Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
+        }
+
+        private void InitializeLicenses()
+        {
         }
 
         private void InitializeKeyboardShortcuts()
@@ -332,11 +334,11 @@ namespace CollimationCircles.ViewModels
         {
             if (SettingsDialogViewModel is null)
             {
-                SettingsDialogViewModel = dialogService?.CreateViewModel<SettingsViewModel>();
+                SettingsDialogViewModel = DialogService?.CreateViewModel<SettingsViewModel>();
 
                 if (SettingsDialogViewModel is not null)
                 {
-                    dialogService?.Show(null, SettingsDialogViewModel);
+                    DialogService?.Show(null, SettingsDialogViewModel);
                     logger.Info("Opened settings window");
                 }
 
@@ -351,27 +353,27 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void AddScrew()
+        internal async Task AddScrew()
         {
-            AddItem(new ScrewViewModel());
+            await AddItem(new ScrewViewModel());
         }
 
         [RelayCommand]
-        internal void AddClip()
+        internal async Task AddClip()
         {
-            AddItem(new PrimaryClipViewModel());
+            await AddItem(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
-        internal void AddSpider()
+        internal async Task AddSpider()
         {
-            AddItem(new SpiderViewModel());
+            await AddItem(new SpiderViewModel());
         }
 
         [RelayCommand]
-        internal void AddBahtinovMask()
+        internal async Task AddBahtinovMask()
         {
-            AddItem(new BahtinovMaskViewModel());
+            await AddItem(new BahtinovMaskViewModel());
         }
 
         [RelayCommand]
@@ -381,12 +383,18 @@ namespace CollimationCircles.ViewModels
             SelectedIndex = Items.Count - 1;
         }
 
-        private void AddItem(CollimationHelper item)
+        private async Task AddItem(CollimationHelper item)
         {
-            Items.Add(item);
-            SelectedIndex = Items.Count - 1;
+            await CheckFeatureCount(FeatureList.ShapeListMaxCount, Items.Count, async () =>
+            {
+                await CheckFeatureLicensed(FeatureList.Screw, () =>
+                {
+                    Items.Add(item);
+                    SelectedIndex = Items.Count - 1;
 
-            logger.Debug($"Added shape {item.Label}");
+                    logger.Debug($"Added shape {item.Label}");
+                });
+            });
         }
 
         [RelayCommand]
@@ -409,7 +417,7 @@ namespace CollimationCircles.ViewModels
                 DefaultExtension = ResSvc.TryGetString("StarJson")
             };
 
-            var path = await dialogService.ShowSaveFileDialogAsync(this, settings);
+            var path = await DialogService.ShowSaveFileDialogAsync(this, settings);
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
@@ -430,13 +438,13 @@ namespace CollimationCircles.ViewModels
                 ]
             };
 
-            var path = await dialogService.ShowOpenFileDialogAsync(this, settings);
+            var path = await DialogService.ShowOpenFileDialogAsync(this, settings);
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
                 if (!LoadState(path: path?.Path?.LocalPath))
                 {
-                    await dialogService.ShowMessageBoxAsync(this, ResSvc.TryGetString("UnableToOpenFile"), ResSvc.TryGetString("Error"));
+                    await DialogService.ShowMessageBoxAsync(this, ResSvc.TryGetString("UnableToOpenFile"), ResSvc.TryGetString("Error"));
                 }
             }
         }
@@ -492,7 +500,7 @@ namespace CollimationCircles.ViewModels
 
                 DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
 
-                var dialogResult = await dialogService.ShowMessageBoxAsync(null,
+                var dialogResult = await DialogService.ShowMessageBoxAsync(null,
                     ResSvc.TryGetString("NewVersionDownload").F(newVersion), ResSvc.TryGetString("NewVersion"), MessageBoxButton.YesNo);
 
                 if (dialogResult is true)
@@ -505,7 +513,7 @@ namespace CollimationCircles.ViewModels
             else if (!success)
             {
                 DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
-                await dialogService.ShowMessageBoxAsync(null, result, ResSvc.TryGetString("Error"));
+                await DialogService.ShowMessageBoxAsync(null, result, ResSvc.TryGetString("Error"));
                 RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
         }
@@ -620,10 +628,10 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal async Task OpenAboutDialog()
         {
-            var dialogViewModel = dialogService.CreateViewModel<AboutViewModel>();
+            var dialogViewModel = DialogService.CreateViewModel<AboutViewModel>();
 
             DissableAlwaysOnTop();
-            _ = await dialogService.ShowDialogAsync(this, dialogViewModel);
+            _ = await DialogService.ShowDialogAsync(this, dialogViewModel);
             RestoreAlwaysOnTop();
         }
 

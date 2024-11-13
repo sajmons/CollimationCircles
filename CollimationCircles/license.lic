@@ -1,0 +1,26 @@
+﻿<License>
+  <Id>980c51c9-62bb-4ff5-9380-25f68ff26734</Id>
+  <Type>Trial</Type>
+  <Expiration>Fri, 13 Dec 2024 09:14:38 GMT</Expiration>
+  <LicenseAttributes>
+    <Attribute name="ClientId">BE7FBE191F9A39B42114DC7B2EF2FFD149F3701C</Attribute>
+  </LicenseAttributes>
+  <ProductFeatures>
+    <Feature name="Camera Video Stream">true</Feature>
+    <Feature name="Scope Manager">true</Feature>
+    <Feature name="Themes">true</Feature>
+    <Feature name="Bahtinov Mask">true</Feature>
+    <Feature name="Screw">true</Feature>
+    <Feature name="PrimaryClip">true</Feature>
+    <Feature name="Save Shape List">true</Feature>
+    <Feature name="Load Shape List">true</Feature>
+    <Feature name="Show Shape Labels">true</Feature>
+    <Feature name="Shape List Max Count">10</Feature>
+    <Feature name="Global Properties">true</Feature>
+  </ProductFeatures>
+  <Customer>
+    <Name>Simon Šander</Name>
+    <Email>simon.sand3r@gmail.com</Email>
+  </Customer>
+  <Signature>MEQCIGjX2uEKnEwlhr1GO1QE+S35VXy6qA/AxHwEEeaREY7tAiAZwnvxiLgKIQxPFVIGVH1rnad3Ja23LGA8lxtOX3B6kQ==</Signature>
+</License>

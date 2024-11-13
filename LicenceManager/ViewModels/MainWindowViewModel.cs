@@ -3,6 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using Standard.Licensing;
 using System.Collections.Generic;
 using System;
+using System.Text;
+using System.IO;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using HanumanInstitute.MvvmDialogs;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CollimationCirclesFeatures;
 
 namespace LicenceManager.ViewModels
 {
@@ -22,7 +29,7 @@ namespace LicenceManager.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CreateLicenceCommand))]
-        private string? clientId;
+        private string clientId = string.Empty;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CreateLicenceCommand))]
@@ -37,6 +44,16 @@ namespace LicenceManager.ViewModels
 
         [ObservableProperty]
         private int trialLicenceDaysUntilExpiration = 30;
+
+        private readonly IDialogService dialogService;
+
+        [ObservableProperty]
+        private License? newLicense;
+
+        public MainWindowViewModel()
+        {
+            this.dialogService = Ioc.Default.GetRequiredService<IDialogService>();
+        }
 
         public bool CanExecuteCreateKeys
         {
@@ -53,19 +70,39 @@ namespace LicenceManager.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteCreateLicence))]
-        internal void CreateLicence()
+        internal async Task CreateLicence()
         {
-            var license = License.New()
+            var featureList = new FeatureList().ToDictionary(TrialLicence);            
+
+            NewLicense = License.New()
                 .WithUniqueIdentifier(Guid.NewGuid())
                 .As(TrialLicence ? LicenseType.Trial : LicenseType.Standard)
                 .ExpiresAt(TrialLicence ? DateTime.Now.AddDays(TrialLicenceDaysUntilExpiration) : DateTime.Now.AddYears(100))
-                .WithProductFeatures(new Dictionary<string, string>
+                .WithAdditionalAttributes(new Dictionary<string, string>
                     {
-                        {"Camera Video Stream", "yes"},
-                        {"Shapes Manager", "yes"}
+                        {"ClientId", ClientId }
                     })
+                .WithProductFeatures(featureList)
                 .LicensedTo(LicensedTo, LicensedToEmail)
                 .CreateAndSignWithPrivateKey(PrivateKey, PassPhrase);
+
+            // save licence file
+            var settings = new SaveFileDialogSettings
+            {
+                Title = "SaveFile",
+                Filters =
+                [
+                    new("License", "*.lic")
+                ],
+                DefaultExtension = "*.lic"
+            };
+
+            var path = await dialogService.ShowSaveFileDialogAsync(this, settings);
+
+            if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
+            {
+                File.WriteAllText($"{path?.Path?.LocalPath}license.lic", NewLicense.ToString(), Encoding.UTF8);
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteCreateKeys))]

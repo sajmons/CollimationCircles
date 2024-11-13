@@ -42,6 +42,7 @@ public partial class App : Application
     {
         Ioc.Default.ConfigureServices(
         new ServiceCollection()
+            .AddSingleton<ILicenseService, LicenseService>()
             .AddSingleton<IDialogService>(new DialogService(
                 new DialogManager(
                     viewLocator: new ViewLocator(),
@@ -57,7 +58,7 @@ public partial class App : Application
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
-            .AddSingleton<IResourceService>(new ResourceService(LangDir))
+            .AddSingleton<IResourceService>(new ResourceService(LangDir))            
             .BuildServiceProvider());
     }
 }

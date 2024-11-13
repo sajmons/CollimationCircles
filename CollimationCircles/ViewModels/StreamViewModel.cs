@@ -2,6 +2,7 @@
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CollimationCirclesFeatures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
@@ -116,19 +118,22 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
-        private void PlayPause()
+        private async Task PlayPause()
         {
-            if (libVLCService.MediaPlayer != null)
+            await CheckFeatureLicensed(FeatureList.CameraVideoStream, () =>
             {
-                if (!libVLCService.MediaPlayer.IsPlaying)
+                if (libVLCService.MediaPlayer != null)
                 {
-                    libVLCService.Play();
+                    if (!libVLCService.MediaPlayer.IsPlaying)
+                    {
+                        libVLCService.Play();
+                    }
+                    else
+                    {
+                        libVLCService.MediaPlayer.Stop();
+                    }
                 }
-                else
-                {
-                    libVLCService.MediaPlayer.Stop();
-                }
-            }
+            });
         }
 
         private void ShowWebCamStream()

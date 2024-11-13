@@ -31,14 +31,21 @@
       TextWrapping="WrapWithOverflow"
       VerticalAlignment="Center"
       Text="{DynamicResource Text.PatreonDesc}" />
+    <StackPanel
+      Orientation="Vertical"
+      Spacing="10"
+      Margin="8 0 8 0">
+      <TextBlock
+        Text="{DynamicResource Text.ClientId}"/>
+      <TextBlock
+        Text="{ReflectionBinding ClientId}"/>
 
-    <TextBlock
-      Margin="8"
-      Text="{DynamicResource Text.ClientId}"/>
-    <TextBox
-      IsReadOnly="True"
-      Margin="8"      
-      Text="{ReflectionBinding ClientId}"/>
+      <TextBlock
+        Text="{DynamicResource Text.License}"/>
+      <TextBlock
+        TextWrapping="WrapWithOverflow"
+        Text="{ReflectionBinding License}"/>
+    </StackPanel>
 
   </WrapPanel>
 
