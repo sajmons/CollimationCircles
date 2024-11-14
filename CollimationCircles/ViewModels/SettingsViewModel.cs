@@ -110,10 +110,6 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool alwaysOnTop = true;
-
-        [JsonProperty]
-        [ObservableProperty]
         private bool dockInMainWindow = true;
 
         [JsonProperty]
@@ -155,8 +151,6 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         private bool cameraVideoStreamExpanded = true;
-
-        private bool oldAllwysOnTop = false;
 
         [JsonProperty]
         [ObservableProperty]
@@ -353,27 +347,27 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal async Task AddScrew()
+        internal void AddScrew()
         {
-            await AddItem(new ScrewViewModel());
+            AddItem(new ScrewViewModel());
         }
 
         [RelayCommand]
-        internal async Task AddClip()
+        internal void AddClip()
         {
-            await AddItem(new PrimaryClipViewModel());
+            AddItem(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
-        internal async Task AddSpider()
+        internal void AddSpider()
         {
-            await AddItem(new SpiderViewModel());
+            AddItem(new SpiderViewModel());
         }
 
         [RelayCommand]
-        internal async Task AddBahtinovMask()
+        internal void AddBahtinovMask()
         {
-            await AddItem(new BahtinovMaskViewModel());
+            AddItem(new BahtinovMaskViewModel());
         }
 
         [RelayCommand]
@@ -383,18 +377,12 @@ namespace CollimationCircles.ViewModels
             SelectedIndex = Items.Count - 1;
         }
 
-        private async Task AddItem(CollimationHelper item)
+        private void AddItem(CollimationHelper item)
         {
-            await CheckFeatureCount(FeatureList.ShapeListMaxCount, Items.Count, async () =>
-            {
-                await CheckFeatureLicensed(FeatureList.Screw, () =>
-                {
-                    Items.Add(item);
-                    SelectedIndex = Items.Count - 1;
+            Items.Add(item);
+            SelectedIndex = Items.Count - 1;
 
-                    logger.Debug($"Added shape {item.Label}");
-                });
-            });
+            logger.Debug($"Added shape {item.Label}");
         }
 
         [RelayCommand]
@@ -498,7 +486,7 @@ namespace CollimationCircles.ViewModels
             {
                 logger.Info($"Found new version {newVersion}");
 
-                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
+                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow
 
                 var dialogResult = await DialogService.ShowMessageBoxAsync(null,
                     ResSvc.TryGetString("NewVersionDownload").F(newVersion), ResSvc.TryGetString("NewVersion"), MessageBoxButton.YesNo);
@@ -704,17 +692,6 @@ namespace CollimationCircles.ViewModels
                     }
                     break;
             }
-        }
-
-        public void DissableAlwaysOnTop()
-        {
-            oldAllwysOnTop = AlwaysOnTop;
-            AlwaysOnTop = false;
-        }
-
-        public void RestoreAlwaysOnTop()
-        {
-            AlwaysOnTop = oldAllwysOnTop;
         }
     }
 }

@@ -6,6 +6,7 @@ using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using System.Threading.Tasks;
 using System;
 using HanumanInstitute.MvvmDialogs;
+using Newtonsoft.Json;
 
 namespace CollimationCircles.ViewModels
 {
@@ -17,13 +18,19 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         public string mainTitle = string.Empty;
 
+        [JsonProperty]
+        [ObservableProperty]
+        private bool alwaysOnTop = true;
+
         internal readonly IResourceService ResSvc;
         internal readonly IDialogService DialogService;
         internal readonly ILicenseService LicenseService;
 
+        private bool oldAllwysOnTop = false;
+
         public BaseViewModel()
         {
-            ResSvc = Ioc.Default.GetRequiredService<IResourceService>();            
+            ResSvc = Ioc.Default.GetRequiredService<IResourceService>();
             DialogService = Ioc.Default.GetRequiredService<IDialogService>(); ;
             LicenseService = Ioc.Default.GetRequiredService<ILicenseService>();
         }
@@ -34,7 +41,18 @@ namespace CollimationCircles.ViewModels
             ResSvc.Translate(targetLanguage);
         }
 
-        public async Task CheckFeatureLicensed(string feature, Action callback)
+        public void DissableAlwaysOnTop()
+        {
+            oldAllwysOnTop = AlwaysOnTop;
+            AlwaysOnTop = false;
+        }
+
+        public void RestoreAlwaysOnTop()
+        {
+            AlwaysOnTop = oldAllwysOnTop;
+        }
+
+        public void CheckFeatureLicensed(string feature, Action callback)
         {
             if (LicenseService.IsFeatureLicensed(feature))
             {
@@ -42,12 +60,19 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
-                await DialogService.ShowMessageBoxAsync(null,
-                    $"Feature '{feature}' is not supported by your current licence.\nPlease upgrade your license.", "Insifficient license", MessageBoxButton.Ok);
+                DissableAlwaysOnTop();      // prevent new version dialog to appear behind MainWindow
+
+                Task.Run(async () =>
+                {
+                    await DialogService.ShowMessageBoxAsync(null,
+                        $"Feature '{feature}' is not supported by your current licence.\nPlease upgrade your license.", "Insifficient license", MessageBoxButton.Ok);
+                });
+
+                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
         }
 
-        public async Task CheckFeatureCount(string feature, int count, Action callback)
+        public void CheckFeatureCount(string feature, int count, Action callback)
         {
             if (LicenseService.IsFeatureCount(feature, count))
             {
@@ -55,8 +80,15 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
-                await DialogService.ShowMessageBoxAsync(null,
+                DissableAlwaysOnTop();      // prevent new version dialog to appear behind MainWindow
+
+                Task.Run(async () =>
+                {
+                    await DialogService.ShowMessageBoxAsync(null,
                     $"Feature '{feature}' count of '{count}' is not supported by your current licence.\nPlease upgrade your license.", "Insifficient license", MessageBoxButton.Ok);
+                });
+
+                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
         }
     }

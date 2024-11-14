@@ -118,22 +118,19 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
-        private async Task PlayPause()
+        private void PlayPause()
         {
-            await CheckFeatureLicensed(FeatureList.CameraVideoStream, () =>
+            if (libVLCService.MediaPlayer != null)
             {
-                if (libVLCService.MediaPlayer != null)
+                if (!libVLCService.MediaPlayer.IsPlaying)
                 {
-                    if (!libVLCService.MediaPlayer.IsPlaying)
-                    {
-                        libVLCService.Play();
-                    }
-                    else
-                    {
-                        libVLCService.MediaPlayer.Stop();
-                    }
+                    libVLCService.Play();
                 }
-            });
+                else
+                {
+                    libVLCService.MediaPlayer.Stop();
+                }
+            }
         }
 
         private void ShowWebCamStream()

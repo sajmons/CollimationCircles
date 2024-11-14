@@ -20,7 +20,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        private Guid id = Guid.NewGuid();
+        private string id = Guid.NewGuid().ToString();
 
         [JsonProperty]
         [ObservableProperty]

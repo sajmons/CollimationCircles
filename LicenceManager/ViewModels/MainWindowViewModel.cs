@@ -92,7 +92,7 @@ namespace LicenceManager.ViewModels
                 Title = "SaveFile",
                 Filters =
                 [
-                    new("License", "*.lic")
+                    new("License", "lic")
                 ],
                 DefaultExtension = "*.lic"
             };
@@ -101,7 +101,7 @@ namespace LicenceManager.ViewModels
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
-                File.WriteAllText($"{path?.Path?.LocalPath}license.lic", NewLicense.ToString(), Encoding.UTF8);
+                File.WriteAllText($"{path?.Path?.LocalPath}", NewLicense.ToString(), Encoding.UTF8);
             }
         }
 
