@@ -34,16 +34,13 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
-    }
-
-    private const string LangDir = "CollimationCircles/Resources/Lang";
-    private const string ProductName = "Collimation Circles";
+    }    
 
     private static void ConfigureServices()
     {
         Ioc.Default.ConfigureServices(
         new ServiceCollection()
-            .AddSingleton<ILicenseService>(new LicenseService(ProductName))
+            .AddSingleton<ILicenseService>(new LicenseService(AppService.ProductName))
             .AddSingleton<IDialogService>(new DialogService(
                 new DialogManager(
                     viewLocator: new ViewLocator(),
@@ -59,7 +56,7 @@ public partial class App : Application
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
-            .AddSingleton<IResourceService>(new ResourceService(LangDir))            
+            .AddSingleton<IResourceService>(new ResourceService(AppService.LangDir))            
             .BuildServiceProvider());
     }
 }

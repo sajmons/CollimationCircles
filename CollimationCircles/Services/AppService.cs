@@ -28,6 +28,8 @@ public class AppService
     public const string YouTubeChannel = "https://www.youtube.com/channel/UCz6iFL9ziUcWgs_n6n2gwZw";
     public const string GitHubIssue = "https://github.com/sajmons/CollimationCircles/issues/new";
     public const string PatreonWebPage = "https://www.patreon.com/SaimonsAstronomy";
+    public const string LangDir = "CollimationCircles/Resources/Lang";
+    public const string ProductName = "Collimation Circles";
 
     public static string GetAppMajorVersion()
     {
