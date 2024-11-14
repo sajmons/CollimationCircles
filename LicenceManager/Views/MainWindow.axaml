@@ -27,7 +27,7 @@
       <TextBlock>Private Key:</TextBlock>
       <TextBox
         Text="{ReflectionBinding PrivateKey}"
-        Watermark="Private key will appear here"/>        
+        Watermark="Private key will appear here"/>
       <TextBlock>Public Key:</TextBlock>
       <TextBox
         Watermark="Public key will appear here"
@@ -40,30 +40,45 @@
     <TextBlock>Client ID:</TextBlock>
     <TextBox
       Text="{ReflectionBinding ClientId}"
-      Watermark="Enter client ID here"/>
+      Watermark="Enter client ID here (GUID received from client)"/>
 
-    <TextBlock>Licensed To:</TextBlock>
-    <TextBox
-      Text="{ReflectionBinding LicensedTo}"
-      Watermark="Enter user name and lastname"/>
+    <TextBlock>Product:</TextBlock>
+    <UniformGrid Columns="2">
+      <TextBox
+        Margin="0 0 5 0"
+        Text="{ReflectionBinding Product}"
+        Watermark="Enter product name here (e.g., Best Product)"/>
+      <TextBox
+        Margin="5 0 0 0"
+        Text="{ReflectionBinding MajorProductVersion}"
+        Watermark="Enter major product version here (e.g., 4)"/>
+    </UniformGrid>
 
-    <TextBlock>Email:</TextBlock>
-    <TextBox
-      Text="{ReflectionBinding LicensedToEmail}"
-      Watermark="Enter user email"/>
+    <TextBlock>Customer:</TextBlock>
+    <UniformGrid Columns="2">
+      <TextBox
+        Margin="0 0 5 0"
+        Text="{ReflectionBinding LicensedTo}"
+        Watermark="Enter user first and last name (e.g., John Doe)"/>
+      <TextBox
+        Margin="5 0 0 0"
+        Text="{ReflectionBinding LicensedToEmail}"
+        Watermark="Enter user email (e.g., john.doe@gmail.com)"/>
+    </UniformGrid>
 
     <StackPanel Orientation="Horizontal">
-      <TextBlock>Is trial</TextBlock>
+      <TextBlock Margin="0 5 0 0">Is trial license</TextBlock>
       <CheckBox
+        Margin="5 0 0 0"
         Name="trialLicence"
         IsChecked="{ReflectionBinding TrialLicence}" />
 
-      <TextBlock>licence is valid for</TextBlock>
+      <TextBlock Margin="0 5 0 0">and is valid for</TextBlock>
       <TextBox
         IsEnabled="{ReflectionBinding #trialLicence.IsChecked}"
         Margin="5 0 5 0"
         Text="{ReflectionBinding TrialLicenceDaysUntilExpiration}" />
-      <TextBlock>days</TextBlock>
+      <TextBlock Margin="0 5 0 0">days</TextBlock>
 
     </StackPanel>
 

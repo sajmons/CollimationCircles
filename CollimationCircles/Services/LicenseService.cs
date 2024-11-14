@@ -1,10 +1,4 @@
-﻿using CollimationCircles.ViewModels;
-using CollimationCirclesFeatures;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.Avalonia;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using Standard.Licensing;
+﻿using Standard.Licensing;
 using Standard.Licensing.Validation;
 using System;
 using System.IO;
@@ -22,12 +16,12 @@ namespace CollimationCircles.Services
 
         public bool IsLicensed => license != null;
 
-        public LicenseService()
+        public LicenseService(string productName)
         {
-            license = LoadLicense();
-        }
+            license = LoadLicense(productName);
+        }        
 
-        private License? LoadLicense()
+        private License? LoadLicense(string productName)
         {
             try
             {
@@ -41,6 +35,8 @@ namespace CollimationCircles.Services
 
                 string clientId = libc.hwid.HwId.Generate();
 
+                string majorProductVersion = AppService.GetAppMajorVersion();
+
                 var validationFailures = license.Validate()
                                 .ExpirationDate(DateTime.Now)
                                 .And()
@@ -48,6 +44,12 @@ namespace CollimationCircles.Services
                                 .And()
                                 .AssertThat(lic => lic.AdditionalAttributes.Get("ClientId") == clientId,
                                     new GeneralValidationFailure { Message = "ClientId mismatch" })
+                                .And()
+                                .AssertThat(lic => lic.AdditionalAttributes.Get("Product") == productName,
+                                    new GeneralValidationFailure { Message = "Product name mismatch" })
+                                .And()
+                                .AssertThat(lic => lic.AdditionalAttributes.Get("MajorProductVersion") == majorProductVersion,
+                                    new GeneralValidationFailure { Message = "Major product version number mismatch" })
                                 .AssertValidLicense();
 
                 if (validationFailures.Any())
@@ -59,7 +61,7 @@ namespace CollimationCircles.Services
                 }
                 else
                 {
-                    logger.Info($"License: {license?.Type}, {license?.Customer.Name}, {license?.Customer.Email}, {license?.Id}");
+                    logger.Info($"License: {license?.Type}, {license?.Customer.Name}, {license?.Customer.Email}, {license?.Expiration}");
                     return license;
                 }
             }
@@ -73,27 +75,34 @@ namespace CollimationCircles.Services
 
         public bool IsFeatureLicensed(string feature)
         {
-            if (IsLicensed)
+            try
             {
-                var validationFailures = license.Validate()
-                    .ExpirationDate(DateTime.Now)
-                    .And()
-                    .AssertThat(lic => lic.ProductFeatures.Get(feature) == "true",
-                        new GeneralValidationFailure { Message = $"Feature '{feature}' not licensed" })
-                    .AssertValidLicense();
-
-                if (validationFailures.Any())
+                if (IsLicensed)
                 {
-                    foreach (var failure in validationFailures)
+                    var validationFailures = license.Validate()
+                        .ExpirationDate(DateTime.Now)
+                        .And()
+                        .AssertThat(lic => lic.ProductFeatures.Get(feature) == "true",
+                            new GeneralValidationFailure { Message = $"Feature '{feature}' not licensed" })
+                        .AssertValidLicense();
+
+                    if (validationFailures.Any())
                     {
-                        logger.Error(failure.GetType().Name + ": " + failure.Message + " - " + failure.HowToResolve);
+                        foreach (var failure in validationFailures)
+                        {
+                            logger.Error(failure.GetType().Name + ": " + failure.Message + " - " + failure.HowToResolve);
+                        }
+                    }
+                    else
+                    {
+                        logger.Info($"Feature '{feature}' is licensed");
+                        return true;
                     }
                 }
-                else
-                {
-                    logger.Info($"Feature '{feature}' is licensed");
-                    return true;
-                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, ex.Message);
             }
 
             return false;
@@ -135,7 +144,6 @@ namespace CollimationCircles.Services
             catch (Exception ex)
             {
                 logger.Error(ex, ex.Message);
-
             }
 
             return false;

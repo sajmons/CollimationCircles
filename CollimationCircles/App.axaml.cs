@@ -36,13 +36,14 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    public static string LangDir = "CollimationCircles/Resources/Lang";
+    private const string LangDir = "CollimationCircles/Resources/Lang";
+    private const string ProductName = "Collimation Circles";
 
     private static void ConfigureServices()
     {
         Ioc.Default.ConfigureServices(
         new ServiceCollection()
-            .AddSingleton<ILicenseService, LicenseService>()
+            .AddSingleton<ILicenseService>(new LicenseService(ProductName))
             .AddSingleton<IDialogService>(new DialogService(
                 new DialogManager(
                     viewLocator: new ViewLocator(),

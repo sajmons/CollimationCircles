@@ -11,7 +11,7 @@
             ]);
         }
 
-        public Dictionary<string, string> ToDictionary(bool isTrial)
+        public Dictionary<string, string> ToDictionary()
         {
             Dictionary<string, string> keyValuePairs = [];
 
@@ -19,7 +19,7 @@
             {
                 if (f.Numeric == null)
                 {
-                    keyValuePairs.Add(f.Name, isTrial ? "true" : $"{f.Enabled}");
+                    keyValuePairs.Add(f.Name, "true");
                 }
                 else
                 {

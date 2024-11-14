@@ -33,6 +33,14 @@ namespace LicenceManager.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(CreateLicenceCommand))]
+        private string product = string.Empty;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CreateLicenceCommand))]
+        private string majorProductVersion = string.Empty;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CreateLicenceCommand))]
         private string? licensedTo;
 
         [ObservableProperty]
@@ -43,7 +51,7 @@ namespace LicenceManager.ViewModels
         private bool trialLicence = true;
 
         [ObservableProperty]
-        private int trialLicenceDaysUntilExpiration = 30;
+        private int trialLicenceDaysUntilExpiration = 5;        
 
         private readonly IDialogService dialogService;
 
@@ -72,15 +80,24 @@ namespace LicenceManager.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecuteCreateLicence))]
         internal async Task CreateLicence()
         {
-            var featureList = new FeatureList().ToDictionary(TrialLicence);            
+            var featureList = new FeatureList().ToDictionary();
 
-            NewLicense = License.New()
+            ILicenseBuilder licenseBuilder = License.New()
                 .WithUniqueIdentifier(Guid.NewGuid())
-                .As(TrialLicence ? LicenseType.Trial : LicenseType.Standard)
-                .ExpiresAt(TrialLicence ? DateTime.Now.AddDays(TrialLicenceDaysUntilExpiration) : DateTime.Now.AddYears(100))
+                .As(TrialLicence ? LicenseType.Trial : LicenseType.Standard);
+
+            if (TrialLicence)
+            {
+                licenseBuilder.ExpiresAt(DateTime.Now.AddDays(TrialLicenceDaysUntilExpiration));
+            }
+
+            NewLicense = licenseBuilder                
                 .WithAdditionalAttributes(new Dictionary<string, string>
                     {
-                        {"ClientId", ClientId }
+                        {"ClientId", ClientId },
+                        {"Product", Product },
+                        {"MajorProductVersion", MajorProductVersion },
+                        {"DatePublished", DateTime.UtcNow.ToString("o") },
                     })
                 .WithProductFeatures(featureList)
                 .LicensedTo(LicensedTo, LicensedToEmail)

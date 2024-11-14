@@ -29,6 +29,25 @@ public class AppService
     public const string GitHubIssue = "https://github.com/sajmons/CollimationCircles/issues/new";
     public const string PatreonWebPage = "https://www.patreon.com/SaimonsAstronomy";
 
+    public static string GetAppMajorVersion()
+    {
+        var entryAssembly = Assembly.GetEntryAssembly();
+
+        var assemblyVersion = entryAssembly?.GetName().Version;
+
+        int major = assemblyVersion?.Major ?? 0;
+
+        return $"{major}";
+    }
+    public static string GetAppName()
+    {
+        var entryAssembly = Assembly.GetEntryAssembly();
+
+        var assemblyVersion = entryAssembly?.GetName().Version;
+
+        return assemblyVersion?.ToString() ?? "0.0.0";
+    }
+
     public static string GetAppVersion()
     {
         var entryAssembly = Assembly.GetEntryAssembly();
