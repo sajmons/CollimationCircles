@@ -677,8 +677,8 @@ namespace CollimationCircles.ViewModels
                 case nameof(DockInMainWindow):
                 case nameof(GlobalOffsetX):
                 case nameof(GlobalOffsetY):
-                //case nameof(MainWindowOpacity):
-                //case nameof(MainWindowPosition):
+                case nameof(MainWindowOpacity):
+                case nameof(MainWindowPosition):
                 case nameof(MainWindowWidth):
                 case nameof(MainWindowHeight):
                 case nameof(PinVideoWindowToMainWindow):

@@ -138,7 +138,7 @@
   <system:String x:Key="Text.ProfileManagerTitle">Profile manager</system:String>
   <system:String x:Key="Text.AddCurrentProfile">Add current setup to profile manager</system:String>
   <system:String x:Key="Text.EnterProfileName">Enter profile name</system:String>
-  <system:String x:Key="Text.DefaultProfileName">Default profile</system:String>
+  <system:String x:Key="Text.DefaultProfileName">Profile</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

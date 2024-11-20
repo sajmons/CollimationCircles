@@ -7,13 +7,13 @@
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.ProfileManagerUserControl"
              x:DataType="vm:ProfileManagerViewModel">
-  <StackPanel HorizontalAlignment="Stretch">
-    <Grid ColumnDefinitions="*,32" RowDefinitions="32,*">
+  <StackPanel HorizontalAlignment="Stretch" Spacing="10">
+    <Grid ColumnDefinitions="*,5,44">
       <TextBox
-        Text="{ReflectionBinding SelectedProfile.Name, Mode=TwoWay}"
+        Text="{ReflectionBinding ProfileName}"
         Watermark="{DynamicResource Text.EnterProfileName}" />
       <Button
-        Grid.Column="1"
+        Grid.Column="2"
         Command="{ReflectionBinding AddCurrentProfileCommand}"
         ToolTip.Tip="{DynamicResource Text.AddCurrentProfile}"
         Width="32"
@@ -22,35 +22,32 @@
           Foreground="{DynamicResource Color2}"
           Data="{StaticResource IconData.Add}" />
       </Button>
-
-      <ListBox
+    </Grid>
+    <ListBox
         Grid.Row="1"
         Grid.ColumnSpan="2"
-        Name="profiles"
-        SelectedItem="{ReflectionBinding SelectedProfile, Mode=TwoWay}"
+        SelectedItem="{ReflectionBinding SelectedProfile}"
         SelectionMode="Single"
         ItemsSource="{ReflectionBinding Profiles}">
-        <ListBox.ItemTemplate>
-          <DataTemplate>
-            <Grid ColumnDefinitions="*,32" RowDefinitions="20">
-              <TextBlock Text="{ReflectionBinding Name}"/>
-              <Button
-                Grid.Column="1"
-                Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveProfileCommand}"
-                CommandParameter="{ReflectionBinding .}"
-                ToolTip.Tip="{DynamicResource Text.RemoveItem}"
-                Width="32"
-                Height="32">
-                <PathIcon
-                  Foreground="{DynamicResource Color2}"
-                  Data="{StaticResource IconData.Remove}" />
-              </Button>
-            </Grid>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
-
-    </Grid>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Grid ColumnDefinitions="*,32" RowDefinitions="20">
+            <TextBlock Text="{ReflectionBinding Name}"/>
+            <Button
+              Grid.Column="1"
+              Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveProfileCommand}"
+              CommandParameter="{ReflectionBinding .}"
+              ToolTip.Tip="{DynamicResource Text.RemoveItem}"
+              Width="32"
+              Height="32">
+              <PathIcon
+                Foreground="{DynamicResource Color2}"
+                Data="{StaticResource IconData.Remove}" />
+            </Button>
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
   </StackPanel>
 
 </UserControl>

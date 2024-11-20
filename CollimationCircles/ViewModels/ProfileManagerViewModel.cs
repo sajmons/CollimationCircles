@@ -18,19 +18,28 @@ namespace CollimationCircles.ViewModels
         public ProfileManagerViewModel()
         {
             _settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
-            SelectedProfile = new() { Name = ResSvc.TryGetString("DefaultProfileName"), ScopeShapes = [] };
+            ProfileName = ResSvc.TryGetString("DefaultProfileName");
         }
 
         [ObservableProperty]
         private ObservableCollection<Profile> profiles = [];
 
         [ObservableProperty]
-        private Profile selectedProfile;
+        private Profile? selectedProfile;
 
-        [RelayCommand]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddCurrentProfileCommand))]
+        private string profileName;
+
+        public bool CanExecuteAddCurrentProfile
+        {
+            get => !string.IsNullOrWhiteSpace(ProfileName);
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteAddCurrentProfile))]
         internal void AddCurrentProfile()
         {
-            Profiles.Add(new Profile { Name = SelectedProfile.Name, ScopeShapes = _settingsViewModel.Items.ToList() });
+            Profiles.Add(new Profile(ProfileName, _settingsViewModel.Items));
         }
 
         [RelayCommand]
@@ -39,15 +48,25 @@ namespace CollimationCircles.ViewModels
             Profiles.Remove(profile);
         }
 
-        partial void OnSelectedProfileChanged(Profile? oldValue, Profile newValue)
+        partial void OnSelectedProfileChanged(Profile? oldValue, Profile? newValue)
         {
             if (newValue != null)
             {
                 _settingsViewModel.Items.Clear();
-                _settingsViewModel.Items.AddRange(newValue.ScopeShapes!);
+                _settingsViewModel.Items.AddRange(newValue.Shapes);
+
+                ProfileName = newValue.Name;
 
                 WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(_settingsViewModel));
             }
+        }
+
+        partial void OnProfileNameChanged(string? oldValue, string newValue)
+        {
+            if (SelectedProfile != null)
+            {
+                SelectedProfile.Name = newValue;
+            }            
         }
     }
 }

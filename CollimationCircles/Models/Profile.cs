@@ -1,10 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using CollimationCircles.Extensions;
+using CommunityToolkit.Mvvm.ComponentModel;
+using System.Collections.ObjectModel;
 
 namespace CollimationCircles.Models
 {
-    public class Profile
+    public partial class Profile : ObservableValidator
     {
-        public required string Name { get; set; }
-        public required List<CollimationHelper> ScopeShapes { get; set; }
+        [ObservableProperty]
+        public string name;
+
+        [ObservableProperty]
+        public ObservableCollection<CollimationHelper> shapes = new ObservableCollection<CollimationHelper>();
+
+        public Profile(string name, ObservableCollection<CollimationHelper> scopeShapes)
+        { 
+            Name = name;
+            Shapes.AddRange(scopeShapes);
+        }
     }
 }
