@@ -17,7 +17,7 @@ namespace CollimationCircles.Services
 
         private IEnumerable<IValidationFailure>? validationFailures;
 
-        public bool IsLicensed => license != null;
+        public bool HasLicense => license != null;
 
         public bool HasErrors => validationFailures?.FirstOrDefault() != null;
 
@@ -92,7 +92,7 @@ namespace CollimationCircles.Services
         {
             try
             {
-                if (IsLicensed)
+                if (!HasErrors)
                 {
                     var validationFailures = license.Validate()
                         .ExpirationDate(DateTime.Now)
@@ -127,7 +127,7 @@ namespace CollimationCircles.Services
         {
             try
             {
-                if (IsLicensed)
+                if (!HasErrors)
                 {
                     int maxCount = 0;
 

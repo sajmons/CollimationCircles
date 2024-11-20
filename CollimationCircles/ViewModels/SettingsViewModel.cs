@@ -345,33 +345,33 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal async Task AddCircle()
+        internal void AddCircle()
         {
-            await AddItem(new CircleViewModel());
+            AddItem(new CircleViewModel());
         }
 
         [RelayCommand]
-        internal async Task AddScrew()
+        internal void AddScrew()
         {
-            await AddItem(new ScrewViewModel());
+            AddItem(new ScrewViewModel());
         }
 
         [RelayCommand]
-        internal async Task AddClip()
+        internal void AddClip()
         {
-            await AddItem(new PrimaryClipViewModel());
+            AddItem(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
-        internal async Task AddSpider()
+        internal void AddSpider()
         {
-            await AddItem(new SpiderViewModel());
+            AddItem(new SpiderViewModel());
         }
 
         [RelayCommand]
-        internal async Task AddBahtinovMask()
+        internal void AddBahtinovMask()
         {
-            await AddItem(new BahtinovMaskViewModel());
+            AddItem(new BahtinovMaskViewModel());
         }
 
         [RelayCommand]
@@ -381,14 +381,12 @@ namespace CollimationCircles.ViewModels
             SelectedIndex = Items.Count - 1;
         }
 
-        private async Task AddItem(CollimationHelper item)
+        private void AddItem(CollimationHelper item)
         {
-            await CheckFeatureCount(FeatureList.MaxHelperItemsCount, Items.Count, () => {
-                Items.Add(item);
-                SelectedIndex = Items.Count - 1;
+            Items.Add(item);
+            SelectedIndex = Items.Count - 1;
 
-                logger.Debug($"Added shape {item.Label}");
-            });            
+            logger.Debug($"Added shape {item.Label}");
         }
 
         [RelayCommand]
