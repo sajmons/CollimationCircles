@@ -133,6 +133,10 @@
   <system:String x:Key="Text.RefreshCameras">Osveži kamere</system:String>
   <system:String x:Key="Text.ClientId">Id Odjemalca:</system:String>
   <system:String x:Key="Text.License">Licenca:</system:String>
+  <system:String x:Key="Text.ProfileManagerTitle">Profile manager</system:String>
+  <system:String x:Key="Text.AddCurrentProfile">Add current setup to profile manager</system:String>
+  <system:String x:Key="Text.EnterProfileName">Vpišite ime profila</system:String>
+  <system:String x:Key="Text.DefaultProfileName">Default profile</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

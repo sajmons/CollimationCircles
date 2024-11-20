@@ -51,6 +51,7 @@ public partial class App : Application
             .AddSingleton<StreamViewModel>()
             .AddSingleton<AppLogViewModel>()
             .AddSingleton<CameraControlsViewModel>()
+            .AddSingleton<ProfileManagerViewModel>()
             .AddTransient<AboutViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()

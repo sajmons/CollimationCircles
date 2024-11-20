@@ -6,7 +6,6 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
-using CollimationCirclesFeatures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -151,6 +150,10 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         private bool cameraVideoStreamExpanded = true;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool profileManagerExpanded = true;
 
         [JsonProperty]
         [ObservableProperty]
@@ -551,6 +554,7 @@ namespace CollimationCircles.ViewModels
                     ShowKeyboardShortcuts = vm.ShowKeyboardShortcuts;
                     SettingsExpanded = vm.SettingsExpanded;
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
+                    ProfileManagerExpanded = vm.ProfileManagerExpanded;
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
@@ -673,8 +677,8 @@ namespace CollimationCircles.ViewModels
                 case nameof(DockInMainWindow):
                 case nameof(GlobalOffsetX):
                 case nameof(GlobalOffsetY):
-                case nameof(MainWindowOpacity):
-                case nameof(MainWindowPosition):
+                //case nameof(MainWindowOpacity):
+                //case nameof(MainWindowPosition):
                 case nameof(MainWindowWidth):
                 case nameof(MainWindowHeight):
                 case nameof(PinVideoWindowToMainWindow):

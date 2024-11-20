@@ -58,6 +58,9 @@
     <ProjectReference Include="..\CollimationCirclesFeatures\CollimationCirclesFeatures.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\ProfileManagerUserControl.axaml.cs">
+      <DependentUpon>ProfileManagerUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\AboutUserControl.axaml.cs">
       <DependentUpon>AboutUserControl.axaml</DependentUpon>
     </Compile>
