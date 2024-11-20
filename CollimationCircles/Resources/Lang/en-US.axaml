@@ -139,6 +139,11 @@
   <system:String x:Key="Text.AddCurrentProfile">Add current setup to profile manager</system:String>
   <system:String x:Key="Text.EnterProfileName">Enter profile name</system:String>
   <system:String x:Key="Text.DefaultProfileName">Profile</system:String>
+  <system:String x:Key="Text.InsifficientLicenseTitle">Insifficient License</system:String>
+  <system:String x:Key="Text.InsifficientLicenseMessage">Feature '{0}' is not supported by your current licence.</system:String>
+  <system:String x:Key="Text.InsifficientLicenseCountMessage">Feature '{0}' count of '{1}' is not supported by your current licence.</system:String>
+  <system:String x:Key="Text.UpgradeLicenseMessage">Would you like to upgrade your license or request trial license?</system:String>
+  <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>  
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

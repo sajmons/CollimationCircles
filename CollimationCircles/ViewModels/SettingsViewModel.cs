@@ -6,6 +6,7 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CollimationCirclesFeatures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -344,33 +345,33 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void AddCircle()
+        internal async Task AddCircle()
         {
-            AddItem(new CircleViewModel());
+            await AddItem(new CircleViewModel());
         }
 
         [RelayCommand]
-        internal void AddScrew()
+        internal async Task AddScrew()
         {
-            AddItem(new ScrewViewModel());
+            await AddItem(new ScrewViewModel());
         }
 
         [RelayCommand]
-        internal void AddClip()
+        internal async Task AddClip()
         {
-            AddItem(new PrimaryClipViewModel());
+            await AddItem(new PrimaryClipViewModel());
         }
 
         [RelayCommand]
-        internal void AddSpider()
+        internal async Task AddSpider()
         {
-            AddItem(new SpiderViewModel());
+            await AddItem(new SpiderViewModel());
         }
 
         [RelayCommand]
-        internal void AddBahtinovMask()
+        internal async Task AddBahtinovMask()
         {
-            AddItem(new BahtinovMaskViewModel());
+            await AddItem(new BahtinovMaskViewModel());
         }
 
         [RelayCommand]
@@ -380,12 +381,14 @@ namespace CollimationCircles.ViewModels
             SelectedIndex = Items.Count - 1;
         }
 
-        private void AddItem(CollimationHelper item)
+        private async Task AddItem(CollimationHelper item)
         {
-            Items.Add(item);
-            SelectedIndex = Items.Count - 1;
+            await CheckFeatureCount(FeatureList.MaxHelperItemsCount, Items.Count, () => {
+                Items.Add(item);
+                SelectedIndex = Items.Count - 1;
 
-            logger.Debug($"Added shape {item.Label}");
+                logger.Debug($"Added shape {item.Label}");
+            });            
         }
 
         [RelayCommand]

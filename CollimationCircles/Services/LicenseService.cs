@@ -1,6 +1,7 @@
 ﻿using Standard.Licensing;
 using Standard.Licensing.Validation;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -14,22 +15,34 @@ namespace CollimationCircles.Services
 
         private readonly License? license;
 
+        private IEnumerable<IValidationFailure>? validationFailures;
+
         public bool IsLicensed => license != null;
+
+        public bool HasErrors => validationFailures?.FirstOrDefault() != null;
+
+        public string ValidationError => validationFailures?.FirstOrDefault()?.Message ?? string.Empty;
+
+        public bool IsExpired => license?.Expiration < DateTime.Now;
+
+        public DateTime? Expiration => license?.Expiration;
 
         public LicenseService(string productName)
         {
             license = LoadLicense(productName);
-        }        
+        }
 
         private License? LoadLicense(string productName)
         {
+            License? license = null;
+
             try
             {
                 logger.Info($"Loading licence file");
 
                 using TextReader textReader = new StreamReader("./license.lic");
 
-                License license = License.Load(textReader);
+                license = License.Load(textReader);
 
                 textReader.Close();
 
@@ -37,7 +50,7 @@ namespace CollimationCircles.Services
 
                 string majorProductVersion = AppService.GetAppMajorVersion();
 
-                var validationFailures = license.Validate()
+                validationFailures = license.Validate()
                                 .ExpirationDate(DateTime.Now)
                                 .And()
                                 .Signature(publicKey)
@@ -51,6 +64,8 @@ namespace CollimationCircles.Services
                                 .AssertThat(lic => lic.AdditionalAttributes.Get("MajorProductVersion") == majorProductVersion,
                                     new GeneralValidationFailure { Message = "Major product version number mismatch" })
                                 .AssertValidLicense();
+
+
 
                 if (validationFailures.Any())
                 {
@@ -70,7 +85,7 @@ namespace CollimationCircles.Services
                 logger.Error(ex, ex.Message);
             }
 
-            return null;
+            return license;
         }
 
         public bool IsFeatureLicensed(string feature)

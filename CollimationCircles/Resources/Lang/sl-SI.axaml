@@ -137,6 +137,11 @@
   <system:String x:Key="Text.AddCurrentProfile">Dodaj v upravljalec profilov</system:String>
   <system:String x:Key="Text.EnterProfileName">Vpišite ime profila</system:String>
   <system:String x:Key="Text.DefaultProfileName">Profil</system:String>
+  <system:String x:Key="Text.InsifficientLicenseTitle">Neustrezna licenca</system:String>
+  <system:String x:Key="Text.InsifficientLicenseMessage">Vaša trenutna licenca ne podpira funkcionalnosti '{0}'.</system:String>
+  <system:String x:Key="Text.InsifficientLicenseCountMessage">Vaša trenutna licenca ne podpira funkcionalnosti '{0}' v številu '{1}'</system:String>
+  <system:String x:Key="Text.UpgradeLicenseMessage">Bi želeli nadgraditi vašo licenco ali zahteveti preizkusno licenco?</system:String>
+  <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

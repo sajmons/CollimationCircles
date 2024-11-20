@@ -2,12 +2,14 @@
 {
     public class FeatureList : List<Feature>
     {
-        public const string ScopeManager = "Scope Manager";        
+        public const string ProfileManager = "Profile Manager";
+        public const string MaxHelperItemsCount = "Max helper items count";
 
         public FeatureList()
         {
-            AddRange([                
-                new Feature { Name = ScopeManager }
+            AddRange([
+                new Feature { Name = ProfileManager },
+                new Feature { Name = MaxHelperItemsCount, Numeric = 5 }
             ]);
         }
 

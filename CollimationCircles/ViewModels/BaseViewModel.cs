@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System;
 using HanumanInstitute.MvvmDialogs;
 using Newtonsoft.Json;
+using CollimationCircles.Extensions;
+using Tmds.DBus.Protocol;
 
 namespace CollimationCircles.ViewModels
 {
@@ -52,7 +54,7 @@ namespace CollimationCircles.ViewModels
             AlwaysOnTop = oldAllwysOnTop;
         }
 
-        public void CheckFeatureLicensed(string feature, Action callback)
+        public async Task CheckFeatureLicensed(string feature, Action callback)
         {
             if (LicenseService.IsFeatureLicensed(feature))
             {
@@ -60,19 +62,34 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
-                DissableAlwaysOnTop();      // prevent new version dialog to appear behind MainWindow
+                DissableAlwaysOnTop();      // prevent dialog to appear behind MainWindow
 
-                Task.Run(async () =>
+                string title = ResSvc.TryGetString("InsifficientLicenseTitle");
+                
+                string message = ResSvc.TryGetString("InsifficientLicenseMessage").F(feature);
+
+                if (LicenseService.IsExpired)
                 {
-                    await DialogService.ShowMessageBoxAsync(null,
-                        $"Feature '{feature}' is not supported by your current licence.\nPlease upgrade your license.", "Insifficient license", MessageBoxButton.Ok);
-                });
+                    string expired = ResSvc.TryGetString("ExpiredLicenseMessage").F(LicenseService.Expiration!.Value.ToLongDateString());
+                    message += Environment.NewLine + expired;
+                }
+
+                string upgrade = ResSvc.TryGetString("UpgradeLicenseMessage");
+
+                string dialogMessage = $"{message}\n{upgrade}";
+
+                var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
 
                 RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
+
+                if (dialogResult == true)
+                {
+                    // user requested licence
+                }
             }
         }
 
-        public void CheckFeatureCount(string feature, int count, Action callback)
+        public async Task CheckFeatureCount(string feature, int count, Action callback)
         {
             if (LicenseService.IsFeatureCount(feature, count))
             {
@@ -80,15 +97,30 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
-                DissableAlwaysOnTop();      // prevent new version dialog to appear behind MainWindow
+                DissableAlwaysOnTop();      // prevent dialog to appear behind MainWindow
 
-                Task.Run(async () =>
+                string title = ResSvc.TryGetString("InsifficientLicenseTitle");
+
+                string message = ResSvc.TryGetString("InsifficientLicenseCountMessage").F(feature, count);
+
+                if (LicenseService.IsExpired)
                 {
-                    await DialogService.ShowMessageBoxAsync(null,
-                    $"Feature '{feature}' count of '{count}' is not supported by your current licence.\nPlease upgrade your license.", "Insifficient license", MessageBoxButton.Ok);
-                });
+                    string expired = ResSvc.TryGetString("ExpiredLicenseMessage").F(LicenseService.Expiration!.Value.ToLongDateString());
+                    message += Environment.NewLine + expired;
+                }
+
+                string upgrade = ResSvc.TryGetString("UpgradeLicenseMessage");
+
+                string dialogMessage = $"{message}\n{upgrade}";                
+
+                var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
 
                 RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
+
+                if (dialogResult == true)
+                {
+                    // user requested licence
+                }
             }
         }
     }

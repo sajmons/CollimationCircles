@@ -8,16 +8,21 @@ using System.Linq;
 using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
 using CommunityToolkit.Mvvm.Messaging;
+using CollimationCircles.Services;
+using CollimationCirclesFeatures;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class ProfileManagerViewModel : BaseViewModel
     {
-        private readonly SettingsViewModel _settingsViewModel;
+        private readonly SettingsViewModel settingsViewModel;
+        private readonly ILicenseService licenseService;
 
         public ProfileManagerViewModel()
         {
-            _settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            licenseService = Ioc.Default.GetRequiredService<ILicenseService>();
             ProfileName = ResSvc.TryGetString("DefaultProfileName");
         }
 
@@ -37,9 +42,12 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteAddCurrentProfile))]
-        internal void AddCurrentProfile()
+        internal async Task AddCurrentProfile()
         {
-            Profiles.Add(new Profile(ProfileName, _settingsViewModel.Items));
+            await CheckFeatureLicensed(FeatureList.ProfileManager, () =>
+            {
+                Profiles.Add(new Profile(ProfileName, settingsViewModel.Items));
+            });
         }
 
         [RelayCommand]
@@ -52,12 +60,12 @@ namespace CollimationCircles.ViewModels
         {
             if (newValue != null)
             {
-                _settingsViewModel.Items.Clear();
-                _settingsViewModel.Items.AddRange(newValue.Shapes);
+                settingsViewModel.Items.Clear();
+                settingsViewModel.Items.AddRange(newValue.Shapes);
 
                 ProfileName = newValue.Name;
 
-                WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(_settingsViewModel));
+                WeakReferenceMessenger.Default.Send(new SettingsChangedMessage(settingsViewModel));
             }
         }
 
@@ -66,7 +74,7 @@ namespace CollimationCircles.ViewModels
             if (SelectedProfile != null)
             {
                 SelectedProfile.Name = newValue;
-            }            
+            }
         }
     }
 }
