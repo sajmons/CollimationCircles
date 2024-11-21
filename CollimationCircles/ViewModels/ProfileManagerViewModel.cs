@@ -8,18 +8,19 @@ using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
 using CommunityToolkit.Mvvm.Messaging;
 using System.Threading.Tasks;
+using CollimationCirclesFeatures;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class ProfileManagerViewModel : BaseViewModel
     {
         private readonly SettingsViewModel settingsViewModel;
-        
+
         public ProfileManagerViewModel()
         {
             settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
             ProfileName = ResSvc.TryGetString("DefaultProfileName");
-        }        
+        }
 
         [ObservableProperty]
         private Profile? selectedProfile;
@@ -28,8 +29,13 @@ namespace CollimationCircles.ViewModels
         [NotifyCanExecuteChangedFor(nameof(AddCurrentProfileCommand))]
         private string profileName;
 
-        
-        public ObservableCollection<Profile> Profiles { get { return settingsViewModel.Profiles; } }
+        public ObservableCollection<Profile> Profiles
+        {
+            get
+            {
+                return settingsViewModel.Profiles;
+            }
+        }
 
         public bool CanExecuteAddCurrentProfile
         {
@@ -39,10 +45,10 @@ namespace CollimationCircles.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecuteAddCurrentProfile))]
         internal async Task AddCurrentProfile()
         {
-            //await CheckFeatureLicensed(FeatureList.ProfileManager, () =>
-            //{
+            await CheckValidLicense(() =>
+            {
                 settingsViewModel.Profiles.Add(new Profile(ProfileName, settingsViewModel.Items));
-            //});
+            });
         }
 
         [RelayCommand]

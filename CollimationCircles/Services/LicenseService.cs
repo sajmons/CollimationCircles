@@ -27,6 +27,8 @@ namespace CollimationCircles.Services
 
         public DateTime? Expiration => license?.Expiration;
 
+        public bool IsValid => HasLicense && !IsExpired && !HasErrors;
+
         public LicenseService(string productName)
         {
             license = LoadLicense(productName);

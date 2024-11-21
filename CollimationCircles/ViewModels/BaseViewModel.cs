@@ -54,6 +54,41 @@ namespace CollimationCircles.ViewModels
             AlwaysOnTop = oldAllwysOnTop;
         }
 
+        public async Task CheckValidLicense(Action callback)
+        {
+            if (LicenseService.IsValid)
+            {
+                callback?.Invoke();
+            }
+            else
+            {
+                DissableAlwaysOnTop();      // prevent dialog to appear behind MainWindow
+
+                string title = ResSvc.TryGetString("InsifficientLicenseTitle");
+
+                string message = ResSvc.TryGetString("InsifficientLicenseMessage");
+
+                if (LicenseService.IsExpired)
+                {
+                    string expired = ResSvc.TryGetString("ExpiredLicenseMessage").F(LicenseService.Expiration!.Value.ToLongDateString());
+                    message += Environment.NewLine + expired;
+                }
+
+                string upgrade = ResSvc.TryGetString("UpgradeLicenseMessage");
+
+                string dialogMessage = $"{message}\n{upgrade}";
+
+                var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
+
+                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
+
+                if (dialogResult == true)
+                {
+                    // user requested licence
+                }
+            }
+        }
+
         public async Task CheckFeatureLicensed(string feature, Action callback)
         {
             if (LicenseService.IsFeatureLicensed(feature))

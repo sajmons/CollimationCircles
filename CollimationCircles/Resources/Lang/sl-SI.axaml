@@ -138,7 +138,7 @@
   <system:String x:Key="Text.EnterProfileName">Vpišite ime profila</system:String>
   <system:String x:Key="Text.DefaultProfileName">Profil</system:String>
   <system:String x:Key="Text.InsifficientLicenseTitle">Neustrezna licenca</system:String>
-  <system:String x:Key="Text.InsifficientLicenseMessage">Fnkcionalnosti '{0}' zahteva veljavno licenco.</system:String>
+  <system:String x:Key="Text.InsifficientLicenseMessage">Ta funkcionalnosti zahteva veljavno licenco.</system:String>
   <system:String x:Key="Text.InsifficientLicenseCountMessage">Funkcionalnosti '{0}' v številu '{1}' zahteva veljavno licenco</system:String>
   <system:String x:Key="Text.UpgradeLicenseMessage">Bi želeli nadgraditi vašo licenco ali zahteveti preizkusno licenco?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">Ta licenca je potekla {0}</system:String>

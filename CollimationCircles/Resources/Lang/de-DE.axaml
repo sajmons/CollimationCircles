@@ -138,7 +138,7 @@
   <system:String x:Key="Text.EnterProfileName">Enter profile name</system:String>
   <system:String x:Key="Text.DefaultProfileName">Profile</system:String>
   <system:String x:Key="Text.InsifficientLicenseTitle">Insifficient License</system:String>
-  <system:String x:Key="Text.InsifficientLicenseMessage">Feature '{0}' requires valid licence.</system:String>
+  <system:String x:Key="Text.InsifficientLicenseMessage">This Feature requires valid licence.</system:String>
   <system:String x:Key="Text.InsifficientLicenseCountMessage">Feature '{0}' count of '{1}' requires valid licence.</system:String>
   <system:String x:Key="Text.UpgradeLicenseMessage">Would you like to upgrade your license or request trial license?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
