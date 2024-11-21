@@ -31,6 +31,8 @@ namespace CollimationCircles.Services
 
         public bool IsValid => HasLicense && !IsExpired && !HasErrors;
 
+        public bool IsTrial => license?.Type == LicenseType.Trial;
+
         public LicenseService(string productName)
         {            
             license = LoadLicense(productName);            
@@ -174,7 +176,8 @@ namespace CollimationCircles.Services
 
             if (IsValid)
             {
-                return $"{license?.Type}, {license?.Customer.Name}, {license?.Customer.Email}, {license?.Id}";
+                string validUntil = IsTrial ? $"{ResSvc.TryGetString("ValidUntil")} {Expiration}" : string.Empty;
+                return $"{license?.Type}, {license?.Customer.Name}, {license?.Customer.Email} {validUntil}";
             }
             else if (HasLicense && IsExpired)
             {

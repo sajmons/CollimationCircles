@@ -13,5 +13,7 @@ namespace CollimationCircles.Services
         public bool IsExpired { get; }
         public DateTime? Expiration { get; }
         public bool IsValid { get; }
+
+        public bool IsTrial { get; }
     }
 }

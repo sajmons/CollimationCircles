@@ -1,17 +1,17 @@
 ﻿<License>
-  <Id>60a3f310-9a17-402e-b64c-e8e1a1c8d2a8</Id>
+  <Id>f828945a-5d70-4d1d-895e-035ca3d643fb</Id>
   <Type>Trial</Type>
-  <Expiration>Tue, 26 Nov 2024 08:38:35 GMT</Expiration>
+  <Expiration>Sat, 16 Nov 2024 09:09:00 GMT</Expiration>
   <LicenseAttributes>
     <Attribute name="ClientId">BE7FBE191F9A39B42114DC7B2EF2FFD149F3701C</Attribute>
     <Attribute name="Product">Collimation Circles</Attribute>
     <Attribute name="MajorProductVersion">4</Attribute>
-    <Attribute name="DatePublished">2024-11-21T08:38:35.6838170Z</Attribute>
+    <Attribute name="DatePublished">2024-11-21T09:09:00.4649495Z</Attribute>
   </LicenseAttributes>
   <ProductFeatures />
   <Customer>
     <Name>Simon Šander</Name>
     <Email>simon.sand3r@gmail.com</Email>
   </Customer>
-  <Signature>MEUCIQDrnGogj+SmC8Tyk1nxo2BMxxlwpYLDffg6KXqZ8hmPJgIgURKxaGa5NldjpqD4te7RBTSOk3x1gM8BM38U0jpnyZM=</Signature>
+  <Signature>MEUCIAGoHhRbYT2cH6YdatT740B4f5AaXALfoVXCjte8jCp3AiEApx2Pq8rNnjBfYKj1mRF7B101UAUlREhb18TOGp3VCRE=</Signature>
 </License>

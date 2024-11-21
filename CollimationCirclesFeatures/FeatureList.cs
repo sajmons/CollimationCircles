@@ -7,10 +7,10 @@
 
         public FeatureList()
         {
-            AddRange([
-                new Feature { Name = ProfileManager },
-                new Feature { Name = MaxHelperItemsCount, Numeric = 5 }
-            ]);
+            //AddRange([
+            //    new Feature { Name = ProfileManager },
+            //    new Feature { Name = MaxHelperItemsCount, Numeric = 5 }
+            //]);
         }
 
         public Dictionary<string, string> ToDictionary()

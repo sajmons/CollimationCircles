@@ -6,7 +6,6 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
-using CollimationCirclesFeatures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;

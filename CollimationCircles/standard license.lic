@@ -1,18 +1,16 @@
 ﻿<License>
-  <Id>2edacb8d-6124-4e33-b7c3-cd8425755e2e</Id>
+  <Id>d3128f0f-f26f-4777-9d68-96cd9b96e94f</Id>
   <Type>Standard</Type>
   <LicenseAttributes>
     <Attribute name="ClientId">BE7FBE191F9A39B42114DC7B2EF2FFD149F3701C</Attribute>
     <Attribute name="Product">Collimation Circles</Attribute>
     <Attribute name="MajorProductVersion">4</Attribute>
-    <Attribute name="DatePublished">2024-11-14T08:23:09.7009738Z</Attribute>
+    <Attribute name="DatePublished">2024-11-21T08:48:40.4079271Z</Attribute>
   </LicenseAttributes>
-  <ProductFeatures>
-    <Feature name="Scope Manager">true</Feature>
-  </ProductFeatures>
+  <ProductFeatures />
   <Customer>
     <Name>Simon Šander</Name>
     <Email>simon.sand3r@gmail.com</Email>
   </Customer>
-  <Signature>MEUCIHa6WSUD6RcnqOMvU81oim7WrnAcKa+2n3K26lXI4Mz9AiEA/1ioyVxJNs2/mbUnSkMiVLhgcvcqpu/Xi1H+Uu5ECiY=</Signature>
+  <Signature>MEQCIEH0/OUiS9L9+SCqIs3F0HQGCtVXdZDMzgx+gPCKJzG9AiBWQv4JnNPE2xvWdqMI+t7lhYQzotoX+jKLRwXcpZ5SCg==</Signature>
 </License>

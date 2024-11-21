@@ -71,6 +71,9 @@
     <Compile Update="Controls\AboutUserControl.axaml.cs">
       <DependentUpon>AboutUserControl.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\RequestLicenseView.axaml.cs">
+      <DependentUpon>RequestLicenseView.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\CameraControlsView.axaml.cs">
       <DependentUpon>CameraControlsView.axaml</DependentUpon>
     </Compile>
@@ -79,10 +82,13 @@
     <None Update="icon.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="trial license.lic">
+    <None Update="trial expired license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="license.lic">
+    <None Update="standard license.lic">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="trial license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NLog.config">

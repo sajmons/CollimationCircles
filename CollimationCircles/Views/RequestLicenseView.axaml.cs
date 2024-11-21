@@ -4,15 +4,15 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Views
 {
-    public partial class CameraControlsView : Window
+    public partial class RequestLicenseView : Window
     {
-        public CameraControlsView()
+        public RequestLicenseView()
         {
             InitializeComponent();
 
             if (!Design.IsDesignMode)
             {
-                DataContext = Ioc.Default.GetRequiredService<CameraControlsViewModel>();
+                DataContext = Ioc.Default.GetRequiredService<RequestLicenseViewModel>();
             }
         }
     }

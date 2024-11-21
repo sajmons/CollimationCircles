@@ -34,7 +34,7 @@ public partial class App : Application
         }
 
         base.OnFrameworkInitializationCompleted();
-    }    
+    }
 
     private static void ConfigureServices()
     {
@@ -54,6 +54,7 @@ public partial class App : Application
             .AddSingleton<CameraControlsViewModel>()
             .AddSingleton<ProfileManagerViewModel>()
             .AddTransient<AboutViewModel>()
+            .AddSingleton<RequestLicenseViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()

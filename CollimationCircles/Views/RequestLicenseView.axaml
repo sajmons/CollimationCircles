@@ -1,0 +1,90 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500"
+        d:DesignHeight="290"
+        x:Class="CollimationCircles.Views.RequestLicenseView"
+        xmlns:controls="clr-namespace:CollimationCircles.Controls"
+        Title="{Binding Title}"
+        xmlns:vm="using:CollimationCircles.ViewModels"
+        x:DataType="vm:RequestLicenseViewModel"
+        Width="500" Height="290"
+        Icon="/Resources/Images/icon_256px.ico"
+        WindowStartupLocation="CenterScreen">
+  <StackPanel
+    Margin="20"
+    Spacing="10"
+    Orientation="Vertical">
+    <Grid
+      ColumnDefinitions="*,Auto"
+      RowDefinitions="30,8,30,8,30,8,30,8,30,8,30">
+      <TextBlock
+        Text="{DynamicResource Text.ClientId}"/>
+      <TextBlock
+        Grid.Column="1"
+        Text="{ReflectionBinding ClientId}"/>
+      
+      <TextBlock
+        Grid.Row="2"
+        Text="{DynamicResource Text.Product}"/>
+      <TextBlock
+        Grid.Column="1"
+        Grid.Row="2">
+        <TextBlock.Text>
+          <MultiBinding StringFormat="{}{0} {1}">
+            <Binding Path="Product" />
+            <Binding Path="ProductMajorVersion" />            
+          </MultiBinding>
+        </TextBlock.Text>
+        </TextBlock>
+      
+      <TextBlock
+        Grid.Row="4"
+        Text="{DynamicResource Text.Customer}"/>
+      <TextBox
+        Grid.Row="4"
+        Grid.Column="1"
+        Watermark="{DynamicResource Text.CustomerWatermark}"
+        Text="{ReflectionBinding Customer}"/>
+      
+      <TextBlock
+        Grid.Row="6"
+        Text="{DynamicResource Text.CustomerEmail}"/>
+      <TextBox
+        Grid.Row="6"
+        Grid.Column="1"
+        Watermark="{DynamicResource Text.CustomerEmailWatermark}"
+        Text="{ReflectionBinding CustomerEmail}"/>
+
+      <TextBlock
+        Grid.Row="8"
+        Text="{DynamicResource Text.LicenseType}"/>
+      <StackPanel 
+        Spacing="10"
+        Orientation="Horizontal"        
+        Grid.Column="1"
+        Grid.Row="8">
+        <RadioButton
+          Content="{DynamicResource Text.StandardLicense}"
+          GroupName="LicenseType"
+          IsChecked="{ReflectionBinding !IsTrialSelected}"/>
+        <RadioButton
+          IsChecked="{ReflectionBinding IsTrialSelected}"
+          GroupName="LicenseType"
+          Content="{DynamicResource Text.TrialLicense}"/>
+      </StackPanel>
+
+      <TextBlock
+        Grid.Row="10"
+        Text="{DynamicResource Text.LicenseCost}"/>
+      <TextBlock
+        Grid.Row="10"
+        Grid.Column="1"
+        Text="{ReflectionBinding LicenseCost}"/>
+    </Grid>
+    <Button 
+      Content="{DynamicResource Text.RequestLicense}"
+      Command="{ReflectionBinding Submit}"/>
+  </StackPanel>
+</Window>

@@ -1,5 +1,4 @@
 using CollimationCircles.Services;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using System.Web;
@@ -8,22 +7,10 @@ namespace CollimationCircles.ViewModels
 {
     internal partial class AboutViewModel : BaseViewModel, IModalDialogViewModel
     {
-        public bool? DialogResult => true;
+        public bool? DialogResult => true;                
 
-        [ObservableProperty]
-        private string clientId;
-
-        [ObservableProperty]
-        private string license;
-
-        private readonly IDialogService dialogService;
-
-        public AboutViewModel(IDialogService dialogService)
-        {
-            this.dialogService = dialogService;
-            
-            ClientId = libc.hwid.HwId.Generate();
-            License = $"{LicenseService}";
+        public AboutViewModel()
+        {        
             Title = $"{ResSvc.TryGetString("About")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 
@@ -36,7 +23,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void CloseDialog()
         {
-            dialogService.Close(this);
+            DialogService.Close(this);
         }
 
         [RelayCommand]

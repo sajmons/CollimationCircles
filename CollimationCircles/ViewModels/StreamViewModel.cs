@@ -2,7 +2,6 @@
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
-using CollimationCirclesFeatures;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -11,14 +10,12 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class StreamViewModel : BaseViewModel, IViewClosed
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly IDialogService dialogService;
         private readonly ICameraControlService cameraControlService;
         private readonly ILibVLCService libVLCService;
 
@@ -60,10 +57,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool controlsEnabled = false;
 
-        public StreamViewModel(ILibVLCService libVLCService, IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
+        public StreamViewModel(ILibVLCService libVLCService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
             this.libVLCService = libVLCService;
-            this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
             this.cameraControlService = cameraControlService;
 
@@ -137,7 +133,7 @@ namespace CollimationCircles.ViewModels
         {
             Dispatcher.UIThread.Post(() =>
             {
-                dialogService.Show<StreamViewModel>(null, this);
+                DialogService.Show<StreamViewModel>(null, this);
                 logger.Trace($"Opened web camera stream window");
             });
         }
@@ -148,7 +144,7 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
-                    dialogService.Close(this);
+                    DialogService.Close(this);
                     logger.Trace($"Closed web camera stream window");
                 }
                 catch (Exception exc)
@@ -168,18 +164,18 @@ namespace CollimationCircles.ViewModels
         {
             if (SettingsDialogViewModel is null)
             {
-                SettingsDialogViewModel = dialogService.CreateViewModel<CameraControlsViewModel>();
+                SettingsDialogViewModel = DialogService.CreateViewModel<CameraControlsViewModel>();
 
                 if (SettingsDialogViewModel is not null)
                 {
-                    dialogService.Show(null, SettingsDialogViewModel);
+                    DialogService.Show(null, SettingsDialogViewModel);
                     logger.Info("Opened camera controls dialog");
                 }
             }
             else
             {
-                dialogService.Close(SettingsDialogViewModel);
-                dialogService.Show(null, SettingsDialogViewModel);
+                DialogService.Close(SettingsDialogViewModel);
+                DialogService.Show(null, SettingsDialogViewModel);
             }
         }
 
