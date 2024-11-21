@@ -1,14 +1,13 @@
+using CollimationCircles.Extensions;
+using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using CollimationCircles.Extensions;
-using CollimationCircles.Messages;
-using CommunityToolkit.Mvvm.Messaging;
 using System.Threading.Tasks;
-using CollimationCirclesFeatures;
 
 namespace CollimationCircles.ViewModels
 {

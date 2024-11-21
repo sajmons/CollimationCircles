@@ -1,14 +1,13 @@
-﻿using CollimationCircles.Services;
+﻿using CollimationCircles.Extensions;
+using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using System.Threading.Tasks;
-using System;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Newtonsoft.Json;
-using CollimationCircles.Extensions;
-using Tmds.DBus.Protocol;
+using System;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
@@ -100,7 +99,7 @@ namespace CollimationCircles.ViewModels
                 DissableAlwaysOnTop();      // prevent dialog to appear behind MainWindow
 
                 string title = ResSvc.TryGetString("InsifficientLicenseTitle");
-                
+
                 string message = ResSvc.TryGetString("InsifficientLicenseMessage").F(feature);
 
                 if (LicenseService.IsExpired)
@@ -146,7 +145,7 @@ namespace CollimationCircles.ViewModels
 
                 string upgrade = ResSvc.TryGetString("UpgradeLicenseMessage");
 
-                string dialogMessage = $"{message}\n{upgrade}";                
+                string dialogMessage = $"{message}\n{upgrade}";
 
                 var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
 

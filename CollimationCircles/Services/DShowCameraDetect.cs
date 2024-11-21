@@ -22,7 +22,7 @@ namespace CollimationCircles.Services
         };
 
         public List<ICamera> GetCameras()
-        {            
+        {
             List<ICamera> cameras = [];
 
             if (OperatingSystem.IsWindows())

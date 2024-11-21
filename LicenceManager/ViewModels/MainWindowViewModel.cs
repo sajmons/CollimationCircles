@@ -1,15 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using Standard.Licensing;
-using System.Collections.Generic;
-using System;
-using System.Text;
-using System.IO;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using HanumanInstitute.MvvmDialogs;
-using System.Threading.Tasks;
+﻿using CollimationCirclesFeatures;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CollimationCirclesFeatures;
+using CommunityToolkit.Mvvm.Input;
+using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using Standard.Licensing;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace LicenceManager.ViewModels
 {
@@ -51,7 +51,7 @@ namespace LicenceManager.ViewModels
         private bool trialLicence = true;
 
         [ObservableProperty]
-        private int trialLicenceDaysUntilExpiration = 5;        
+        private int trialLicenceDaysUntilExpiration = 5;
 
         private readonly IDialogService dialogService;
 
@@ -91,7 +91,7 @@ namespace LicenceManager.ViewModels
                 licenseBuilder.ExpiresAt(DateTime.Now.AddDays(TrialLicenceDaysUntilExpiration));
             }
 
-            NewLicense = licenseBuilder                
+            NewLicense = licenseBuilder
                 .WithAdditionalAttributes(new Dictionary<string, string>
                     {
                         {"ClientId", ClientId },

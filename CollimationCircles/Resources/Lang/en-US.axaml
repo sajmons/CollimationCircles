@@ -146,18 +146,15 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
   <system:String x:Key="Text.NotLicensed">Not licensed</system:String>
   <system:String x:Key="Text.ValidUntil">Valid until:</system:String>
-  <system:String x:Key="Text.Customer">Customer:</system:String>
-  <system:String x:Key="Text.CustomerWatermark">Enter user first and last name (e.g., John Doe)</system:String>
-  <system:String x:Key="Text.CustomerEmail">Email:</system:String>
-  <system:String x:Key="Text.CustomerEmailWatermark">Enter user email (e.g., john.doe@gmail.com)</system:String>
   <system:String x:Key="Text.RequestLicense">Request licence</system:String>
   <system:String x:Key="Text.Product">Product:</system:String>
   <system:String x:Key="Text.ProductMajorVersion">Product major version:</system:String>
   <system:String x:Key="Text.LicenseType">Licence type:</system:String>
   <system:String x:Key="Text.StandardLicense">Standard</system:String>
   <system:String x:Key="Text.TrialLicense">Trial</system:String>
-  <system:String x:Key="Text.LicenseCost">Costs:</system:String>
-
+  <system:String x:Key="Text.LicenseInstructions">Licence data wil be stored in clipborad. Paste this information into web form that will open in your web browser.</system:String>
+  <system:String x:Key="Text.PayPalTransactionId">PayPal transaction ID:</system:String>
+  
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>

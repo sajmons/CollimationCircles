@@ -13,7 +13,7 @@ namespace CollimationCircles.Services
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly string publicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1dtu67ItK9HISDiRoVhsFiZSYHx6jd4WIt7D7eID6t5Fmp4NNs15OsIVdoP9elH4r8xcHR0qryAh54mPm2bdjQ==";        
+        private readonly string publicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1dtu67ItK9HISDiRoVhsFiZSYHx6jd4WIt7D7eID6t5Fmp4NNs15OsIVdoP9elH4r8xcHR0qryAh54mPm2bdjQ==";
 
         private readonly License? license;
 
@@ -34,8 +34,8 @@ namespace CollimationCircles.Services
         public bool IsTrial => license?.Type == LicenseType.Trial;
 
         public LicenseService(string productName)
-        {            
-            license = LoadLicense(productName);            
+        {
+            license = LoadLicense(productName);
         }
 
         private License? LoadLicense(string productName)

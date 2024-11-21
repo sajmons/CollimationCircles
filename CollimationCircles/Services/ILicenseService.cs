@@ -1,5 +1,4 @@
-﻿using Standard.Licensing;
-using System;
+﻿using System;
 
 namespace CollimationCircles.Services
 {

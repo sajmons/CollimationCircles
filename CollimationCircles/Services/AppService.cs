@@ -21,8 +21,9 @@ public class AppService
     private static readonly string owner = "sajmons";
     private static readonly string reponame = "CollimationCircles";
 
-    public const string WebPage = "https://saimons-astronomy.webador.com/software/collimation-circles";
-    public const string ContactPage = "https://saimons-astronomy.webador.com/about";
+    public const string BasePage = "https://www.saimons-astronomy.com";
+    public const string WebPage = $"{BasePage}/software/collimation-circles";
+    public const string ContactPage = $"{BasePage}/about";
     public const string GitHubPage = "https://github.com/sajmons/CollimationCircles";
     public const string TwitterPage = "https://twitter.com/saimons_art";
     public const string YouTubeChannel = "https://www.youtube.com/channel/UCz6iFL9ziUcWgs_n6n2gwZw";
@@ -30,6 +31,7 @@ public class AppService
     public const string PatreonWebPage = "https://www.patreon.com/SaimonsAstronomy";
     public const string LangDir = "CollimationCircles/Resources/Lang";
     public const string ProductName = "Collimation Circles";
+    public const string RequestLicensePage = $"{BasePage}/software/request-license";
 
     public static string GetAppMajorVersion()
     {

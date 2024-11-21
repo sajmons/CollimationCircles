@@ -7,10 +7,10 @@ namespace CollimationCircles.ViewModels
 {
     internal partial class AboutViewModel : BaseViewModel, IModalDialogViewModel
     {
-        public bool? DialogResult => true;                
+        public bool? DialogResult => true;
 
         public AboutViewModel()
-        {        
+        {
             Title = $"{ResSvc.TryGetString("About")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 

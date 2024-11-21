@@ -13,7 +13,7 @@ namespace CollimationCircles.Models
         public ObservableCollection<CollimationHelper> shapes = [];
 
         public Profile(string name, ObservableCollection<CollimationHelper> scopeShapes)
-        { 
+        {
             Name = name;
             Shapes?.AddRange(scopeShapes);
         }
