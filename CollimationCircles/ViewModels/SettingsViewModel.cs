@@ -178,6 +178,10 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string lastSelectedCamera = string.Empty;
 
+        [JsonProperty]
+        [ObservableProperty]
+        private ObservableCollection<Profile> profiles = [];
+
         public SettingsViewModel()
         {
             Initialize();
@@ -185,17 +189,12 @@ namespace CollimationCircles.ViewModels
 
         public void Initialize()
         {
-            InitializeLicenses();
             InitializeLanguage();
             InitializeThemes();
             InitializeColors();
             InitializeKeyboardShortcuts();
 
             Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
-        }
-
-        private void InitializeLicenses()
-        {
         }
 
         private void InitializeKeyboardShortcuts()
@@ -560,6 +559,7 @@ namespace CollimationCircles.ViewModels
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
                     LastSelectedCamera = vm.LastSelectedCamera;
+                    Profiles = vm.Profiles;
 
                     if (!DockInMainWindow)
                     {

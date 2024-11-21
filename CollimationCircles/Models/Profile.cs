@@ -10,12 +10,12 @@ namespace CollimationCircles.Models
         public string name;
 
         [ObservableProperty]
-        public ObservableCollection<CollimationHelper> shapes = new ObservableCollection<CollimationHelper>();
+        public ObservableCollection<CollimationHelper> shapes = [];
 
         public Profile(string name, ObservableCollection<CollimationHelper> scopeShapes)
         { 
             Name = name;
-            Shapes.AddRange(scopeShapes);
+            Shapes?.AddRange(scopeShapes);
         }
     }
 }
