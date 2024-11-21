@@ -9,7 +9,7 @@
              x:DataType="vm:SettingsViewModel">
   <Grid
       Background="{DynamicResource ThemeBackgroundBrush}"
-      RowDefinitions="*,50">
+      RowDefinitions="*,Auto,50">
     <TabControl>
       <TabItem>
         <TabItem.Header>
@@ -69,7 +69,9 @@
         </ScrollViewer>
       </TabItem>
     </TabControl>
-    <controls:SocialButtonBarUserControl
+    <controls:LicenseUserControl
       Grid.Row="1"/>
+    <controls:SocialButtonBarUserControl
+      Grid.Row="2"/>
   </Grid>
 </UserControl>

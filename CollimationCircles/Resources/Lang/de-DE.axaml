@@ -142,6 +142,7 @@
   <system:String x:Key="Text.InsifficientLicenseCountMessage">Feature '{0}' count of '{1}' requires valid licence.</system:String>
   <system:String x:Key="Text.UpgradeLicenseMessage">Would you like to upgrade your license or request trial license?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
+  <system:String x:Key="Text.NotLicensed">Not licensed</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

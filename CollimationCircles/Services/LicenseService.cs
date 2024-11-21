@@ -1,4 +1,6 @@
-﻿using Standard.Licensing;
+﻿using CollimationCircles.Extensions;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Standard.Licensing;
 using Standard.Licensing.Validation;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ namespace CollimationCircles.Services
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly string publicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1dtu67ItK9HISDiRoVhsFiZSYHx6jd4WIt7D7eID6t5Fmp4NNs15OsIVdoP9elH4r8xcHR0qryAh54mPm2bdjQ==";
+        private readonly string publicKey = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1dtu67ItK9HISDiRoVhsFiZSYHx6jd4WIt7D7eID6t5Fmp4NNs15OsIVdoP9elH4r8xcHR0qryAh54mPm2bdjQ==";        
 
         private readonly License? license;
 
@@ -30,8 +32,8 @@ namespace CollimationCircles.Services
         public bool IsValid => HasLicense && !IsExpired && !HasErrors;
 
         public LicenseService(string productName)
-        {
-            license = LoadLicense(productName);
+        {            
+            license = LoadLicense(productName);            
         }
 
         private License? LoadLicense(string productName)
@@ -168,7 +170,20 @@ namespace CollimationCircles.Services
 
         public override string ToString()
         {
-            return $"{license?.Type}, {license?.Customer.Name}, {license?.Customer.Email}, {license?.Id}";
+            var ResSvc = Ioc.Default.GetRequiredService<IResourceService>();
+
+            if (IsValid)
+            {
+                return $"{license?.Type}, {license?.Customer.Name}, {license?.Customer.Email}, {license?.Id}";
+            }
+            else if (HasLicense && IsExpired)
+            {
+                return ResSvc.TryGetString("ExpiredLicenseMessage").F(Expiration!.Value.ToLongDateString());
+            }
+            else
+            {
+                return ResSvc.TryGetString("NotLicensed");
+            }
         }
     }
 }

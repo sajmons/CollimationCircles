@@ -62,6 +62,9 @@
     <ProjectReference Include="..\CollimationCirclesFeatures\CollimationCirclesFeatures.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\LicenseUserControl.axaml.cs">
+      <DependentUpon>LicenseUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\ProfileManagerUserControl.axaml.cs">
       <DependentUpon>ProfileManagerUserControl.axaml</DependentUpon>
     </Compile>
@@ -76,10 +79,10 @@
     <None Update="icon.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="license.lic">
+    <None Update="trial license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="standard license.lic">
+    <None Update="license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NLog.config">
