@@ -154,6 +154,8 @@
   <system:String x:Key="Text.TrialLicense">Trial</system:String>
   <system:String x:Key="Text.LicenseInstructions">Licence data wil be stored in clipborad. Paste this information into web form that will open in your web browser.</system:String>
   <system:String x:Key="Text.PayPalTransactionId">PayPal transaction ID:</system:String>
+  <system:String x:Key="Text.RemoveProfileDialogText">Do you want to remove profile '{0}'?</system:String>
+  <system:String x:Key="Text.RemoveProfileDialogTitle">Remove profile</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

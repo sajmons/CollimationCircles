@@ -134,7 +134,7 @@
   <system:String x:Key="Text.ClientId">Id Odjemalca:</system:String>
   <system:String x:Key="Text.License">Licenca:</system:String>
   <system:String x:Key="Text.ProfileManagerTitle">Upravljalec profilov</system:String>
-  <system:String x:Key="Text.AddCurrentProfile">Dodaj v upravljalec profilov</system:String>
+  <system:String x:Key="Text.AddCurrentProfile">Dodaj nov profil</system:String>
   <system:String x:Key="Text.EnterProfileName">Vpišite ime profila</system:String>
   <system:String x:Key="Text.DefaultProfileName">Profil</system:String>
   <system:String x:Key="Text.InsifficientLicenseTitle">Neustrezna licenca</system:String>
@@ -142,16 +142,18 @@
   <system:String x:Key="Text.InsifficientLicenseCountMessage">Funkcionalnosti '{0}' v številu '{1}' zahteva veljavno licenco</system:String>
   <system:String x:Key="Text.UpgradeLicenseMessage">Bi želeli nadgraditi vašo licenco ali zahteveti preizkusno licenco?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">Ta licenca je potekla {0}</system:String>
-  <system:String x:Key="Text.NotLicensed">Not licensed</system:String>
+  <system:String x:Key="Text.NotLicensed">Ni licencirano</system:String>
   <system:String x:Key="Text.ValidUntil">Velja do:</system:String>
-  <system:String x:Key="Text.RequestLicense">Request licence</system:String>
-  <system:String x:Key="Text.Product">Product:</system:String>
-  <system:String x:Key="Text.ProductMajorVersion">Product major version:</system:String>
-  <system:String x:Key="Text.LicenseType">Licence type:</system:String>
-  <system:String x:Key="Text.StandardLicense">Standard</system:String>
-  <system:String x:Key="Text.TrialLicense">Trial</system:String>
-  <system:String x:Key="Text.LicenseInstructions">Licence data wil be stored in clipborad. Paste this information into web form that will open in your web browser.</system:String>
-  <system:String x:Key="Text.PayPalTransactionId">PayPal transaction ID:</system:String>
+  <system:String x:Key="Text.RequestLicense">Zahtevaj licenco</system:String>
+  <system:String x:Key="Text.Product">Izdelek:</system:String>
+  <system:String x:Key="Text.ProductMajorVersion">Glavna verzija izdelka:</system:String>
+  <system:String x:Key="Text.LicenseType">Tip licence:</system:String>
+  <system:String x:Key="Text.StandardLicense">Standarden</system:String>
+  <system:String x:Key="Text.TrialLicense">Začasna</system:String>
+  <system:String x:Key="Text.LicenseInstructions">Podatki o licenci bodo shranjeni v odložišče. Prilepite te podatke v spletni obrazec, ki se bo odprl v vašem spletnem brskalniku.</system:String>
+  <system:String x:Key="Text.PayPalTransactionId">ID PayPal transakcije:</system:String>
+  <system:String x:Key="Text.RemoveProfileDialogText">Želite odstraniti profil '{0}'?</system:String>
+  <system:String x:Key="Text.RemoveProfileDialogTitle">Odstrani profil</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
