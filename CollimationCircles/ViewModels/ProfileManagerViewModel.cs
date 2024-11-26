@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -51,9 +53,18 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void RemoveProfile(Profile profile)
+        internal async Task RemoveProfile(Profile profile)
         {
-            settingsViewModel.Profiles.Remove(profile);
+            bool? dialogResult = await DialogService.ShowMessageBoxAsync(
+                null, 
+                ResSvc.TryGetString("RemoveProfileDialogText").F(profile.Name),
+                ResSvc.TryGetString("RemoveProfileDialogTitle"),
+                MessageBoxButton.YesNo);
+
+            if (dialogResult == true)
+            {
+                settingsViewModel.Profiles.Remove(profile);
+            }            
         }
 
         partial void OnSelectedProfileChanged(Profile? oldValue, Profile? newValue)
