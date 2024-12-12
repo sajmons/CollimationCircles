@@ -1,4 +1,5 @@
 ﻿using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -23,9 +24,9 @@ namespace CollimationCircles.Services
             { ControlType.Zoom_Absolute, "roi" }
         };
 
-        public List<ICamera> GetCameras()
+        public List<Camera> GetCameras()
         {
-            List<ICamera> cameras = [];
+            List<Camera> cameras = [];
 
             var (errorCode, result, process) = AppService.ExecuteCommand(
                 "rpicam-vid",
@@ -71,8 +72,10 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(ICamera camera)
+        public List<ICameraControl> GetControls(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             List<ICameraControl> controls = [];
 
             //decimal? brightness = null;
@@ -139,15 +142,19 @@ namespace CollimationCircles.Services
             return controls;
         }
 
-        public void SetControl(ICamera camera, ControlType controlName, double value)
+        public void SetControl(Camera camera, ControlType controlName, double value)
         {
+            Guard.IsNotNull(camera);
+
             // TODO: implement libcamera camera controls set
             // Stop video streaming and start new one with new parameters
             logger.Warn($"{nameof(RasPiCameraDetect)} is not implemented yet.");
         }
 
-        public List<string> GetCommandLineParameters(ICamera camera)
+        public List<string> GetCommandLineParameters(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             logger.Warn($"{nameof(RasPiCameraDetect)}: {nameof(GetCommandLineParameters)} not yet implemented");
             return [];
         }

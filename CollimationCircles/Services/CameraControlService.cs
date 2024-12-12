@@ -1,4 +1,5 @@
 ﻿using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 
@@ -6,8 +7,10 @@ namespace CollimationCircles.Services
 {
     internal class CameraControlService : ICameraControlService
     {
-        public void Set(ControlType controlName, double value, ICamera camera)
+        public void Set(ControlType controlName, double value, Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             // set camera control for V4L2
             if (camera.APIType is APIType.V4l2 || camera.APIType is APIType.QTCapture)
             {
@@ -25,9 +28,9 @@ namespace CollimationCircles.Services
             }
         }
 
-        public List<ICamera> GetCameraList()
+        public List<Camera> GetCameraList()
         {
-            List<ICamera> cameras = [];
+            List<Camera> cameras = [];
 
             if (OperatingSystem.IsWindows())
             {

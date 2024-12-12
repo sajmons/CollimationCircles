@@ -1,4 +1,5 @@
 ﻿using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LibVLCSharp.Shared;
 using System;
@@ -21,9 +22,9 @@ namespace CollimationCircles.Services
             { ControlType.Gamma, "Gamma" }
         };
 
-        public List<ICamera> GetCameras()
+        public List<Camera> GetCameras()
         {
-            List<ICamera> cameras = [];
+            List<Camera> cameras = [];
 
             if (OperatingSystem.IsWindows())
             {
@@ -64,13 +65,15 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(ICamera camera)
+        public List<ICameraControl> GetControls(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             List<ICameraControl> controls = [];
 
             CameraControl cameraControl;
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Contrast)
+            controls.Add(cameraControl = new CameraControl(ControlType.Contrast, camera)
             {
                 Default = 50,
                 Value = 50,
@@ -80,7 +83,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Brightness)
+            controls.Add(cameraControl = new CameraControl(ControlType.Brightness, camera)
             {
                 Default = 50,
                 Value = 50,
@@ -90,7 +93,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Hue)
+            controls.Add(cameraControl = new CameraControl(ControlType.Hue, camera)
             {
                 Default = 0,
                 Value = 0,
@@ -100,7 +103,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Saturation)
+            controls.Add(cameraControl = new CameraControl(ControlType.Saturation, camera)
             {
                 Default = 40,
                 Value = 40,
@@ -110,7 +113,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Gamma)
+            controls.Add(cameraControl = new CameraControl(ControlType.Gamma, camera)
             {
                 Default = 8,
                 Value = 8,
@@ -123,8 +126,10 @@ namespace CollimationCircles.Services
             return controls;
         }
 
-        public void SetControl(ICamera camera, ControlType controlName, double value)
+        public void SetControl(Camera camera, ControlType controlName, double value)
         {
+            Guard.IsNotNull(camera);            
+
             try
             {
                 ILibVLCService vlc = Ioc.Default.GetRequiredService<ILibVLCService>();
@@ -156,8 +161,10 @@ namespace CollimationCircles.Services
             return (newStart + ((value - originalStart) * scale));
         }
 
-        public List<string> GetCommandLineParameters(ICamera camera)
+        public List<string> GetCommandLineParameters(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             return [
                 $":dshow-vdev={camera.Name}"
                 , ":dshow-size=1024x768"

@@ -1,4 +1,5 @@
 ﻿using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,9 +30,9 @@ namespace CollimationCircles.Services
             { ControlType.Zoom_Absolute, "zoom_absolute" }
         };
 
-        public List<ICamera> GetCameras()
+        public List<Camera> GetCameras()
         {
-            List<ICamera> cameras = [];
+            List<Camera> cameras = [];
 
             var (errorCode, result, process) = AppService.ExecuteCommand(
                 "v4l2-ctl",
@@ -87,8 +88,10 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(ICamera camera)
+        public List<ICameraControl> GetControls(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             var (errorCode, result, process) = AppService.ExecuteCommand(
                 "v4l2-ctl",
                 ["--list-ctrls", "--device", $"{camera.Path}"]).GetAwaiter().GetResult();
@@ -113,7 +116,7 @@ namespace CollimationCircles.Services
 
                 if (Enum.TryParse(name, out ControlType controlName))
                 {
-                    var cameraControl = new CameraControl(controlName)
+                    var cameraControl = new CameraControl(controlName, camera)
                     {
                         Min = min,
                         Max = max,
@@ -132,8 +135,10 @@ namespace CollimationCircles.Services
             return controls;
         }
 
-        public void SetControl(ICamera camera, ControlType controlType, double value)
+        public void SetControl(Camera camera, ControlType controlType, double value)
         {
+            Guard.IsNotNull(camera);
+
             AppService.ExecuteCommand("v4l2-ctl", [
                 "--device",
                 camera.Path,
@@ -141,8 +146,10 @@ namespace CollimationCircles.Services
                 ]);
         }
 
-        public List<string> GetCommandLineParameters(ICamera camera)
+        public List<string> GetCommandLineParameters(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             return ["width=432", "height=240"];
         }
     }
