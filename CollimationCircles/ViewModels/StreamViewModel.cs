@@ -2,6 +2,7 @@
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -28,7 +29,7 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            get => !string.IsNullOrWhiteSpace(FullAddress);
+            get => !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
         }
 
         [ObservableProperty]
@@ -49,10 +50,10 @@ namespace CollimationCircles.ViewModels
         private INotifyPropertyChanged? settingsDialogViewModel;
 
         [ObservableProperty]
-        private ObservableCollection<ICamera> cameraList = [];
+        private ObservableCollection<Camera> cameraList = [];
 
         [ObservableProperty]
-        private ICamera selectedCamera;
+        private Camera? selectedCamera;
 
         [ObservableProperty]
         private bool controlsEnabled = false;
@@ -67,9 +68,9 @@ namespace CollimationCircles.ViewModels
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
 
-            CameraList = new ObservableCollection<ICamera>(cameraControlService.GetCameraList());
+            CameraList = new ObservableCollection<Camera>(cameraControlService.GetCameraList());
 
-            SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
+            SelectedCamera = CameraList.First(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First() ?? null;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -99,6 +100,8 @@ namespace CollimationCircles.ViewModels
 
         private void MediaPlayer_Playing()
         {
+            Guard.IsNotNull(SelectedCamera);
+
             logger.Trace($"MediaPlayer playing");
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
             ControlsEnabled = IsPlaying && SelectedCamera.APIType == APIType.Dshow || SelectedCamera.APIType == APIType.V4l2;
@@ -116,11 +119,13 @@ namespace CollimationCircles.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
         private void PlayPause()
         {
+            Guard.IsNotNull(SelectedCamera);
+
             if (libVLCService.MediaPlayer != null)
             {
                 if (!libVLCService.MediaPlayer.IsPlaying)
                 {
-                    libVLCService.Play();
+                    libVLCService.Play(SelectedCamera);
                 }
                 else
                 {
@@ -182,7 +187,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void CameraRefresh()
         {
-            CameraList = new ObservableCollection<ICamera>(cameraControlService.GetCameraList());
+            CameraList = new ObservableCollection<Camera>(cameraControlService.GetCameraList());
             SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
         }
 
@@ -191,7 +196,7 @@ namespace CollimationCircles.ViewModels
             SettingsDialogViewModel = null;
         }
 
-        partial void OnSelectedCameraChanged(ICamera? oldValue, ICamera newValue)
+        partial void OnSelectedCameraChanged(Camera? oldValue, Camera? newValue)
         {
             if (newValue is not null)
             {
