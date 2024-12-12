@@ -6,7 +6,9 @@ namespace CollimationCircles.Services
     internal interface ICameraDetect
     {
         public Dictionary<ControlType, object> ControlMapping { get; }
-        public List<ICamera> GetCameras();
-        public List<string> GetCommandLineParameters(ICamera camera);
+        public List<Camera> GetCameras();
+        public List<string> GetCommandLineParameters(Camera camera);
+        public void SetControl(Camera camera, ControlType controlName, double value);
+        public List<ICameraControl> GetControls(Camera camera);
     }
 }
