@@ -1,6 +1,5 @@
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
-using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -16,11 +15,11 @@ namespace CollimationCircles.ViewModels
         private bool isOpened = true;
 
         [ObservableProperty]
-        private ICamera camera = new Camera();
+        private Camera? camera;
 
         public CameraControlsViewModel()
-        {
-            Camera = Ioc.Default.GetRequiredService<ILibVLCService>().Camera;
+        {            
+            camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -33,7 +32,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void Default()
         {
-            Camera.SetDefaultControls();
+            Camera?.SetDefaultControls();
             logger.Info("Default camera controls buton clicked");
         }
     }
