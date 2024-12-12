@@ -1,5 +1,6 @@
 ﻿using CollimationCircles.Messages;
 using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using System.Collections.Generic;
@@ -20,12 +21,9 @@ namespace CollimationCircles.Services
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
-        public ICamera Camera { get; set; } = new Camera();
-
+        
         public LibVLCService()
         {
-            FullAddress = GetFullUrlFromParts();
-
             // https://wiki.videolan.org/VLC_command-line_help/
 
             string[] libVLCOptions = [
@@ -51,23 +49,25 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public async Task Play()
+        public async Task Play(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             List<string> parametersList = [];
 
-            if (Camera.APIType == APIType.LibCamera)
+            if (camera.APIType == APIType.LibCamera)
             {
                 // with libcamera we need first to create video stream
-                List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(Camera);
+                List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(camera);
                 await AppService.StartRaspberryPIStream(rpiPort, controls);
             }
-            else if (Camera.APIType == APIType.V4l2)
+            else if (camera.APIType == APIType.V4l2)
             {
-                parametersList = new V4L2CameraDetect().GetCommandLineParameters(Camera);
+                parametersList = new V4L2CameraDetect().GetCommandLineParameters(camera);
             }
-            else if (Camera.APIType == APIType.Dshow)
+            else if (camera.APIType == APIType.Dshow)
             {
-                parametersList = new DShowCameraDetect().GetCommandLineParameters(Camera);
+                parametersList = new DShowCameraDetect().GetCommandLineParameters(camera);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
@@ -93,28 +93,30 @@ namespace CollimationCircles.Services
             }
         }
 
-        private string GetFullUrlFromParts()
+        private string GetFullUrlFromParts(Camera? camera)
         {
+            Guard.IsNotNull(camera);
+            
             protocol = string.Empty;
             pathAndQuery = string.Empty;
             port = string.Empty;
             address = string.Empty;
 
-            if (Camera.APIType == APIType.Dshow)
+            if (camera.APIType == APIType.Dshow)
             {
                 protocol = "dshow";
             }
-            else if (Camera.APIType == APIType.QTCapture)
+            else if (camera.APIType == APIType.QTCapture)
             {
                 protocol = "qtcapture";
-                address = Camera.Path;
+                address = camera.Path;
             }
-            else if (Camera.APIType == APIType.V4l2)
+            else if (camera.APIType == APIType.V4l2)
             {
                 protocol = "v4l2";
-                address = Camera.Path;
+                address = camera.Path;
             }
-            else if (Camera.APIType == APIType.LibCamera)
+            else if (camera.APIType == APIType.LibCamera)
             {
                 protocol = "tcp/h264";
                 address = "localhost";
@@ -134,10 +136,11 @@ namespace CollimationCircles.Services
             return $"{protocol}{addr}{prt}{pth}";
         }
 
-        public string DefaultAddress(ICamera camera)
+        public string DefaultAddress(Camera camera)
         {
-            Camera = camera;
-            FullAddress = GetFullUrlFromParts();
+            Guard.IsNotNull(camera);
+            
+            FullAddress = GetFullUrlFromParts(camera);
             return FullAddress;
         }
     }
