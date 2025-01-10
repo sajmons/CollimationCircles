@@ -73,7 +73,7 @@ namespace CollimationCircles.ViewModels
 
             CameraList = new ObservableCollection<Camera>(cameraControlService.GetCameraList());
 
-            SelectedCamera = CameraList?.SingleOrDefault(c => c.Name == settingsViewModel!.LastSelectedCamera) ?? CameraList?.SingleOrDefault() ?? null;
+            SelectedCamera = CameraList?.FirstOrDefault(c => c.Name == settingsViewModel!.LastSelectedCamera) ?? CameraList?.FirstOrDefault() ?? null;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
