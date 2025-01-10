@@ -21,7 +21,7 @@ namespace CollimationCircles.Services
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
-        
+
         public LibVLCService()
         {
             // https://wiki.videolan.org/VLC_command-line_help/
@@ -88,15 +88,23 @@ namespace CollimationCircles.Services
                     media.AddOption(parameter);
                 }
 
-                MediaPlayer.Play(media);
-                logger.Info($"Playing web camera stream: '{media.Mrl}'");
+                bool result = MediaPlayer.Play(media);
+
+                if (result)
+                {
+                    logger.Info($"Playing web camera stream: '{media.Mrl}'");
+                }
+                else
+                {
+                    logger.Info($"Failed to play web camera stream: '{media.Mrl}'");
+                }
             }
         }
 
         private string GetFullUrlFromParts(Camera? camera)
         {
             Guard.IsNotNull(camera);
-            
+
             protocol = string.Empty;
             pathAndQuery = string.Empty;
             port = string.Empty;
@@ -139,7 +147,7 @@ namespace CollimationCircles.Services
         public string DefaultAddress(Camera camera)
         {
             Guard.IsNotNull(camera);
-            
+
             FullAddress = GetFullUrlFromParts(camera);
             return FullAddress;
         }
