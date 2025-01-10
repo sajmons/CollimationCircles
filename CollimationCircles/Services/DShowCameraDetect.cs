@@ -41,7 +41,7 @@ namespace CollimationCircles.Services
                             string deviceId = (string)device.GetPropertyValue("DeviceID");
                             string service = (string)device.GetPropertyValue("Service");
 
-                            logger.Debug($"DeviceName: '{deviceName}, DeviceId: {deviceId}, Service: {service}'");
+                            logger.Debug($"DeviceName: '{deviceName}', DeviceId: '{deviceId}', Service: '{service}'");
 
                             Camera c = new()
                             {
