@@ -9,7 +9,7 @@ using System.Management;
 
 namespace CollimationCircles.Services
 {
-    internal class DShowCameraDetect() : ICameraDetect
+    internal class DShowCameraDetect(bool displayAdvancedDShowDialog = false) : ICameraDetect
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -28,11 +28,9 @@ namespace CollimationCircles.Services
 
             if (OperatingSystem.IsWindows())
             {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera')"))
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera') AND DeviceID Like 'USB%'"))
                 {
                     var devices = searcher.Get().Cast<ManagementObject>().ToList();
-
-                    ILibVLCService lib = Ioc.Default.GetRequiredService<ILibVLCService>();
 
                     int camIndex = 0;
                     foreach (var device in devices)
@@ -41,6 +39,9 @@ namespace CollimationCircles.Services
                         {
                             string deviceName = (string)device.GetPropertyValue("Name");
                             string deviceId = (string)device.GetPropertyValue("DeviceID");
+                            string service = (string)device.GetPropertyValue("Service");
+
+                            logger.Debug($"DeviceName: '{deviceName}, DeviceId: {deviceId}, Service: {service}'");
 
                             Camera c = new()
                             {
@@ -165,13 +166,19 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
-            return [
+            List<string> properties = [
                 $":dshow-vdev={camera.Name}"
-                , ":dshow-fps=30"
                 , ":dshow-adev=none"
                 , ":live-caching=300"
-                //, ":dshow-config"
+                , ":dshow-chroma=mjpg"
             ];
+
+            if (displayAdvancedDShowDialog)
+            {
+                properties.Add(":dshow-config");
+            }
+
+            return properties;
         }
     }
 }

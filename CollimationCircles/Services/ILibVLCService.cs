@@ -8,7 +8,7 @@ namespace CollimationCircles.Services
     {
         public string FullAddress { get; set; }
         public MediaPlayer MediaPlayer { get; }
-        public Task Play(Camera camera);
+        public Task Play(Camera camera, bool displayAdvancedDShowDialog);
         public string DefaultAddress(Camera camera);
     }
 }

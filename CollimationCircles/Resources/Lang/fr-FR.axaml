@@ -155,6 +155,7 @@
   <system:String x:Key="Text.PayPalTransactionId">Identifiant de transaction PayPal:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Voulez-vous supprimer le profil '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Supprimer le profil</system:String>
+  <system:String x:Key="Text.DisplayAdvancedDShowDialog">Afficher les paramètres avancés</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

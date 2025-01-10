@@ -154,7 +154,8 @@
   <system:String x:Key="Text.PayPalTransactionId">PayPal-Transaktions-ID:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Möchten Sie das Profil entfernen? '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Profil entfernen</system:String>
-
+  <system:String x:Key="Text.DisplayAdvancedDShowDialog">Erweiterte Einstellungen anzeigen</system:String>
+  
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>

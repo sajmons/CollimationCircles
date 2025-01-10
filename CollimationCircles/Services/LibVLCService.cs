@@ -72,7 +72,7 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public async Task Play(Camera camera)
+        public async Task Play(Camera camera, bool displayAdvancedDShowDialog)
         {
             Guard.IsNotNull(camera);
 
@@ -90,7 +90,7 @@ namespace CollimationCircles.Services
             }
             else if (camera.APIType == APIType.Dshow)
             {
-                parametersList = new DShowCameraDetect().GetCommandLineParameters(camera);
+                parametersList = new DShowCameraDetect(displayAdvancedDShowDialog).GetCommandLineParameters(camera);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))

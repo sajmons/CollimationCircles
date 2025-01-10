@@ -150,7 +150,9 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
-            return ["width=432", "height=240"];
+            return [
+                "chroma=mjpg"
+            ];
         }
     }
 }

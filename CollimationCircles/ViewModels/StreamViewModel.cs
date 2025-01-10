@@ -58,6 +58,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool controlsEnabled = false;
 
+        [ObservableProperty]
+        bool displayAdvancedDShowDialog = false;
+
         public StreamViewModel(ILibVLCService libVLCService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
             this.libVLCService = libVLCService;
@@ -70,7 +73,7 @@ namespace CollimationCircles.ViewModels
 
             CameraList = new ObservableCollection<Camera>(cameraControlService.GetCameraList());
 
-            SelectedCamera = CameraList.First(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First() ?? null;
+            SelectedCamera = CameraList?.SingleOrDefault(c => c.Name == settingsViewModel!.LastSelectedCamera) ?? CameraList?.SingleOrDefault() ?? null;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -125,7 +128,7 @@ namespace CollimationCircles.ViewModels
             {
                 if (!libVLCService.MediaPlayer.IsPlaying)
                 {
-                    libVLCService.Play(SelectedCamera);
+                    libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
                 }
                 else
                 {

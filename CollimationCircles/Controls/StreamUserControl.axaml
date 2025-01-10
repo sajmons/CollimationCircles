@@ -97,8 +97,12 @@
       </StackPanel>
     </StackPanel>
     <CheckBox
+      Content="{DynamicResource Text.DisplayAdvancedDShowDialog}"
+      IsChecked="{Binding DisplayAdvancedDShowDialog}"
+      IsVisible="{Binding IsWindows}"/>
+    <CheckBox
       Content="{DynamicResource Text.CameraStreamSeparateWindow}"
-      IsChecked="{Binding PinVideoWindowToMainWindow}" />
+      IsChecked="{Binding PinVideoWindowToMainWindow}" />    
 
   </StackPanel>
 
