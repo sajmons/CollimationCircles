@@ -3,6 +3,7 @@ using CollimationCircles.Models;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -35,6 +36,28 @@ namespace CollimationCircles.Services
             ];
 
             libVLC = new(libVLCOptions);
+            
+            if (OperatingSystem.IsWindows())
+            {
+                libVLC.Log += (sender, e) =>
+                {
+                    switch (e.Level)
+                    {
+                        case LogLevel.Error:
+                            logger.Error($"LibVLC: {e.Module} {e.Message}");
+                            break;
+                        case LogLevel.Debug:
+                            logger.Debug($"LibVLC: {e.Module} {e.Message}");
+                            break;
+                        case LogLevel.Warning:
+                            logger.Warn($"LibVLC: {e.Module} {e.Message}");
+                            break;
+                        case LogLevel.Notice:
+                            logger.Info($"LibVLC: {e.Module} {e.Message}");
+                            break;
+                    }
+                };
+            }
 
             MediaPlayer = new(libVLC)
             {
