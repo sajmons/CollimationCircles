@@ -28,7 +28,7 @@ namespace CollimationCircles.Services
 
             if (OperatingSystem.IsWindows())
             {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE PNPClass = 'Camera'"))
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera')"))
                 {
                     var devices = searcher.Get().Cast<ManagementObject>().ToList();
 
