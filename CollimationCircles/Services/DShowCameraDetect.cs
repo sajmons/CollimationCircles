@@ -162,6 +162,7 @@ namespace CollimationCircles.Services
                 $":dshow-vdev={camera.Name}"
                 , ":dshow-adev=none"
                 , ":live-caching=300"
+                , ":dshow-chroma=MJPG"
                 //, ":dshow-config"
             ];
         }
