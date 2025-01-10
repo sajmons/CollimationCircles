@@ -88,8 +88,16 @@ namespace CollimationCircles.Services
                     media.AddOption(parameter);
                 }
 
-                MediaPlayer.Play(media);
-                logger.Info($"Playing web camera stream: '{media.Mrl}'");
+                bool result = MediaPlayer.Play(media);
+
+                if (result)
+                {
+                    logger.Info($"Playing web camera stream: '{media.Mrl}'");
+                }
+                else
+                {
+                    logger.Info($"Failed to play web camera stream: '{media.Mrl}'");
+                }
             }
         }
 
