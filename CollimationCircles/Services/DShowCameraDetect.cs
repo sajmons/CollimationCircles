@@ -167,7 +167,6 @@ namespace CollimationCircles.Services
 
             return [
                 $":dshow-vdev={camera.Name}"
-                , ":dshow-size=1024x768"
                 , ":dshow-fps=30"
                 , ":dshow-adev=none"
                 , ":live-caching=300"
