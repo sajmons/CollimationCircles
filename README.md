@@ -130,7 +130,7 @@ winget install Microsoft.DotNet.SDK.7
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
 
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
 ```
 
 ### Raspbian OS Bullseye x64
@@ -145,7 +145,7 @@ sudo dpkg -i packages-microsoft-prod.deb
 rm packages-microsoft-prod.deb
 ```
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
 ```
 
 ### Raspbian OS Bullseye ARM
@@ -157,7 +157,7 @@ wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
 sudo chmod +x ./dotnet-install.sh
 ```
 ```
-sudo ./dotnet-install.sh --channel 7.0 --install-dir /opt/dotnet/
+sudo ./dotnet-install.sh --channel 8.0 --install-dir /opt/dotnet/
 ```
 ```
 echo 'export DOTNET_ROOT=/opt/dotnet/' >> ~/.bashrc
@@ -180,6 +180,6 @@ On windows I'm using these commands to make prebuild binaries.
 dotnet restore .\CollimationCircles.sln -r win-x64
 ```
 ```
-dotnet publish -c Release -f net7.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
+dotnet publish -c Release -f net8.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
 ```
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
