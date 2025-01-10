@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DeviceId;
+using Newtonsoft.Json;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -388,5 +389,22 @@ public class AppService
         _ = await ExecuteCommand(
             "rpicam-vid",
             parameters, timeout: 1500);
+    }
+
+    public static string DeviceId()
+    {
+        return new DeviceIdBuilder()
+        .AddMachineName()
+        .AddOsVersion()
+        .OnWindows(windows => windows
+            .AddMotherboardSerialNumber()
+            .AddSystemDriveSerialNumber())
+        .OnLinux(linux => linux
+            .AddMotherboardSerialNumber()
+            .AddSystemDriveSerialNumber())
+        .OnMac(mac => mac
+            .AddSystemDriveSerialNumber()
+            .AddPlatformSerialNumber())
+        .ToString();
     }
 }

@@ -2,14 +2,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="500"
+        mc:Ignorable="d" d:DesignWidth="600"
         d:DesignHeight="230"
         x:Class="CollimationCircles.Views.RequestLicenseView"
         xmlns:controls="clr-namespace:CollimationCircles.Controls"
         Title="{Binding Title}"
         xmlns:vm="using:CollimationCircles.ViewModels"
         x:DataType="vm:RequestLicenseViewModel"
-        Width="500" Height="230"
+        Width="600" Height="230"
         Icon="/Resources/Images/icon_256px.ico"
         WindowStartupLocation="CenterScreen">
   <StackPanel

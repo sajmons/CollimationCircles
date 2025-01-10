@@ -28,12 +28,12 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool isStandardLicense = true;
 
-        public bool ShowRequestLicenceButton => !LicenseService.IsValid || (LicenseService.HasLicense && LicenseService.IsExpired);
+        public bool ShowRequestLicenceButton => !LicenseService.IsValid || (!LicenseService.HasLicense && !LicenseService.IsExpired);
 
         public RequestLicenseViewModel()
         {
             License = $"{LicenseService}";
-            ClientId = libc.hwid.HwId.Generate();
+            ClientId = AppService.DeviceId();
             Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 

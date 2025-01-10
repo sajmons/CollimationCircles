@@ -52,7 +52,7 @@ namespace CollimationCircles.Services
 
                 textReader.Close();
 
-                string clientId = libc.hwid.HwId.Generate();
+                string clientId = AppService.DeviceId();
 
                 string majorProductVersion = AppService.GetAppMajorVersion();
 

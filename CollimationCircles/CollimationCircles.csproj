@@ -44,8 +44,10 @@
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.3.2" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="DeviceId.Linux" Version="6.8.0" />
+    <PackageReference Include="DeviceId.Mac" Version="6.8.0" />
+    <PackageReference Include="DeviceId.Windows.WmiLight" Version="6.8.0" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
-    <PackageReference Include="libc.hwid" Version="6.0.2" />
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
