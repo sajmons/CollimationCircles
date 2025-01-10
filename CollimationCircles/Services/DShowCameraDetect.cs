@@ -27,7 +27,7 @@ namespace CollimationCircles.Services
 
             if (OperatingSystem.IsWindows())
             {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE PNPClass = 'Camera'"))
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera')"))
                 {
                     var devices = searcher.Get().Cast<ManagementObject>().ToList();
 
@@ -160,8 +160,6 @@ namespace CollimationCircles.Services
         {
             return [
                 $":dshow-vdev={camera.Name}"
-                , ":dshow-size=1024x768"
-                , ":dshow-fps=30"
                 , ":dshow-adev=none"
                 , ":live-caching=300"
                 //, ":dshow-config"
