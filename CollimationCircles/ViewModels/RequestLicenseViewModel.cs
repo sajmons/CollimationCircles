@@ -72,7 +72,21 @@ namespace CollimationCircles.ViewModels
 
             string licenceJson = $"{AppService.Serialize(a)}{Environment.NewLine}{payPalTransactionId}";
 
-            ClipboardService.SetText(licenceJson);
+            try
+            {
+                ClipboardService.SetText(licenceJson);
+            }
+            catch (Exception ex)
+            {
+                string msg = string.Empty;
+                
+                if (!OperatingSystem.IsWindows())
+                { 
+                    msg = "Please check if you have xsel installed and if not please run 'sudo apt install xsel' to install it.";
+                }
+
+                logger.Warn(ex, $"Error while copying licence to clipboard. {msg}");
+            }
 
             AppService.OpenUrl(AppService.RequestLicensePage);
 
