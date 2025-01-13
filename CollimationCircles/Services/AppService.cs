@@ -48,9 +48,9 @@ public class AppService
     {
         var entryAssembly = Assembly.GetEntryAssembly();
 
-        var assemblyVersion = entryAssembly?.GetName().Version;
+        var assemblyVersion = entryAssembly?.GetName().Name;
 
-        return assemblyVersion?.ToString() ?? "0.0.0";
+        return assemblyVersion?.ToString() ?? nameof(CollimationCircles);
     }
 
     public static string GetAppVersion()
@@ -406,5 +406,13 @@ public class AppService
             .AddSystemDriveSerialNumber()
             .AddPlatformSerialNumber())
         .ToString();
+    }
+
+    public static void LogSystemInformation()
+    {
+        logger.Info($"Application Name: {GetAppName()}, Version: {GetAppVersionTitle()}");
+        logger.Info($"OS Version: {Environment.OSVersion}");
+        logger.Info($"OS Architecture: {RuntimeInformation.OSArchitecture}");        
+        logger.Info($"Device ID: {DeviceId()}");
     }
 }

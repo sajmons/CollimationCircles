@@ -19,6 +19,8 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        AppService.LogSystemInformation();
+
         ConfigureServices();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -31,7 +33,7 @@ public partial class App : Application
             {
                 Topmost = vm.AlwaysOnTop
             };
-        }
+        }        
 
         base.OnFrameworkInitializationCompleted();
     }
