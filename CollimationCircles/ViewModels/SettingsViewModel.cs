@@ -303,10 +303,7 @@ namespace CollimationCircles.ViewModels
                 new ScrewViewModel(),
 
                 // Primary Clip
-                new PrimaryClipViewModel(),
-
-                // Focus mask
-                new BahtinovMaskViewModel()
+                new PrimaryClipViewModel()
             ];
 
             Items.Clear();
@@ -371,7 +368,10 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void AddBahtinovMask()
         {
-            AddItem(new BahtinovMaskViewModel());
+            InCaseOfValidLicense(() =>
+            {
+                AddItem(new BahtinovMaskViewModel());
+            });
         }
 
         [RelayCommand]
@@ -462,7 +462,10 @@ namespace CollimationCircles.ViewModels
                     c = new SpiderViewModel();
                     break;
                 case BahtinovMaskViewModel:
-                    c = new BahtinovMaskViewModel();
+                    InCaseOfValidLicense(() =>
+                    {
+                        c = new BahtinovMaskViewModel();
+                    });
                     break;
             }
 
@@ -616,7 +619,7 @@ namespace CollimationCircles.ViewModels
         internal async Task OpenAboutDialog()
         {
             var dialogViewModel = DialogService.CreateViewModel<AboutViewModel>();
-            
+
             _ = await DialogService.ShowDialogAsync(this, dialogViewModel);
         }
 
