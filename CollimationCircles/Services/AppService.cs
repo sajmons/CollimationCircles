@@ -411,8 +411,8 @@ public class AppService
     public static void LogSystemInformation()
     {
         logger.Info($"Application Name: {GetAppName()}, Version: {GetAppVersionTitle()}");
-        logger.Info($"OS Version: {Environment.OSVersion}");
-        logger.Info($"OS Architecture: {RuntimeInformation.OSArchitecture}");        
+        logger.Info($"OS Version: {RuntimeInformation.OSDescription}");
+        logger.Info($"OS Architecture: {RuntimeInformation.OSArchitecture}");
         logger.Info($"Device ID: {DeviceId()}");
     }
 }
