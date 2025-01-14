@@ -86,10 +86,13 @@
     <None Update="icon.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="license.lic">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="trial expired license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="license.lic">
+    <None Update="license1.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="trial license.lic">

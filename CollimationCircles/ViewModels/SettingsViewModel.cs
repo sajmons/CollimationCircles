@@ -1,11 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.Threading;
 using CollimationCircles.Extensions;
 using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -97,11 +99,11 @@ namespace CollimationCircles.ViewModels
         private KeyValuePair<string, string> selectedLanguage = new();
 
         [ObservableProperty]
-        private ObservableCollection<string> themeList = [];
+        private ObservableCollection<ThemeVariant> themeList = [];
 
         [JsonProperty]
         [ObservableProperty]
-        private string selectedTheme = "Dark";
+        private ThemeVariant selectedTheme = ThemeVariant.Default;
 
         [JsonProperty]
         [ObservableProperty]
@@ -227,16 +229,16 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeThemes()
         {
-            // initialize languages
-            List<string> l =
+            // initialize themes
+            List<ThemeVariant> themes =
             [
-                nameof(ThemeVariant.Light),
-                nameof(ThemeVariant.Dark),
-                nameof(Themes.Custom.Night)
+                ThemeVariant.Light,
+                ThemeVariant.Dark,
+                Themes.Custom.Night
             ];
 
-            ThemeList = new ObservableCollection<string>(l);
-            SelectedTheme = ThemeList.FirstOrDefault() ?? nameof(ThemeVariant.Dark);
+            ThemeList = new ObservableCollection<ThemeVariant>(themes);
+            SelectedTheme = ThemeList.FirstOrDefault() ?? ThemeVariant.Default;
 
             Translate(SelectedLanguage.Value);
 
@@ -488,8 +490,6 @@ namespace CollimationCircles.ViewModels
             {
                 logger.Info($"Found new version {newVersion}");
 
-                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow
-
                 var dialogResult = await DialogService.ShowMessageBoxAsync(null,
                     ResSvc.TryGetString("NewVersionDownload").F(newVersion), ResSvc.TryGetString("NewVersion"), MessageBoxButton.YesNo);
 
@@ -497,14 +497,10 @@ namespace CollimationCircles.ViewModels
                 {
                     AppService.OpenUrl(result);
                 }
-
-                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
             else if (!success)
             {
-                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
                 await DialogService.ShowMessageBoxAsync(null, result, ResSvc.TryGetString("Error"));
-                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
         }
 
@@ -590,41 +586,38 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        partial void OnSelectedThemeChanged(string value)
+        partial void OnSelectedThemeChanged(ThemeVariant? oldValue, ThemeVariant newValue)
         {
-            if (SelectedTheme is not null)
+            Guard.IsNotNull(SelectedTheme, nameof(SelectedTheme));
+            Guard.IsNotNull(Application.Current, nameof(Application.Current));
+            Guard.IsNotNull(newValue, nameof(newValue));
+
+            if (oldValue == newValue)
             {
-                if (Application.Current is not null)
-                {
-                    switch (value)
-                    {
-                        default:
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Default;
-                            break;
-                        case nameof(ThemeVariant.Light):
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Light;
-                            break;
-                        case nameof(Themes.Custom.Night):
-                            Application.Current.RequestedThemeVariant = Themes.Custom.Night;
-                            break;
-                        case nameof(ThemeVariant.Dark):
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
-                            break;
-                    };
-                }
+                return;
             }
 
-            logger.Info($"Application theme changed to '{value}'");
+            if (newValue == Themes.Custom.Night)
+            {
+                InCaseOfValidLicense(() =>
+                {
+                    Application.Current.RequestedThemeVariant = newValue;
+                    logger.Info($"Application theme changed to '{Application.Current.ActualThemeVariant}'");
+                });
+            }
+            else
+            {
+                Application.Current.RequestedThemeVariant = newValue;
+                logger.Info($"Application theme changed to '{Application.Current.ActualThemeVariant}'");
+            }
         }
 
         [RelayCommand]
         internal async Task OpenAboutDialog()
         {
             var dialogViewModel = DialogService.CreateViewModel<AboutViewModel>();
-
-            DissableAlwaysOnTop();
+            
             _ = await DialogService.ShowDialogAsync(this, dialogViewModel);
-            RestoreAlwaysOnTop();
         }
 
         [RelayCommand]

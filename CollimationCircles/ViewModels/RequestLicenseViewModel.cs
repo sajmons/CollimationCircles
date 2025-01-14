@@ -1,5 +1,6 @@
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
@@ -47,11 +48,10 @@ namespace CollimationCircles.ViewModels
         internal void RequestLicense()
         {
             dialog = DialogService.CreateViewModel<RequestLicenseViewModel>();
-
-            DissableAlwaysOnTop();
-            DialogService.Show(null, dialog);
-            logger.Info("Request licence dialog opened");
-            RestoreAlwaysOnTop();
+            var parent = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            
+            DialogService.Show(parent, dialog);
+            logger.Info("Request licence dialog opened");            
         }
 
         [RelayCommand]

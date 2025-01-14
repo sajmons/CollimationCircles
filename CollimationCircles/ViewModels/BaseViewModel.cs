@@ -1,4 +1,5 @@
-﻿using CollimationCircles.Extensions;
+﻿using Avalonia.Threading;
+using CollimationCircles.Extensions;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -21,13 +22,11 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool alwaysOnTop = true;
+        private bool alwaysOnTop = true;        
 
         internal readonly IResourceService ResSvc;
         internal readonly IDialogService DialogService;
         internal readonly ILicenseService LicenseService;
-
-        private bool oldAllwysOnTop = false;
 
         public BaseViewModel()
         {
@@ -42,18 +41,15 @@ namespace CollimationCircles.ViewModels
             ResSvc.Translate(targetLanguage);
         }
 
-        public void DissableAlwaysOnTop()
+        public void InCaseOfValidLicense(Action callback)
         {
-            oldAllwysOnTop = AlwaysOnTop;
-            AlwaysOnTop = false;
+            Dispatcher.UIThread.Post(async () =>
+            {
+                await InCaseOfValidLicenseAsync(callback);
+            });
         }
 
-        public void RestoreAlwaysOnTop()
-        {
-            AlwaysOnTop = oldAllwysOnTop;
-        }
-
-        public async Task CheckValidLicense(Action callback)
+        public async Task InCaseOfValidLicenseAsync(Action callback)
         {
             if (LicenseService.IsValid)
             {
@@ -61,8 +57,6 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
-                DissableAlwaysOnTop();      // prevent dialog to appear behind MainWindow
-
                 string title = ResSvc.TryGetString("InsifficientLicenseTitle");
 
                 string message = ResSvc.TryGetString("InsifficientLicenseMessage");
@@ -79,11 +73,12 @@ namespace CollimationCircles.ViewModels
 
                 var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
 
-                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
-
                 if (dialogResult == true)
                 {
                     // user requested licence
+                    var rlVm = Ioc.Default.GetRequiredService<RequestLicenseViewModel>();
+
+                    rlVm.RequestLicense();
                 }
             }
         }
@@ -96,8 +91,6 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
-                DissableAlwaysOnTop();      // prevent dialog to appear behind MainWindow
-
                 string title = ResSvc.TryGetString("InsifficientLicenseTitle");
 
                 string message = ResSvc.TryGetString("InsifficientLicenseMessage").F(feature);
@@ -114,11 +107,12 @@ namespace CollimationCircles.ViewModels
 
                 var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
 
-                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
-
                 if (dialogResult == true)
                 {
                     // user requested licence
+                    var rlVm = Ioc.Default.GetRequiredService<RequestLicenseViewModel>();
+
+                    rlVm.RequestLicense();
                 }
             }
         }
@@ -131,8 +125,6 @@ namespace CollimationCircles.ViewModels
             }
             else
             {
-                DissableAlwaysOnTop();      // prevent dialog to appear behind MainWindow
-
                 string title = ResSvc.TryGetString("InsifficientLicenseTitle");
 
                 string message = ResSvc.TryGetString("InsifficientLicenseCountMessage").F(feature, count);
@@ -149,11 +141,12 @@ namespace CollimationCircles.ViewModels
 
                 var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
 
-                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
-
                 if (dialogResult == true)
                 {
                     // user requested licence
+                    var rlVm = Ioc.Default.GetRequiredService<RequestLicenseViewModel>();
+
+                    rlVm.RequestLicense();
                 }
             }
         }

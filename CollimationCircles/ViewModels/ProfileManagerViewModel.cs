@@ -46,7 +46,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecuteAddCurrentProfile))]
         internal async Task AddCurrentProfile()
         {
-            await CheckValidLicense(() =>
+            await InCaseOfValidLicenseAsync(() =>
             {
                 settingsViewModel.Profiles.Add(new Profile(ProfileName, settingsViewModel.Items));
             });
@@ -56,7 +56,7 @@ namespace CollimationCircles.ViewModels
         internal async Task RemoveProfile(Profile profile)
         {
             bool? dialogResult = await DialogService.ShowMessageBoxAsync(
-                null, 
+                null,
                 ResSvc.TryGetString("RemoveProfileDialogText").F(profile.Name),
                 ResSvc.TryGetString("RemoveProfileDialogTitle"),
                 MessageBoxButton.YesNo);
@@ -64,7 +64,7 @@ namespace CollimationCircles.ViewModels
             if (dialogResult == true)
             {
                 settingsViewModel.Profiles.Remove(profile);
-            }            
+            }
         }
 
         partial void OnSelectedProfileChanged(Profile? oldValue, Profile? newValue)
