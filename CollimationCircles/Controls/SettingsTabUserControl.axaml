@@ -7,12 +7,15 @@
              x:Class="CollimationCircles.Controls.SettingsTabUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <WrapPanel HorizontalAlignment="Center">
 
+  <Border
+    Background="{DynamicResource ExpanderContentBackground}"
+    BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
+    BorderBrush="{DynamicResource ExpanderContentBorderBrush}"
+    CornerRadius="{DynamicResource ControlCornerRadius}"
+    Padding="{DynamicResource ExpanderContentPadding}">
     <StackPanel
-      Orientation="Vertical"
-      HorizontalAlignment="Center"
-      Width="{Binding SettingsWidth}">
+      Orientation="Vertical">
 
       <Grid
         ColumnDefinitions="*,95"
@@ -59,16 +62,15 @@
         IsChecked="{Binding AlwaysOnTop}" />
       <CheckBox
         Content="{DynamicResource Text.ShowMarkAtSelectedItem}"
-        IsChecked="{Binding ShowMarkAtSelectedItem}" />      
+        IsChecked="{Binding ShowMarkAtSelectedItem}" />
       <CheckBox
         Content="{DynamicResource Text.ShowApplicationLog}"
         IsChecked="{Binding ShowApplicationLog}" />
       <CheckBox
         Content="{DynamicResource Text.ShowKeyboardShortcuts}"
-        IsChecked="{Binding ShowKeyboardShortcuts}" />      
+        IsChecked="{Binding ShowKeyboardShortcuts}" />
 
-    </StackPanel>    
-
-  </WrapPanel>
+    </StackPanel>
+  </Border>
 
 </UserControl>

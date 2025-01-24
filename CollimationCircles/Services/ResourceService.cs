@@ -13,7 +13,7 @@ namespace CollimationCircles.Services
         private readonly string langDir;
 
         public ResourceService(string langDir, string textPresset = "Text")
-        { 
+        {
             this.langDir = langDir;
             this.textPresset = textPresset;
 

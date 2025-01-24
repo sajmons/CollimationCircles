@@ -4,6 +4,14 @@
   <ResourceDictionary.ThemeDictionaries>
 
     <ResourceDictionary x:Key="Light">
+
+      <Thickness x:Key="ExpanderContentPadding">8</Thickness>
+      <Thickness x:Key="ListBoxItemPadding">6</Thickness>
+      <Thickness x:Key="TextControlThemePadding">2</Thickness>
+      <x:Double x:Key="TextControlThemeMinHeight">16</x:Double>
+      <Thickness x:Key="ComboBoxPadding">2</Thickness>
+      <x:Double x:Key="ComboBoxMinHeight">16</x:Double>
+
       <Color x:Key="Color1">#de2626</Color>
       <Color x:Key="Color2">#1B1C18</Color>
       <Color x:Key="BackgroundColor">#FEFCF6</Color>      

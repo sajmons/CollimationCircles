@@ -18,7 +18,7 @@ namespace CollimationCircles.ViewModels
         private Camera? camera;
 
         public CameraControlsViewModel()
-        {            
+        {
             camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>

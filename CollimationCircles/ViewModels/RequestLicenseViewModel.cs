@@ -12,14 +12,14 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private INotifyPropertyChanged? dialog;        
+        private INotifyPropertyChanged? dialog;
 
         [ObservableProperty]
         private bool isStandardLicense = true;
 
         public RequestLicenseViewModel()
-        {            
-            Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";            
+        {
+            Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 
         [RelayCommand]
@@ -33,9 +33,9 @@ namespace CollimationCircles.ViewModels
         {
             dialog = DialogService.CreateViewModel<RequestLicenseViewModel>();
             var parent = Ioc.Default.GetRequiredService<SettingsViewModel>();
-            
+
             DialogService.Show(parent, dialog);
-            logger.Info("Request licence dialog opened");            
+            logger.Info("Request licence dialog opened");
         }
 
         [RelayCommand]
@@ -63,9 +63,9 @@ namespace CollimationCircles.ViewModels
             catch (Exception ex)
             {
                 string msg = string.Empty;
-                
+
                 if (!OperatingSystem.IsWindows())
-                { 
+                {
                     msg = "Please check if you have xsel installed and if not please run 'sudo apt install xsel' to install it.";
                 }
 

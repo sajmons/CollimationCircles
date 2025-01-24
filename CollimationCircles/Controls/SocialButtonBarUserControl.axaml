@@ -8,9 +8,11 @@
              x:DataType="vm:SettingsViewModel">
 
   <StackPanel
-    Orientation="Horizontal">
+    Orientation="Horizontal"
+    Spacing="4">
 
     <Button
+      Padding="5"
       Command="{Binding OpenAboutDialogCommand}"
       ToolTip.Tip="{DynamicResource Text.ShowAboutDialog}">
       <PathIcon
@@ -19,6 +21,7 @@
     </Button>
 
     <Button
+      Padding="5"
       Command="{Binding OpenPatreonWebSiteCommand}"
       ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
       <PathIcon
@@ -27,6 +30,7 @@
     </Button>
 
     <Button
+      Padding="5"
       Command="{Binding OpenContactWebPageCommand}"
       ToolTip.Tip="{DynamicResource Text.OpenWebSiteContactForm}">
       <PathIcon
@@ -35,6 +39,7 @@
     </Button>
 
     <Button
+      Padding="5"
       Command="{Binding OpenGitHubPageCommand}"
       ToolTip.Tip="{DynamicResource Text.GitHubWebSite}">
       <PathIcon
@@ -43,6 +48,7 @@
     </Button>
 
     <Button
+      Padding="5"
       Command="{Binding OpenTwitterCommand}"
       ToolTip.Tip="{DynamicResource Text.TwitterWebSite}">
       <PathIcon
@@ -51,6 +57,7 @@
     </Button>
 
     <Button
+      Padding="5"
       Command="{Binding OpenYouTubeChannelCommand}"
       ToolTip.Tip="{DynamicResource Text.YouTubeChannel}">
       <PathIcon
@@ -59,6 +66,7 @@
     </Button>
 
     <Button
+      Padding="5"
       Command="{Binding GitHubIssueCommand}"
       ToolTip.Tip="{DynamicResource Text.OpenGitHubIssue}">
       <PathIcon

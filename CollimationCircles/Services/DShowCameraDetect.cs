@@ -129,7 +129,7 @@ namespace CollimationCircles.Services
 
         public void SetControl(Camera camera, ControlType controlName, double value)
         {
-            Guard.IsNotNull(camera);            
+            Guard.IsNotNull(camera);
 
             try
             {

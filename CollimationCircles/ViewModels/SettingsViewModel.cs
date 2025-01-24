@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
-using Avalonia.Threading;
 using CollimationCircles.Extensions;
 using CollimationCircles.Helper;
 using CollimationCircles.Messages;
@@ -19,7 +18,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
@@ -38,11 +36,11 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private double mainWindowWidth = 1024;
+        private double mainWindowWidth = 1152;
 
         [JsonProperty]
         [ObservableProperty]
-        private double mainWindowHeight = 768;
+        private double mainWindowHeight = 800;
 
         [JsonProperty]
         [ObservableProperty]
@@ -181,14 +179,24 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private ObservableCollection<Profile> profiles = [];        
+        private ObservableCollection<Profile> profiles = [];
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool shapeListExpanded = true;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool shapePropertiesExpanded = true;
 
         protected override void Initialize()
         {
+            base.Initialize();
+
             InitializeLanguage();
             InitializeThemes();
             InitializeColors();
-            InitializeKeyboardShortcuts();            
+            InitializeKeyboardShortcuts();
         }
 
         private void InitializeKeyboardShortcuts()
@@ -545,6 +553,9 @@ namespace CollimationCircles.ViewModels
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
+                    ShapeListExpanded = vm.ShapeListExpanded;
+                    ShapePropertiesExpanded = vm.ShapePropertiesExpanded;
+
                     LastSelectedCamera = vm.LastSelectedCamera;
                     Profiles = vm.Profiles;
 

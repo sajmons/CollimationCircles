@@ -74,13 +74,13 @@ namespace CollimationCircles.Views
                     foreach (var sk in vm.ShapeShortcuts)
                     {
                         shortcutsString += $"{sk.Key}: {sk.Value}{Environment.NewLine}";
-                    }                    
+                    }
 
-                    dhs.DrawText(context, shortcutsString, new Point(5, 5), Brushes.Yellow, vm.LabelSize);                    
+                    dhs.DrawText(context, shortcutsString, new Point(5, 5), Brushes.Yellow, vm.LabelSize);
                 }
 
                 if (!vm.LicenseService.IsValid)
-                { 
+                {
                     dhs.DrawText(context, vm.ResSvc.TryGetString("UnlicensedVersion"), new Point(5, vm.MainWindowHeight - 25), Brushes.Red, vm.LabelSize);
                 }
 

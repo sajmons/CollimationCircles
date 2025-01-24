@@ -1,5 +1,4 @@
 ﻿using CollimationCircles.Extensions;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using Standard.Licensing;
 using Standard.Licensing.Validation;
 using System;

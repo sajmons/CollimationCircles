@@ -156,7 +156,9 @@
   <system:String x:Key="Text.RemoveProfileDialogTitle">Supprimer le profil</system:String>
   <system:String x:Key="Text.DisplayAdvancedDShowDialog">Afficher les paramètres avancés</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Version sans licence</system:String>
-  
+  <system:String x:Key="Text.ShapeList">Formes</system:String>
+  <system:String x:Key="Text.ShapeProperties">Propriétés de forme</system:String>
+
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>

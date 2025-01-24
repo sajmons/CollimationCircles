@@ -3,7 +3,6 @@ using Avalonia.Media;
 using CollimationCircles.Models;
 using CollimationCircles.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace CollimationCircles.Services
@@ -43,7 +42,7 @@ namespace CollimationCircles.Services
                         break;
                 }
             }
-        }        
+        }
 
         public void DrawText(DrawingContext context, string text, Point location, IBrush foregroundColor, double size)
         {

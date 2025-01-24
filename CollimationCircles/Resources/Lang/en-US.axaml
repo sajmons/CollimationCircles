@@ -157,7 +157,9 @@
   <system:String x:Key="Text.RemoveProfileDialogTitle">Remove profile</system:String>
   <system:String x:Key="Text.DisplayAdvancedDShowDialog">Show advanced settings</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Unlicensed version</system:String>
-  
+  <system:String x:Key="Text.ShapeList">Shapes</system:String>
+  <system:String x:Key="Text.ShapeProperties">Shape properties</system:String>
+
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>

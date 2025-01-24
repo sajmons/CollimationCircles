@@ -155,7 +155,9 @@
   <system:String x:Key="Text.RemoveProfileDialogTitle">Odstrani profil</system:String>
   <system:String x:Key="Text.DisplayAdvancedDShowDialog">Prikaži napredne nastavitve</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Nelicencirana različica</system:String>
-  
+  <system:String x:Key="Text.ShapeList">Oblike</system:String>
+  <system:String x:Key="Text.ShapeProperties">Lastnosti oblike</system:String>
+
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
   <system:String x:Key="Text.StarJson">json</system:String>

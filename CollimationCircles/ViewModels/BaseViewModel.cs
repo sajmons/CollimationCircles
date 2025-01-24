@@ -70,7 +70,7 @@ namespace CollimationCircles.ViewModels
         public void Translate(string targetLanguage)
         {
             ResSvc.Translate(targetLanguage);
-            Initialize();            
+            Initialize();
         }
 
         public void InCaseOfValidLicense(Action callback)

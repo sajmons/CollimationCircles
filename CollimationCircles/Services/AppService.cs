@@ -114,6 +114,9 @@ public class AppService
         {
             GitHubClient client = new(new ProductHeaderValue("CollimationCircles"));
 
+            var tokenAuth = new Credentials("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"); // NOTE: not real token
+            client.Credentials = tokenAuth;
+
             var release = await client.Repository.Release.GetLatest(owner, reponame);
 
             var gitHubVer = release.TagName.Split('-')[1];

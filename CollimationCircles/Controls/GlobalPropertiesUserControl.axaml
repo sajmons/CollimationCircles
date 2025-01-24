@@ -6,59 +6,75 @@
              x:Class="CollimationCircles.Controls.GlobalPropertiesUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
+  <StackPanel Spacing="4">
 
-  <UniformGrid
-    Columns="2">
-    <TextBlock
-      VerticalAlignment="Center"
-      Text="{DynamicResource Text.Scale}"/>
-    <NumericUpDown
-      Increment="0.01"
-      Value="{Binding Scale}"
-      Minimum="{Binding ScaleMin}" 
-      Maximum="{Binding ScaleMax}" />
+    <UniformGrid
+      Columns="2">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.Scale}"/>
+      <NumericUpDown
+        Increment="0.01"
+        Value="{Binding Scale}"
+        Minimum="{Binding ScaleMin}"
+        Maximum="{Binding ScaleMax}" />
+    </UniformGrid>
 
-    <TextBlock
-      VerticalAlignment="Center"
-      Text="{DynamicResource Text.Rotation}"/>
-    <NumericUpDown
-      Value="{Binding RotationAngle}"
-      Minimum="{Binding RotationAngleMin}"
-      Maximum="{Binding RotationAngleMax}" />
+    <UniformGrid
+      Columns="2">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.Rotation}"/>
+      <NumericUpDown
+        Value="{Binding RotationAngle}"
+        Minimum="{Binding RotationAngleMin}"
+        Maximum="{Binding RotationAngleMax}" />
+    </UniformGrid>
+    <UniformGrid
+  Columns="2">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.MainWindowOpacity}" />
+      <NumericUpDown
+        Value="{Binding MainWindowOpacity}"
+        Minimum="{Binding OpacityMin}"
+        Maximum="{Binding OpacityMax}"
+        Increment="0.1"/>
+    </UniformGrid>
 
-    <TextBlock
-      VerticalAlignment="Center"
-      Text="{DynamicResource Text.MainWindowOpacity}" />
-    <NumericUpDown
-      Value="{Binding MainWindowOpacity}"
-      Minimum="{Binding OpacityMin}"
-      Maximum="{Binding OpacityMax}"
-      Increment="0.1"/>
+    <UniformGrid
+  Columns="2">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.GlobalOffsetX}" />
+      <NumericUpDown
+        Value="{Binding GlobalOffsetX}"
+        Minimum="{Binding OffsetMin}"
+        Maximum="{Binding OffsetMax}"/>
+    </UniformGrid>
 
-    <TextBlock
-      VerticalAlignment="Center"
-      Text="{DynamicResource Text.GlobalOffsetX}" />
-    <NumericUpDown
-      Value="{Binding GlobalOffsetX}"
-      Minimum="{Binding OffsetMin}"
-      Maximum="{Binding OffsetMax}"/>
+    <UniformGrid
+  Columns="2">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.GlobalOffsetY}" />
+      <NumericUpDown
+        Value="{Binding GlobalOffsetY}"
+        Minimum="{Binding OffsetMin}"
+        Maximum="{Binding OffsetMax}"/>
+    </UniformGrid>
 
-    <TextBlock
-      VerticalAlignment="Center"
-      Text="{DynamicResource Text.GlobalOffsetY}" />
-    <NumericUpDown
-      Value="{Binding GlobalOffsetY}"
-      Minimum="{Binding OffsetMin}"
-      Maximum="{Binding OffsetMax}"/>
+    <UniformGrid
+  Columns="2">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.LabelSize}" />
+      <NumericUpDown
+        Value="{Binding LabelSize}"
+        Minimum="{Binding LabelSizeMin}"
+        Maximum="{Binding LabelSizeMax}"/>
 
-    <TextBlock
-      VerticalAlignment="Center"
-      Text="{DynamicResource Text.LabelSize}" />
-    <NumericUpDown
-      Value="{Binding LabelSize}"
-      Minimum="{Binding LabelSizeMin}"
-      Maximum="{Binding LabelSizeMax}"/>    
-
-  </UniformGrid>
+    </UniformGrid>
+  </StackPanel>
 
 </UserControl>

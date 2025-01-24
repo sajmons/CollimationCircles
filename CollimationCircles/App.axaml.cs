@@ -33,7 +33,7 @@ public partial class App : Application
             {
                 Topmost = vm.AlwaysOnTop
             };
-        }        
+        }
 
         base.OnFrameworkInitializationCompleted();
     }

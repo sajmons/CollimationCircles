@@ -39,7 +39,7 @@ namespace CollimationCircles.Services
             ];
 
             libVLC = new(libVLCOptions);
-            
+
             if (OperatingSystem.IsWindows())
             {
                 libVLC.Log += (sender, e) =>
