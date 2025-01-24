@@ -12,35 +12,14 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private INotifyPropertyChanged? dialog;
-
-        [ObservableProperty]
-        private string license;
-
-        [ObservableProperty]
-        private string clientId;
-
-        [ObservableProperty]
-        private string product = AppService.ProductName;
-
-        [ObservableProperty]
-        private string productMajorVersion = AppService.GetAppMajorVersion();
+        private INotifyPropertyChanged? dialog;        
 
         [ObservableProperty]
         private bool isStandardLicense = true;
 
-        [ObservableProperty]
-        private bool invalidLicense = true;
-
-        public bool ShowRequestLicenceButton => !LicenseService.IsValid || (!LicenseService.HasLicense && !LicenseService.IsExpired);
-
         public RequestLicenseViewModel()
-        {
-            License = $"{LicenseService}";
-            ClientId = AppService.DeviceId();
-            Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
-
-            InvalidLicense = !LicenseService.IsValid;
+        {            
+            Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";            
         }
 
         [RelayCommand]

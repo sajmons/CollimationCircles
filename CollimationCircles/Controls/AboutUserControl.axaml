@@ -4,34 +4,60 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:CollimationCircles.ViewModels"
              xmlns:controls="clr-namespace:CollimationCircles.Controls"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             mc:Ignorable="d"
+             d:DesignWidth="600"
+             d:DesignHeight="280"
              x:Class="CollimationCircles.Controls.AboutTabUserControl"
              x:DataType="vm:SettingsViewModel">
-  <WrapPanel HorizontalAlignment="Center">
+  <Grid
+    RowDefinitions="Auto,*,Auto"
+    ColumnDefinitions="40,*">
 
     <PathIcon
       Width="32" Height="32"
       Margin="8"
-      HorizontalAlignment="Center" VerticalAlignment="Center"
+      HorizontalAlignment="Center"
+      VerticalAlignment="Center"
       Foreground="{DynamicResource Color2}"
       Data="{StaticResource IconData.Launcher}" />
 
     <TextBlock
-      Margin="0,0,10,10"
-      Padding="8,8,0,0"
+      Grid.Column="1"
       TextWrapping="WrapWithOverflow"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Top"
+      VerticalAlignment="Center"
       Text="{DynamicResource Text.AppDescription}">
     </TextBlock>
 
-    <TextBlock
-      Margin="8"
-      HorizontalAlignment="Stretch"
-      TextWrapping="WrapWithOverflow"
-      VerticalAlignment="Center"
-      Text="{DynamicResource Text.PatreonDesc}" />
+    <Border 
+      Height="100" 
+      Grid.Row="1"
+      Grid.ColumnSpan="2">
+      <ScrollViewer>
 
-  </WrapPanel>
+        <TextBlock
+          Margin="8"
+          HorizontalAlignment="Stretch"
+          TextWrapping="WrapWithOverflow"
+          VerticalAlignment="Center"
+          Text="{DynamicResource Text.PatreonDesc}" />
+
+      </ScrollViewer>
+    </Border>
+
+    <StackPanel
+      Margin="8" 
+      Grid.Row="2"
+      Grid.ColumnSpan="2">
+      <WrapPanel IsVisible="{Binding ValidLicense}">
+        <TextBlock
+          Margin="0 0 8 0"
+          Text="{DynamicResource Text.License}"/>
+        <TextBlock
+          TextWrapping="WrapWithOverflow"
+          Text="{ReflectionBinding License}"/>
+      </WrapPanel>
+    </StackPanel>
+
+  </Grid>
 
 </UserControl>

@@ -40,10 +40,12 @@ public partial class App : Application
 
     private static void ConfigureServices()
     {
+        IResourceService resourceService = new ResourceService(AppService.LangDir);
+
         Ioc.Default.ConfigureServices(
         new ServiceCollection()
-            .AddSingleton<IResourceService>(new ResourceService(AppService.LangDir))
-            .AddSingleton<ILicenseService>(new LicenseService(AppService.ProductName))
+            .AddSingleton<IResourceService>(resourceService)
+            .AddSingleton<ILicenseService>(new LicenseService(AppService.ProductName, resourceService))
             .AddSingleton<IDialogService>(new DialogService(
                 new DialogManager(
                     viewLocator: new ViewLocator(),

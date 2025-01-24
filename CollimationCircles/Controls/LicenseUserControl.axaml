@@ -8,12 +8,11 @@
              x:Class="CollimationCircles.Controls.LicenseUserControl"
              x:DataType="vm:RequestLicenseViewModel">
 
-  <StackPanel 
-    IsVisible="{Binding InvalidLicense}">
+  <StackPanel>    
     <Button
+      IsVisible="{Binding InvalidLicense}"
       Background="{DynamicResource Color1}"
       Content="{DynamicResource Text.RequestLicense}"
-      IsVisible="{ReflectionBinding ShowRequestLicenceButton}"
       Command="{ReflectionBinding RequestLicense}"/>
   </StackPanel>
 

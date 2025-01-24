@@ -22,7 +22,25 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool alwaysOnTop = true;        
+        private bool alwaysOnTop = true;
+
+        [ObservableProperty]
+        private bool invalidLicense = true;
+
+        [ObservableProperty]
+        private bool validLicense = false;
+
+        [ObservableProperty]
+        private string license;
+
+        [ObservableProperty]
+        private string clientId;
+
+        [ObservableProperty]
+        private string product = AppService.ProductName;
+
+        [ObservableProperty]
+        private string productMajorVersion = AppService.GetAppMajorVersion();
 
         internal readonly IResourceService ResSvc;
         internal readonly IDialogService DialogService;
@@ -33,6 +51,12 @@ namespace CollimationCircles.ViewModels
             ResSvc = Ioc.Default.GetRequiredService<IResourceService>();
             DialogService = Ioc.Default.GetRequiredService<IDialogService>(); ;
             LicenseService = Ioc.Default.GetRequiredService<ILicenseService>();
+
+            License = $"{LicenseService}";
+            ClientId = AppService.DeviceId();
+
+            InvalidLicense = !LicenseService.IsValid || (!LicenseService.HasLicense && !LicenseService.IsExpired);
+            ValidLicense = !InvalidLicense;
         }
 
         [RelayCommand]

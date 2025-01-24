@@ -6,11 +6,19 @@ using System.Linq;
 
 namespace CollimationCircles.Services
 {
-    public class ResourceService(string langDir, string textPresset = "Text") : IResourceService
+    public class ResourceService : IResourceService
     {
         private ResourceInclude? resources;
-        private readonly string textPresset = textPresset;
-        private readonly string langDir = langDir;
+        private readonly string textPresset;
+        private readonly string langDir;
+
+        public ResourceService(string langDir, string textPresset = "Text")
+        { 
+            this.langDir = langDir;
+            this.textPresset = textPresset;
+
+            Translate();
+        }
 
         public void Translate(string language = "en-US")
         {

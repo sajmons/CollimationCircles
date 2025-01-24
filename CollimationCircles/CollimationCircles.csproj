@@ -87,7 +87,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="license.lic">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="trial expired license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

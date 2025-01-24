@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="500" 
-        d:DesignHeight="250"
+        d:DesignHeight="300"
         x:Class="CollimationCircles.Views.AboutView"
         xmlns:controls="clr-namespace:CollimationCircles.Controls"
         Title="{Binding Title}"
@@ -13,7 +13,8 @@
         Icon="/Resources/Images/icon_256px.ico"
         WindowStartupLocation="CenterScreen">
   <StackPanel
-    Orientation="Vertical">
+    Orientation="Vertical"
+    Margin="16">
     <controls:AboutTabUserControl />
     <Separator/>
     <StackPanel      

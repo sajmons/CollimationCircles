@@ -33,8 +33,11 @@ namespace CollimationCircles.Services
 
         public bool IsTrial => license?.Type == LicenseType.Trial;
 
-        public LicenseService(string productName)
+        private IResourceService resourceService;
+
+        public LicenseService(string productName, IResourceService resourceService)
         {
+            this.resourceService = resourceService;
             license = LoadLicense(productName);
         }
 
@@ -172,20 +175,18 @@ namespace CollimationCircles.Services
 
         public override string ToString()
         {
-            var ResSvc = Ioc.Default.GetRequiredService<IResourceService>();
-
             if (IsValid)
             {
-                string validUntil = IsTrial ? $"{ResSvc.TryGetString("ValidUntil")} {Expiration}" : string.Empty;
+                string validUntil = IsTrial ? $"{resourceService.TryGetString("ValidUntil")} {Expiration}" : string.Empty;
                 return $"{license?.Type}, {license?.Customer.Name}, {license?.Customer.Email} {validUntil}";
             }
             else if (HasLicense && IsExpired)
             {
-                return ResSvc.TryGetString("ExpiredLicenseMessage").F(Expiration!.Value.ToLongDateString());
+                return resourceService.TryGetString("ExpiredLicenseMessage").F(Expiration!.Value.ToLongDateString());
             }
             else
             {
-                return ResSvc.TryGetString("UnlicensedVersion");
+                return $"{resourceService.TryGetString("UnlicensedVersion")}";
             }
         }
     }
