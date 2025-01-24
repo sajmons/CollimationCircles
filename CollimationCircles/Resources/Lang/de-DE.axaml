@@ -142,7 +142,6 @@
   <system:String x:Key="Text.InsifficientLicenseCountMessage">Für die Funktion '{0}' von '{1}' ist eine gültige Lizenz erforderlich.</system:String>
   <system:String x:Key="Text.UpgradeLicenseMessage">Möchten Sie Ihre Lizenz upgraden oder eine Testlizenz anfordern?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">Diese Lizenz ist abgelaufen um {0}</system:String>
-  <system:String x:Key="Text.NotLicensed">Nicht lizenziert</system:String>
   <system:String x:Key="Text.ValidUntil">Gültig bis:</system:String>
   <system:String x:Key="Text.RequestLicense">Lizenz anfordern</system:String>
   <system:String x:Key="Text.Product">Produkt:</system:String>

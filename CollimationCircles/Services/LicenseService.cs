@@ -185,7 +185,7 @@ namespace CollimationCircles.Services
             }
             else
             {
-                return ResSvc.TryGetString("NotLicensed");
+                return ResSvc.TryGetString("UnlicensedVersion");
             }
         }
     }

@@ -29,6 +29,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool isStandardLicense = true;
 
+        [ObservableProperty]
+        private bool invalidLicense = true;
+
         public bool ShowRequestLicenceButton => !LicenseService.IsValid || (!LicenseService.HasLicense && !LicenseService.IsExpired);
 
         public RequestLicenseViewModel()
@@ -36,6 +39,8 @@ namespace CollimationCircles.ViewModels
             License = $"{LicenseService}";
             ClientId = AppService.DeviceId();
             Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
+
+            InvalidLicense = !LicenseService.IsValid;
         }
 
         [RelayCommand]

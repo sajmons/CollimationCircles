@@ -142,7 +142,6 @@
   <system:String x:Key="Text.InsifficientLicenseCountMessage">Funkcionalnosti '{0}' v številu '{1}' zahteva veljavno licenco</system:String>
   <system:String x:Key="Text.UpgradeLicenseMessage">Bi želeli nadgraditi vašo licenco ali zahteveti preizkusno licenco?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">Ta licenca je potekla {0}</system:String>
-  <system:String x:Key="Text.NotLicensed">Ni licencirano</system:String>
   <system:String x:Key="Text.ValidUntil">Velja do:</system:String>
   <system:String x:Key="Text.RequestLicense">Zahtevaj licenco</system:String>
   <system:String x:Key="Text.Product">Izdelek:</system:String>

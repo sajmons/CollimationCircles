@@ -8,7 +8,6 @@
              x:DataType="vm:SettingsViewModel">
 
   <StackPanel
-    HorizontalAlignment="Center"
     Orientation="Horizontal">
 
     <Button

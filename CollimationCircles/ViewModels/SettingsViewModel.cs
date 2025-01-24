@@ -38,11 +38,11 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private double mainWindowWidth = 900;
+        private double mainWindowWidth = 1024;
 
         [JsonProperty]
         [ObservableProperty]
-        private double mainWindowHeight = 700;
+        private double mainWindowHeight = 768;
 
         [JsonProperty]
         [ObservableProperty]
@@ -195,7 +195,7 @@ namespace CollimationCircles.ViewModels
             InitializeColors();
             InitializeKeyboardShortcuts();
 
-            Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
+            Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()} {LicenseService.ToString()}";
         }
 
         private void InitializeKeyboardShortcuts()

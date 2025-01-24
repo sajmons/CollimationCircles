@@ -7,16 +7,11 @@
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.LicenseUserControl"
              x:DataType="vm:RequestLicenseViewModel">
-  <StackPanel Margin="8">
-    <WrapPanel>
-      <TextBlock
-        Margin="0 0 8 0"
-        Text="{DynamicResource Text.License}"/>
-      <TextBlock
-        TextWrapping="WrapWithOverflow"
-        Text="{ReflectionBinding License}"/>
-    </WrapPanel>
-    <Button      
+
+  <StackPanel 
+    IsVisible="{Binding InvalidLicense}">
+    <Button
+      Background="{DynamicResource Color1}"
       Content="{DynamicResource Text.RequestLicense}"
       IsVisible="{ReflectionBinding ShowRequestLicenceButton}"
       Command="{ReflectionBinding RequestLicense}"/>
