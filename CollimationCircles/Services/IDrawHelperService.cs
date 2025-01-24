@@ -8,9 +8,6 @@ namespace CollimationCircles.Services
     internal interface IDrawHelperService
     {
         public void DrawMask<T>(DrawingContext context, SettingsViewModel? vm, T item, Matrix translate);
-
-        public void DrawShortcuts(DrawingContext context, Dictionary<string, string> shortcutsList, Point location);
-
         public void DrawText(DrawingContext context, string text, Point location, IBrush foregroundColor, double size);
     }
 }

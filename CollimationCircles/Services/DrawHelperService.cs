@@ -43,27 +43,7 @@ namespace CollimationCircles.Services
                         break;
                 }
             }
-        }
-
-        public void DrawShortcuts(DrawingContext context, Dictionary<string, string> shortcutsList, Point location)
-        {
-            string shortcutsString = string.Empty;
-
-            foreach (var sk in shortcutsList)
-            {
-                shortcutsString += $"{sk.Key}: {sk.Value}{Environment.NewLine}";
-            }
-
-            FormattedText shortcutsFormatedText = new(
-                    shortcutsString,
-                    CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight,
-                    Typeface.Default,
-                    12,
-                    Brushes.Yellow);
-
-            context.DrawText(shortcutsFormatedText, location);
-        }
+        }        
 
         public void DrawText(DrawingContext context, string text, Point location, IBrush foregroundColor, double size)
         {
