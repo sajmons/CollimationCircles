@@ -44,17 +44,7 @@
               <StackPanel Orientation="Vertical">
                 <controls:StreamUserControl/>
               </StackPanel>
-            </Expander>
-            <Expander
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Width="{Binding SettingsWidth}"
-              Header="{DynamicResource Text.ProfileManagerTitle}"
-              IsExpanded="{Binding ProfileManagerExpanded}">
-              <StackPanel Orientation="Vertical">
-                <controls:ProfileManagerUserControl/>
-              </StackPanel>
-            </Expander>
+            </Expander>            
           </StackPanel>
         </ScrollViewer>
       </TabItem>

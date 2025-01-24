@@ -27,7 +27,7 @@
 
               <Grid
                 ColumnDefinitions="25,*,34,34"
-                RowDefinitions="20">                
+                RowDefinitions="20">
 
                 <Viewbox
                   Margin="2">
@@ -196,7 +196,7 @@
           <NumericUpDown
             Increment="1"
             Value="{ReflectionBinding #list.SelectedItem.Count}"
-            Minimum="{Binding CountMin}" 
+            Minimum="{Binding CountMin}"
             Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
         </UniformGrid>
 
@@ -230,6 +230,17 @@
           IsChecked="{Binding ShowLabels}"/>
 
       </StackPanel>
+
+      <Expander
+            VerticalAlignment="Top"
+            HorizontalAlignment="Stretch"
+            Width="{Binding SettingsWidth}"
+            Header="{DynamicResource Text.ProfileManagerTitle}"
+            IsExpanded="{Binding ProfileManagerExpanded}">
+        <StackPanel Orientation="Vertical">
+          <controls:ProfileManagerUserControl/>
+        </StackPanel>
+      </Expander>
 
     </WrapPanel>
   </ScrollViewer>
