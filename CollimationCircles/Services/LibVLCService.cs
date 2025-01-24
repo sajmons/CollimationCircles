@@ -33,6 +33,9 @@ namespace CollimationCircles.Services
                 //$"--zoom=1.5",
                 //$"--log-verbose=0"
                 //"--video-filter=adjust{contrast=1.0,brightness=1.0,hue=0,saturation=1.0,gamma=1.0}"
+                "--log-verbose=3",
+                "--logfile=logs\\vlclog.txt",
+                "--file-logging"
             ];
 
             libVLC = new(libVLCOptions);
