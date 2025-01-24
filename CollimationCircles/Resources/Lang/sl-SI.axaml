@@ -155,6 +155,7 @@
   <system:String x:Key="Text.RemoveProfileDialogText">Želite odstraniti profil '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Odstrani profil</system:String>
   <system:String x:Key="Text.DisplayAdvancedDShowDialog">Prikaži napredne nastavitve</system:String>
+  <system:String x:Key="Text.UnlicensedVersion">Nelicencirana različica</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

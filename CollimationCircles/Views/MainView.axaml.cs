@@ -59,8 +59,6 @@ namespace CollimationCircles.Views
         {
             try
             {
-                SettingsViewModel vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
-
                 int dockedWidth = vm.DockInMainWindow ? vm.SettingsMinWidth / 2 : 0;
                 var items = vm.Items;
 
@@ -68,6 +66,11 @@ namespace CollimationCircles.Views
                 {
                     dhs.DrawShortcuts(context, vm.GlobalShortcuts, new Point(5, 0));
                     dhs.DrawShortcuts(context, vm.ShapeShortcuts, new Point(5, 80));
+                }
+
+                if (!vm.LicenseService.IsValid)
+                { 
+                    dhs.DrawText(context, vm.ResSvc.TryGetString("UnlicensedVersion"), new Point(5, vm.MainWindowHeight - 25), Brushes.Red, 16);
                 }
 
                 if (items is not null)

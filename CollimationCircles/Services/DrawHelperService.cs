@@ -65,6 +65,19 @@ namespace CollimationCircles.Services
             context.DrawText(shortcutsFormatedText, location);
         }
 
+        public void DrawText(DrawingContext context, string text, Point location, IBrush foregroundColor, double size)
+        {
+            FormattedText shortcutsFormatedText = new(
+                    text,
+                    CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight,
+                    Typeface.Default,
+                    size,
+                    foregroundColor);
+
+            context.DrawText(shortcutsFormatedText, location);
+        }
+
         private void DrawCircle(DrawingContext context, SettingsViewModel vm, CircleViewModel item, Matrix translate)
         {
             using (context.PushTransform(translate))

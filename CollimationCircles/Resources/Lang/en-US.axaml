@@ -157,6 +157,7 @@
   <system:String x:Key="Text.RemoveProfileDialogText">Do you want to remove profile '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Remove profile</system:String>
   <system:String x:Key="Text.DisplayAdvancedDShowDialog">Show advanced settings</system:String>
+  <system:String x:Key="Text.UnlicensedVersion">Unlicensed version</system:String>
   
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
