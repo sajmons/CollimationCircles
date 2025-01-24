@@ -31,7 +31,7 @@ namespace CollimationCircles.ViewModels
         private bool validLicense = false;
 
         [ObservableProperty]
-        private string license;
+        private string? license;
 
         [ObservableProperty]
         private string clientId;
@@ -52,17 +52,25 @@ namespace CollimationCircles.ViewModels
             DialogService = Ioc.Default.GetRequiredService<IDialogService>(); ;
             LicenseService = Ioc.Default.GetRequiredService<ILicenseService>();
 
-            License = $"{LicenseService}";
             ClientId = AppService.DeviceId();
 
             InvalidLicense = !LicenseService.IsValid || (!LicenseService.HasLicense && !LicenseService.IsExpired);
             ValidLicense = !InvalidLicense;
+
+            Initialize();
+        }
+
+        protected virtual void Initialize()
+        {
+            License = $"{LicenseService}";
+            Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()} {LicenseService}";
         }
 
         [RelayCommand]
         public void Translate(string targetLanguage)
         {
             ResSvc.Translate(targetLanguage);
+            Initialize();            
         }
 
         public void InCaseOfValidLicense(Action callback)

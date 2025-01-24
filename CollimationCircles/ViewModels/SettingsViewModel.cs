@@ -64,7 +64,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private double labelSize = 10;
+        private double labelSize = 16;
 
         [JsonProperty]
         [ObservableProperty]
@@ -181,21 +181,14 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private ObservableCollection<Profile> profiles = [];
+        private ObservableCollection<Profile> profiles = [];        
 
-        public SettingsViewModel()
-        {
-            Initialize();
-        }
-
-        public void Initialize()
+        protected override void Initialize()
         {
             InitializeLanguage();
             InitializeThemes();
             InitializeColors();
-            InitializeKeyboardShortcuts();
-
-            Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()} {LicenseService.ToString()}";
+            InitializeKeyboardShortcuts();            
         }
 
         private void InitializeKeyboardShortcuts()
@@ -238,9 +231,7 @@ namespace CollimationCircles.ViewModels
             ];
 
             ThemeList = new ObservableCollection<ThemeVariant>(themes);
-            SelectedTheme = ThemeList.FirstOrDefault() ?? ThemeVariant.Default;
-
-            Translate(SelectedLanguage.Value);
+            //SelectedTheme = ThemeList.FirstOrDefault() ?? ThemeVariant.Default;
 
             logger.Info("Initialized themes");
         }
@@ -257,9 +248,7 @@ namespace CollimationCircles.ViewModels
             ];
 
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
-            SelectedLanguage = LanguageList.FirstOrDefault();
-
-            Translate(SelectedLanguage.Value);
+            //SelectedLanguage = LanguageList.FirstOrDefault();
 
             logger.Info("Initialized languages");
         }

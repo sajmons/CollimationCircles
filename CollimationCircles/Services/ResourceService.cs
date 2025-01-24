@@ -34,7 +34,7 @@ namespace CollimationCircles.Services
                 }
             );
 
-            resources ??= Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>()
+            resources = Application.Current?.Resources.MergedDictionaries.OfType<ResourceInclude>()
                 .FirstOrDefault(x => x.Source?.OriginalString?.Contains(language) ?? false);
         }
 
