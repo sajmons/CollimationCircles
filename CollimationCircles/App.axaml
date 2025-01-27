@@ -47,8 +47,7 @@
       <Setter Property="Width" Value="{DynamicResource ToolbarButtonWidth}"/>
       <Setter Property="Height" Value="{DynamicResource ToolbarButtonHeight}"/>
       <Style Selector="^:pointerover">
-        <Setter Property="Background" Value="Red"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Background" Value="{DynamicResource Color2}"/>
       </Style>
     </ControlTheme>
 

@@ -63,6 +63,7 @@ public partial class App : Application
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
+            .AddSingleton<ImageAnalysisService>()
             .BuildServiceProvider());
     }
 }

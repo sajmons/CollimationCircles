@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using CollimationCircles.Services;
 using System;
 
 namespace CollimationCircles
@@ -13,6 +14,9 @@ namespace CollimationCircles
         [STAThread]
         public static void Main(string[] args)
         {
+            ImageAnalysisService imageAnalysisService = new ImageAnalysisService();
+            imageAnalysisService.DetectingCollimationErrors();
+
             try
             {
                 BuildAvaloniaApp()
