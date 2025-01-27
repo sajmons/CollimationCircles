@@ -8,36 +8,51 @@
              x:Class="CollimationCircles.Controls.ProfileManagerUserControl"
              x:DataType="vm:ProfileManagerViewModel">
   <StackPanel Spacing="{DynamicResource ControlSpacing}">
-    <Grid ColumnDefinitions="*,4,32,6">
-      <TextBox
-        Text="{ReflectionBinding ProfileName}"
-        Watermark="{DynamicResource Text.EnterProfileName}" />
-      <Button
-        Theme="{DynamicResource ToolbarButton}"
-        Grid.Column="2"
-        Command="{ReflectionBinding AddCurrentProfileCommand}"
-        ToolTip.Tip="{DynamicResource Text.AddCurrentProfile}">
-        <PathIcon
-          Width="{DynamicResource PathIconWidth}"
-          Height="{DynamicResource PathIconHeight}"
-          Foreground="{DynamicResource Color2}"
-          Data="{StaticResource IconData.Add}" />
-      </Button>
-    </Grid>
     <Border Height="160">
       <ScrollViewer>
         <ListBox
-            Grid.Row="1"
-            Grid.ColumnSpan="2"
             SelectedItem="{ReflectionBinding SelectedProfile}"
             SelectionMode="Single"
             ItemsSource="{ReflectionBinding Profiles}">
+          <ListBox.Template>
+            <ControlTemplate>
+              <DockPanel LastChildFill="True">
+                <Grid 
+                  DockPanel.Dock="Top"
+                  ColumnDefinitions="*,Auto,Auto,Auto">
+                  <TextBox
+                    Text="{ReflectionBinding ProfileName}"
+                    Watermark="{DynamicResource Text.EnterProfileName}"/>
+                  <Border
+                    Grid.Column="1"
+                    Width="{DynamicResource ControlSpacing}"/>
+                  <Button
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    Theme="{DynamicResource ToolbarButton}"
+                    Command="{ReflectionBinding AddCurrentProfileCommand}"
+                    ToolTip.Tip="{DynamicResource Text.AddCurrentProfile}">
+                    <PathIcon
+                      Width="{DynamicResource PathIconWidth}"
+                      Height="{DynamicResource PathIconHeight}"
+                      Foreground="{DynamicResource Color2}"
+                      Data="{StaticResource IconData.Add}" />
+                  </Button>
+                  <Border
+                    Grid.Column="3"
+                    Width="{DynamicResource ControlSpacing}"/>
+                </Grid>
+                <ItemsPresenter></ItemsPresenter>
+              </DockPanel>
+            </ControlTemplate>
+          </ListBox.Template>
           <ListBox.ItemTemplate>
             <DataTemplate>
               <Grid
-                ColumnDefinitions="*,32"
-                RowDefinitions="20">
-                <TextBlock Text="{ReflectionBinding Name}"/>
+                ColumnDefinitions="*,Auto">
+                <TextBlock 
+                  Text="{ReflectionBinding Name}"
+                  VerticalAlignment="Center"/>
                 <Button
                   Theme="{DynamicResource ToolbarButton}"
                   Grid.Column="1"

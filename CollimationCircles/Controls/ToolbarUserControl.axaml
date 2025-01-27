@@ -6,18 +6,16 @@
              x:Class="CollimationCircles.Controls.ToolbarUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <StackPanel    
-    Orientation="Horizontal"
-    Spacing="{DynamicResource ControlSpacing}">
-
+  <Grid
+    ColumnDefinitions="Auto,*,Auto">
     <SplitButton
       Content="{DynamicResource Text.Add}"
       ToolTip.Tip="{DynamicResource Text.AddNewItem}">
       <SplitButton.Flyout>
-        <MenuFlyout          
+        <MenuFlyout
           Placement="BottomEdgeAlignedLeft">
           <MenuItem
-            Header="{DynamicResource Text.Circle}"            
+            Header="{DynamicResource Text.Circle}"
             Command="{Binding AddCircleCommand}" >
             <MenuItem.Icon>
               <PathIcon
@@ -40,7 +38,7 @@
           <MenuItem Header="{DynamicResource Text.PrimaryClip}"
           Command="{Binding AddClipCommand}">
             <MenuItem.Icon>
-              <PathIcon 
+              <PathIcon
                 Width="{DynamicResource PathIconWidth}"
                 Height="{DynamicResource PathIconHeight}"
                 Foreground="{DynamicResource Color2}"
@@ -71,50 +69,59 @@
       </SplitButton.Flyout>
     </SplitButton>
 
-    <Button
-      Theme="{DynamicResource ToolbarButton}"
-      Command="{Binding ResetListCommand}"
-      ToolTip.Tip="{DynamicResource Text.ResetItems}">
-      <PathIcon
-        Width="{DynamicResource PathIconWidth}"
-        Height="{DynamicResource PathIconHeight}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Reset}" />
-    </Button>
+    <StackPanel
+      HorizontalAlignment="Right"
+      Orientation="Horizontal"
+      Grid.Column="1"
+      Spacing="{DynamicResource ControlSpacing}">
+      <Button
+        Theme="{DynamicResource ToolbarButton}"
+        Command="{Binding ResetListCommand}"
+        ToolTip.Tip="{DynamicResource Text.ResetItems}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Reset}" />
+      </Button>
 
-    <Button
-      Theme="{DynamicResource ToolbarButton}"
-      Command="{Binding SaveListCommand}"
-      ToolTip.Tip="{DynamicResource Text.SaveList}">
-      <PathIcon
-        Width="{DynamicResource PathIconWidth}"
-        Height="{DynamicResource PathIconHeight}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Save}"/>
-    </Button>
+      <Button
+        Theme="{DynamicResource ToolbarButton}"
+        Command="{Binding SaveListCommand}"
+        ToolTip.Tip="{DynamicResource Text.SaveList}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Save}"/>
+      </Button>
 
-    <Button
-      Theme="{DynamicResource ToolbarButton}"
-      Command="{Binding LoadListCommand}"
-      ToolTip.Tip="{DynamicResource Text.LoadList}">
-      <PathIcon
-        Width="{DynamicResource PathIconWidth}"
-        Height="{DynamicResource PathIconHeight}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Load}"/>
-    </Button>
+      <Button
+        Theme="{DynamicResource ToolbarButton}"
+        Command="{Binding LoadListCommand}"
+        ToolTip.Tip="{DynamicResource Text.LoadList}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Load}"/>
+      </Button>
 
-    <Button
-      Theme="{DynamicResource ToolbarButton}"
-      Command="{Binding DuplicateCommand}"
-      ToolTip.Tip="{DynamicResource Text.Duplicate}"
-      CommandParameter="{Binding SelectedIndex}">
-      <PathIcon
-        Width="{DynamicResource PathIconWidth}"
-        Height="{DynamicResource PathIconHeight}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Duplicate}"/>
-    </Button>
+      <Button
+        Theme="{DynamicResource ToolbarButton}"
+        Command="{Binding DuplicateCommand}"
+        ToolTip.Tip="{DynamicResource Text.Duplicate}"
+        CommandParameter="{Binding SelectedIndex}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Duplicate}"/>
+      </Button>      
+    </StackPanel>
+    <Border 
+      Grid.Column="2"
+      Width="{DynamicResource ControlSpacing}"/>
 
-  </StackPanel>
+  </Grid>
 </UserControl>
