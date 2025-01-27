@@ -6,7 +6,7 @@
              x:Class="CollimationCircles.Controls.GlobalPropertiesUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <StackPanel Spacing="4">
+  <StackPanel Spacing="{DynamicResource ControlSpacing}">
 
     <UniformGrid
       Columns="2">

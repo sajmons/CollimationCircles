@@ -9,67 +9,81 @@
 
   <StackPanel
     Orientation="Horizontal"
-    Spacing="4">
+    Spacing="{DynamicResource ControlSpacing}">
 
     <Button
-      Padding="5"
+      Theme="{DynamicResource ToolbarButton}"
       Command="{Binding OpenAboutDialogCommand}"
       ToolTip.Tip="{DynamicResource Text.ShowAboutDialog}">
       <PathIcon
+        Width="{DynamicResource PathIconWidth}"
+        Height="{DynamicResource PathIconHeight}"
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Info}" />
     </Button>
 
     <Button
-      Padding="5"
+      Theme="{DynamicResource ToolbarButton}"
       Command="{Binding OpenPatreonWebSiteCommand}"
       ToolTip.Tip="{DynamicResource Text.PatreonWebSite}">
       <PathIcon
+        Width="{DynamicResource PathIconWidth}"
+        Height="{DynamicResource PathIconHeight}"
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Patreon}" />
     </Button>
 
     <Button
-      Padding="5"
+      Theme="{DynamicResource ToolbarButton}"
       Command="{Binding OpenContactWebPageCommand}"
       ToolTip.Tip="{DynamicResource Text.OpenWebSiteContactForm}">
       <PathIcon
+        Width="{DynamicResource PathIconWidth}"
+        Height="{DynamicResource PathIconHeight}"
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Email}" />
     </Button>
 
     <Button
-      Padding="5"
+      Theme="{DynamicResource ToolbarButton}"
       Command="{Binding OpenGitHubPageCommand}"
       ToolTip.Tip="{DynamicResource Text.GitHubWebSite}">
       <PathIcon
+        Width="{DynamicResource PathIconWidth}"
+        Height="{DynamicResource PathIconHeight}"
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.GitHub}" />
     </Button>
 
     <Button
-      Padding="5"
+      Theme="{DynamicResource ToolbarButton}"
       Command="{Binding OpenTwitterCommand}"
       ToolTip.Tip="{DynamicResource Text.TwitterWebSite}">
       <PathIcon
+        Width="{DynamicResource PathIconWidth}"
+        Height="{DynamicResource PathIconHeight}"
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Twetter}" />
     </Button>
 
     <Button
-      Padding="5"
+      Theme="{DynamicResource ToolbarButton}"
       Command="{Binding OpenYouTubeChannelCommand}"
       ToolTip.Tip="{DynamicResource Text.YouTubeChannel}">
       <PathIcon
+        Width="{DynamicResource PathIconWidth}"
+        Height="{DynamicResource PathIconHeight}"
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.YouTube}" />
     </Button>
 
     <Button
-      Padding="5"
+      Theme="{DynamicResource ToolbarButton}"
       Command="{Binding GitHubIssueCommand}"
       ToolTip.Tip="{DynamicResource Text.OpenGitHubIssue}">
       <PathIcon
+        Width="{DynamicResource PathIconWidth}"
+        Height="{DynamicResource PathIconHeight}"
         Foreground="{DynamicResource Color2}"
         Data="{StaticResource IconData.Bug}" />
     </Button>

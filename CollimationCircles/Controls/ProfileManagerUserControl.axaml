@@ -7,18 +7,19 @@
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.ProfileManagerUserControl"
              x:DataType="vm:ProfileManagerViewModel">
-  <StackPanel Spacing="4">
+  <StackPanel Spacing="{DynamicResource ControlSpacing}">
     <Grid ColumnDefinitions="*,4,32,6">
       <TextBox
         Text="{ReflectionBinding ProfileName}"
         Watermark="{DynamicResource Text.EnterProfileName}" />
       <Button
+        Theme="{DynamicResource ToolbarButton}"
         Grid.Column="2"
         Command="{ReflectionBinding AddCurrentProfileCommand}"
-        ToolTip.Tip="{DynamicResource Text.AddCurrentProfile}"
-        Width="32"
-        Height="32">
+        ToolTip.Tip="{DynamicResource Text.AddCurrentProfile}">
         <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
           Foreground="{DynamicResource Color2}"
           Data="{StaticResource IconData.Add}" />
       </Button>
@@ -38,15 +39,15 @@
                 RowDefinitions="20">
                 <TextBlock Text="{ReflectionBinding Name}"/>
                 <Button
-                  Padding="0"
+                  Theme="{DynamicResource ToolbarButton}"
                   Grid.Column="1"
                   Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveProfileCommand}"
                   CommandParameter="{ReflectionBinding .}"
-                  ToolTip.Tip="{DynamicResource Text.RemoveItem}"
-                  Width="32"
-                  Height="32">
+                  ToolTip.Tip="{DynamicResource Text.RemoveItem}">
                   <Viewbox Margin="7">
                     <PathIcon
+                      Width="{DynamicResource PathIconWidth}"
+                      Height="{DynamicResource PathIconHeight}"
                       Foreground="{DynamicResource Color2}"
                       Data="{StaticResource IconData.Remove}" />
                   </Viewbox>

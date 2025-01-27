@@ -9,11 +9,11 @@
 
   <StackPanel
     Orientation="Vertical"
-    Spacing="10">
+    Spacing="{DynamicResource ControlSpacing}">
 
     <StackPanel
       Orientation="Vertical"
-      Spacing="10">
+      Spacing="{DynamicResource ControlSpacing}">
       <StackPanel
         Orientation="Vertical"
         IsEnabled="{Binding !IsPlaying}">
@@ -36,10 +36,13 @@
             </ComboBox.ItemTemplate>
           </ComboBox>
           <Button
+            Theme="{DynamicResource ToolbarButton}"
             HorizontalAlignment="Right"
             Command="{Binding CameraRefreshCommand}"
             ToolTip.Tip="{DynamicResource Text.RefreshCameras}">
             <PathIcon
+              Width="{DynamicResource PathIconWidth}"
+              Height="{DynamicResource PathIconHeight}"
               Foreground="{DynamicResource Color2}"
               Data="{StaticResource IconData.Reset}" />
           </Button>
@@ -55,17 +58,22 @@
             VerticalAlignment="Center" />
         </StackPanel>
       </StackPanel>
-      <StackPanel Orientation="Horizontal">
+      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource ControlSpacing}">
         <ToggleButton
+          Theme="{DynamicResource ToolbarButton}"
           IsChecked="{Binding IsPlaying}"
           Command="{Binding PlayPauseCommand}"
           ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}">
           <Panel>
             <PathIcon
+              Width="{DynamicResource PathIconWidth}"
+              Height="{DynamicResource PathIconHeight}"
               Foreground="{DynamicResource Color2}"
               Classes="visibility-on"
               Data="{StaticResource IconData.Stop}" />
             <PathIcon
+              Width="{DynamicResource PathIconWidth}"
+              Height="{DynamicResource PathIconHeight}"
               Foreground="{DynamicResource Color2}"
               Classes="visibility-off"
               Data="{StaticResource IconData.Play}" />
@@ -86,11 +94,14 @@
           </ToggleButton.Styles>
         </ToggleButton>
         <Button
+            Theme="{DynamicResource ToolbarButton}"
             Command="{Binding CameraSettingsCommand}"
             ToolTip.Tip="{DynamicResource Text.CameraSettings}"
             Grid.Column="2"
             IsEnabled="{Binding ControlsEnabled}">
           <PathIcon
+            Width="{DynamicResource PathIconWidth}"
+            Height="{DynamicResource PathIconHeight}"
             Foreground="{DynamicResource Color2}"
             Data="{StaticResource IconData.Settings}" />
         </Button>

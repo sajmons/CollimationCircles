@@ -26,7 +26,7 @@
             Text="{DynamicResource Text.Tools}" />
         </TabItem.Header>
         <ScrollViewer>
-          <StackPanel Spacing="8">
+          <StackPanel Spacing="{DynamicResource ControlSpacing}">
             <Expander
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"                
@@ -57,7 +57,7 @@
         </ScrollViewer>
       </TabItem>
     </TabControl>
-    <StackPanel Grid.Row="1" Spacing="8" Margin="12">
+    <StackPanel Grid.Row="1" Spacing="{DynamicResource ControlSpacing}" Margin="12">
       <controls:LicenseUserControl IsVisible="{Binding InvalidLicense}"/>
       <controls:SocialButtonBarUserControl/>
     </StackPanel>

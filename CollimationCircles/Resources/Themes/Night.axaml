@@ -11,7 +11,7 @@
       <Thickness x:Key="TextControlThemePadding">2</Thickness>
       <x:Double x:Key="TextControlThemeMinHeight">16</x:Double>
       <Thickness x:Key="ComboBoxPadding">2</Thickness>
-      <x:Double x:Key="ComboBoxMinHeight">16</x:Double>
+      <x:Double x:Key="ComboBoxMinHeight">16</x:Double>      
 
       <Color x:Key="Color1">#de2626</Color>
       <Color x:Key="Color2">#922323</Color>

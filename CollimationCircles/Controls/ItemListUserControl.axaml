@@ -11,7 +11,7 @@
   <ScrollViewer>
     <StackPanel
       Orientation="Vertical"
-      Spacing="8">
+      Spacing="{DynamicResource ControlSpacing}">
       <Border
         Background="{DynamicResource ExpanderContentBackground}"
         BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
@@ -20,11 +20,11 @@
         Padding="{DynamicResource ExpanderContentPadding}">
         <StackPanel
           Orientation="Vertical"
-          Spacing="4">
+          Spacing="{DynamicResource ControlSpacing}">
           <StackPanel
             HorizontalAlignment="Stretch"
             Orientation="Vertical"
-            Spacing="4">
+            Spacing="{DynamicResource ControlSpacing}">
 
             <controls:ToolbarUserControl/>
 
@@ -40,67 +40,75 @@
                     <DataTemplate>
 
                       <Grid
-                        ColumnDefinitions="25,*,34,34"
-                        RowDefinitions="20">
+                        ColumnDefinitions="Auto,*,Auto"
+                        RowDefinitions="Auto">
 
-                        <Viewbox
-                          Margin="2">
-                          <PathIcon
-                            Foreground="{DynamicResource Color2}"
-                            Data="{Binding ResourceString}"/>
-                        </Viewbox>
+                        <StackPanel
+                          Orientation="Horizontal"
+                          Spacing="{DynamicResource ControlSpacing}">
+                        <PathIcon
+                          Width="{DynamicResource PathIconWidth}"
+                          Height="{DynamicResource PathIconHeight}"
+                          Foreground="{DynamicResource Color2}"
+                          Data="{Binding ResourceString}"/>
 
                         <TextBlock
-                          TextWrapping="Wrap"
-                          Grid.Column="1"
+                          TextWrapping="Wrap"                          
                           VerticalAlignment="Center"
                           HorizontalAlignment="Stretch"
                           Background="{ReflectionBinding SelectedItem.ItemColor}"
                           Text="{Binding Label}" />
+                        </StackPanel>
 
-                        <Button
-                          Padding="0"
-                          Grid.Column="2"
-                          Width="32"
-                          Height="32"
-                          Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveItemCommand}"
-                          CommandParameter="{Binding .}"
-                          ToolTip.Tip="{DynamicResource Text.RemoveItem}">
-                          <Viewbox Margin="7">
-                            <PathIcon 
-                              Foreground="{DynamicResource Color2}" 
-                              Data="{StaticResource IconData.Remove}"/>
-                          </Viewbox>
-                        </Button>
-
-                        <ToggleButton
-                          Padding="0"
+                        <StackPanel 
                           Grid.Column="3"
-                          IsChecked="{Binding IsVisible}"
-                          ToolTip.Tip="{DynamicResource Text.ItemVisibility}"
-                          Width="32"
-                          Height="32">
-                          <ToggleButton.Styles>
-                            <Style Selector="ToggleButton PathIcon.visibility-on">
-                              <Setter Property="IsVisible" Value="False"/>
-                            </Style>
-                            <Style Selector="ToggleButton:checked PathIcon.visibility-on">
-                              <Setter Property="IsVisible" Value="True"/>
-                            </Style>
-                            <Style Selector="ToggleButton PathIcon.visibility-off">
-                              <Setter Property="IsVisible" Value="True"/>
-                            </Style>
-                            <Style Selector="ToggleButton:checked PathIcon.visibility-off">
-                              <Setter Property="IsVisible" Value="False"/>
-                            </Style>
-                          </ToggleButton.Styles>
-                          <Panel>
-                            <PathIcon Classes="visibility-on"
-                                      Data="{StaticResource IconData.Visible}" />
-                            <PathIcon Classes="visibility-off"
-                                      Data="{StaticResource IconData.Hidden}" />
-                          </Panel>
-                        </ToggleButton>
+                          Orientation="Horizontal"
+                          Spacing="{DynamicResource ControlSpacing}">
+                          <Button
+                            Theme="{DynamicResource ToolbarButton}"
+                            Grid.Column="2"
+                            Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveItemCommand}"
+                            CommandParameter="{Binding .}"
+                            ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+                            <PathIcon
+                              Width="{DynamicResource PathIconWidth}"
+                              Height="{DynamicResource PathIconHeight}"
+                              Foreground="{DynamicResource Color2}"
+                              Data="{StaticResource IconData.Remove}"/>
+                          </Button>
+
+                          <ToggleButton
+                            Theme="{DynamicResource ToolbarButton}"                          
+                            IsChecked="{Binding IsVisible}"
+                            ToolTip.Tip="{DynamicResource Text.ItemVisibility}">
+                            <ToggleButton.Styles>
+                              <Style Selector="ToggleButton PathIcon.visibility-on">
+                                <Setter Property="IsVisible" Value="False"/>
+                              </Style>
+                              <Style Selector="ToggleButton:checked PathIcon.visibility-on">
+                                <Setter Property="IsVisible" Value="True"/>
+                              </Style>
+                              <Style Selector="ToggleButton PathIcon.visibility-off">
+                                <Setter Property="IsVisible" Value="True"/>
+                              </Style>
+                              <Style Selector="ToggleButton:checked PathIcon.visibility-off">
+                                <Setter Property="IsVisible" Value="False"/>
+                              </Style>
+                            </ToggleButton.Styles>
+                            <Panel>
+                              <PathIcon
+                                Width="{DynamicResource PathIconWidth}"
+                                Height="{DynamicResource PathIconHeight}"
+                                Classes="visibility-on"
+                                Data="{StaticResource IconData.Visible}" />
+                              <PathIcon
+                                Width="{DynamicResource PathIconWidth}"
+                                Height="{DynamicResource PathIconHeight}"
+                                Classes="visibility-off"
+                                Data="{StaticResource IconData.Hidden}" />
+                            </Panel>
+                          </ToggleButton>
+                        </StackPanel>
 
                       </Grid>
 
@@ -119,7 +127,7 @@
         VerticalAlignment="Top"
         HorizontalAlignment="Stretch"
         IsExpanded="{Binding ShapePropertiesExpanded}">
-        <StackPanel Spacing="4">
+        <StackPanel Spacing="{DynamicResource ControlSpacing}">
 
           <UniformGrid
             Columns="2">
