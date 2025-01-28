@@ -157,6 +157,7 @@
   <system:String x:Key="Text.UnlicensedVersion">Nelicencirana različica</system:String>
   <system:String x:Key="Text.ShapeList">Oblike</system:String>
   <system:String x:Key="Text.ShapeProperties">Lastnosti oblike</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysis">Analiza zračnega diska zvezde</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

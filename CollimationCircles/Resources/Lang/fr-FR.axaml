@@ -158,6 +158,7 @@
   <system:String x:Key="Text.UnlicensedVersion">Version sans licence</system:String>
   <system:String x:Key="Text.ShapeList">Formes</system:String>
   <system:String x:Key="Text.ShapeProperties">Propriétés de forme</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysis">Analyse du disque Star Airy</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
