@@ -7,10 +7,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
@@ -220,6 +223,37 @@ namespace CollimationCircles.ViewModels
         private void Default()
         {
             SelectedCamera?.SetDefaultControls();
+        }
+
+        [RelayCommand]
+        private async Task TakeSnapshot()
+        {
+            Guard.IsNotNull(libVLCService);
+            Guard.IsTrue(IsPlaying);
+
+            libVLCService.TakeSnapshot();
+
+            double euclideanDistance = ImageAnalysisService.AnalyzeStarTestImage($".\\{LibVLCService.SnapshotImageFile}", showFinalImage: true);
+
+            string message = $"Offset from optical axis: {euclideanDistance}px" + Environment.NewLine + Environment.NewLine;
+
+            if (euclideanDistance == -1)
+            {
+                message = "Unable to detect defocused star.\nPlease point your telescope to bright star and then defocuse it.";
+            }
+            else
+            {
+                if (euclideanDistance < 5 && euclideanDistance > -1)
+                {
+                    message += "Telescope is likely well-collimated.";
+                }
+                else
+                {
+                    message += "Collimation issues detected.";
+                }
+            }
+
+            await DialogService.ShowMessageBoxAsync(null, message, "Collimation analysis", MessageBoxButton.Ok);
         }
     }
 }

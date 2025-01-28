@@ -10,5 +10,6 @@ namespace CollimationCircles.Services
         public MediaPlayer MediaPlayer { get; }
         public Task Play(Camera camera, bool displayAdvancedDShowDialog);
         public string DefaultAddress(Camera camera);
+        public void TakeSnapshot();
     }
 }

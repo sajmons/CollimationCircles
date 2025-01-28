@@ -1,88 +1,117 @@
 ﻿using OpenCvSharp;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace CollimationCircles.Services
 {
     internal class ImageAnalysisService
     {
-        public void DetectingCollimationErrors()
+        public static byte[] FileToByteArray(string fileName)
+        {
+            byte[] buff = [];
+            FileStream fs = new(fileName, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new(fs);
+            long numBytes = new FileInfo(fileName).Length;
+            buff = br.ReadBytes((int)numBytes);
+            return buff;
+        }
+
+        /// <summary>
+        /// Compute Euclidean distance (offset) between the average circle center and the image center
+        /// </summary>
+        /// <param name="sourceImageFile">Input image</param>
+        /// <param name="saveImages">Save images for debugging</param>
+        /// <param name="showFinalImage">Show final image</param>
+        /// <returns></returns>
+        public static double AnalyzeStarTestImage(string sourceImageFile, bool saveImages = false, bool showFinalImage = false)
+        {
+            Mat image = Cv2.ImRead(sourceImageFile, ImreadModes.Grayscale);
+
+            return AnalyzeStarTestImageInternal(image, saveImages, showFinalImage);
+        }
+
+        /// <summary>
+        /// Compute Euclidean distance (offset) between the average circle center and the image center
+        /// </summary>
+        /// <param name="sourceImageBytes">Input image byte array</param>
+        /// <param name="saveImages">Save images for debugging</param>
+        /// <param name="showFinalImage">Show final image</param>
+        /// <returns></returns>
+        public static double AnalyzeStarTestImage(byte[] sourceImageBytes, bool saveImages = false, bool showFinalImage = false)
+        {
+            Mat image = Mat.FromImageData(sourceImageBytes, ImreadModes.Grayscale);
+
+            return AnalyzeStarTestImageInternal(image, saveImages, showFinalImage);
+        }
+
+        /// <summary>
+        /// Compute Euclidean distance (offset) between the average circle center and the image center
+        /// </summary>
+        /// <param name="image">Input image</param>
+        /// <param name="saveImages">Save images for debugging</param>
+        /// <param name="showFinalImage">Show final image</param>
+        /// <returns></returns>
+        private static double AnalyzeStarTestImageInternal(Mat image, bool saveImages = true, bool showFinalImage = false)
         {
             try
             {
-                string path = "D:\\Projekti\\Sajmons\\CollimationCircles\\Documentation\\RMS\\";
+                string path = ".\\";
 
-                // Load the image
-                Mat image = Cv2.ImRead($"{path}defocused_star_1.jpg", ImreadModes.Grayscale);
-
-                // Preprocess the image
                 // Normalize brightness and contrast
                 Cv2.Normalize(image, image, 0, 255, NormTypes.MinMax);
+                if (saveImages) image.SaveImage($"{path}0_Normalize.jpg");
 
-                image.SaveImage($"{path}normalized.jpg");
+                // Apply Gaussian blur                
+                Cv2.MedianBlur(image, image, 11);
+                if (saveImages) image.SaveImage($"{path}1_MedianBlur.jpg");
 
-                // Apply Gaussian blur
-                Mat blurred = new Mat();
-                Cv2.GaussianBlur(image, blurred, new Size(5, 5), 0);
+                // Apply Adaptive threshold
+                Cv2.AdaptiveThreshold(image, image, 20, AdaptiveThresholdTypes.GaussianC, ThresholdTypes.Binary, 51, 0);
+                if (saveImages) image.SaveImage($"{path}2_AdaptiveThreshold.jpg");
 
-                blurred.SaveImage($"{path}blurred.jpg");
+                // Morph open 
+                Mat kernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new Size(5, 5));
+                Cv2.MorphologyEx(image, image, MorphTypes.Open, kernel, iterations: 3);
+                if (saveImages) image.SaveImage($"{path}3_MorphologyEx.jpg");
 
                 // Apply Canny edge detector
-                Mat edges = new Mat();
-                Cv2.Canny(blurred, edges, threshold1: 50, threshold2: 150);
+                //Mat edges = new();
+                Cv2.Canny(image, image, 0, 50);
+                if (saveImages) image.SaveImage($"{path}4_Canny.jpg");
 
-                edges.SaveImage($"{path}canny_edges.jpg");
+                //// Find contours
+                Cv2.FindContours(image, out Point[][] contours, out HierarchyIndex[] hierarchy
+                    , RetrievalModes.List, ContourApproximationModes.ApproxSimple);
 
-                // Threshold the image
-                Mat thresholded = new Mat();
-                Cv2.Threshold(edges, thresholded, 100, 255, ThresholdTypes.Binary);
-
-                thresholded.SaveImage($"{path}treshold.jpg");
-
-                // Find contours
-                Cv2.FindContours(thresholded, out Point[][] contours, out HierarchyIndex[] hierarchy, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
+                List<CircleSegment> conCircles = [];
 
                 // Fit circles to contours
                 foreach (var contour in contours)
                 {
                     double area = Cv2.ContourArea(contour);
-                    if (area > 10) // Filter based on area
+                    if (area > 2000 && area < image.Width * image.Height) // Filter based on area
                     {
                         Cv2.MinEnclosingCircle(contour, out Point2f center, out float radius);
-                        Cv2.Circle(image, (Point)center, (int)radius, Scalar.Red, 2);
+                        conCircles.Add(new CircleSegment(center, radius));
+                        Cv2.Circle(image, (Point)center, (int)radius, Scalar.White, 2);
                     }
                 }
 
-                image.SaveImage($"{path}contours.jpg");
+                if (saveImages) image.SaveImage($"{path}5_FindContours.jpg");
 
+                // Display the image
+                if (showFinalImage) Cv2.ImShow("Image analysis", image);
 
-                // Detect difraction rings
-                // Detect circles using Hough Transform
-                CircleSegment[] circles = Cv2.HoughCircles(thresholded,
-                    HoughModes.Gradient,
-                    dp: 1,
-                    minDist: 20,
-                    param1: 100,
-                    param2: 30,
-                    minRadius: 10,
-                    maxRadius: 100);
-
-                // Draw the detected circles
-                foreach (var circle in circles)
-                {
-                    Cv2.Circle(image, (int)circle.Center.X, (int)circle.Center.Y, (int)circle.Radius, Scalar.Red, 2);
-                }
-
-
-                // Analyze the simetry            
                 // Compute average center of circles
                 var avgCenter = new Point2d(
-                    circles.Average(c => c.Center.X),
-                    circles.Average(c => c.Center.Y)
+                    conCircles.Average(c => c.Center.X),
+                    conCircles.Average(c => c.Center.Y)
                 );
 
                 // Compute image center
-                Point2d imageCenter = new Point2d(image.Width / 2, image.Height / 2);
+                Point2d imageCenter = new(image.Width / 2, image.Height / 2);
 
                 // Compute Euclidean distance (offset) between the average circle center and the image center
                 double offset = Math.Sqrt(
@@ -90,26 +119,14 @@ namespace CollimationCircles.Services
                     Math.Pow(avgCenter.Y - imageCenter.Y, 2)
                 );
 
-                // Check for concentricity
-                double maxRadiusDeviation = circles.Max(c => Math.Abs(c.Radius - circles.Average(c => c.Radius)));
-
-                // Print results
-                Console.WriteLine($"Offset from optical axis: {offset}px");
-                Console.WriteLine($"Max radius deviation: {maxRadiusDeviation}px");
-
-                if (offset < 5 && maxRadiusDeviation < 3)
-                {
-                    Console.WriteLine("Telescope is likely well-collimated.");
-                }
-                else
-                {
-                    Console.WriteLine("Collimation issues detected.");
-                }
+                return offset;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
+
+            return -1;
         }
     }
 }

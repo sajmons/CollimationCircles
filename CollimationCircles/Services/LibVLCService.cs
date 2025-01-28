@@ -3,6 +3,7 @@ using CollimationCircles.Models;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
+using Octokit;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -19,6 +20,8 @@ namespace CollimationCircles.Services
         private string port = string.Empty;
         private string pathAndQuery = string.Empty;
         private const string rpiPort = "55555";
+
+        public const string SnapshotImageFile = "snapshot.jpg";
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
@@ -176,6 +179,14 @@ namespace CollimationCircles.Services
 
             FullAddress = GetFullUrlFromParts(camera);
             return FullAddress;
+        }
+
+        public void TakeSnapshot()
+        {
+            if (MediaPlayer.IsPlaying)
+            {
+                MediaPlayer.TakeSnapshot(0, $".\\{SnapshotImageFile}", 1024, 768);
+            }
         }
     }
 }
