@@ -235,6 +235,10 @@ namespace CollimationCircles.ViewModels
 
             double euclideanDistance = ImageAnalysisService.AnalyzeStarTestImage($".\\{LibVLCService.SnapshotImageFile}", showFinalImage: true);
 
+            //string path = "d:\\Projekti\\CollimationCircles\\Documentation\\AiryDisk\\";
+
+            //double euclideanDistance = ImageAnalysisService.AnalyzeStarTestImage($"{path}Airy_disk_8.jpg", showFinalImage: true);
+
             string message = $"Offset from optical axis: {euclideanDistance}px" + Environment.NewLine + Environment.NewLine;
 
             if (euclideanDistance == -1)
