@@ -7,12 +7,14 @@ using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FileSystem;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using LibVLCSharp.Shared;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using static CollimationCircles.Services.ImageAnalysisService;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CollimationCircles.ViewModels
 {
@@ -36,7 +38,9 @@ namespace CollimationCircles.ViewModels
         bool isContourMinimumEnclosingCircle = false;
 
         [ObservableProperty]
-        bool isDebug = false;        
+        bool isDebug = false;
+
+        bool loadedFromFile = false;
 
         public CollimationAnalysisViewModel(ILibVLCService libVLCService)
         {
@@ -57,21 +61,23 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        private async Task TakeSnapshot()
+        private void TakeSnapshot()
         {
             Guard.IsNotNull(libVLCService);
             Guard.IsTrue(libVLCService.MediaPlayer.IsPlaying);
 
             libVLCService.TakeSnapshot();
 
-            lastImage = ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}", ImreadModes.Color);
+            loadedFromFile = false;
+
+            lastImage = ReLoadImage();
 
             AnalysisType at = AnalysisType.CircleHoughTransform;
 
             if (IsContourMinimumEnclosingCircle)
                 at = AnalysisType.ContourMinimumEnclosingCircle;
 
-            await DoAnalysis(lastImage, at);
+            DoAnalysis(lastImage, at);
         }
 
         [RelayCommand]
@@ -94,18 +100,32 @@ namespace CollimationCircles.ViewModels
             {
                 lastPath = $"{path?.Path?.LocalPath}";
 
-                lastImage = ImageAnalysisService.LoadImage(lastPath, ImreadModes.Color);
+                loadedFromFile = true;
+
+                lastImage = ReLoadImage();
 
                 AnalysisType at = AnalysisType.CircleHoughTransform;
 
                 if (IsContourMinimumEnclosingCircle)
                     at = AnalysisType.ContourMinimumEnclosingCircle;
 
-                await DoAnalysis(lastImage, at);
-            }            
+                DoAnalysis(lastImage, at);
+            }
         }
 
-        private async Task DoAnalysis(Mat image, AnalysisType analysisType)
+        private Mat ReLoadImage()
+        {
+            if (loadedFromFile)
+            {
+                return ImageAnalysisService.LoadImage(lastPath, ImreadModes.Color);
+            }
+            else
+            {
+                return ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}", ImreadModes.Color);
+            }
+        }
+
+        private void DoAnalysis(Mat image, AnalysisType analysisType)
         {
             Options options = new()
             {
@@ -131,17 +151,27 @@ namespace CollimationCircles.ViewModels
                 case AnalysisType.ContourMinimumEnclosingCircle:
                     circles = ImageAnalysisService.DetectCirclesFromContour(processed, options);
                     result = ImageAnalysisService.AnalyzeResult(image, circles, options);
-                    break;            
-            }            
+                    break;
+            }
+
+            string title = "Detected Circles";
+
+            try
+            {
+                Cv2.DestroyWindow(title);
+            }
+            catch
+            {
+            }
 
             // Display the result
-            Cv2.ImShow("Detected Circles", image);
-            await DescribeResult(result, options);
+            Cv2.ImShow(title, image);
+            DescribeResult(image, result, options);
         }
 
-        private async Task DescribeResult(AnalysisResult result, Options options)
+        private void DescribeResult(Mat image, AnalysisResult result, Options options)
         {
-            string message = $"Offset from optical axis: {result.Offset}px" + Environment.NewLine + Environment.NewLine;
+            string message = $"Offset from optical axis: {result.Offset:F3}px";
 
             if (result?.Offset == -1)
             {
@@ -151,39 +181,57 @@ namespace CollimationCircles.ViewModels
             {
                 if (result?.CircleCount < options.MinCirclesDetected)
                 {
-                    message += $"Number of detected circles is to small.";
+                    message += $"\nNumber of detected circles is to small.";
                 }
                 else if (result?.Offset < options.OffsetLimit)
                 {
-                    message += $"Telescope is likely well-collimated.";
+                    message += $"\nTelescope is likely well-collimated.";
                 }
                 else
                 {
-                    message += "Collimation issues detected.";
+                    message += "\nCollimation issues detected.";
                 }
             }
 
-            await DialogService.ShowMessageBoxAsync(null, $"{message}\nNumber of circles: {result?.CircleCount}\n{result?.Error}", "Collimation analysis", MessageBoxButton.Ok);
+            DrawTextOnImage(message, image);
+        }
+
+        public static void DrawTextOnImage(string text, Mat img, int x0 = 10, int y0 = 15, int dy = 20,
+            HersheyFonts font = HersheyFonts.HersheyPlain, double fontScale = 0.8, int fontThickness = 1)
+        {
+            // Split text into lines
+            string[] lines = text.Split('\n');
+
+            // Iterate through lines and draw text
+            for (int i = 0; i < lines.Length; i++)
+            {
+                int y = y0 + i * dy;
+                Cv2.PutText(img, lines[i], new Point(x0, y), font, fontScale, Scalar.Yellow, fontThickness);
+            }
         }
 
         partial void OnIsCircleHoughTransformChanged(bool value)
         {
+            ReLoadImage();
+
             AnalysisType at = AnalysisType.CircleHoughTransform;
 
             if (IsContourMinimumEnclosingCircle)
                 at = AnalysisType.ContourMinimumEnclosingCircle;
 
-            Task.Run(async () => await DoAnalysis(lastImage, at));
+            DoAnalysis(lastImage, at);
         }
 
         partial void OnIsContourMinimumEnclosingCircleChanged(bool value)
         {
+            ReLoadImage();
+
             AnalysisType at = AnalysisType.CircleHoughTransform;
 
             if (IsContourMinimumEnclosingCircle)
                 at = AnalysisType.ContourMinimumEnclosingCircle;
 
-            Task.Run(async () => await DoAnalysis(lastImage, at));
+            DoAnalysis(lastImage, at);
         }
     }
 }
