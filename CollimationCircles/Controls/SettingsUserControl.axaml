@@ -42,7 +42,16 @@
               <StackPanel Orientation="Vertical">
                 <controls:StreamUserControl/>
               </StackPanel>
-            </Expander>            
+            </Expander>
+            <Expander
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              Header="Collimation analysis"
+              IsExpanded="{Binding CameraVideoStreamExpanded}">
+              <StackPanel Orientation="Vertical">
+                <controls:CollimationAnalysisUserControl/>
+              </StackPanel>
+            </Expander>
           </StackPanel>
         </ScrollViewer>
       </TabItem>

@@ -59,11 +59,11 @@ public partial class App : Application
             .AddSingleton<ProfileManagerViewModel>()
             .AddTransient<AboutViewModel>()
             .AddSingleton<RequestLicenseViewModel>()
+            .AddSingleton<CollimationAnalysisViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
-            .AddSingleton<ImageAnalysisService>()
             .BuildServiceProvider());
     }
 }

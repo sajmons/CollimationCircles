@@ -67,6 +67,11 @@
     <ProjectReference Include="..\CollimationCirclesFeatures\CollimationCirclesFeatures.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaXaml Update="Controls\CollimationAnalysisUserControl.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Controls\LicenseUserControl.axaml.cs">
       <DependentUpon>LicenseUserControl.axaml</DependentUpon>
     </Compile>
@@ -75,6 +80,10 @@
     </Compile>
     <Compile Update="Controls\AboutUserControl.axaml.cs">
       <DependentUpon>AboutUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\CollimationAnalysisUserControl.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>CollimationAnalysisUserControl.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\RequestLicenseView.axaml.cs">
       <DependentUpon>RequestLicenseView.axaml</DependentUpon>

@@ -1,0 +1,3 @@
+﻿1. User interface
+2. Local UVC camera
+3. Stream from remote camera

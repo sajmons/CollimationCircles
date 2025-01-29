@@ -104,19 +104,7 @@
             Height="{DynamicResource PathIconHeight}"
             Foreground="{DynamicResource Color2}"
             Data="{StaticResource IconData.Settings}" />
-        </Button>
-        <Button
-            Theme="{DynamicResource ToolbarButton}"
-            Command="{Binding TakeSnapshotCommand}"
-            ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysis}"
-            Grid.Column="2"
-            IsEnabled="{Binding IsPlaying}">
-          <PathIcon
-            Width="{DynamicResource PathIconWidth}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.ImageAnalysis}" />
-        </Button>
+        </Button>        
       </StackPanel>
     </StackPanel>
     <CheckBox

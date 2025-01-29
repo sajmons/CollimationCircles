@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.CollimationAnalysisUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:CollimationAnalysisViewModel">
+
+  <StackPanel
+    Orientation="Vertical"
+    Spacing="{DynamicResource ControlSpacing}">
+
+    <StackPanel
+      Orientation="Horizontal"
+      Spacing="{DynamicResource ControlSpacing}">
+      <Button
+          Theme="{DynamicResource ToolbarButton}"
+          Command="{Binding TakeSnapshotCommand}"
+          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysis}"
+          IsEnabled="{Binding IsPlaying}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.ImageAnalysis}" />
+      </Button>
+      <Button
+          Theme="{DynamicResource ToolbarButton}"
+          Command="{Binding LoadImageCommand}"
+          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysis}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.ImageAnalysis}" />
+      </Button>
+    </StackPanel>
+
+    <TextBlock Margin="0 10 0 5">Detection method</TextBlock>
+    <RadioButton
+      GroupName="DetectionMethod"
+      IsChecked="{Binding IsCircleHoughTransform}"
+      Content="Circle Hough Transform (CHT)"/>
+    <RadioButton
+      GroupName="DetectionMethod"
+      IsChecked="{Binding IsContourMinimumEnclosingCircle}"
+      Content="Contour minimum enclosing circle"/>
+
+    <CheckBox Content="Debug" IsChecked="{Binding IsDebug}" />
+
+  </StackPanel>
+
+</UserControl>
