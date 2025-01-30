@@ -33,6 +33,7 @@ public class AppService
     public const string LangDir = "CollimationCircles/Resources/Lang";
     public const string ProductName = "Collimation Circles";
     public const string RequestLicensePage = $"{BasePage}/software/request-license";
+    public const string PatreonShop = $"https://www.patreon.com/SaimonsAstronomy/shop/collimation-circles-4-licence-984002";
 
     public static string GetAppMajorVersion()
     {
@@ -82,11 +83,12 @@ public class AppService
             });
     }
 
-    public static string Serialize<T>(T obj)
+    public static string Serialize<T>(T obj, Formatting formating = Formatting.None)
     {
         return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.Auto
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = formating
         });
     }
 

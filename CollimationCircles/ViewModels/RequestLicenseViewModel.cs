@@ -2,8 +2,11 @@ using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using HanumanInstitute.MvvmDialogs;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using TextCopy;
 
 namespace CollimationCircles.ViewModels
@@ -16,6 +19,9 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         private bool isStandardLicense = true;
+
+        [ObservableProperty]
+        private bool isTrialLicense = false;
 
         public RequestLicenseViewModel()
         {
@@ -39,46 +45,47 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void Submit()
+        internal async Task Submit()
         {
             logger.Info("Licence request submited");
 
-            // submit licence to author
-            var a = new
+            if (IsStandardLicense)
             {
-                ClientId,
-                Product,
-                ProductMajorVersion,
-                IsStandardLicense
-            };
-
-            string payPalTransactionId = ResSvc.TryGetString("PayPalTransactionId");
-
-            string licenceJson = $"{AppService.Serialize(a)}{Environment.NewLine}{payPalTransactionId}";
-
-            try
-            {
-                ClipboardService.SetText(licenceJson);
+                AppService.OpenUrl(AppService.PatreonShop);
             }
-            catch (Exception ex)
+            else
             {
-                string msg = string.Empty;
-
-                if (!OperatingSystem.IsWindows())
+                // submit licence to author
+                var a = new
                 {
-                    msg = "Please check if you have xsel installed and if not please run 'sudo apt install xsel' to install it.";
+                    ClientId,
+                    Product,
+                    ProductMajorVersion
+                };
+
+                string licenceJson = $"{AppService.Serialize(a, Formatting.Indented)}";
+
+                bool? result = await DialogService.ShowMessageBoxAsync(null,
+                    $"Please select text below and copy it to your clipboard (CRTL+C).\nAfter clicking OK button you will be redirected to my web page {AppService.RequestLicensePage}.\n\n{licenceJson}",
+                    "Buy licence", HanumanInstitute.MvvmDialogs.FrameworkDialogs.MessageBoxButton.OkCancel);
+
+                if (result is true)
+                {
+                    AppService.OpenUrl(AppService.RequestLicensePage);
                 }
-
-                logger.Warn(ex, $"Error while copying licence to clipboard. {msg}");
             }
-
-            AppService.OpenUrl(AppService.RequestLicensePage);
 
             if (dialog != null)
             {
                 DialogService.Close(dialog);
                 logger.Info("Request licence dialog closed");
             }
+        }
+
+        partial void OnIsStandardLicenseChanged(bool value)
+        {
+            IsStandardLicense = value;
+            IsTrialLicense = !IsStandardLicense;
         }
     }
 }

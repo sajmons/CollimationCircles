@@ -59,7 +59,12 @@
     </Grid>
     <TextBlock
       TextWrapping="Wrap"
-      Text="{DynamicResource Text.LicenseInstructions}"/>
+      Text="{DynamicResource Text.LicenseInstructions}"
+      IsVisible="{Binding IsTrialLicense}"/>
+    <TextBlock
+      TextWrapping="Wrap"
+      Text="{DynamicResource Text.StandardLicenseInstructions}"
+      IsVisible="{Binding IsStandardLicense}"/>
     <Button
       Content="{DynamicResource Text.RequestLicense}"
       Command="{ReflectionBinding Submit}"/>
