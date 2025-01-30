@@ -53,6 +53,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.3.4" />
     <PackageReference Include="Octokit" Version="14.0.0" />
+    <PackageReference Include="OpenCvSharp4.runtime.linux-arm" Version="4.10.0.20241107" />
+    <PackageReference Include="OpenCvSharp4.runtime.linux-x64" Version="4.10.0.20240717" />
     <PackageReference Include="OpenCvSharp4.Windows" Version="4.10.0.20241108" />
     <PackageReference Include="Standard.Licensing" Version="1.2.1" />
     <PackageReference Include="System.Management" Version="9.0.1" />
