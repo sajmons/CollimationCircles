@@ -64,11 +64,11 @@ namespace CollimationCircles.ViewModels
         private void TakeSnapshot()
         {
             Guard.IsNotNull(libVLCService);
-            
+
             if (!IsImageLoaded)
             {
-                DialogService.ShowMessageBoxAsync(null, 
-                    ResSvc.TryGetString("NoVideoStreamDescription"), 
+                DialogService.ShowMessageBoxAsync(null,
+                    ResSvc.TryGetString("NoVideoStreamWarning"),
                     ResSvc.TryGetString("NoVideoStreamMsgBoxTitle"),
                     MessageBoxButton.Ok);
             }
@@ -80,14 +80,9 @@ namespace CollimationCircles.ViewModels
 
                 lastImage = ReLoadImage();
 
-                AnalysisType at = AnalysisType.CircleHoughTransform;
-
-                if (IsContourMinimumEnclosingCircle)
-                    at = AnalysisType.ContourMinimumEnclosingCircle;
-
-                DoAnalysis(lastImage, at);
+                ProcessAndAnalyze(lastImage);
             }
-        }        
+        }
 
         [RelayCommand]
         public async Task LoadImage()
@@ -113,33 +108,37 @@ namespace CollimationCircles.ViewModels
 
                 lastImage = ReLoadImage();
 
-                AnalysisType at = AnalysisType.CircleHoughTransform;
-
-                if (IsContourMinimumEnclosingCircle)
-                    at = AnalysisType.ContourMinimumEnclosingCircle;
-
-                DoAnalysis(lastImage, at);
+                ProcessAndAnalyze(lastImage);
             }
         }
 
         private Mat ReLoadImage()
         {
+            Mat img;
+
             if (loadedFromFile)
             {
-                Mat img = ImageAnalysisService.LoadImage(lastPath, ImreadModes.Color);
+                img = ImageAnalysisService.LoadImage(lastPath, ImreadModes.Color);
                 IsImageLoaded = true;
-                return img;
             }
             else
             {
-                Mat img = ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}", ImreadModes.Color);
+                img = ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}", ImreadModes.Color);
                 IsImageLoaded = true;
-                return img;
-            }            
+            }
+
+            return img;
         }
 
-        private void DoAnalysis(Mat image, AnalysisType analysisType)
+        private void ProcessAndAnalyze(Mat image)
         {
+            AnalysisType analysisType = AnalysisType.CircleHoughTransform;
+
+            if (IsContourMinimumEnclosingCircle)
+            {
+                analysisType = AnalysisType.ContourMinimumEnclosingCircle;
+            }
+
             Options options = new()
             {
                 ShowEachImage = IsDebug,
@@ -177,7 +176,7 @@ namespace CollimationCircles.ViewModels
 
             // Display the result
             Cv2.ImShow(ResSvc.TryGetString("StarAiryDiscAnalysisResult"), image);
-            DescribeResult(image, result, options);            
+            DescribeResult(image, result, options);
         }
 
         private void DescribeResult(Mat image, AnalysisResult result, Options options)
@@ -227,28 +226,20 @@ namespace CollimationCircles.ViewModels
 
         partial void OnIsCircleHoughTransformChanged(bool value)
         {
-            ReLoadImage();
+            if (!isImageLoaded || !value) return;
 
-            AnalysisType at = AnalysisType.CircleHoughTransform;
+            lastImage = ReLoadImage();
 
-            if (IsContourMinimumEnclosingCircle)
-                at = AnalysisType.ContourMinimumEnclosingCircle;
-
-            DoAnalysis(lastImage, at);
+            ProcessAndAnalyze(lastImage);
         }
 
         partial void OnIsContourMinimumEnclosingCircleChanged(bool value)
         {
-            if (lastImage.Empty()) return;
+            if (!isImageLoaded || !value) return;
 
-            ReLoadImage();
+            lastImage = ReLoadImage();
 
-            AnalysisType at = AnalysisType.CircleHoughTransform;
-
-            if (IsContourMinimumEnclosingCircle)
-                at = AnalysisType.ContourMinimumEnclosingCircle;
-
-            DoAnalysis(lastImage, at);
+            ProcessAndAnalyze(lastImage);
         }
     }
 }

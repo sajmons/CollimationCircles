@@ -170,7 +170,7 @@
   <system:String x:Key="Text.TrialLicenseInstructions">Please select text below and copy it to your clipboard (CRTL+C).\nAfter clicking OK button you will be redirected to my web page</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analysis result</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Please start video stream before using this function.</system:String>
-  <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">"No video stream"</system:String>
+  <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">No video stream</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
