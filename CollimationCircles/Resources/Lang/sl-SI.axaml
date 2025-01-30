@@ -165,6 +165,7 @@
   <system:String x:Key="Text.AiryDiscAnalysis">Analiza zračnih diskov zvezde</system:String>
   <system:String x:Key="Text.AiryDiscAnalysisDebug">Prikaz vmesnih slik postopka</system:String>
   <system:String x:Key="Text.StandardLicenseInstructions">V spletnem brskalniku se bo odprla spletna stran patreon.com, kjer lahko kupite licenco.</system:String>
+  <system:String x:Key="Text.TrialLicenseInstructions">Prosim označite spodnje besedilo in ga skopirajte v odložišče (CRTL+C).\nPo izbiri gumba OK, boste preusmerjeni na spletno stran za naročilo licence.</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

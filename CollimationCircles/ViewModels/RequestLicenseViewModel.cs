@@ -65,9 +65,12 @@ namespace CollimationCircles.ViewModels
 
                 string licenceJson = $"{AppService.Serialize(a, Formatting.Indented)}";
 
+                string trialLicenseInstructions = ResSvc.TryGetString("TrialLicenseInstructions");
+
                 bool? result = await DialogService.ShowMessageBoxAsync(null,
-                    $"Please select text below and copy it to your clipboard (CRTL+C).\nAfter clicking OK button you will be redirected to my web page {AppService.RequestLicensePage}.\n\n{licenceJson}",
-                    "Buy licence", HanumanInstitute.MvvmDialogs.FrameworkDialogs.MessageBoxButton.OkCancel);
+                    $"{trialLicenseInstructions} {AppService.RequestLicensePage}.\n\n{licenceJson}",
+                    ResSvc.TryGetString("RequestLicense"),
+                    HanumanInstitute.MvvmDialogs.FrameworkDialogs.MessageBoxButton.OkCancel);
 
                 if (result is true)
                 {
