@@ -46,7 +46,7 @@
             <Expander
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
-              Header="Collimation analysis"
+              Header="{DynamicResource Text.AiryDiscAnalysis}"
               IsExpanded="{Binding CameraVideoStreamExpanded}">
               <StackPanel Orientation="Vertical">
                 <controls:CollimationAnalysisUserControl/>

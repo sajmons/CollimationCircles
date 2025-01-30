@@ -143,7 +143,7 @@
   <system:String x:Key="Text.UpgradeLicenseMessage">Bi želeli nadgraditi vašo licenco ali zahteveti preizkusno licenco?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">Ta licenca je potekla {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Velja do:</system:String>
-  <system:String x:Key="Text.RequestLicense">Zahtevaj licenco</system:String>
+  <system:String x:Key="Text.RequestLicense">Kupi licenco</system:String>
   <system:String x:Key="Text.Product">Izdelek:</system:String>
   <system:String x:Key="Text.ProductMajorVersion">Glavna verzija izdelka:</system:String>
   <system:String x:Key="Text.LicenseType">Tip licence:</system:String>
@@ -157,7 +157,14 @@
   <system:String x:Key="Text.UnlicensedVersion">Nelicencirana različica</system:String>
   <system:String x:Key="Text.ShapeList">Oblike</system:String>
   <system:String x:Key="Text.ShapeProperties">Lastnosti oblike</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysis">Analiza zračnega diska zvezde</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisCam">Analiza zračnega diska zvezde iz kamere</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisImage">Analiza zračnega diska zvezde iz slike</system:String>
+  <system:String x:Key="Text.CircleDetectionMethod">Metoda zaznavanja krogov</system:String>
+  <system:String x:Key="Text.CircleHoughTransform">Hough-ova transformacija (CHT)</system:String>
+  <system:String x:Key="Text.ContourMinEnclosingCircle">Minimalen krog konture</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysis">Analiza zračnih diskov zvezde</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysisDebug">Prikaz vmesnih slik postopka</system:String>
+  <system:String x:Key="Text.StandardLicenseInstructions">V spletnem brskalniku se bo odprla spletna stran patreon.com, kjer lahko kupite licenco.</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

@@ -144,7 +144,7 @@
   <system:String x:Key="Text.UpgradeLicenseMessage">Souhaitez-vous mettre à niveau votre licence ou demander une licence d'essai ?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">Cette licence a expiré à {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Valable jusqu'au:</system:String>
-  <system:String x:Key="Text.RequestLicense">Demander une licence</system:String>
+  <system:String x:Key="Text.RequestLicense">Acheter une licence</system:String>
   <system:String x:Key="Text.Product">Produit:</system:String>
   <system:String x:Key="Text.ProductMajorVersion">Version majeure du produit:</system:String>
   <system:String x:Key="Text.LicenseType">Type de licence:</system:String>
@@ -158,7 +158,14 @@
   <system:String x:Key="Text.UnlicensedVersion">Version sans licence</system:String>
   <system:String x:Key="Text.ShapeList">Formes</system:String>
   <system:String x:Key="Text.ShapeProperties">Propriétés de forme</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysis">Analyse du disque Star Airy</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisCam">Analyse du disque Star Airy depuis la caméra</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisImage">Analyse du disque Star Airy à partir de l'image</system:String>
+  <system:String x:Key="Text.CircleDetectionMethod">Méthode de détection de cercle</system:String>
+  <system:String x:Key="Text.CircleHoughTransform">Transformation de Hough en cercle (CHT)</system:String>
+  <system:String x:Key="Text.ContourMinEnclosingCircle">Cercle englobant minimum de contour</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysis">Analyse du disque Star Airy</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysisDebug">Afficher les images intermédiaires</system:String>
+  <system:String x:Key="Text.StandardLicenseInstructions">La page Web patreon.com s'ouvrira dans votre navigateur Internet, où vous pourrez acheter une licence.</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

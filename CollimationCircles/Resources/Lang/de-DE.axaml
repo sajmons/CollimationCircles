@@ -143,7 +143,7 @@
   <system:String x:Key="Text.UpgradeLicenseMessage">Möchten Sie Ihre Lizenz upgraden oder eine Testlizenz anfordern?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">Diese Lizenz ist abgelaufen um {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Gültig bis:</system:String>
-  <system:String x:Key="Text.RequestLicense">Lizenz anfordern</system:String>
+  <system:String x:Key="Text.RequestLicense">Lizenz kaufen</system:String>
   <system:String x:Key="Text.Product">Produkt:</system:String>
   <system:String x:Key="Text.ProductMajorVersion">Hauptversion des Produkts:</system:String>
   <system:String x:Key="Text.LicenseType">Lizenztyp:</system:String>
@@ -157,7 +157,14 @@
   <system:String x:Key="Text.UnlicensedVersion">Nicht lizenzierte Version</system:String>
   <system:String x:Key="Text.ShapeList">Formen</system:String>
   <system:String x:Key="Text.ShapeProperties">Formeigenschaften</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysis">Analyse der Star Airy Disk</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisCam">Star Airy Disk-Analyse von der Kamera</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisImage">Star Airy Disk-Analyse aus dem Bild</system:String>
+  <system:String x:Key="Text.CircleDetectionMethod">Kreiserkennungsmethode</system:String>
+  <system:String x:Key="Text.CircleHoughTransform">Kreis-Hough-Transformation (CHT)</system:String>
+  <system:String x:Key="Text.ContourMinEnclosingCircle">Kontur minimaler umschließender Kreis</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysis">Star Airy Disc-Analyse</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysisDebug">Zwischenbilder anzeigen</system:String>
+  <system:String x:Key="Text.StandardLicenseInstructions">In Ihrem Internetbrowser wird die Webseite patreon.com geöffnet, auf der Sie eine Lizenz kaufen können.</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

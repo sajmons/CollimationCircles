@@ -44,7 +44,7 @@
               Width="{DynamicResource PathIconWidth}"
               Height="{DynamicResource PathIconHeight}"
               Foreground="{DynamicResource Color2}"
-              Data="{StaticResource IconData.Reset}" />
+              Data="{StaticResource IconData.Refresh}" />
           </Button>
         </DockPanel>
         <StackPanel

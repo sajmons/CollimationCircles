@@ -145,13 +145,13 @@
   <system:String x:Key="Text.UpgradeLicenseMessage">Would you like to upgrade your license or request trial license?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Valid until:</system:String>
-  <system:String x:Key="Text.RequestLicense">Request licence</system:String>
+  <system:String x:Key="Text.RequestLicense">Buy licence</system:String>
   <system:String x:Key="Text.Product">Product:</system:String>
   <system:String x:Key="Text.ProductMajorVersion">Product major version:</system:String>
   <system:String x:Key="Text.LicenseType">Licence type:</system:String>
   <system:String x:Key="Text.StandardLicense">Standard</system:String>
   <system:String x:Key="Text.TrialLicense">Trial</system:String>
-  <system:String x:Key="Text.LicenseInstructions">Licence data wil be stored in clipborad. Paste this information into web form that will open in your web browser.</system:String>
+  <system:String x:Key="Text.LicenseInstructions">Licence data wil be stored in clipborad. Paste this information into the web form that will open in your web browser.</system:String>
   <system:String x:Key="Text.PayPalTransactionId">PayPal transaction ID:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Do you want to remove profile '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Remove profile</system:String>
@@ -159,7 +159,14 @@
   <system:String x:Key="Text.UnlicensedVersion">Unlicensed version</system:String>
   <system:String x:Key="Text.ShapeList">Shapes</system:String>
   <system:String x:Key="Text.ShapeProperties">Shape properties</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysis">Star Airy Disk analysis</system:String>  
+  <system:String x:Key="Text.AiryDiskAnalysisCam">Star Airy Disk analysis from camera</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisImage">Star Airy Disk analysis from image</system:String>
+  <system:String x:Key="Text.CircleDetectionMethod">Circle detection method</system:String>
+  <system:String x:Key="Text.CircleHoughTransform">Circle Hough Transform (CHT)</system:String>
+  <system:String x:Key="Text.ContourMinEnclosingCircle">Contour min. enclosing circle</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysis">Star Airy Disc analysis</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysisDebug">Display intermediate images</system:String>
+  <system:String x:Key="Text.StandardLicenseInstructions">Web page patreon.com will be opened in your internet browser, where you can buy license.</system:String>  
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

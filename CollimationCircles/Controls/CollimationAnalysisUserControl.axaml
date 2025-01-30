@@ -17,18 +17,18 @@
       <Button
           Theme="{DynamicResource ToolbarButton}"
           Command="{Binding TakeSnapshotCommand}"
-          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysis}"
+          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisCam}"
           IsEnabled="{Binding IsPlaying}">
         <PathIcon
           Width="{DynamicResource PathIconWidth}"
           Height="{DynamicResource PathIconHeight}"
           Foreground="{DynamicResource Color2}"
-          Data="{StaticResource IconData.ImageAnalysis}" />
+          Data="{StaticResource IconData.Camera}" />
       </Button>
       <Button
           Theme="{DynamicResource ToolbarButton}"
           Command="{Binding LoadImageCommand}"
-          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysis}">
+          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisImage}">
         <PathIcon
           Width="{DynamicResource PathIconWidth}"
           Height="{DynamicResource PathIconHeight}"
@@ -37,17 +37,22 @@
       </Button>
     </StackPanel>
 
-    <TextBlock Margin="0 10 0 5">Detection method</TextBlock>
-    <RadioButton
-      GroupName="DetectionMethod"
-      IsChecked="{Binding IsCircleHoughTransform}"
-      Content="Circle Hough Transform (CHT)"/>
-    <RadioButton
-      GroupName="DetectionMethod"
-      IsChecked="{Binding IsContourMinimumEnclosingCircle}"
-      Content="Contour minimum enclosing circle"/>
-
-    <CheckBox Content="Debug" IsChecked="{Binding IsDebug}" />
+    <StackPanel
+      Orientation="Vertical"
+      Spacing="{DynamicResource ControlSpacing}">
+      <TextBlock Text="{DynamicResource Text.CircleDetectionMethod}" />
+      <RadioButton
+        GroupName="DetectionMethod"
+        IsChecked="{Binding IsCircleHoughTransform}"
+        Content="{DynamicResource Text.CircleHoughTransform}"/>
+      <RadioButton
+        GroupName="DetectionMethod"
+        IsChecked="{Binding IsContourMinimumEnclosingCircle}"
+        Content="{DynamicResource Text.ContourMinEnclosingCircle}"/>
+      <CheckBox 
+        Content="{DynamicResource Text.AiryDiscAnalysisDebug}"
+        IsChecked="{Binding IsDebug}" />
+    </StackPanel>
 
   </StackPanel>
 
