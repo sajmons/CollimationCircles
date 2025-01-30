@@ -67,7 +67,10 @@ namespace CollimationCircles.ViewModels
             
             if (!IsImageLoaded)
             {
-                DialogService.ShowMessageBoxAsync(null, "Please start video stream before using this function.", "No video stream", MessageBoxButton.Ok);
+                DialogService.ShowMessageBoxAsync(null, 
+                    ResSvc.TryGetString("NoVideoStreamDescription"), 
+                    ResSvc.TryGetString("NoVideoStreamMsgBoxTitle"),
+                    MessageBoxButton.Ok);
             }
             else
             {

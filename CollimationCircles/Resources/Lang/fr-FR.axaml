@@ -168,6 +168,8 @@
   <system:String x:Key="Text.StandardLicenseInstructions">La page Web patreon.com s'ouvrira dans votre navigateur Internet, où vous pourrez acheter une licence.</system:String>
   <system:String x:Key="Text.TrialLicenseInstructions">Veuillez sélectionner le texte ci-dessous et copiez-le dans votre presse-papiers (CRTL+C).\nAprès avoir cliqué sur le bouton OK, vous serez redirigé vers la page Web où vous pourrez commander votre licence d'essai.</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Résultat de l'analyse</system:String>
+  <system:String x:Key="Text.NoVideoStreamWarning">Veuillez démarrer le flux vidéo avant d'utiliser cette fonction.</system:String>
+  <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Pas de flux vidéo</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
