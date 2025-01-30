@@ -365,10 +365,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void AddBahtinovMask()
         {
-            InCaseOfValidLicense(() =>
-            {
-                AddItem(new BahtinovMaskViewModel());
-            });
+            AddItem(new BahtinovMaskViewModel());
         }
 
         [RelayCommand]
@@ -459,10 +456,7 @@ namespace CollimationCircles.ViewModels
                     c = new SpiderViewModel();
                     break;
                 case BahtinovMaskViewModel:
-                    InCaseOfValidLicense(() =>
-                    {
-                        c = new BahtinovMaskViewModel();
-                    });
+                    c = new BahtinovMaskViewModel();
                     break;
             }
 
@@ -602,11 +596,8 @@ namespace CollimationCircles.ViewModels
 
             if (newValue == Themes.Custom.Night)
             {
-                InCaseOfValidLicense(() =>
-                {
-                    Application.Current.RequestedThemeVariant = newValue;
-                    logger.Info($"Application theme changed to '{Application.Current.ActualThemeVariant}'");
-                });
+                Application.Current.RequestedThemeVariant = newValue;
+                logger.Info($"Application theme changed to '{Application.Current.ActualThemeVariant}'");
             }
             else
             {

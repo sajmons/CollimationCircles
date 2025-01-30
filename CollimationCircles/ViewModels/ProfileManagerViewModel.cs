@@ -44,10 +44,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecuteAddCurrentProfile))]
         internal async Task AddCurrentProfile()
         {
-            await InCaseOfValidLicenseAsync(() =>
-            {
-                settingsViewModel.Profiles.Add(new Profile(ProfileName, settingsViewModel.Items));
-            });
+            settingsViewModel.Profiles.Add(new Profile(ProfileName, settingsViewModel.Items));
         }
 
         [RelayCommand]
