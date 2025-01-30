@@ -169,8 +169,4 @@
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analyseergebnis</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Bitte starten Sie den Videostream, bevor Sie diese Funktion verwenden.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Kein Videostream</system:String>
-
-  <!-- Non translatable -->
-  <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">json</system:String>
 </ResourceDictionary>

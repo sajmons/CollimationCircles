@@ -89,12 +89,11 @@ namespace CollimationCircles.ViewModels
         {
             var settings = new OpenFileDialogSettings
             {
-                SuggestedFileName = "*.jpg",
                 SuggestedStartLocation = new DesktopDialogStorageFolder(new DirectoryInfo(lastPath)),
                 Title = ResSvc.TryGetString("OpenFile"),
                 Filters =
                 [
-                    new("JPEG", "jpg")
+                    new("JPEG", [".jpg",".jpeg"])
                 ]
             };
 

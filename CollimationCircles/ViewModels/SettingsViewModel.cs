@@ -397,10 +397,9 @@ namespace CollimationCircles.ViewModels
                 Title = ResSvc.TryGetString("SaveFile"),
                 Filters =
                 [
-                    new(ResSvc.TryGetString("JSONDocuments"), ResSvc.TryGetString("StarJson")),
-                    new(ResSvc.TryGetString("AllFiles"), ResSvc.TryGetString("StarChar"))
+                    new("JSON", "json")
                 ],
-                DefaultExtension = ResSvc.TryGetString("StarJson")
+                DefaultExtension = "json"
             };
 
             var path = await DialogService.ShowSaveFileDialogAsync(this, settings);
@@ -419,8 +418,7 @@ namespace CollimationCircles.ViewModels
                 Title = ResSvc.TryGetString("OpenFile"),
                 Filters =
                 [
-                    new(ResSvc.TryGetString("JSONDocuments"), ResSvc.TryGetString("StarJson")),
-                    new(ResSvc.TryGetString("AllFiles"), ResSvc.TryGetString("StarChar")),
+                    new("JSON", "json"),
                 ]
             };
 

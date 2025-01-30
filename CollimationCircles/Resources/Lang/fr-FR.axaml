@@ -170,8 +170,4 @@
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Résultat de l'analyse</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Veuillez démarrer le flux vidéo avant d'utiliser cette fonction.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Pas de flux vidéo</system:String>
-
-  <!-- Non translatable -->
-  <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">json</system:String>
 </ResourceDictionary>
