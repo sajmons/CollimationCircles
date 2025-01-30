@@ -9,7 +9,7 @@
         x:Class="CollimationCircles.Views.MainView"
         x:DataType="vm:SettingsViewModel"
         Icon="/Resources/Images/icon_256px.ico"
-        Title="{Binding Title}"
+        Title="{Binding Title, Mode=TwoWay}"
 		    Background="Transparent"
         TransparencyBackgroundFallback="Transparent"
         TransparencyLevelHint="Transparent"
