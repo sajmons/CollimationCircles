@@ -167,7 +167,8 @@
   <system:String x:Key="Text.AiryDiscAnalysis">Star Airy Disc analysis</system:String>
   <system:String x:Key="Text.AiryDiscAnalysisDebug">Display intermediate images</system:String>
   <system:String x:Key="Text.StandardLicenseInstructions">Web page patreon.com will be opened in your internet browser, where you can buy license.</system:String>
-  <system:String x:Key="Text.TrialLicenseInstructions">Please select text below and copy it to your clipboard (CRTL+C).\nAfter clicking OK button you will be redirected to my web page</system:String>  
+  <system:String x:Key="Text.TrialLicenseInstructions">Please select text below and copy it to your clipboard (CRTL+C).\nAfter clicking OK button you will be redirected to my web page</system:String>
+  <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analysis result</system:String>  
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>

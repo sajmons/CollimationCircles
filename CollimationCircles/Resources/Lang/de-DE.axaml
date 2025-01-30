@@ -166,6 +166,7 @@
   <system:String x:Key="Text.AiryDiscAnalysisDebug">Zwischenbilder anzeigen</system:String>
   <system:String x:Key="Text.StandardLicenseInstructions">In Ihrem Internetbrowser wird die Webseite patreon.com geöffnet, auf der Sie eine Lizenz kaufen können.</system:String>
   <system:String x:Key="Text.TrialLicenseInstructions">Bitte wählen Sie unten den Text aus und kopieren Sie ihn in Ihre Zwischenablage (STRG+C).\nNachdem Sie auf die Schaltfläche „OK“ geklickt haben, werden Sie zur Webseite weitergeleitet, auf der Sie Ihre Testlizenz bestellen können.</system:String>
+  <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analysis result</system:String>
 
   <!-- Non translatable -->
   <system:String x:Key="Text.StarChar">*</system:String>
