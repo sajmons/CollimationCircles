@@ -64,20 +64,26 @@ namespace CollimationCircles.ViewModels
         private void TakeSnapshot()
         {
             Guard.IsNotNull(libVLCService);
-            Guard.IsTrue(libVLCService.MediaPlayer.IsPlaying);
+            
+            if (!IsImageLoaded)
+            {
+                DialogService.ShowMessageBoxAsync(null, "Please start video stream before using this function.", "No video stream", MessageBoxButton.Ok);
+            }
+            else
+            {
+                libVLCService.TakeSnapshot();
 
-            libVLCService.TakeSnapshot();
+                loadedFromFile = false;
 
-            loadedFromFile = false;
+                lastImage = ReLoadImage();
 
-            lastImage = ReLoadImage();
+                AnalysisType at = AnalysisType.CircleHoughTransform;
 
-            AnalysisType at = AnalysisType.CircleHoughTransform;
+                if (IsContourMinimumEnclosingCircle)
+                    at = AnalysisType.ContourMinimumEnclosingCircle;
 
-            if (IsContourMinimumEnclosingCircle)
-                at = AnalysisType.ContourMinimumEnclosingCircle;
-
-            DoAnalysis(lastImage, at);
+                DoAnalysis(lastImage, at);
+            }
         }        
 
         [RelayCommand]

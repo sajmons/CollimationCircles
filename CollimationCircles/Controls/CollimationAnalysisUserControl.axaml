@@ -17,8 +17,7 @@
       <Button
           Theme="{DynamicResource ToolbarButton}"
           Command="{Binding TakeSnapshotCommand}"
-          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisCam}"
-          IsEnabled="{Binding IsPlaying}">
+          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisCam}">
         <PathIcon
           Width="{DynamicResource PathIconWidth}"
           Height="{DynamicResource PathIconHeight}"
