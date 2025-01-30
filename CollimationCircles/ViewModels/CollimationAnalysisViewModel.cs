@@ -7,14 +7,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FileSystem;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using LibVLCSharp.Shared;
 using OpenCvSharp;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using static CollimationCircles.Services.ImageAnalysisService;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CollimationCircles.ViewModels
 {
@@ -39,6 +36,9 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         bool isDebug = false;
+
+        [ObservableProperty]
+        bool isImageLoaded = false;
 
         bool loadedFromFile = false;
 
@@ -78,7 +78,7 @@ namespace CollimationCircles.ViewModels
                 at = AnalysisType.ContourMinimumEnclosingCircle;
 
             DoAnalysis(lastImage, at);
-        }
+        }        
 
         [RelayCommand]
         public async Task LoadImage()
@@ -117,12 +117,16 @@ namespace CollimationCircles.ViewModels
         {
             if (loadedFromFile)
             {
-                return ImageAnalysisService.LoadImage(lastPath, ImreadModes.Color);
+                Mat img = ImageAnalysisService.LoadImage(lastPath, ImreadModes.Color);
+                IsImageLoaded = true;
+                return img;
             }
             else
             {
-                return ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}", ImreadModes.Color);
-            }
+                Mat img = ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}", ImreadModes.Color);
+                IsImageLoaded = true;
+                return img;
+            }            
         }
 
         private void DoAnalysis(Mat image, AnalysisType analysisType)
@@ -154,24 +158,22 @@ namespace CollimationCircles.ViewModels
                     break;
             }
 
-            string title = "Detected Circles";
-
             try
             {
-                Cv2.DestroyWindow(title);
+                Cv2.DestroyAllWindows();
             }
             catch
             {
             }
 
             // Display the result
-            Cv2.ImShow(title, image);
-            DescribeResult(image, result, options);
+            Cv2.ImShow(ResSvc.TryGetString("StarAiryDiscAnalysisResult"), image);
+            DescribeResult(image, result, options);            
         }
 
         private void DescribeResult(Mat image, AnalysisResult result, Options options)
         {
-            string message = $"Offset from optical axis: {result.Offset:F3}px";
+            string message = string.Empty;
 
             if (result?.Offset == -1)
             {
@@ -185,7 +187,7 @@ namespace CollimationCircles.ViewModels
                 }
                 else if (result?.Offset < options.OffsetLimit)
                 {
-                    message += $"\nTelescope is likely well-collimated.";
+                    message += $"Offset from optical axis: {result.Offset:F3}px\nTelescope is likely well-collimated.";
                 }
                 else
                 {
@@ -199,12 +201,16 @@ namespace CollimationCircles.ViewModels
         public static void DrawTextOnImage(string text, Mat img, int x0 = 10, int y0 = 15, int dy = 20,
             HersheyFonts font = HersheyFonts.HersheyPlain, double fontScale = 0.8, int fontThickness = 1)
         {
+            if (string.IsNullOrWhiteSpace(text)) return;
+
             // Split text into lines
             string[] lines = text.Split('\n');
 
             // Iterate through lines and draw text
             for (int i = 0; i < lines.Length; i++)
             {
+                if (lines[i] is null || string.IsNullOrWhiteSpace(lines[i])) continue;
+
                 int y = y0 + i * dy;
                 Cv2.PutText(img, lines[i], new Point(x0, y), font, fontScale, Scalar.Yellow, fontThickness);
             }
@@ -224,6 +230,8 @@ namespace CollimationCircles.ViewModels
 
         partial void OnIsContourMinimumEnclosingCircleChanged(bool value)
         {
+            if (lastImage.Empty()) return;
+
             ReLoadImage();
 
             AnalysisType at = AnalysisType.CircleHoughTransform;
