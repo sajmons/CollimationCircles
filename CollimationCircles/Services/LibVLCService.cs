@@ -185,7 +185,7 @@ namespace CollimationCircles.Services
         {
             if (MediaPlayer.IsPlaying)
             {
-                MediaPlayer.TakeSnapshot(0, $".\\{SnapshotImageFile}", 1024, 768);
+                MediaPlayer.TakeSnapshot(0, $".\\{SnapshotImageFile}", 800, 600);
             }
         }
     }
