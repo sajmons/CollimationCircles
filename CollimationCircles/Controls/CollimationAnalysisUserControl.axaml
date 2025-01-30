@@ -44,14 +44,16 @@
       <RadioButton
         GroupName="DetectionMethod"
         IsChecked="{Binding IsCircleHoughTransform}"
-        Content="{DynamicResource Text.CircleHoughTransform}"/>
+        Content="{DynamicResource Text.CircleHoughTransform}"
+        IsEnabled="{Binding IsImageLoaded}"/>
       <RadioButton
         GroupName="DetectionMethod"
         IsChecked="{Binding IsContourMinimumEnclosingCircle}"
         Content="{DynamicResource Text.ContourMinEnclosingCircle}"/>
       <CheckBox 
         Content="{DynamicResource Text.AiryDiscAnalysisDebug}"
-        IsChecked="{Binding IsDebug}" />
+        IsChecked="{Binding IsDebug}"
+        IsEnabled="{Binding IsImageLoaded}"/>
     </StackPanel>
 
   </StackPanel>
