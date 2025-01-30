@@ -165,16 +165,18 @@ namespace CollimationCircles.ViewModels
                     break;
             }
 
+            string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");
+
             try
             {
-                Cv2.DestroyAllWindows();
+                Cv2.DestroyWindow(windowTitle);
             }
             catch
             {
             }
 
             // Display the result
-            Cv2.ImShow(ResSvc.TryGetString("StarAiryDiscAnalysisResult"), image);
+            Cv2.ImShow(windowTitle, image);
             DescribeResult(image, result, options);
         }
 
