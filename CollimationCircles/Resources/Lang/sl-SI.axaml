@@ -169,4 +169,5 @@
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Rezultat analize</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Pred uporabo te funkcije morate aktivirati video pretok.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Ni video pretoka</system:String>
+  <system:String x:Key="Text.CombinedDetectionMode">Oboje</system:String>
 </ResourceDictionary>

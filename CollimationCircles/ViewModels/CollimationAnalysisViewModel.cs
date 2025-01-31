@@ -38,6 +38,9 @@ namespace CollimationCircles.ViewModels
         bool isContourMinimumEnclosingCircle = false;
 
         [ObservableProperty]
+        bool isCombined = false;
+
+        [ObservableProperty]
         bool isDebug = false;
 
         [ObservableProperty]
@@ -140,6 +143,10 @@ namespace CollimationCircles.ViewModels
             {
                 analysisType = AnalysisType.ContourMinimumEnclosingCircle;
             }
+            else if (IsCombined)
+            {
+                analysisType = AnalysisType.Combined;
+            }
 
             Options options = new()
             {
@@ -148,25 +155,30 @@ namespace CollimationCircles.ViewModels
                 DoGaussianBlur = true,
                 DoAdaptiveThreshold = true,
                 DoMorphologyEx = true,
+                //DoErode = true,
+                //DoDilate = true,
                 DoCanny = true
             };
 
             Mat processed = ImageAnalysisService.ProcessImage(image, options);
 
-            List<CircleF> circles;
-            AnalysisResult result = new();
+            List<CircleF> circles = [];            
 
             switch (analysisType)
             {
                 case AnalysisType.CircleHoughTransform:
-                    circles = ImageAnalysisService.DetectHoughCircles(processed, options);
-                    result = ImageAnalysisService.AnalyzeResult(image, circles, options);
+                    circles = ImageAnalysisService.DetectHoughCircles(processed, options);                    
                     break;
                 case AnalysisType.ContourMinimumEnclosingCircle:
-                    circles = ImageAnalysisService.DetectCirclesFromContour(processed, options);
-                    result = ImageAnalysisService.AnalyzeResult(image, circles, options);
+                    circles = ImageAnalysisService.DetectCirclesFromContour(processed, options);                    
+                    break;
+                case AnalysisType.Combined:
+                    circles = ImageAnalysisService.DetectHoughCircles(processed, options);
+                    circles.AddRange(ImageAnalysisService.DetectCirclesFromContour(processed, options));                    
                     break;
             }
+
+            AnalysisResult result = ImageAnalysisService.AnalyzeResult(image, circles, options);
 
             string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");
 
@@ -178,40 +190,41 @@ namespace CollimationCircles.ViewModels
             {
             }
 
-            // Display the result
-            CvInvoke.Imshow(windowTitle, image);
             DescribeResult(image, result, options);
+
+            // Display the result
+            CvInvoke.Imshow(windowTitle, image);            
         }
 
         private void DescribeResult(Mat image, AnalysisResult result, Options options)
         {
-            string message = string.Empty;
+            string message = $"Number of circles detected: {result.CircleCount}\n";
 
             if (result?.Offset == -1)
             {
-                message = $"Unable to detect defocused star.\nPlease point your telescope to bright star and then defocuse it.";
+                message += $"Unable to detect defocused star.\nPlease point your telescope to bright star and then defocus it.";
             }
             else
             {
                 if (result?.CircleCount < options.MinCirclesDetected)
                 {
-                    message += $"\nNumber of detected circles is to small.";
+                    message += $"Number of detected circles is to small.";
                 }
-                else if (result?.Offset < options.OffsetLimit)
+                else if (result?.Offset <= options.OffsetLimit)
                 {
                     message += $"Offset from optical axis: {result.Offset:F3}px\nTelescope is likely well-collimated.";
                 }
                 else
                 {
-                    message += "\nCollimation issues detected.";
+                    message += "Collimation issues detected.";
                 }
             }
 
-            DrawTextOnImage(message, image);
+            DrawTextOnImage(image, message);
         }
 
-        public static void DrawTextOnImage(string text, Mat img, int x0 = 10, int y0 = 15, int dy = 20,
-            FontFace font = FontFace.HersheyPlain, double fontScale = 0.8, int fontThickness = 1)
+        public static void DrawTextOnImage(Mat img, string text, int x0 = 10, int y0 = 15, int dy = 20,
+            FontFace font = FontFace.HersheyPlain, double fontScale = 1.0, int fontThickness = 1)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
 
@@ -222,9 +235,9 @@ namespace CollimationCircles.ViewModels
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i] is null || string.IsNullOrWhiteSpace(lines[i])) continue;
+                int y = y0 + i * dy;                
 
-                int y = y0 + i * dy;
-                CvInvoke.PutText(img, lines[i], new Point(x0, y), font, fontScale, new MCvScalar(255,255,0), fontThickness);
+                CvInvoke.PutText(img, lines[i], new Point(x0, y), font, fontScale, new Bgr(Color.Yellow).MCvScalar, fontThickness);
             }
         }
 
@@ -238,6 +251,15 @@ namespace CollimationCircles.ViewModels
         }
 
         partial void OnIsContourMinimumEnclosingCircleChanged(bool value)
+        {
+            if (!isImageLoaded || !value) return;
+
+            lastImage = ReLoadImage();
+
+            ProcessAndAnalyze(lastImage);
+        }
+
+        partial void OnIsCombinedChanged(bool value)
         {
             if (!isImageLoaded || !value) return;
 

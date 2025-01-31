@@ -48,11 +48,16 @@
       <RadioButton
         GroupName="DetectionMethod"
         IsChecked="{Binding IsContourMinimumEnclosingCircle}"
-        Content="{DynamicResource Text.ContourMinEnclosingCircle}"/>
-      <CheckBox 
-        Content="{DynamicResource Text.AiryDiscAnalysisDebug}"
-        IsChecked="{Binding IsDebug}"
+        Content="{DynamicResource Text.ContourMinEnclosingCircle}"
         IsEnabled="{Binding IsImageLoaded}"/>
+      <RadioButton
+        GroupName="DetectionMethod"
+        IsChecked="{Binding IsCombined}"
+        Content="{DynamicResource Text.CombinedDetectionMode}"
+        IsEnabled="{Binding IsImageLoaded}"/>
+      <CheckBox
+        Content="{DynamicResource Text.AiryDiscAnalysisDebug}"
+        IsChecked="{Binding IsDebug}"/>
     </StackPanel>
 
   </StackPanel>
