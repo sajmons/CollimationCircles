@@ -4,11 +4,14 @@ using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FileSystem;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using OpenCvSharp;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using static CollimationCircles.Services.ImageAnalysisService;
@@ -150,7 +153,7 @@ namespace CollimationCircles.ViewModels
 
             Mat processed = ImageAnalysisService.ProcessImage(image, options);
 
-            List<CircleSegment> circles;
+            List<CircleF> circles;
             AnalysisResult result = new();
 
             switch (analysisType)
@@ -169,14 +172,14 @@ namespace CollimationCircles.ViewModels
 
             try
             {
-                Cv2.DestroyWindow(windowTitle);
+                CvInvoke.DestroyWindow(windowTitle);
             }
             catch
             {
             }
 
             // Display the result
-            Cv2.ImShow(windowTitle, image);
+            CvInvoke.Imshow(windowTitle, image);
             DescribeResult(image, result, options);
         }
 
@@ -208,7 +211,7 @@ namespace CollimationCircles.ViewModels
         }
 
         public static void DrawTextOnImage(string text, Mat img, int x0 = 10, int y0 = 15, int dy = 20,
-            HersheyFonts font = HersheyFonts.HersheyPlain, double fontScale = 0.8, int fontThickness = 1)
+            FontFace font = FontFace.HersheyPlain, double fontScale = 0.8, int fontThickness = 1)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
 
@@ -221,7 +224,7 @@ namespace CollimationCircles.ViewModels
                 if (lines[i] is null || string.IsNullOrWhiteSpace(lines[i])) continue;
 
                 int y = y0 + i * dy;
-                Cv2.PutText(img, lines[i], new Point(x0, y), font, fontScale, Scalar.Yellow, fontThickness);
+                CvInvoke.PutText(img, lines[i], new Point(x0, y), font, fontScale, new MCvScalar(255,255,0), fontThickness);
             }
         }
 

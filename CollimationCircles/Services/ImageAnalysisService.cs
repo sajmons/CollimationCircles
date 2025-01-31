@@ -1,9 +1,14 @@
 ﻿using CommunityToolkit.Diagnostics;
-using OpenCvSharp;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace CollimationCircles.Services
 {
@@ -46,7 +51,7 @@ namespace CollimationCircles.Services
         {
             public double Aplha { get; set; } = 0;
             public double Beta { get; set; } = 255;
-            public NormTypes NormType { get; set; } = NormTypes.MinMax;
+            public NormType NormType { get; set; } = NormType.MinMax;
             public double DType { get; set; } = -1;
         }
 
@@ -55,7 +60,7 @@ namespace CollimationCircles.Services
             public int KSize { get; set; } = 11;
             public int SigmaX { get; set; } = 11;
             public double SigmaY { get; internal set; } = 0;
-            public BorderTypes BorderType { get; internal set; }
+            public BorderType BorderType { get; internal set; }
         }
 
         public class BilateralFilter
@@ -63,27 +68,27 @@ namespace CollimationCircles.Services
             public int D { get; set; } = 15;
             public double SigmaColor { get; set; } = 80;
             public double SigmaSpace { get; set; } = 80;
-            public BorderTypes BorderType { get; internal set; } = BorderTypes.Default;
+            public BorderType BorderType { get; internal set; } = BorderType.Default;
         }
 
         public class AdaptiveThresholdOptions
         {
             public double MaxValue { get; set; } = 20;
-            public AdaptiveThresholdTypes AdaptiveThresholdType { get; set; } = AdaptiveThresholdTypes.GaussianC;
-            public ThresholdTypes ThresholdType { get; set; } = ThresholdTypes.Binary;
+            public AdaptiveThresholdType AdaptiveThresholdType { get; set; } = AdaptiveThresholdType.GaussianC;
+            public ThresholdType ThresholdType { get; set; } = ThresholdType.Binary;
             public int BlockSize { get; set; } = 51;
             public double C { get; set; } = 0;
         }
 
         public class MorphologyExOptions
         {
-            public MorphShapes MorphShape { get; set; } = MorphShapes.Ellipse;
+            public ElementShape MorphShape { get; set; } = ElementShape.Ellipse;
             public int Size { get; set; } = 5;
-            public MorphTypes MorphType { get; set; } = MorphTypes.Open;
+            public MorphOp MorphType { get; set; } = MorphOp.Open;
             public int Iterations { get; set; } = 3;
-            public Point? Ancor { get; set; } = null;
-            public BorderTypes BorderType { get; internal set; } = BorderTypes.Constant;
-            public Scalar? BorderValue { get; internal set; } = null;
+            public Point Ancor { get; set; }
+            public BorderType BorderType { get; internal set; } = BorderType.Constant;
+            public MCvScalar BorderValue { get; internal set; }
         }
 
         public class CannyOptions
@@ -96,9 +101,9 @@ namespace CollimationCircles.Services
 
         public class FindContoursOptions
         {
-            public RetrievalModes RetrievalMode { get; set; } = RetrievalModes.List;
-            public ContourApproximationModes ContourApproximationMode { get; set; } = ContourApproximationModes.ApproxSimple;
-            public Scalar Color { get; set; } = Scalar.White;
+            public RetrType RetrievalMode { get; set; } = RetrType.List;
+            public ChainApproxMethod ContourApproximationMode { get; set; } = ChainApproxMethod.ChainApproxSimple;
+            public MCvScalar Color { get; set; } = new MCvScalar(255, 255, 255);
             public int Thickness { get; set; } = 2;
         }
 
@@ -120,17 +125,19 @@ namespace CollimationCircles.Services
 
         public static Mat LoadImage(string sourceImageFile, ImreadModes imreadModes)
         {
-            Mat image = Cv2.ImRead(sourceImageFile, imreadModes);
+            Mat image = CvInvoke.Imread(sourceImageFile, imreadModes);
 
             return image;
         }
 
         public static Mat LoadImage(byte[] sourceImageBytes, ImreadModes imreadModes)
         {
-            Mat image = Mat.FromImageData(sourceImageBytes, imreadModes);
+            Mat image = new();
+                
+            CvInvoke.Imdecode(sourceImageBytes, imreadModes, image);
 
             return image;
-        }
+        }        
 
         public static Mat ProcessImage(Mat image, Options options)
         {
@@ -141,78 +148,79 @@ namespace CollimationCircles.Services
 
             if (options.DoGrayscale)
             {
-                Cv2.CvtColor(processed, processed, ColorConversionCodes.BGR2GRAY);
+                CvInvoke.CvtColor(processed, processed, ColorConversion.Bgr2Gray);
             }
 
             if (options.DoNormalize)
             {
                 // Normalize brightness and contrast
-                Cv2.Normalize(processed, processed,
+                CvInvoke.Normalize(processed, processed,
                     options.NormalizeOptions.Aplha,
                     options.NormalizeOptions.Beta,
                     options.NormalizeOptions.NormType);
 
-                if (options.SaveImages) processed.SaveImage($"{path}0_Normalize.jpg");
-                if (options.ShowEachImage) Cv2.ImShow("Step 1: Normalize", processed);
+                if (options.SaveImages) processed.Save($"{path}0_Normalize.jpg");
+                if (options.ShowEachImage) CvInvoke.Imshow("Step 1: Normalize", processed);
             }
 
             if (options.DoMedianBlur)
             {
                 // Apply Median blur                
-                Cv2.MedianBlur(processed, processed,
+                CvInvoke.MedianBlur(processed, processed,
                     options.BlurOptions.KSize);
 
-                if (options.SaveImages) processed.SaveImage($"{path}1_MedianBlur.jpg");
-                if (options.ShowEachImage) Cv2.ImShow("Step 2: Median blur", processed);
+                if (options.SaveImages) processed.Save($"{path}1_MedianBlur.jpg");
+                if (options.ShowEachImage) CvInvoke.Imshow("Step 2: Median blur", processed);
             }
 
             if (options.DoGaussianBlur)
             {
                 // Apply Median blur                
-                Cv2.GaussianBlur(processed, processed,
+                CvInvoke.GaussianBlur(processed, processed,
                     new Size(options.BlurOptions.KSize, options.BlurOptions.KSize),
                     options.BlurOptions.SigmaX,
                     options.BlurOptions.SigmaY,
                     options.BlurOptions.BorderType);
 
-                if (options.SaveImages) processed.SaveImage($"{path}1a_GaussianBlur.jpg");
-                if (options.ShowEachImage) Cv2.ImShow("Step 3: Gaussian blur", processed);
+                if (options.SaveImages) processed.Save($"{path}1a_GaussianBlur.jpg");
+                if (options.ShowEachImage) CvInvoke.Imshow("Step 3: Gaussian blur", processed);
             }
 
             if (options.DoBilateralFilter)
             {
-                Cv2.BilateralFilter(processed, processed,
+                CvInvoke.BilateralFilter(processed, processed,
                     options.BilateralFilter.D,
                     options.BilateralFilter.SigmaColor,
                     options.BilateralFilter.SigmaSpace,
                     options.BilateralFilter.BorderType);
 
-                if (options.SaveImages) processed.SaveImage($"{path}1b_BilateralFilter.jpg");
-                if (options.ShowEachImage) Cv2.ImShow("Step 4: Bilateral filter", processed);
+                if (options.SaveImages) processed.Save($"{path}1b_BilateralFilter.jpg");
+                if (options.ShowEachImage) CvInvoke.Imshow("Step 4: Bilateral filter", processed);
             }
 
             if (options.DoAdaptiveThreshold)
             {
                 // Apply Adaptive threshold
-                Cv2.AdaptiveThreshold(processed, processed,
+                CvInvoke.AdaptiveThreshold(processed, processed,
                     options.AdaptiveThresholdOptions.MaxValue,
                     options.AdaptiveThresholdOptions.AdaptiveThresholdType,
                     options.AdaptiveThresholdOptions.ThresholdType,
                     options.AdaptiveThresholdOptions.BlockSize,
                     options.AdaptiveThresholdOptions.C);
 
-                if (options.SaveImages) processed.SaveImage($"{path}2_AdaptiveThreshold.jpg");
-                if (options.ShowEachImage) Cv2.ImShow("Step 5: Adaptive thershold", processed);
+                if (options.SaveImages) processed.Save($"{path}2_AdaptiveThreshold.jpg");
+                if (options.ShowEachImage) CvInvoke.Imshow("Step 5: Adaptive thershold", processed);
             }
 
             if (options.DoMorphologyEx)
             {
                 // Morph open 
-                Mat kernel = Cv2.GetStructuringElement(
+                Mat kernel = CvInvoke.GetStructuringElement(
                     options.MorphologyExOptions.MorphShape,
-                    new Size(options.MorphologyExOptions.Size, options.MorphologyExOptions.Size));
+                    new Size(options.MorphologyExOptions.Size, options.MorphologyExOptions.Size),
+                    options.MorphologyExOptions.Ancor);
 
-                Cv2.MorphologyEx(processed, processed,
+                CvInvoke.MorphologyEx(processed, processed,
                     options.MorphologyExOptions.MorphType,
                     kernel,
                     options.MorphologyExOptions.Ancor,
@@ -220,76 +228,90 @@ namespace CollimationCircles.Services
                     options.MorphologyExOptions.BorderType,
                     options.MorphologyExOptions.BorderValue);
 
-                if (options.SaveImages) processed.SaveImage($"{path}3_MorphologyEx.jpg");
-                if (options.ShowEachImage) Cv2.ImShow("Step 6: MorphologyEx", processed);
+                if (options.SaveImages) processed.Save($"{path}3_MorphologyEx.jpg");
+                if (options.ShowEachImage) CvInvoke.Imshow("Step 6: MorphologyEx", processed);
             }
 
             if (options.DoCanny)
             {
                 // Apply Canny edge detector
-                Cv2.Canny(processed, processed,
+                CvInvoke.Canny(processed, processed,
                     options.CannyOptions.Threshold1,
                     options.CannyOptions.Threshold2,
                     options.CannyOptions.ApertureSize,
                     options.CannyOptions.LGradient2);
 
-                if (options.SaveImages) processed.SaveImage($"{path}4_Canny.jpg");
-                if (options.ShowEachImage) Cv2.ImShow("Step 7: Canny", processed);
+                if (options.SaveImages) processed.Save($"{path}4_Canny.jpg");
+                if (options.ShowEachImage) CvInvoke.Imshow("Step 7: Canny", processed);
             }
 
             return processed;
         }
 
-        public static List<CircleSegment> DetectCirclesFromContour(Mat image, Options options)
+        public static List<CircleF> DetectCirclesFromContour(Mat image, Options options)
         {
-            List<CircleSegment> circles = [];
+            List<CircleF> circles = [];
 
             // Compute image center
-            Point2d imageCenter = new(image.Width / 2, image.Height / 2);
+            PointF imageCenter = new(image.Width / 2, image.Height / 2);
 
-            //// Find contours
-            Cv2.FindContours(image, out Point[][] contours, out HierarchyIndex[] hierarchy,
-                options.FindContoursOptions.RetrievalMode,
-                options.FindContoursOptions.ContourApproximationMode);
-
-            // Fit circles to contours
-            foreach (var contour in contours)
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
             {
-                double area = Cv2.ContourArea(contour);
-                if (area > options.MinConturArea && area < image.Width * image.Height) // Filter based on area
+                //IOutputArray hierarchy = new Mat();
+
+                // Find contours
+                CvInvoke.FindContours(image, contours, null,
+                    options.FindContoursOptions.RetrievalMode,
+                    options.FindContoursOptions.ContourApproximationMode);
+
+                options.MinConturArea = 1000;
+                options.OffsetLimit = 20;
+
+                // Fit circles to contours
+                //int count = contours.Size;
+                for (int i = 0; i < contours.Size; i++)
                 {
-                    Cv2.MinEnclosingCircle(contour, out Point2f center, out float radius);
+                    using VectorOfPoint contour = contours[i];
+                    using VectorOfPoint approxContour = new VectorOfPoint();
 
-                    // Compute Euclidean distance (offset) between the average circle center and the image center
-                    double offset = Math.Sqrt(
-                        Math.Pow(center.X - imageCenter.X, 2) +
-                        Math.Pow(center.Y - imageCenter.Y, 2)
-                    );
+                    double area = CvInvoke.ContourArea(contour);
 
-                    if (offset < options.OffsetLimit)
+                    if (area > options.MinConturArea && area < image.Width * image.Height) // Filter based on area
                     {
-                        circles.Add(new CircleSegment(center, radius));
-                    }                    
+                        CircleF circle = CvInvoke.MinEnclosingCircle(contour);
+
+                        // Compute Euclidean distance (offset) between the average circle center and the image center
+                        // var distance = Math. Sqrt. Pow(x1 - x2, 2) + Math. Pow(y1 - y2, 2)));
+                        double offset = Math.Sqrt(
+                            Math.Pow(circle.Center.X - imageCenter.X, 2) +
+                            Math.Pow(circle.Center.Y - imageCenter.Y, 2)
+                        );
+
+                        if (offset < options.OffsetLimit)
+                        {
+                            circles.Add(new CircleF(circle.Center, circle.Radius));
+                        }
+                    }
                 }
             }
 
             return circles;
         }
 
-        public static List<CircleSegment> DetectHoughCircles(Mat image, Options options)
+        public static List<CircleF> DetectHoughCircles(Mat image, Options options)
         {
             Guard.IsNotNull(image);
             Guard.IsNotNull(options);
 
             // Compute image center
-            Point2d imageCenter = new(image.Width / 2, image.Height / 2);
+            PointF imageCenter = new(image.Width / 2, image.Height / 2);
 
-            List<CircleSegment> circlesAll = [];
+            List<CircleF> circlesAll = [];
 
             for (int i = options.MinCircleRadius; i <= options.MaxCircleRadius; i += 10)
             {
                 // Use HoughCircles to detect circles
-                CircleSegment[] circles = Cv2.HoughCircles(
+                CircleF[] circles = CvInvoke.HoughCircles(
                     image,
                     HoughModes.Gradient,
                     dp: 1,
@@ -300,7 +322,7 @@ namespace CollimationCircles.Services
                     maxRadius: 2 * i
                 );
 
-                foreach (CircleSegment circle in circles)
+                foreach (CircleF circle in circles)
                 {
                     if (!circlesAll.Any(x => x.Radius == circle.Radius && x.Center == circle.Center))
                     {
@@ -321,18 +343,18 @@ namespace CollimationCircles.Services
             return circlesAll;
         }
 
-        public static AnalysisResult AnalyzeResult(Mat image, List<CircleSegment> circles, Options options)
+        public static AnalysisResult AnalyzeResult(Mat image, List<CircleF> circles, Options options)
         {
             string? error = null;
             double? offset = null;
 
             RNG rng = new(12345);
             // Draw detected circles on the image
-            foreach (var circle in circles)
+            foreach (CircleF circle in circles)
             {                
-                Scalar color = new(rng.Uniform(0, 255), rng.Uniform(0, 255), rng.Uniform(0, 255));
-                Cv2.Circle(image, (int)circle.Center.X, (int)circle.Center.Y, (int)circle.Radius, color, 2);
-                Cv2.Circle(image, (int)circle.Center.X, (int)circle.Center.Y, 2, color, -1);
+                MCvScalar color = new(rng.Uniform(0, 255), rng.Uniform(0, 255), rng.Uniform(0, 255));
+                CvInvoke.Circle(image, new Point((int)circle.Center.X, (int)circle.Center.Y), (int)circle.Radius, color, 2);
+                CvInvoke.Circle(image, new Point((int)circle.Center.X, (int)circle.Center.Y), 2, color, -1);
             }            
 
             if (circles.Count == 0)
@@ -342,13 +364,13 @@ namespace CollimationCircles.Services
             else
             {
                 // Compute average center of circles
-                var avgCenter = new Point2d(
+                var avgCenter = new PointF(
                     circles.Average(c => c.Center.X),
                     circles.Average(c => c.Center.Y)
                 );
 
                 // Compute image center
-                Point2d imageCenter = new(image.Width / 2, image.Height / 2);
+                PointF imageCenter = new(image.Width / 2, image.Height / 2);
 
                 // Compute Euclidean distance (offset) between the average circle center and the image center
                 offset = Math.Sqrt(
