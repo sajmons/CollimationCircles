@@ -76,12 +76,12 @@ namespace CollimationCircles.Views
                         shortcutsString += $"{sk.Key}: {sk.Value}{Environment.NewLine}";
                     }
 
-                    dhs.DrawText(context, shortcutsString, new Point(15, 10), Brushes.Yellow, vm.LabelSize);
+                    dhs.DrawText(context, shortcutsString, new Point(8, 2), Brushes.Yellow, vm.LabelSize);
                 }
 
                 if (!vm.LicenseService.IsValid)
                 {
-                    dhs.DrawText(context, vm.ResSvc.TryGetString("UnlicensedVersion"), new Point(15, vm.MainWindowHeight - 35), Brushes.Red, vm.LabelSize);
+                    dhs.DrawText(context, vm.ResSvc.TryGetString("UnlicensedVersion"), new Point(8, vm.MainWindowHeight - 30), Brushes.Red, vm.LabelSize);
                 }
 
                 if (items is not null)
