@@ -4,14 +4,11 @@ using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Emgu.CV;
-using Emgu.CV.CvEnum;
-using Emgu.CV.Structure;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FileSystem;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using ImageMagick;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using static CollimationCircles.Services.ImageAnalysisService;
@@ -26,19 +23,10 @@ namespace CollimationCircles.ViewModels
 
         private string lastPath = ".\\";
 
-        private Mat lastImage = new();
+        private MagickImage lastImage = new();
 
         [ObservableProperty]
         bool isPlaying = false;
-
-        [ObservableProperty]
-        bool isCircleHoughTransform = true;
-
-        [ObservableProperty]
-        bool isContourMinimumEnclosingCircle = false;
-
-        [ObservableProperty]
-        bool isCombined = false;
 
         [ObservableProperty]
         bool isDebug = false;
@@ -117,86 +105,52 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        private Mat ReLoadImage()
+        private MagickImage ReLoadImage()
         {
-            Mat img;
+            MagickImage img;
 
             if (loadedFromFile)
             {
-                img = ImageAnalysisService.LoadImage(lastPath, ImreadModes.Color);
+                img = ImageAnalysisService.LoadImage(lastPath);
                 IsImageLoaded = true;
             }
             else
             {
-                img = ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}", ImreadModes.Color);
+                img = ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}");
                 IsImageLoaded = true;
             }
 
             return img;
         }
 
-        private void ProcessAndAnalyze(Mat image)
+        private void ProcessAndAnalyze(MagickImage image)
         {
-            AnalysisType analysisType = AnalysisType.CircleHoughTransform;
-
-            if (IsContourMinimumEnclosingCircle)
-            {
-                analysisType = AnalysisType.ContourMinimumEnclosingCircle;
-            }
-            else if (IsCombined)
-            {
-                analysisType = AnalysisType.Combined;
-            }
-
             Options options = new()
             {
                 ShowEachImage = IsDebug,
+                SaveImages = IsDebug,
                 DoNormalize = true,
                 DoGaussianBlur = true,
-                DoAdaptiveThreshold = true,
-                DoMorphologyEx = true,
-                //DoErode = true,
-                //DoDilate = true,
-                DoCanny = true
+                DoThreshold = true,
+                DoErode = true,
+                DoDilate = true,
+                DoEdge = true
             };
 
-            Mat processed = ImageAnalysisService.ProcessImage(image, options);
+            ImageAnalysisService.ProcessImage(image, options);
 
-            List<CircleF> circles = [];            
+            List<Circle> circles = [];
 
-            switch (analysisType)
-            {
-                case AnalysisType.CircleHoughTransform:
-                    circles = ImageAnalysisService.DetectHoughCircles(processed, options);                    
-                    break;
-                case AnalysisType.ContourMinimumEnclosingCircle:
-                    circles = ImageAnalysisService.DetectCirclesFromContour(processed, options);                    
-                    break;
-                case AnalysisType.Combined:
-                    circles = ImageAnalysisService.DetectHoughCircles(processed, options);
-                    circles.AddRange(ImageAnalysisService.DetectCirclesFromContour(processed, options));                    
-                    break;
-            }
+            circles = ImageAnalysisService.DetectCircles(image, 30, 1000, 255, 0.3, 10, 5, 2);
 
             AnalysisResult result = ImageAnalysisService.AnalyzeResult(image, circles, options);
 
             string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");
-
-            try
-            {
-                CvInvoke.DestroyWindow(windowTitle);
-            }
-            catch
-            {
-            }
-
-            DescribeResult(image, result, options);
-
-            // Display the result
-            CvInvoke.Imshow(windowTitle, image);            
+                        
+            DescribeResult(image, result, options);            
         }
 
-        private void DescribeResult(Mat image, AnalysisResult result, Options options)
+        private void DescribeResult(MagickImage image, AnalysisResult result, Options options)
         {
             string message = $"Number of circles detected: {result.CircleCount}\n";
 
@@ -223,8 +177,7 @@ namespace CollimationCircles.ViewModels
             DrawTextOnImage(image, message);
         }
 
-        public static void DrawTextOnImage(Mat img, string text, int x0 = 10, int y0 = 15, int dy = 20,
-            FontFace font = FontFace.HersheyPlain, double fontScale = 1.0, int fontThickness = 1)
+        public static void DrawTextOnImage(MagickImage img, string text, int x0 = 10, int y0 = 15, int dy = 20)
         {
             if (string.IsNullOrWhiteSpace(text)) return;
 
@@ -237,35 +190,8 @@ namespace CollimationCircles.ViewModels
                 if (lines[i] is null || string.IsNullOrWhiteSpace(lines[i])) continue;
                 int y = y0 + i * dy;                
 
-                CvInvoke.PutText(img, lines[i], new Point(x0, y), font, fontScale, new Bgr(Color.Yellow).MCvScalar, fontThickness);
+                ImageAnalysisService.DrawText(img, lines[i], x0, y, MagickColors.Yellow);
             }
-        }
-
-        partial void OnIsCircleHoughTransformChanged(bool value)
-        {
-            if (!isImageLoaded || !value) return;
-
-            lastImage = ReLoadImage();
-
-            ProcessAndAnalyze(lastImage);
-        }
-
-        partial void OnIsContourMinimumEnclosingCircleChanged(bool value)
-        {
-            if (!isImageLoaded || !value) return;
-
-            lastImage = ReLoadImage();
-
-            ProcessAndAnalyze(lastImage);
-        }
-
-        partial void OnIsCombinedChanged(bool value)
-        {
-            if (!isImageLoaded || !value) return;
-
-            lastImage = ReLoadImage();
-
-            ProcessAndAnalyze(lastImage);
-        }
+        }        
     }
 }

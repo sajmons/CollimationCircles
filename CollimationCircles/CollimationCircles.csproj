@@ -47,12 +47,9 @@
     <PackageReference Include="DeviceId.Linux" Version="6.8.0" />
     <PackageReference Include="DeviceId.Mac" Version="6.8.0" />
     <PackageReference Include="DeviceId.Windows.WmiLight" Version="6.8.0" />
-    <PackageReference Include="Emgu.CV.runtime.debian-arm64" Version="4.10.0.5680" />
-    <PackageReference Include="Emgu.CV.runtime.mini.macos" Version="4.9.0.5494" />
-    <PackageReference Include="Emgu.CV.runtime.mini.ubuntu-x64" Version="4.10.0.5680" />
-    <PackageReference Include="Emgu.CV.runtime.mini.windows" Version="4.10.0.5680" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.2" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.3.4" />

@@ -39,22 +39,7 @@
     <StackPanel
       Orientation="Vertical"
       Spacing="{DynamicResource ControlSpacing}">
-      <TextBlock Text="{DynamicResource Text.CircleDetectionMethod}" />
-      <RadioButton
-        GroupName="DetectionMethod"
-        IsChecked="{Binding IsCircleHoughTransform}"
-        Content="{DynamicResource Text.CircleHoughTransform}"
-        IsEnabled="{Binding IsImageLoaded}"/>
-      <RadioButton
-        GroupName="DetectionMethod"
-        IsChecked="{Binding IsContourMinimumEnclosingCircle}"
-        Content="{DynamicResource Text.ContourMinEnclosingCircle}"
-        IsEnabled="{Binding IsImageLoaded}"/>
-      <RadioButton
-        GroupName="DetectionMethod"
-        IsChecked="{Binding IsCombined}"
-        Content="{DynamicResource Text.CombinedDetectionMode}"
-        IsEnabled="{Binding IsImageLoaded}"/>
+      <TextBlock Text="{DynamicResource Text.CircleDetectionMethod}" />      
       <CheckBox
         Content="{DynamicResource Text.AiryDiscAnalysisDebug}"
         IsChecked="{Binding IsDebug}"/>

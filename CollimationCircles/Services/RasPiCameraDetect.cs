@@ -87,7 +87,7 @@ namespace CollimationCircles.Services
             //decimal? whiteBalance = null;
             //decimal? sharpness = null;
             //decimal? exposureTime = null;
-            //decimal? zoom = null;
+            decimal? zoom = null;
 
             //if (brightness != null)
             //    controls.Add($"--{ControlMapping[ControlType.Brightness]} {brightness}");
@@ -135,9 +135,13 @@ namespace CollimationCircles.Services
             //if (exposureTime != null)
             //    controls.Add($"--{ControlMapping[ControlType.ExposureTime]} {exposureTime}");
 
-            //decimal? roi = 1.0M / zoom;
-            //if (zoom != null)
-            //    controls.Add($"--{ControlMapping[ControlType.Zoom_Absolute]} {roi},{roi},{roi},{roi}");
+            // ROI = ( (1 – 1/Z)/2 , (1 – 1/Z)/2 , 1/Z , 1/Z )            
+            if (zoom != null)
+            {
+                var cc = new CameraControl(ControlType.Zoom_Absolute, camera);                
+                controls.Add(cc);
+                //$"--{ControlMapping[ControlType.Zoom_Absolute]} {roi},{roi},{roi},{roi}");
+            }
 
             return controls;
         }

@@ -149,6 +149,11 @@ namespace CollimationCircles.Views
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            if (FocusManager?.GetFocusedElement() is TextBox)
+            {
+                TopGrid.Focus();
+            }
+
             khs.HandleMovement(this, vm, e);
             khs.HandleGlobalScale(vm, e);
             khs.HandleHelperRadius(vm, e);

@@ -17,7 +17,7 @@
         Height="{Binding MainWindowHeight, Mode=TwoWay}"
         Opacity="{Binding MainWindowOpacity, Mode=TwoWay}">
 
-  <Grid>
+  <Grid x:Name="TopGrid">
     <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*" />
       <ColumnDefinition Width="Auto" />
