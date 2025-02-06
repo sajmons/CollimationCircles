@@ -4,4 +4,5 @@
 - add button to quickly turn off visibility for all items
 - add option to check for updates for beta versions
 - add AI integration for image analysis
-- add RMS Error calculation	
+- put shape indicator under shape
+- add option to show or hide label to each item
