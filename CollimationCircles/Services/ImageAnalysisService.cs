@@ -1,5 +1,4 @@
-﻿using CommunityToolkit.Diagnostics;
-using ImageMagick;
+﻿using ImageMagick;
 using ImageMagick.Drawing;
 using System;
 using System.Collections.Generic;

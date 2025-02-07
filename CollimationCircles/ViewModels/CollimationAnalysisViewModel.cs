@@ -1,4 +1,5 @@
-﻿using CollimationCircles.Messages;
+﻿using Avalonia.Media.Imaging;
+using CollimationCircles.Messages;
 using CollimationCircles.Services;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -39,7 +40,7 @@ namespace CollimationCircles.ViewModels
         public CollimationAnalysisViewModel(ILibVLCService libVLCService)
         {
             this.libVLCService = libVLCService;
-
+            
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
                 switch (m.Value)
@@ -147,10 +148,24 @@ namespace CollimationCircles.ViewModels
 
             string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");
                         
-            DescribeResult(image, result, options);            
+            string resultText = DescribeResult(image, result, options);
+
+            ShowResultDialog(resultText, image);
         }
 
-        private void DescribeResult(MagickImage image, AnalysisResult result, Options options)
+        private void ShowResultDialog(string resultText, MagickImage image)
+        {
+            var dialogViewModel = DialogService.CreateViewModel<ImageViewModel>();
+
+            Stream stream = new MemoryStream(image.ToByteArray());            
+
+            dialogViewModel.ImageToDisplay = Bitmap.DecodeToWidth(stream, (int)image.Width);
+            dialogViewModel.ImageDescription = resultText;
+
+            DialogService.Show(null, dialogViewModel);
+        }
+
+        private string DescribeResult(MagickImage image, AnalysisResult result, Options options)
         {
             string message = $"Number of circles detected: {result.CircleCount}\n";
 
@@ -174,7 +189,7 @@ namespace CollimationCircles.ViewModels
                 }
             }
 
-            DrawTextOnImage(image, message);
+            return message;
         }
 
         public static void DrawTextOnImage(MagickImage img, string text, int x0 = 10, int y0 = 15, int dy = 20)

@@ -50,6 +50,7 @@
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.2" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.4.0" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="8.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.3.4" />
@@ -90,6 +91,9 @@
     </Compile>
     <Compile Update="Views\CameraControlsView.axaml.cs">
       <DependentUpon>CameraControlsView.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ImageView.axaml.cs">
+      <DependentUpon>ImageView.axaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
