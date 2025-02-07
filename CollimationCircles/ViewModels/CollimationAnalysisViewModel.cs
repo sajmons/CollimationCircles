@@ -147,7 +147,7 @@ namespace CollimationCircles.ViewModels
 
             ImageAnalysisService.ProcessImage(image, options);
 
-            List<Circle> circles = ImageAnalysisService.DetectCircles(image, 30, (int)image.Width / 2, 255, 0.3, 10, 5, 2);
+            List<Circle> circles = ImageAnalysisService.DetectCircles(image, 50, (int)image.Width / 2, 128, 0.9, 5, 5);
 
             AnalysisResult result = ImageAnalysisService.AnalyzeResult(image, circles, options);
 

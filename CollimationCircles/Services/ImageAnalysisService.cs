@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
@@ -18,12 +19,13 @@ namespace CollimationCircles.Services
 
         public static event EventHandler<FilterComplitedEventArgs>? FilterComplited;
 
-        public struct Circle
+        public class Circle
         {
-            public int CenterX;
-            public int CenterY;
-            public int Radius;
-        }        
+            public int X { get; set; }       // X-coordinate of center
+            public int Y { get; set; }       // Y-coordinate of center
+            public int Radius { get; set; }  // Circle radius
+            public int Votes { get; set; }   // Accumulator votes
+        }
 
         public class Options
         {
@@ -135,125 +137,92 @@ namespace CollimationCircles.Services
         }
 
         /// <summary>
-        /// Detect circles in an image using a Hough Transform.
+        /// Detect circles in an 8-bit grayscale image using the Hough transform.
+        /// Only circles with centers near the image center (within centerProximityThreshold)
+        /// and whose accumulator value exceeds a given fraction (0 to 1) of the maximum possible votes are returned.
+        /// A post-processing step then merges detections that are too similar (i.e. with center and radius differences less than radiusStep).
         /// </summary>
-        /// <param name="image">Input image (MagickImage).</param>
-        /// <param name="minRadius">Minimum circle radius to detect.</param>
-        /// <param name="maxRadius">Maximum circle radius to detect.</param>
-        /// <param name="edgeThreshold">
-        /// Intensity threshold for an edge pixel (0-255). Pixels with intensity equal to or above this value are considered edges.
+        /// <param name="edgeImage">
+        /// A MagickImage representing an 8bpp grayscale edge image. Pixels above 128 are treated as edges.
         /// </param>
-        /// <param name="voteThresholdFactor">
-        /// Fraction of the total angular steps required as votes (e.g. 0.5 means at least half of the steps must vote).
+        /// <param name="minRadius">Minimum circle radius to search.</param>
+        /// <param name="maxRadius">Maximum circle radius to search.</param>
+        /// <param name="centerProximityThreshold">
+        /// Maximum Euclidean distance from the image center that a circle center can have to be accepted.
+        /// </param>
+        /// <param name="voteThresholdFraction">
+        /// Fraction (from 0 to 1) representing the minimum percentage of the maximum votes (i.e. the number of angles)
+        /// required for a candidate circle to be accepted.
         /// </param>
         /// <param name="angleStep">
-        /// Step size in degrees for iterating the circle perimeter (e.g. 5 means 360/5 = 72 steps per circle).
+        /// Angular discretization in degrees. Smaller values improve accuracy at the cost of speed.
         /// </param>
-        /// <param name="centerTolerance">
-        /// Maximum distance (in pixels) from the image center for a circle to be accepted.
+        /// <param name="radiusStep">
+        /// Step (in pixels) for increasing the candidate radius. For example, 1 tests every radius while 2 tests every other radius.
         /// </param>
-        /// <param name="pixelStep">
-        /// Step size for iterating over image pixels in both x and y directions (1 processes every pixel, 2 processes every other pixel, etc.).
-        /// </param>
-        /// <returns>List of detected circles (with centers near the image center).</returns>
-        public static List<Circle> DetectCircles(
-            MagickImage image,
-            int minRadius,
-            int maxRadius,
-            byte edgeThreshold,
-            double voteThresholdFactor,
-            int angleStep,
-            int centerTolerance,
-            int pixelStep)
+        /// <returns>List of filtered circles detected that meet the criteria.</returns>
+        public static List<Circle> DetectCircles(MagickImage edgeImage, int minRadius, int maxRadius,
+                                                   int centerProximityThreshold, double voteThresholdFraction,
+                                                   int angleStep = 5, int radiusStep = 1)
         {
-            // Work on a clone so the original image is not modified.
-            var procImage = image.Clone();
-
-            // Convert image to grayscale.
-            procImage.ColorSpace = ColorSpace.Gray;
-
-            int width = (int)procImage.Width;
-            int height = (int)procImage.Height;
-
-            // Extract grayscale pixel data ("I" channel for intensity).
-            // Use StorageType.Char for 8-bit pixel data.
-            byte[]? pixelData = procImage.GetPixels().ToByteArray("RGB");
-
-            if (pixelData is null) return [];
-
-            // Precompute the center of the image.
-            int imageCenterX = width / 2;
-            int imageCenterY = height / 2;
-
-            // List to hold detected circles (thread-safe additions later).
-            List<Circle> detectedCircles = [];
-            object lockObj = new();
-
-            // Process each candidate radius in parallel.
-            Parallel.For(minRadius, maxRadius + 1, r =>
+            // Ensure the image is in 8-bit grayscale. If not, convert.
+            if (edgeImage.ColorSpace != ColorSpace.Gray || edgeImage.Depth != 8)
             {
-                // Create a 2D accumulator array for potential circle centers for current radius.
-                int[,] accumulator = new int[width, height];
+                edgeImage.ColorSpace = ColorSpace.Gray;
+                edgeImage.Depth = 8;
+            }
 
-                // Determine the number of angular steps.
-                int steps = 360 / angleStep;
-                // The number of votes required to consider a candidate as a circle.
-                double voteThreshold = steps * voteThresholdFactor;
+            int width = (int)edgeImage.Width;
+            int height = (int)edgeImage.Height;
+            // Adjust the count of candidate radii based on the radiusStep.
+            int radiusCount = ((maxRadius - minRadius) / radiusStep) + 1;
 
-                // Precompute sine and cosine for each angle step.
-                double[] cosTable = new double[steps];
-                double[] sinTable = new double[steps];
-                double angleIncrement = 2 * Math.PI / steps;
-                for (int i = 0; i < steps; i++)
+            // Extract pixel data using the intensity channel ("I")
+            byte[] pixelBytes = edgeImage.GetPixels().ToByteArray("I");
+
+            // Allocate a 1D accumulator array for (x, y, radius) combinations.
+            int[] accumulator = new int[width * height * radiusCount];
+
+            // Precompute sine and cosine tables for the discretized angles.
+            int angleCount = 360 / angleStep;
+            double[] sinTable = new double[angleCount];
+            double[] cosTable = new double[angleCount];
+            for (int a = 0; a < angleCount; a++)
+            {
+                double angle = a * angleStep * Math.PI / 180.0;
+                sinTable[a] = Math.Sin(angle);
+                cosTable[a] = Math.Cos(angle);
+            }
+
+            // The stride for our pixel array is the image width.
+            int stride = width;
+
+            // Each perfect circle could receive at most one vote per discrete angle,
+            // so the maximum votes is angleCount. Compute the effective threshold.
+            int effectiveThreshold = (int)Math.Round(voteThresholdFraction * angleCount);
+
+            // Voting: Process the image rows in parallel.
+            Parallel.For(0, height, y =>
+            {
+                for (int x = 0; x < width; x++)
                 {
-                    double theta = i * angleIncrement;
-                    cosTable[i] = Math.Cos(theta);
-                    sinTable[i] = Math.Sin(theta);
-                }
-
-                // Iterate over image pixels using the pixelStep parameter.
-                for (int y = 0; y < height; y += pixelStep)
-                {
-                    for (int x = 0; x < width; x += pixelStep)
+                    int pixelIndex = y * stride + x;
+                    // Treat pixel as an edge if its intensity > 128.
+                    if (pixelBytes[pixelIndex] > 128)
                     {
-                        // Calculate index for 1D pixelData array.
-                        int index = y * width + x;
-                        byte intensity = pixelData[index];
-
-                        // Consider this pixel an edge pixel if intensity meets threshold.
-                        if (intensity >= edgeThreshold)
+                        // Iterate over candidate radii using the specified radiusStep.
+                        for (int r = minRadius; r <= maxRadius; r += radiusStep)
                         {
-                            // Vote for each candidate center along the circle perimeter.
-                            for (int i = 0; i < steps; i++)
+                            int rIndex = (r - minRadius) / radiusStep;
+                            for (int a = 0; a < angleCount; a++)
                             {
-                                int a = (int)Math.Round(x - r * cosTable[i]);
-                                int b = (int)Math.Round(y - r * sinTable[i]);
+                                int aX = (int)Math.Round(x - r * cosTable[a]);
+                                int aY = (int)Math.Round(y - r * sinTable[a]);
 
-                                // Only count votes within image bounds.
-                                if (a >= 0 && a < width && b >= 0 && b < height)
+                                if (aX >= 0 && aX < width && aY >= 0 && aY < height)
                                 {
-                                    accumulator[a, b]++;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // Now, search for accumulator cells that have votes above the threshold.
-                for (int cy = 0; cy < height; cy++)
-                {
-                    for (int cx = 0; cx < width; cx++)
-                    {
-                        if (accumulator[cx, cy] >= voteThreshold)
-                        {
-                            // Filter: only accept circles whose centers lie near the image center.
-                            if (Math.Abs(cx - imageCenterX) <= centerTolerance &&
-                                Math.Abs(cy - imageCenterY) <= centerTolerance)
-                            {
-                                var circle = new Circle { CenterX = cx, CenterY = cy, Radius = r };
-                                lock (lockObj)
-                                {
-                                    detectedCircles.Add(circle);
+                                    int index = (aX + aY * width) + rIndex * width * height;
+                                    Interlocked.Increment(ref accumulator[index]);
                                 }
                             }
                         }
@@ -261,35 +230,89 @@ namespace CollimationCircles.Services
                 }
             });
 
-            return detectedCircles;
+            // Define the image center.
+            int imageCenterX = width / 2;
+            int imageCenterY = height / 2;
+            List<Circle> candidateCircles = new List<Circle>();
+
+            // Scan the accumulator for peaks exceeding the effective threshold.
+            for (int r = minRadius; r <= maxRadius; r += radiusStep)
+            {
+                int rIndex = (r - minRadius) / radiusStep;
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        int index = (x + y * width) + rIndex * width * height;
+                        if (accumulator[index] >= effectiveThreshold)
+                        {
+                            // Filter: only accept circles whose centers are near the image center.
+                            int dx = x - imageCenterX;
+                            int dy = y - imageCenterY;
+                            if (Math.Sqrt(dx * dx + dy * dy) <= centerProximityThreshold)
+                            {
+                                candidateCircles.Add(new Circle
+                                {
+                                    X = x,
+                                    Y = y,
+                                    Radius = r,
+                                    Votes = accumulator[index]
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Post-process: filter duplicate detections.
+            // Two circles are considered duplicates if their centers are close (within radiusStep)
+            // and their radii differ by less than radiusStep.
+            List<Circle> filteredCircles = new List<Circle>();
+            foreach (var circle in candidateCircles)
+            {
+                bool duplicateFound = false;
+                foreach (var existing in filteredCircles)
+                {
+                    double centerDist = Math.Sqrt((circle.X - existing.X) * (circle.X - existing.X) +
+                                                  (circle.Y - existing.Y) * (circle.Y - existing.Y));
+                    if (centerDist < radiusStep && Math.Abs(circle.Radius - existing.Radius) < radiusStep)
+                    {
+                        // If duplicate is found, keep the circle with higher votes.
+                        if (circle.Votes > existing.Votes)
+                        {
+                            existing.X = circle.X;
+                            existing.Y = circle.Y;
+                            existing.Radius = circle.Radius;
+                            existing.Votes = circle.Votes;
+                        }
+                        duplicateFound = true;
+                        break;
+                    }
+                }
+                if (!duplicateFound)
+                {
+                    filteredCircles.Add(circle);
+                }
+            }
+
+            return filteredCircles;
         }
 
-        public static void DrawText(MagickImage image, string text, double x, double y, MagickColor color)
+        public static void DrawCircle(MagickImage image, int circleX, int circleY, int circleR, MagickColor color, int strokeWidth = 1)
         {
-            new Drawables()
-            // // Draw text on the image
-            .FontPointSize(36)
-            .Font("Impact", FontStyleType.Italic, FontWeight.Bold, FontStretch.ExtraExpanded)
-            .StrokeColor(color)
-            .FillColor(color)
-            .Text(x, y, text)
-            .Draw(image);
-        }
+            var drawables = new Drawables(); // Use 'using' for proper disposal
+            {
+                double x = circleX;
+                double y = circleY;
+                double radius = circleR;
 
-        public static void DrawCircle(MagickImage image, double x, double y, double radius, MagickColor circleColor)
-        {
-            // Create a drawing object
-            var drawables = new Drawables()
-                .StrokeColor(circleColor)
-                .StrokeWidth(2)
-                .FillColor(MagickColors.None) // No fill
-                .Circle(
-                    x, y,
-                    radius, radius
-                );
+                drawables.StrokeColor(color)
+                         .StrokeWidth(strokeWidth)
+                         .FillColor(MagickColors.Transparent)
+                         .Arc(x - radius, y - radius, x + radius, y + radius, 0, 360); // Full arc = circle
 
-            // Draw the circle on the image
-            image.Draw(drawables);
+                image.Draw(drawables); // Apply the drawables to the image
+            }
         }
 
         public static AnalysisResult AnalyzeResult(MagickImage image, List<Circle> circles, Options options)
@@ -303,8 +326,8 @@ namespace CollimationCircles.Services
             foreach (Circle circle in circles)
             {
                 MagickColor color = new((byte)rng.Next(255), (byte)rng.Next(255), (byte)rng.Next(255));
-                DrawCircle(image, circle.CenterX, circle.CenterY, circle.Radius, color);
-                DrawCircle(image, circle.CenterX, circle.CenterY, 2, color);
+                DrawCircle(image, circle.X, circle.Y, circle.Radius, color);
+                DrawCircle(image, circle.X, circle.Y, 2, color);
             }
 
             if (circles.Count == 0)
@@ -315,8 +338,8 @@ namespace CollimationCircles.Services
             {
                 // Compute average center of circles
                 var avgCenter = new PointD(
-                    circles.Average(c => c.CenterX),
-                    circles.Average(c => c.CenterY)
+                    circles.Average(c => c.X),
+                    circles.Average(c => c.Y)
                 );
 
                 // Compute image center
