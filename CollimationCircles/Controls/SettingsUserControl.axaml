@@ -28,12 +28,14 @@
         <ScrollViewer>
           <StackPanel Spacing="{DynamicResource ControlSpacing}">
             <Expander
-                VerticalAlignment="Top"
-                HorizontalAlignment="Stretch"                
-                Header="{DynamicResource Text.AllItemsControls}"
-                IsExpanded="{Binding GlobalPropertiesExpanded}">
-              <controls:GlobalPropertiesUserControl />
-            </Expander>
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              Header="{DynamicResource Text.ProfileManagerTitle}"
+              IsExpanded="{Binding ProfileManagerExpanded}">
+              <StackPanel Orientation="Vertical">
+                <controls:ProfileManagerUserControl/>
+              </StackPanel>
+            </Expander>            
             <Expander
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"

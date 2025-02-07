@@ -46,21 +46,21 @@
                         <StackPanel
                           Orientation="Horizontal"
                           Spacing="{DynamicResource ControlSpacing}">
-                        <PathIcon
-                          Width="{DynamicResource PathIconWidth}"
-                          Height="{DynamicResource PathIconHeight}"
-                          Foreground="{DynamicResource Color2}"
-                          Data="{Binding ResourceString}"/>
+                          <PathIcon
+                            Width="{DynamicResource PathIconWidth}"
+                            Height="{DynamicResource PathIconHeight}"
+                            Foreground="{DynamicResource Color2}"
+                            Data="{Binding ResourceString}"/>
 
-                        <TextBlock
-                          TextWrapping="Wrap"                          
-                          VerticalAlignment="Center"
-                          HorizontalAlignment="Stretch"
-                          Background="{ReflectionBinding SelectedItem.ItemColor}"
-                          Text="{Binding Label}" />
+                          <TextBlock
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Stretch"
+                            Background="{ReflectionBinding SelectedItem.ItemColor}"
+                            Text="{Binding Label}" />
                         </StackPanel>
 
-                        <StackPanel 
+                        <StackPanel
                           Grid.Column="3"
                           Orientation="Horizontal"
                           Spacing="{DynamicResource ControlSpacing}">
@@ -78,7 +78,7 @@
                           </Button>
 
                           <ToggleButton
-                            Theme="{DynamicResource ToolbarButton}"                          
+                            Theme="{DynamicResource ToolbarButton}"
                             IsChecked="{Binding IsVisible}"
                             ToolTip.Tip="{DynamicResource Text.ItemVisibility}">
                             <ToggleButton.Styles>
@@ -123,158 +123,167 @@
 
       </Border>
 
-      <Expander Header="{DynamicResource Text.ShapeProperties}"
-        VerticalAlignment="Top"
-        HorizontalAlignment="Stretch"
-        IsExpanded="{Binding ShapePropertiesExpanded}">
-        <StackPanel Spacing="{DynamicResource ControlSpacing}">
+      <Border
+        Background="{DynamicResource ExpanderContentBackground}"
+        BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
+        BorderBrush="{DynamicResource ExpanderContentBorderBrush}"
+        CornerRadius="{DynamicResource ControlCornerRadius}"
+        Padding="{DynamicResource ExpanderContentPadding}">
+        <StackPanel
+          Orientation="Vertical"
+          Spacing="{DynamicResource ControlSpacing}">
+          <StackPanel Spacing="{DynamicResource ControlSpacing}">
 
-          <UniformGrid
-            Columns="2">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.Color}" />
-            <ComboBox
-              HorizontalAlignment="Right"
-              SelectedItem="{ReflectionBinding #list.SelectedItem.ItemColor}"
-              ItemsSource="{Binding ColorList}">
-              <ComboBox.ItemTemplate>
-                <DataTemplate DataType="Color">
-                  <Border
-                    HorizontalAlignment="Left"
-                    CornerRadius="4"
-                    Width="16"
-                    Height="16"
-                    BorderThickness="1" >
-                    <Border.Background>
-                      <SolidColorBrush Color="{Binding}" />
-                    </Border.Background>
-                  </Border>
-                </DataTemplate>
-              </ComboBox.ItemTemplate>
-            </ComboBox>
-          </UniformGrid>
+            <UniformGrid
+              Columns="2">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.Color}" />
+              <ComboBox
+                HorizontalAlignment="Right"
+                SelectedItem="{ReflectionBinding #list.SelectedItem.ItemColor}"
+                ItemsSource="{Binding ColorList}">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate DataType="Color">
+                    <Border
+                      HorizontalAlignment="Left"
+                      CornerRadius="4"
+                      Width="16"
+                      Height="16"
+                      BorderThickness="1" >
+                      <Border.Background>
+                        <SolidColorBrush Color="{Binding}" />
+                      </Border.Background>
+                    </Border>
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+            </UniformGrid>
 
-          <UniformGrid
-            Columns="2">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.Radius}"/>
-            <NumericUpDown
-              Increment="1"
-              Value="{ReflectionBinding #list.SelectedItem.Radius}"
-              Minimum="{Binding RadiusMin}"
-              Maximum="{Binding RadiusMax}"/>
-          </UniformGrid>
+            <UniformGrid
+              Columns="2">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.Radius}"/>
+              <NumericUpDown
+                Increment="1"
+                Value="{ReflectionBinding #list.SelectedItem.Radius}"
+                Minimum="{Binding RadiusMin}"
+                Maximum="{Binding RadiusMax}"/>
+            </UniformGrid>
 
-          <UniformGrid
-            Columns="2">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.Thickness}" />
-            <NumericUpDown
-              Increment="1"
-              Value="{ReflectionBinding #list.SelectedItem.Thickness}"
-              Minimum="{Binding ThicknessMin}"
-              Maximum="{Binding ThicknessMax}"/>
-          </UniformGrid>
+            <UniformGrid
+              Columns="2">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.Thickness}" />
+              <NumericUpDown
+                Increment="1"
+                Value="{ReflectionBinding #list.SelectedItem.Thickness}"
+                Minimum="{Binding ThicknessMin}"
+                Maximum="{Binding ThicknessMax}"/>
+            </UniformGrid>
 
-          <UniformGrid
-            Columns="2"
-            IsVisible="{ReflectionBinding #list.SelectedItem.IsRotatable}">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.Rotation}"/>
-            <NumericUpDown
-              Increment="{ReflectionBinding #list.SelectedItem.RotationIncrement}"
-              Value="{ReflectionBinding #list.SelectedItem.RotationAngle}"
-              Minimum="{Binding RotationAngleMin}"
-              Maximum="{Binding RotationAngleMax}"/>
-          </UniformGrid>
+            <UniformGrid
+              Columns="2"
+              IsVisible="{ReflectionBinding #list.SelectedItem.IsRotatable}">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.Rotation}"/>
+              <NumericUpDown
+                Increment="{ReflectionBinding #list.SelectedItem.RotationIncrement}"
+                Value="{ReflectionBinding #list.SelectedItem.RotationAngle}"
+                Minimum="{Binding RotationAngleMin}"
+                Maximum="{Binding RotationAngleMax}"/>
+            </UniformGrid>
 
-          <UniformGrid
-            Columns="2"
-            IsVisible="{ReflectionBinding #list.SelectedItem.IsInclinatable}">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.InclinationAngle}"/>
-            <NumericUpDown
-              Increment="{ReflectionBinding #list.SelectedItem.InclinationIncrement}"
-              Value="{ReflectionBinding #list.SelectedItem.InclinationAngle}"
-              Minimum="{Binding InclinationAngleMin}"
-              Maximum="{Binding InclinationAngleMax}"/>
-          </UniformGrid>
+            <UniformGrid
+              Columns="2"
+              IsVisible="{ReflectionBinding #list.SelectedItem.IsInclinatable}">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.InclinationAngle}"/>
+              <NumericUpDown
+                Increment="{ReflectionBinding #list.SelectedItem.InclinationIncrement}"
+                Value="{ReflectionBinding #list.SelectedItem.InclinationAngle}"
+                Minimum="{Binding InclinationAngleMin}"
+                Maximum="{Binding InclinationAngleMax}"/>
+            </UniformGrid>
 
-          <UniformGrid
-            Columns="2"
-            IsVisible="{ReflectionBinding #list.SelectedItem.IsSizeable}">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.Spacing}"/>
-            <NumericUpDown
-              Increment="1"
-              Value="{ReflectionBinding #list.SelectedItem.Size}"
-              Minimum="{Binding SpacingMin}"
-              Maximum="{Binding SpacingMax}" />
-          </UniformGrid>
+            <UniformGrid
+              Columns="2"
+              IsVisible="{ReflectionBinding #list.SelectedItem.IsSizeable}">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.Spacing}"/>
+              <NumericUpDown
+                Increment="1"
+                Value="{ReflectionBinding #list.SelectedItem.Size}"
+                Minimum="{Binding SpacingMin}"
+                Maximum="{Binding SpacingMax}" />
+            </UniformGrid>
 
-          <UniformGrid
-            Columns="2"
-            IsVisible="{ReflectionBinding #list.SelectedItem.IsCountable}">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.Count}"/>
-            <NumericUpDown
-              Increment="1"
-              Value="{ReflectionBinding #list.SelectedItem.Count}"
-              Minimum="{Binding CountMin}"
-              Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
-          </UniformGrid>
+            <UniformGrid
+              Columns="2"
+              IsVisible="{ReflectionBinding #list.SelectedItem.IsCountable}">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.Count}"/>
+              <NumericUpDown
+                Increment="1"
+                Value="{ReflectionBinding #list.SelectedItem.Count}"
+                Minimum="{Binding CountMin}"
+                Maximum="{ReflectionBinding #list.SelectedItem.MaxCount}" />
+            </UniformGrid>
 
-          <UniformGrid
-            Columns="2">
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.SelectedOpacity}"/>
-            <NumericUpDown
-              Increment="0.1"
-              Value="{ReflectionBinding #list.SelectedItem.Opacity}"
-              Minimum="{Binding OpacityMin}"
-              Maximum="{Binding OpacityMax}" />
-          </UniformGrid>
+            <UniformGrid
+              Columns="2">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.SelectedOpacity}"/>
+              <NumericUpDown
+                Increment="0.1"
+                Value="{ReflectionBinding #list.SelectedItem.Opacity}"
+                Minimum="{Binding OpacityMin}"
+                Maximum="{Binding OpacityMax}" />
+            </UniformGrid>
 
-          <Grid
-            ColumnDefinitions="25*,25*,50*"
-            IsVisible="{ReflectionBinding #list.SelectedItem.IsEditable}">            
-            <TextBlock
-              VerticalAlignment="Bottom"
-              Text="{DynamicResource Text.Label}"/>
-            <CheckBox
-              HorizontalAlignment="Right"
-              Grid.Column="1"
-              ToolTip.Tip="{DynamicResource Text.ShowLabel}"
-              IsChecked="{ReflectionBinding #list.SelectedItem.IsLabelVisible}"/>
-            <TextBox
-              Grid.Column="2"
-              TextWrapping="Wrap"
-              MaxLength="20"
-              Watermark="{DynamicResource Text.HelperName}"
-              Text="{ReflectionBinding #list.SelectedItem.Label}" />
-          </Grid>          
+            <Grid
+              ColumnDefinitions="25*,25*,50*"
+              IsVisible="{ReflectionBinding #list.SelectedItem.IsEditable}">
+              <TextBlock
+                VerticalAlignment="Bottom"
+                Text="{DynamicResource Text.Label}"/>
+              <CheckBox
+                HorizontalAlignment="Right"
+                Grid.Column="1"
+                ToolTip.Tip="{DynamicResource Text.ShowLabel}"
+                IsChecked="{ReflectionBinding #list.SelectedItem.IsLabelVisible}"/>
+              <TextBox
+                Grid.Column="2"
+                TextWrapping="Wrap"
+                MaxLength="20"
+                Watermark="{DynamicResource Text.HelperName}"
+                Text="{ReflectionBinding #list.SelectedItem.Label}" />
+            </Grid>
+
+          </StackPanel>
 
         </StackPanel>
+      </Border>
 
-      </Expander>
-
-      <Expander
-            VerticalAlignment="Top"
-            HorizontalAlignment="Stretch"
-            Header="{DynamicResource Text.ProfileManagerTitle}"
-            IsExpanded="{Binding ProfileManagerExpanded}">
-        <StackPanel Orientation="Vertical">
-          <controls:ProfileManagerUserControl/>
+      <Border
+        Background="{DynamicResource ExpanderContentBackground}"
+        BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
+        BorderBrush="{DynamicResource ExpanderContentBorderBrush}"
+        CornerRadius="{DynamicResource ControlCornerRadius}"
+        Padding="{DynamicResource ExpanderContentPadding}">
+        <StackPanel
+          Orientation="Vertical"
+          Spacing="{DynamicResource ControlSpacing}">
+          <controls:GlobalPropertiesUserControl />
         </StackPanel>
-      </Expander>
+      </Border>
     </StackPanel>
   </ScrollViewer>
 </UserControl>
