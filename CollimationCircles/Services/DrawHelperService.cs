@@ -83,7 +83,7 @@ namespace CollimationCircles.Services
 
                 if (vm.SelectedItem is CircleViewModel && vm.ShowMarkAtSelectedItem && item is not null && vm.SelectedItem == item)
                 {
-                    context.DrawText(selectedMark, new Point(-item.Size, -item.Radius));
+                    context.DrawText(selectedMark, new Point(-item.Size, item.Radius));
                 }
             }
         }
