@@ -150,10 +150,10 @@ namespace CollimationCircles.ViewModels
                         
             string resultText = DescribeResult(image, result, options);
 
-            ShowResultDialog(resultText, image);
+            ShowResultDialog(windowTitle, resultText, image);
         }
 
-        private void ShowResultDialog(string resultText, MagickImage image)
+        private void ShowResultDialog(string title, string resultText, MagickImage image)
         {
             var dialogViewModel = DialogService.CreateViewModel<ImageViewModel>();
 
@@ -161,11 +161,12 @@ namespace CollimationCircles.ViewModels
 
             dialogViewModel.ImageToDisplay = Bitmap.DecodeToWidth(stream, (int)image.Width);
             dialogViewModel.ImageDescription = resultText;
+            dialogViewModel.Title = title;
 
             DialogService.Show(null, dialogViewModel);
         }
 
-        private string DescribeResult(MagickImage image, AnalysisResult result, Options options)
+        private static string DescribeResult(MagickImage image, AnalysisResult result, Options options)
         {
             string message = $"Number of circles detected: {result.CircleCount}\n";
 
@@ -190,23 +191,6 @@ namespace CollimationCircles.ViewModels
             }
 
             return message;
-        }
-
-        public static void DrawTextOnImage(MagickImage img, string text, int x0 = 10, int y0 = 15, int dy = 20)
-        {
-            if (string.IsNullOrWhiteSpace(text)) return;
-
-            // Split text into lines
-            string[] lines = text.Split('\n');
-
-            // Iterate through lines and draw text
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (lines[i] is null || string.IsNullOrWhiteSpace(lines[i])) continue;
-                int y = y0 + i * dy;                
-
-                ImageAnalysisService.DrawText(img, lines[i], x0, y, MagickColors.Yellow);
-            }
         }        
     }
 }

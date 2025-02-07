@@ -9,13 +9,15 @@
         d:DesignHeight="480"
         x:Class="CollimationCircles.Views.ImageView"
         Width="640"
-        Height="480">
+        Height="480"
+        Title="{Binding Title}">
   <Grid 
     Margin="16"
-    RowDefinitions="*,16,Auto">
+    RowDefinitions="*,Auto">
     <Image Source="{Binding ImageToDisplay}" />
     <TextBlock
       Grid.Row="2"
+      Padding="0 16 0 0"
       Text="{Binding ImageDescription}" />
   </Grid>
 </Window>
