@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:CollimationCircles.Controls"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="650"
              x:Class="CollimationCircles.Controls.ItemListUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
@@ -243,22 +243,24 @@
               Maximum="{Binding OpacityMax}" />
           </UniformGrid>
 
-          <UniformGrid
-            Columns="2"
-            IsVisible="{ReflectionBinding #list.SelectedItem.IsEditable}">
+          <Grid
+            ColumnDefinitions="25*,25*,50*"
+            IsVisible="{ReflectionBinding #list.SelectedItem.IsEditable}">            
             <TextBlock
               VerticalAlignment="Bottom"
               Text="{DynamicResource Text.Label}"/>
+            <CheckBox
+              HorizontalAlignment="Right"
+              Grid.Column="1"
+              ToolTip.Tip="{DynamicResource Text.ShowLabel}"
+              IsChecked="{ReflectionBinding #list.SelectedItem.IsLabelVisible}"/>
             <TextBox
+              Grid.Column="2"
               TextWrapping="Wrap"
               MaxLength="20"
               Watermark="{DynamicResource Text.HelperName}"
               Text="{ReflectionBinding #list.SelectedItem.Label}" />
-          </UniformGrid>
-
-          <CheckBox
-            Content="{DynamicResource Text.ShowLabels}"
-            IsChecked="{Binding ShowLabels}"/>
+          </Grid>          
 
         </StackPanel>
 

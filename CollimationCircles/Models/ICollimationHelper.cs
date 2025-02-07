@@ -11,5 +11,6 @@ namespace CollimationCircles.Models
         public double Radius { get; set; }
         public bool IsVisible { get; set; }
         public int Count { get; set; }
+        public bool IsLabelVisible { get; set; }
     }
 }

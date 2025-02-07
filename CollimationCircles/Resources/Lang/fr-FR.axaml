@@ -62,7 +62,7 @@
   <system:String x:Key="Text.SelectedItemProperties">Propriétés de la forme sélectionnée</system:String>
   <system:String x:Key="Text.Settings">Paramètres</system:String>
   <system:String x:Key="Text.SettingsWindow">Détacher dans une fenêtre séparée</system:String>
-  <system:String x:Key="Text.ShowLabels">Afficher les étiquettes de forme</system:String>
+  <system:String x:Key="Text.ShowLabel">Afficher l'étiquette</system:String>
   <system:String x:Key="Text.Size">Taille</system:String>
   <system:String x:Key="Text.Spacing">Espacement</system:String>
   <system:String x:Key="Text.Spider">Araignée</system:String>

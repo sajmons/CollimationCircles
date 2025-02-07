@@ -62,7 +62,7 @@
   <system:String x:Key="Text.SelectedItemProperties">Ausgewählte Formeigenschaften</system:String>
   <system:String x:Key="Text.Settings">Einstellungen</system:String>
   <system:String x:Key="Text.SettingsWindow">Zum separaten Fenster abdocken</system:String>
-  <system:String x:Key="Text.ShowLabels">Formbeschriftungen anzeigen</system:String>
+  <system:String x:Key="Text.ShowLabel">Etikett anzeigen</system:String>
   <system:String x:Key="Text.Size">Größe</system:String>
   <system:String x:Key="Text.Spacing">Abstand</system:String>
   <system:String x:Key="Text.Spider">Spinne</system:String>

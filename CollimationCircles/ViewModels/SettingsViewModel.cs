@@ -68,11 +68,7 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         [Range(Constraints.RotationAngleMin, Constraints.RotationAngleMax)]
         [NotifyDataErrorInfo]
-        private double rotationAngle = 0;
-
-        [JsonProperty]
-        [ObservableProperty]
-        public bool showLabels = true;
+        private double rotationAngle = 0;        
 
         [JsonProperty]
         [ObservableProperty]
@@ -309,8 +305,7 @@ namespace CollimationCircles.ViewModels
             SelectedIndex = 0;
 
             RotationAngle = 0;
-            Scale = 1;
-            ShowLabels = true;
+            Scale = 1;            
             CheckForNewVersionOnStartup = true;
             AlwaysOnTop = true;
             ShowMarkAtSelectedItem = true;
@@ -515,7 +510,6 @@ namespace CollimationCircles.ViewModels
 
                     Scale = vm.Scale;
                     RotationAngle = vm.RotationAngle;
-                    ShowLabels = vm.ShowLabels;
                     ColorList = vm.ColorList;
                     LabelSize = vm.LabelSize;
 
@@ -655,7 +649,6 @@ namespace CollimationCircles.ViewModels
                 case nameof(RotationAngle):
                 case nameof(Scale):
                 case nameof(LabelSize):
-                case nameof(ShowLabels):
                 case nameof(AlwaysOnTop):
                 case nameof(SelectedIndex):
                 case nameof(ShowMarkAtSelectedItem):
