@@ -10,6 +10,14 @@ namespace CollimationCircles.Services
 {
     internal static class ImageAnalysisService
     {
+        public class FilterComplitedEventArgs(string filterName, byte[] image) : EventArgs
+        {
+            public string FilterName { get; set; } = filterName;
+            public byte[] ImageBytes { get; set; } = image;
+        }
+
+        public static event EventHandler<FilterComplitedEventArgs>? FilterComplited;
+
         public struct Circle
         {
             public int CenterX;
@@ -32,9 +40,6 @@ namespace CollimationCircles.Services
             public bool DoDilate { get; internal set; } = false;
             public bool DoErode { get; internal set; } = false;
             public bool DoCrop { get; internal set; } = false;
-            public string ImagesPath { get; set; } = ".\\";
-            public bool SaveImages { get; set; } = false;
-            public bool ShowEachImage { get; set; } = false;
             public BlurOptions BlurOptions { get; set; } = new();
             public ThresholdOptions AdaptiveThresholdOptions { get; set; } = new();
             public MorphologySettings ErodeSettings { get; set; } = new()
@@ -77,14 +82,14 @@ namespace CollimationCircles.Services
             {
                 // Convert to grayscale directly
                 image.Grayscale(PixelIntensityMethod.Average);
-                if (options.SaveImages) image.Write("1_grayscale.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Grayscale), image.ToByteArray()));
             }
 
             if (options.DoNormalize)
             {
                 // Apply preprocessing filters
                 image.Normalize();
-                if (options.SaveImages) image.Write("2_normalize.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Normalize), image.ToByteArray()));
             }
 
             if (options.DoNormalize)
@@ -93,7 +98,7 @@ namespace CollimationCircles.Services
                     options.BlurOptions.Radius,
                     options.BlurOptions.Sigma,
                     options.BlurOptions.Channels);
-                if (options.SaveImages) image.Write("3_gausian_blur.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.GaussianBlur), image.ToByteArray()));
             }
 
             if (options.DoThreshold)
@@ -101,31 +106,31 @@ namespace CollimationCircles.Services
                 image.Threshold(
                     options.AdaptiveThresholdOptions.Percentage,
                     options.AdaptiveThresholdOptions.Chanels);
-                if (options.SaveImages) image.Write("4_threshold.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Threshold), image.ToByteArray()));
             }
 
             if (options.DoErode)
             {
                 image.Morphology(options.ErodeSettings);
-                if (options.SaveImages) image.Write("5_erode.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Morphology) + "/Erode", image.ToByteArray()));
             }
 
             if (options.DoDilate)
             {
                 image.Morphology(options.DilateSettings);
-                if (options.SaveImages) image.Write("6_dilate.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Morphology) + "/Dilate", image.ToByteArray()));
             }
 
             if (options.DoEdge)
             {
                 image.Edge(10);
-                if (options.SaveImages) image.Write("7_edge.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Edge), image.ToByteArray()));
             }
 
             if (options.DoCrop && image.BoundingBox is not null)
             {
                 image.Crop(image.BoundingBox);
-                if (options.SaveImages) image.Write("8_crop.jpg");
+                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Crop), image.ToByteArray()));
             }
         }
 

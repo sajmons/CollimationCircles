@@ -40,7 +40,16 @@ namespace CollimationCircles.ViewModels
         public CollimationAnalysisViewModel(ILibVLCService libVLCService)
         {
             this.libVLCService = libVLCService;
-            
+
+            ImageAnalysisService.FilterComplited += (s, e) =>
+            {
+                if (IsDebug)
+                {                    
+                    MagickImage image = new (e.ImageBytes);
+                    ShowResultDialog(e.FilterName, image);
+                }
+            };
+
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
                 switch (m.Value)
@@ -128,8 +137,6 @@ namespace CollimationCircles.ViewModels
         {
             Options options = new()
             {
-                ShowEachImage = IsDebug,
-                SaveImages = IsDebug,
                 DoNormalize = true,
                 DoGaussianBlur = true,
                 DoThreshold = true,
@@ -150,10 +157,10 @@ namespace CollimationCircles.ViewModels
                         
             string resultText = DescribeResult(image, result, options);
 
-            ShowResultDialog(windowTitle, resultText, image);
+            ShowResultDialog(windowTitle, image, resultText);
         }
 
-        private void ShowResultDialog(string title, string resultText, MagickImage image)
+        private void ShowResultDialog(string title, MagickImage image, string resultText = "")
         {
             var dialogViewModel = DialogService.CreateViewModel<ImageViewModel>();
 
