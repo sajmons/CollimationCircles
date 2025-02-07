@@ -10,6 +10,7 @@ using HanumanInstitute.MvvmDialogs.FileSystem;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using ImageMagick;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using static CollimationCircles.Services.ImageAnalysisService;
@@ -142,18 +143,31 @@ namespace CollimationCircles.ViewModels
                 DoThreshold = true,
                 DoErode = true,
                 DoDilate = true,
-                DoEdge = true
+                DoEdge = true,
+                DoCrop = true
             };
 
+            Stopwatch sw = new();
+            sw.Start();
+            logger.Info($"Start ProcessImage");
             ImageAnalysisService.ProcessImage(image, options);
+            sw.Stop();
+            logger.Info($"ProcessImage time: {sw.Elapsed:mm\\:ss\\.ff}");
 
+            sw.Start();
+            logger.Info($"Start DetectCircles");
             List<Circle> circles = ImageAnalysisService.DetectCircles(image, 50, (int)image.Width / 2, 128, 0.9, 5, 5);
+            sw.Stop();
+            logger.Info($"DetectCircles time: {sw.Elapsed:mm\\:ss\\.ff}");
 
+            sw.Start();
+            logger.Info($"Start AnalyzeResult");
             AnalysisResult result = ImageAnalysisService.AnalyzeResult(image, circles, options);
+            sw.Stop();
+            logger.Info($"AnalyzeResult time: {sw.Elapsed:mm\\:ss\\.ff}");
 
-            string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");
-                        
-            string resultText = DescribeResult(image, result, options);
+            string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");                        
+            string resultText = DescribeResult(result);
 
             ShowResultDialog(windowTitle, image, resultText);
         }
@@ -171,29 +185,11 @@ namespace CollimationCircles.ViewModels
             DialogService.Show(null, dialogViewModel);
         }
 
-        private static string DescribeResult(MagickImage image, AnalysisResult result, Options options)
+        private static string DescribeResult(AnalysisResult result)
         {
-            string message = $"Number of circles detected: {result.CircleCount}\n";
-
-            if (result?.Offset == -1)
-            {
-                message += $"Unable to detect defocused star.\nPlease point your telescope to bright star and then defocus it.";
-            }
-            else
-            {
-                if (result?.CircleCount < options.MinCirclesDetected)
-                {
-                    message += $"Number of detected circles is to small.";
-                }
-                else if (result?.Offset <= options.OffsetLimit)
-                {
-                    message += $"Offset from optical axis: {result.Offset:F3}px\nTelescope is likely well-collimated.";
-                }
-                else
-                {
-                    message += "Collimation issues detected.";
-                }
-            }
+            string message = $"Number of circles detected: {result.CircleCount}\n" +
+                $"Center RMSE: {result.CenterRMSE:F2}\n" +
+                $"Lower RMSE means better collimation.";            
 
             return message;
         }        
