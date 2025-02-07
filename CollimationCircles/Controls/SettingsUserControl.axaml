@@ -28,21 +28,21 @@
         <ScrollViewer>
           <StackPanel Spacing="{DynamicResource ControlSpacing}">
             <Expander
+                VerticalAlignment="Top"
+                HorizontalAlignment="Stretch"
+                Header="{DynamicResource Text.WebCamStream}"
+                IsExpanded="{Binding CameraVideoStreamExpanded}">
+              <StackPanel Orientation="Vertical">
+                <controls:StreamUserControl/>
+              </StackPanel>
+            </Expander>
+            <Expander
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
               Header="{DynamicResource Text.ProfileManagerTitle}"
               IsExpanded="{Binding ProfileManagerExpanded}">
               <StackPanel Orientation="Vertical">
                 <controls:ProfileManagerUserControl/>
-              </StackPanel>
-            </Expander>            
-            <Expander
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Header="{DynamicResource Text.WebCamStream}"
-              IsExpanded="{Binding CameraVideoStreamExpanded}">
-              <StackPanel Orientation="Vertical">
-                <controls:StreamUserControl/>
               </StackPanel>
             </Expander>
             <Expander
