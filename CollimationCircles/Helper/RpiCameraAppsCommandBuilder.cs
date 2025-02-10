@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace CollimationCircles.Helper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-
     namespace RpiCameraTools
     {
         /// <summary>
@@ -40,11 +36,11 @@ namespace CollimationCircles.Helper
             /// Gets or sets the base command string. If not set explicitly,
             /// it will be derived from CommandType when building the command.
             /// </summary>
-            public string BaseCommand { get; set; }
+            public required string BaseCommand { get; set; }
 
             public RpiCameraAppsCommandBuilder()
             {
-                _parameters = new List<string>();
+                _parameters = [];
             }
 
             /// <summary>
