@@ -264,7 +264,7 @@ public class AppService
             Task completedTask = await Task.WhenAny(waitForExitTask, timeoutTask);
             if (completedTask == timeoutTask)
             {
-                try { process.Kill(); } catch (InvalidOperationException) { /* process already exited */ }
+                //try { process.Kill(); } catch (InvalidOperationException) { /* process already exited */ }
                 logger.Warn($"Timeout executing command '{fileName} {argStr}'");
                 return (-1, string.Empty);
             }
@@ -330,7 +330,7 @@ public class AppService
         Guard.IsNotNull(streamArgs);
 
         await ExecuteCommandAsync("pkill", [command], timeoutMilliseconds: 100);
-        await ExecuteCommandAsync(command, streamArgs);
+        await ExecuteCommandAsync(command, streamArgs, timeoutMilliseconds: 1500);
     }
 
     public static string DeviceId()
