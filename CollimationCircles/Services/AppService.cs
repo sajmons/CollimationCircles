@@ -1,4 +1,5 @@
-﻿using DeviceId;
+﻿using CommunityToolkit.Diagnostics;
+using DeviceId;
 using Newtonsoft.Json;
 using Octokit;
 using System;
@@ -114,7 +115,7 @@ public class AppService
     {
         try
         {
-            GitHubClient client = new(new ProductHeaderValue("CollimationCircles"));            
+            GitHubClient client = new(new ProductHeaderValue("CollimationCircles"));
 
             var release = await client.Repository.Release.GetLatest(owner, reponame);
 
@@ -350,47 +351,16 @@ public class AppService
         return endPoint?.Address.ToString();
     }
 
-    public static async Task StartRaspberryPIStream(string port, List<string>? streamArgs = null)
+    public static async Task StartRaspberryPIStream(string port, List<string> streamArgs, string command = "rpicam-vid")
     {
-        _ = await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 100);
+        Guard.IsNotNullOrWhiteSpace(port);
+        Guard.IsNotNull(streamArgs);
 
-        List<string> parameters = [
-            "--timeout",
-            "0",
-            "--inline",
-            "--listen",
-            "--nopreview",
-            "--output",
-            $"tcp://0.0.0.0:{port}",
-            "--shutter",
-            "60000",
-            "--gain",
-            "22",
-            "--width",
-            "640",
-            "--height",
-            "480",
-            "--framerate",
-            "30",
-            "--quality",
-            "25",
-            "--bitrate",
-            "15000000",
-            "--denoise",
-            "cdn_off",
-            "--level",
-            "4.2"
-        ];
-
-        if (streamArgs != null)
-        {
-            // FIXME: parametri morajo biti filtrirani glede na to kaj katera kamera podpira
-            //parameters.AddRange(streamArgs);
-        }
+        _ = await ExecuteCommand("pkill", [command], timeout: 100);        
 
         _ = await ExecuteCommand(
-            "rpicam-vid",
-            parameters, timeout: 1500);
+            command,
+            streamArgs, timeout: 1500);
     }
 
     public static string DeviceId()
