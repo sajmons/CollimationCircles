@@ -49,17 +49,23 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
-    <Button
+    <StackPanel
+      Orientation="Horizontal"
       HorizontalAlignment="Right"
-      VerticalAlignment="Bottom"
-      Content="{DynamicResource Text.Default}"
-      Command="{Binding DefaultCommand}"/>
+      Spacing="{DynamicResource ControlSpacing}">
+      <Button
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Content="{DynamicResource Text.Default}"
+        Command="{Binding DefaultCommand}"/>
 
-    <Button
-      HorizontalAlignment="Right"
-      VerticalAlignment="Bottom"
-      Content="{DynamicResource Text.Apply}"
-      Command="{Binding ApplyCommand}"/>
+      <Button
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Content="{DynamicResource Text.Apply}"
+        Command="{Binding ApplyCommand}"
+        IsVisible="{Binding IsLibCamera}"/>
+    </StackPanel>
 
   </StackPanel>
 </UserControl>

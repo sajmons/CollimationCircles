@@ -19,10 +19,15 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private Camera camera;
 
+        [ObservableProperty]
+        private bool isLibCamera;
+
         public CameraControlsViewModel(ILibVLCService libVLCService)
         {
             this.libVLCService = libVLCService;
             camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
+
+            IsLibCamera = Camera.APIType == APIType.LibCamera;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
