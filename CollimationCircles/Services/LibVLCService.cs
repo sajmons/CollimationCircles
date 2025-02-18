@@ -175,7 +175,7 @@ namespace CollimationCircles.Services
 
             if (!string.IsNullOrWhiteSpace(protocol))
             {
-                protocol += ":// ";
+                protocol += "://";
             }
 
             return $"{protocol}{addr}{prt}{pth}";
