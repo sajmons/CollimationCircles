@@ -170,4 +170,5 @@
   <system:String x:Key="Text.NoVideoStreamWarning">Bitte starten Sie den Videostream, bevor Sie diese Funktion verwenden.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Kein Videostream</system:String>
   <system:String x:Key="Text.CombinedDetectionMode">Beide</system:String>
+  <system:String x:Key="Text.Apply">Verwenden</system:String>
 </ResourceDictionary>

@@ -54,7 +54,7 @@ namespace CollimationCircles.ViewModels
         private ObservableCollection<Camera> cameraList = [];
 
         [ObservableProperty]
-        private Camera? selectedCamera;
+        private Camera selectedCamera = new();
 
         [ObservableProperty]
         private bool controlsEnabled = false;
@@ -72,10 +72,11 @@ namespace CollimationCircles.ViewModels
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
 
-            Dispatcher.UIThread.Post(async () => {
+            Dispatcher.UIThread.Post(async () =>
+            {
                 CameraList = new ObservableCollection<Camera>(await cameraControlService.GetCameraList());
-                SelectedCamera = CameraList?.FirstOrDefault(c => c.Name == settingsViewModel!.LastSelectedCamera) ?? CameraList?.FirstOrDefault() ?? null;
-            });            
+                SelectedCamera = CameraList.Where(c => c.Name == settingsViewModel.LastSelectedCamera).First();
+            });
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {

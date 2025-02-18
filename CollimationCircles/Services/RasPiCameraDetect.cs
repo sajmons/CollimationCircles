@@ -22,7 +22,7 @@ namespace CollimationCircles.Services
             { ControlType.Gain, "gain" },
             //{ ControlType.AutoFocus, "autofocus-mode" },  // default or manual
             { ControlType.FocusAbsolute, "lens-position" },
-            //{ ControlType.AutoWhiteBalance, "awb" },      // auto 2500K to 8000K, incandescent 2500K to 3000K, tungsten 3000K to 3500K, fluorescent 4000K to 4700K, indoor 3000K to 5000K, daylight 5500K to 6500K, cloudy 7000K to 8500K
+            { ControlType.WhiteBalance, "awb" },      // auto 2500K to 8000K, incandescent 2500K to 3000K, tungsten 3000K to 3500K, fluorescent 4000K to 4700K, indoor 3000K to 5000K, daylight 5500K to 6500K, cloudy 7000K to 8500K
             { ControlType.Sharpness, "sharpness" },
             { ControlType.ExposureTime, "shutter" },
             { ControlType.Zoom_Absolute, "roi" }
@@ -86,11 +86,12 @@ namespace CollimationCircles.Services
             Guard.IsNotNull(camera);
 
             List<ICameraControl> controls = [
+                new CameraControl(ControlType.ExposureTime, camera),
                 new CameraControl(ControlType.Brightness, camera),
                 new CameraControl(ControlType.Contrast, camera),
                 new CameraControl(ControlType.Saturation, camera),
                 new CameraControl(ControlType.Gain, camera),
-                new CameraControl(ControlType.Zoom_Absolute, camera),
+                new CameraControl(ControlType.Zoom_Absolute, camera)
                 ];
 
             return Task.FromResult(controls);
@@ -137,12 +138,14 @@ namespace CollimationCircles.Services
                 .SetDenoise("off")
                 .SetFramerate(30)
                 .SetMetering("average")
-                .SetWidth(1280)
+                .SetWidth(1024)
                 .SetHeight(720)
                 .SetFlush(true);
 
             //List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(camera, commandBuilder);
             //Task.Run(async () => await AppService.StartRaspberryPIStream(StreamPort, controls));
+
+            logger.Debug($"New command: {commandBuilder}");
         }
 
         public List<string> GetCommandLineParameters(Camera camera, ICommandBuilder? builder)

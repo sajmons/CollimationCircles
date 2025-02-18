@@ -171,5 +171,6 @@
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analysis result</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Please start video stream before using this function.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">No video stream</system:String>
-  <system:String x:Key="Text.CombinedDetectionMode">Both</system:String>  
+  <system:String x:Key="Text.CombinedDetectionMode">Both</system:String>
+  <system:String x:Key="Text.Apply">Apply</system:String>
 </ResourceDictionary>

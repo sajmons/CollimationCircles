@@ -273,6 +273,17 @@ namespace CollimationCircles.Helper
             }
 
             /// <summary>
+            /// Sets the AWB (--awb).
+            /// Supported for Vid, Still, and Jpeg.
+            /// </summary>
+            public RpiCameraAppsCommandBuilder SetAwb(string awb)
+            {
+                EnsureSupportedOption("--awbgains", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);                
+                _parameters.Add("--awb", $"{awb}");
+                return this;
+            }
+
+            /// <summary>
             /// Sets the metering mode (--metering).
             /// Supported for Vid, Still, and Jpeg.
             /// </summary>
@@ -417,6 +428,11 @@ namespace CollimationCircles.Helper
                 }
 
                 return $"{BaseCommand} {string.Join(" ", _parameters)}";
+            }
+
+            public override string ToString()
+            {
+                return string.Join(" ", GetParameterList());
             }
         }
     }

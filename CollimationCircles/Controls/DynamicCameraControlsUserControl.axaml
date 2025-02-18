@@ -55,5 +55,11 @@
       Content="{DynamicResource Text.Default}"
       Command="{Binding DefaultCommand}"/>
 
+    <Button
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom"
+      Content="{DynamicResource Text.Apply}"
+      Command="{Binding ApplyCommand}"/>
+
   </StackPanel>
 </UserControl>
