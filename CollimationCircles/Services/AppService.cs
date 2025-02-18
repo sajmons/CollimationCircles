@@ -376,13 +376,13 @@ public class AppService
         return endPoint?.Address.ToString();
     }
 
-    public static async Task StartRaspberryPIStream(string port, List<string> streamArgs, string command = "rpicam-vid", CancellationToken cancellationToken = default)
+    public static async Task StartRaspberryPIStream(string port, List<string> streamArgs, string command = "rpicam-vid")
     {
         Guard.IsNotNullOrWhiteSpace(port);
         Guard.IsNotNull(streamArgs);
 
         await StartProcessAsync("pkill", [command], timeoutMilliseconds: 150);
-        await StartLongRunningProcessAsync(command, streamArgs, cancellationToken: cancellationToken);
+        await StartLongRunningProcessAsync(command, streamArgs);
     }
 
     public static string DeviceId()
