@@ -37,7 +37,7 @@ namespace CollimationCircles.Services
 
             var (errorCode, result) = await AppService.ExecuteCommandAsync(
                 "v4l2-ctl",
-            ["--list-devices"]);
+                ["--list-devices"]);
 
             logger.Info($"v4l2-ctl --list-devices result: {result}");
 
@@ -67,7 +67,7 @@ namespace CollimationCircles.Services
                             Path = cam
                         };
 
-                        c.Controls = GetControls(c);
+                        c.Controls = await GetControls(c);
 
                         if (c.Controls.Count > 0)
                         {
@@ -89,13 +89,13 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(Camera camera)
+        public async Task<List<ICameraControl>> GetControls(Camera camera)
         {
             Guard.IsNotNull(camera);
 
-            var (errorCode, result) = AppService.ExecuteCommandAsync(
+            var (errorCode, result) = await AppService.ExecuteCommandAsync(
                 "v4l2-ctl",
-                ["--list-ctrls", "--device", $"{camera.Path}"]).GetAwaiter().GetResult();
+                ["--list-ctrls", "--device", $"{camera.Path}"]);
 
             string pattern = @"(?<name>\w+)\s(?<hex>0x\w+)\s\((?<type>\w+)\)\s*:\s*(min=(?<min>-?\d+))?\s*(max=(?<max>-?\d+))?\s*(step=(?<step>-?\d+))?\s*(default=(?<default>-?\d+))?\s*(value=(?<value>-?\d+))?\s*(flags=(?<flags>\w+))?";
 

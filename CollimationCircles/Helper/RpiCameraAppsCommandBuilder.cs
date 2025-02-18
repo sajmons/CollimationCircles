@@ -351,7 +351,35 @@ namespace CollimationCircles.Helper
                 if (!string.IsNullOrWhiteSpace(parameter))
                     _parameters.Add(parameter, value);
                 return this;
-            }            
+            }
+
+            /// <summary>
+            /// Set default parameters
+            /// </summary>
+            public RpiCameraAppsCommandBuilder SetDefaultParameters()
+            {
+                _parameters.Clear();
+
+                SetTimeout(0)
+                .SetInline(true)
+                .SetNoPreview(true)
+                .SetListen(true)
+                .SetOutput($"tcp://0.0.0.0:{RasPiCameraDetect.StreamPort}")
+                .SetDenoise("off")
+                .SetFramerate(30)
+                .SetGain(16)
+                .SetShutter(60000)
+                .SetMetering("average")
+                .SetBrightness(0.5)
+                .SetContrast(1.7)
+                .SetSaturation(1.0)
+                .SetWidth(1280)
+                .SetHeight(720)
+                .SetDigitalZoom(3)
+                .SetFlush(true);
+
+                return this;
+            }
 
             /// <summary>
             /// Get list of parameters
@@ -361,7 +389,7 @@ namespace CollimationCircles.Helper
                 List<string> result = [];
 
                 foreach (var parameter in _parameters)
-                {                    
+                {
                     result.Add(parameter.Key);
                     result.Add(parameter.Value);
                 }
@@ -378,23 +406,14 @@ namespace CollimationCircles.Helper
                 // If BaseCommand is not set, determine it based on CommandType.
                 if (string.IsNullOrWhiteSpace(BaseCommand))
                 {
-                    switch (CommandType)
+                    BaseCommand = CommandType switch
                     {
-                        case RpicamAppCommand.Vid:
-                            BaseCommand = "rpicam-vid";
-                            break;
-                        case RpicamAppCommand.Still:
-                            BaseCommand = "rpicam-still";
-                            break;
-                        case RpicamAppCommand.Raw:
-                            BaseCommand = "rpicam-raw";
-                            break;
-                        case RpicamAppCommand.Jpeg:
-                            BaseCommand = "rpicam-jpeg";
-                            break;
-                        default:
-                            throw new InvalidOperationException("Unsupported command type.");
-                    }
+                        RpicamAppCommand.Vid => "rpicam-vid",
+                        RpicamAppCommand.Still => "rpicam-still",
+                        RpicamAppCommand.Raw => "rpicam-raw",
+                        RpicamAppCommand.Jpeg => "rpicam-jpeg",
+                        _ => throw new InvalidOperationException("Unsupported command type."),
+                    };
                 }
 
                 return $"{BaseCommand} {string.Join(" ", _parameters)}";

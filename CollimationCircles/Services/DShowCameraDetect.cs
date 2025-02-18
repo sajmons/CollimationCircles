@@ -52,7 +52,7 @@ namespace CollimationCircles.Services
                                 Index = camIndex++
                             };
 
-                            c.Controls = GetControls(c);
+                            c.Controls = await GetControls(c);
 
                             if (c.Controls.Count > 0)
                             {
@@ -67,7 +67,7 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(Camera camera)
+        public Task<List<ICameraControl>> GetControls(Camera camera)
         {
             Guard.IsNotNull(camera);
 
@@ -125,7 +125,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            return controls;
+            return Task.FromResult(controls);
         }
 
         public void SetControl(Camera camera, ControlType controlName, double value)

@@ -221,8 +221,8 @@ public class AppService
         string fileName,
         List<string> arguments,
         Action? onCompleted = null,
-        int timeoutMilliseconds = -1,
-    CancellationToken cancellationToken = default)
+        int timeoutMilliseconds = 0,  // 0 (or negative) means wait indefinitely
+        CancellationToken cancellationToken = default)
     {
         // Build process start info.
         var startInfo = new ProcessStartInfo
@@ -250,42 +250,39 @@ public class AppService
             return (-1, string.Empty);
         }
 
-        // Start asynchronous reads of both output streams.
-        Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
-        Task<string> errorTask = process.StandardError.ReadToEndAsync();
+        // Begin asynchronous reads on both streams.
+        Task<string> outputTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
+        Task<string> errorTask = process.StandardError.ReadToEndAsync(cancellationToken);
 
         // Wait for the process to exit asynchronously.
         Task waitForExitTask = process.WaitForExitAsync(cancellationToken);
 
         if (timeoutMilliseconds > 0)
         {
-            // Create a delay task to implement a timeout.
+            // Create a delay task for the timeout.
             Task timeoutTask = Task.Delay(timeoutMilliseconds, cancellationToken);
             Task completedTask = await Task.WhenAny(waitForExitTask, timeoutTask);
             if (completedTask == timeoutTask)
             {
-                try
-                {
-                    process.Kill();
-                }
-                catch (InvalidOperationException) { /* process may have exited already */ }
+                try { process.Kill(); } catch (InvalidOperationException) { /* process already exited */ }
                 logger.Warn($"Timeout executing command '{fileName} {argStr}'");
                 return (-1, string.Empty);
             }
         }
         else
         {
+            // No timeout specified: wait indefinitely.
             await waitForExitTask;
         }
 
-        // Await the output tasks to ensure all data is read.
+        // Read remaining output.
         string output = await outputTask;
         string error = await errorTask;
 
-        // Optional callback invoked after process and I/O have completed.
+        // Invoke the optional completion callback.
         onCompleted?.Invoke();
 
-        // Combine output and error as needed.
+        // Combine output and error (if needed).
         string combinedOutput = output;
         if (!string.IsNullOrWhiteSpace(error))
         {
@@ -332,11 +329,8 @@ public class AppService
         Guard.IsNotNullOrWhiteSpace(port);
         Guard.IsNotNull(streamArgs);
 
-        _ = await ExecuteCommandAsync("pkill", [command], timeoutMilliseconds: 100);
-
-        _ = await ExecuteCommandAsync(
-            command,
-            streamArgs, timeoutMilliseconds: 1500);
+        await ExecuteCommandAsync("pkill", [command], timeoutMilliseconds: 100);
+        await ExecuteCommandAsync(command, streamArgs);
     }
 
     public static string DeviceId()

@@ -92,26 +92,7 @@ namespace CollimationCircles.Services
                 commandBuilder = new RpiCameraAppsCommandBuilder
                 {
                     CommandType = RpicamAppCommand.Vid
-                };
-
-                ((RpiCameraAppsCommandBuilder)commandBuilder)
-                    .SetTimeout(0)
-                    .SetInline(true)                     // Only valid for Vid.
-                    .SetNoPreview(true)
-                    .SetListen(true)                     // Only valid for Vid.
-                    .SetOutput($"tcp://0.0.0.0:{RasPiCameraDetect.StreamPort}")
-                    .SetDenoise("off")                   // Supported for Vid, Still, Jpeg.
-                    .SetFramerate(30)                    // Only valid for Vid.
-                    .SetGain(22)                         // Valid for Vid, Still, Jpeg.
-                    .SetShutter(60000)                 // Valid for Vid, Still, Jpeg.
-                    .SetMetering("average")              // Valid for Vid, Still, Jpeg.
-                    .SetBrightness(0.5)                  // Valid for Vid, Still, Jpeg.
-                    .SetContrast(1.7)                    // Valid for Vid, Still, Jpeg.
-                    .SetSaturation(1.0)                 // Valid for Vid, Still, Jpeg.            
-                    .SetWidth(1280)
-                    .SetHeight(720)
-                    .SetDigitalZoom(3)
-                    .SetFlush(true);
+                }.SetDefaultParameters();                
 
                 // with libcamera we need first to create video stream
                 List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(camera, commandBuilder);

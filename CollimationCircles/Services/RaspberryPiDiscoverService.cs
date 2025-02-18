@@ -55,9 +55,9 @@ namespace CollimationCircles.Services
             return false;
         }
 
-        public static string DetectRaspberryPIIPAddress()
+        public static async Task<string> DetectRaspberryPIIPAddress()
         {
-            List<ArpItem> dynamic = GetArpResult().GetAwaiter().GetResult();
+            List<ArpItem> dynamic = await GetArpResult();
             var pis = dynamic.Where(x => IsRaspberryPI(x.MacAddress) == true);
 
             string ip = pis.FirstOrDefault()?.Ip ?? string.Empty;

@@ -58,7 +58,7 @@ namespace CollimationCircles.Services
                             Path = m.Groups["path"].Value
                         };
 
-                        camera.Controls = GetControls(camera);
+                        camera.Controls = await GetControls(camera);
 
                         if (camera.Controls.Count > 0)
                         {
@@ -81,7 +81,7 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(Camera camera)
+        public Task<List<ICameraControl>> GetControls(Camera camera)
         {
             Guard.IsNotNull(camera);
 
@@ -93,7 +93,7 @@ namespace CollimationCircles.Services
                 new CameraControl(ControlType.Zoom_Absolute, camera),
                 ];
 
-            return controls;
+            return Task.FromResult(controls);
         }
 
         public void SetControl(Camera camera, ControlType controlName, double value)
