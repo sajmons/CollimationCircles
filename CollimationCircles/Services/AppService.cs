@@ -291,59 +291,7 @@ public class AppService
 
         logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {combinedOutput}");
         return (process.ExitCode, combinedOutput);
-    }
-
-    public static Task<Process> StartLongRunningProcessAsync(
-        string fileName,
-        List<string> arguments,        
-        Action<string>? onOutputReceived = null,
-        Action<string>? onErrorReceived = null,
-        CancellationToken? cancellationToken = null)
-    {
-        var startInfo = new ProcessStartInfo
-        {
-            FileName = fileName,
-            UseShellExecute = false,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            CreateNoWindow = true
-        };
-
-        arguments.ForEach(startInfo.ArgumentList.Add);
-        string argStr = string.Join(" ", startInfo.ArgumentList);
-        logger.Debug($"Starting long-running process: '{fileName} {argStr}'");
-
-        var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
-
-        process.OutputDataReceived += (s, e) =>
-        {
-            if (e.Data != null)
-            {
-                onOutputReceived?.Invoke(e.Data);
-            }
-        };
-
-        process.ErrorDataReceived += (s, e) =>
-        {
-            if (e.Data != null)
-            {
-                onErrorReceived?.Invoke(e.Data);
-            }
-        };
-
-        process.Start();
-        process.BeginOutputReadLine();
-        process.BeginErrorReadLine();
-
-        // Optionally: register cancellation to kill the process
-        cancellationToken?.Register(() =>
-        {
-            try { process.Kill(); } catch { /* process may have already exited */ }
-        });
-
-        // Return the process so the caller can manage it
-        return Task.FromResult(process);
-    }
+    }    
 
     public static void OpenUrl(string url)
     {
@@ -382,7 +330,7 @@ public class AppService
         Guard.IsNotNull(streamArgs);
 
         await StartProcessAsync("pkill", [command], timeoutMilliseconds: 150);
-        await StartLongRunningProcessAsync(command, streamArgs);
+        await StartProcessAsync(command, streamArgs, timeoutMilliseconds: 1500);
     }
 
     public static string DeviceId()
