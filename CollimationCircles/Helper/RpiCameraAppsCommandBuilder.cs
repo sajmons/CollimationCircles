@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CollimationCircles.Services;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace CollimationCircles.Helper
         /// The user sets the command type (Vid, Still, Raw, Jpeg) and then adds parameters.
         /// The builder will prevent use of options unsupported by the chosen command.
         /// </summary>
-        public class RpiCameraAppsCommandBuilder
+        public class RpiCameraAppsCommandBuilder : ICommandBuilder
         {
             private readonly List<string> _parameters;
 
@@ -36,7 +37,7 @@ namespace CollimationCircles.Helper
             /// Gets or sets the base command string. If not set explicitly,
             /// it will be derived from CommandType when building the command.
             /// </summary>
-            public required string BaseCommand { get; set; }
+            public string? BaseCommand { get; set; }
 
             public RpiCameraAppsCommandBuilder()
             {
@@ -57,12 +58,12 @@ namespace CollimationCircles.Helper
             }
 
             /// <summary>
-            /// Sets the capture duration in milliseconds (-t).
+            /// Sets the capture duration in milliseconds (--timeout).
             /// Allowed for all commands.
             /// </summary>
-            public RpiCameraAppsCommandBuilder SetDuration(int milliseconds)
+            public RpiCameraAppsCommandBuilder SetTimeout(int milliseconds)
             {
-                _parameters.Add($"-t {milliseconds}");
+                _parameters.Add($"--timeout {milliseconds}");
                 return this;
             }
 
@@ -103,13 +104,25 @@ namespace CollimationCircles.Helper
             }
 
             /// <summary>
-            /// Sets the output target (-o).
+            /// Adds the --listen flag.
+            /// Supported only for rpicam-vid.
+            /// </summary>
+            public RpiCameraAppsCommandBuilder SetFlush(bool flush)
+            {
+                EnsureSupportedOption("--flush", RpicamAppCommand.Vid);
+                if (flush)
+                    _parameters.Add("--flush");
+                return this;
+            }
+
+            /// <summary>
+            /// Sets the output target (--output).
             /// Allowed for all commands.
             /// </summary>
             public RpiCameraAppsCommandBuilder SetOutput(string output)
             {
                 if (!string.IsNullOrWhiteSpace(output))
-                    _parameters.Add($"-o {output}");
+                    _parameters.Add($"--output {output}");
                 return this;
             }
 
@@ -152,10 +165,10 @@ namespace CollimationCircles.Helper
             /// Sets the level (--level).
             /// Supported only for rpicam-vid.
             /// </summary>
-            public RpiCameraAppsCommandBuilder SetLevel(int level)
+            public RpiCameraAppsCommandBuilder SetLevel(double level)
             {
                 EnsureSupportedOption("--level", RpicamAppCommand.Vid);
-                _parameters.Add($"--level {level}");
+                _parameters.Add($"--level {level.ToString(CultureInfo.InvariantCulture)}");
                 return this;
             }
 
@@ -327,15 +340,7 @@ namespace CollimationCircles.Helper
                 double fraction = 1.0 / zoomFactor;
                 double offset = (1.0 - fraction) / 2.0;
                 return SetROI(offset, offset, fraction, fraction);
-            }
-
-            /// <summary>
-            /// Convenience method to set a 3× digital zoom.
-            /// </summary>
-            public RpiCameraAppsCommandBuilder SetZoom3()
-            {
-                return SetDigitalZoom(3);
-            }
+            }            
 
             /// <summary>
             /// Adds any custom parameter string.
@@ -346,6 +351,14 @@ namespace CollimationCircles.Helper
                 if (!string.IsNullOrWhiteSpace(parameter))
                     _parameters.Add(parameter);
                 return this;
+            }
+
+            /// <summary>
+            /// Get list of parameters
+            /// </summary>
+            public List<string> GetParameterList()
+            { 
+                return _parameters;
             }
 
             /// <summary>
@@ -376,7 +389,7 @@ namespace CollimationCircles.Helper
                     }
                 }
                 return $"{BaseCommand} {string.Join(" ", _parameters)}";
-            }
+            }            
         }
     }
 
