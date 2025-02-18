@@ -235,12 +235,12 @@ public class AppService
             StartInfo = startInfo
         };
 
-        var argStr = string.Join(' ', arguments);
+        arguments.ForEach(startInfo.ArgumentList.Add);
+
+        var argStr = string.Join(" ", startInfo.ArgumentList);
 
         try
         {
-            arguments.ForEach(startInfo.ArgumentList.Add);
-
             logger.Debug($"Executing command '{fileName} {argStr}'");
 
             StringBuilder output = new();
@@ -356,7 +356,7 @@ public class AppService
         Guard.IsNotNullOrWhiteSpace(port);
         Guard.IsNotNull(streamArgs);
 
-        _ = await ExecuteCommand("pkill", [command], timeout: 100);        
+        _ = await ExecuteCommand("pkill", [command], timeout: 100);
 
         _ = await ExecuteCommand(
             command,
