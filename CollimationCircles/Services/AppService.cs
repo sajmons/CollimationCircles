@@ -217,7 +217,7 @@ public class AppService
         await folderOpener.WaitForExitAsync();
     }
 
-    public static async Task<(int ExitCode, string Output)> ExecuteCommandAsync(
+    public static async Task<(int ExitCode, string Output)> StartProcessAsync(
         string fileName,
         List<string> arguments,
         Action? onCompleted = null,
@@ -293,6 +293,58 @@ public class AppService
         return (process.ExitCode, combinedOutput);
     }
 
+    public static Task<Process> StartLongRunningProcessAsync(
+        string fileName,
+        List<string> arguments,
+        Action<string>? onOutputReceived = null,
+        Action<string>? onErrorReceived = null,
+        CancellationToken cancellationToken = default)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = fileName,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            CreateNoWindow = true
+        };
+
+        arguments.ForEach(startInfo.ArgumentList.Add);
+        string argStr = string.Join(" ", startInfo.ArgumentList);
+        logger.Debug($"Starting long-running process: '{fileName} {argStr}'");
+
+        var process = new Process { StartInfo = startInfo, EnableRaisingEvents = true };
+
+        process.OutputDataReceived += (s, e) =>
+        {
+            if (e.Data != null)
+            {
+                onOutputReceived?.Invoke(e.Data);
+            }
+        };
+
+        process.ErrorDataReceived += (s, e) =>
+        {
+            if (e.Data != null)
+            {
+                onErrorReceived?.Invoke(e.Data);
+            }
+        };
+
+        process.Start();
+        process.BeginOutputReadLine();
+        process.BeginErrorReadLine();
+
+        // Optionally: register cancellation to kill the process
+        cancellationToken.Register(() =>
+        {
+            try { process.Kill(); } catch { /* process may have already exited */ }
+        });
+
+        // Return the process so the caller can manage it
+        return Task.FromResult(process);
+    }
+
     public static void OpenUrl(string url)
     {
         logger.Trace($"Opening external url '{url}'");
@@ -324,13 +376,13 @@ public class AppService
         return endPoint?.Address.ToString();
     }
 
-    public static async Task StartRaspberryPIStream(string port, List<string> streamArgs, string command = "rpicam-vid")
+    public static async Task StartRaspberryPIStream(string port, List<string> streamArgs, string command = "rpicam-vid", CancellationToken cancellationToken = default)
     {
         Guard.IsNotNullOrWhiteSpace(port);
         Guard.IsNotNull(streamArgs);
 
-        await ExecuteCommandAsync("pkill", [command], timeoutMilliseconds: 100);
-        await ExecuteCommandAsync(command, streamArgs, timeoutMilliseconds: 1500);
+        await StartProcessAsync("pkill", [command], timeoutMilliseconds: 150);
+        await StartLongRunningProcessAsync(command, streamArgs, cancellationToken: cancellationToken);
     }
 
     public static string DeviceId()
