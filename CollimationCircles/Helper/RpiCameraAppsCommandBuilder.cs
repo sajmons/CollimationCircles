@@ -340,7 +340,7 @@ namespace CollimationCircles.Helper
                 double fraction = 1.0 / zoomFactor;
                 double offset = (1.0 - fraction) / 2.0;
                 return SetROI(offset, offset, fraction, fraction);
-            }            
+            }
 
             /// <summary>
             /// Adds any custom parameter string.
@@ -351,14 +351,23 @@ namespace CollimationCircles.Helper
                 if (!string.IsNullOrWhiteSpace(parameter))
                     _parameters.Add(parameter);
                 return this;
-            }
+            }            
 
             /// <summary>
             /// Get list of parameters
             /// </summary>
             public List<string> GetParameterList()
-            { 
-                return _parameters;
+            {
+                List<string> result = [];
+
+                foreach (string parameter in _parameters)
+                {
+                    string[] p = parameter.Split(" ");
+                    result.Add(p[0]);
+                    result.Add(p[1]);
+                }
+
+                return result;
             }
 
             /// <summary>
@@ -388,8 +397,9 @@ namespace CollimationCircles.Helper
                             throw new InvalidOperationException("Unsupported command type.");
                     }
                 }
+
                 return $"{BaseCommand} {string.Join(" ", _parameters)}";
-            }            
+            }
         }
     }
 
