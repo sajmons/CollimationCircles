@@ -18,7 +18,7 @@ namespace CollimationCircles.Services
     {
         private static async Task<List<ArpItem>> GetArpResult()
         {
-            var (code, output) = await AppService.ExecuteCommand("arp", ["-a"]);
+            var (code, output) = await AppService.ExecuteCommandAsync("arp", ["-a"]);
 
             return ParseArpResult(output);
         }

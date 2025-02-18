@@ -217,14 +217,14 @@ public class AppService
         await folderOpener.WaitForExitAsync();
     }
 
-    public static Task<(int ExitCode, string Output)> ExecuteCommand(
+    public static async Task<(int ExitCode, string Output)> ExecuteCommandAsync(
         string fileName,
         List<string> arguments,
         Action? onCompleted = null,
-        int timeout = -1)
+        int timeoutMilliseconds = -1,
+    CancellationToken cancellationToken = default)
     {
-        var tcs = new TaskCompletionSource<(int, string)>();
-
+        // Build process start info.
         var startInfo = new ProcessStartInfo
         {
             FileName = fileName,
@@ -234,83 +234,66 @@ public class AppService
             CreateNoWindow = true
         };
 
-        // Populate argument list
-        arguments.ForEach(startInfo.ArgumentList.Add);
-        var argStr = string.Join(" ", startInfo.ArgumentList);
+        // Add arguments
+        foreach (var arg in arguments)
+        {
+            startInfo.ArgumentList.Add(arg);
+        }
+        string argStr = string.Join(" ", startInfo.ArgumentList);
         logger.Debug($"Executing command '{fileName} {argStr}'");
 
         using var process = new Process { StartInfo = startInfo };
-        var output = new StringBuilder();
-        var error = new StringBuilder();
 
-        using var outputWaitHandle = new AutoResetEvent(false);
-        using var errorWaitHandle = new AutoResetEvent(false);
-
-        process.OutputDataReceived += (sender, e) =>
+        if (!process.Start())
         {
-            if (e.Data == null)
-                outputWaitHandle.Set();
-            else
-                output.AppendLine(e.Data);
-        };
+            logger.Warn($"Failed to start command '{fileName} {argStr}'");
+            return (-1, string.Empty);
+        }
 
-        process.ErrorDataReceived += (sender, e) =>
-        {
-            if (e.Data == null)
-                errorWaitHandle.Set();
-            else
-                error.AppendLine(e.Data);
-        };
+        // Start asynchronous reads of both output streams.
+        Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
+        Task<string> errorTask = process.StandardError.ReadToEndAsync();
 
-        try
+        // Wait for the process to exit asynchronously.
+        Task waitForExitTask = process.WaitForExitAsync(cancellationToken);
+
+        if (timeoutMilliseconds > 0)
         {
-            if (!process.Start())
+            // Create a delay task to implement a timeout.
+            Task timeoutTask = Task.Delay(timeoutMilliseconds, cancellationToken);
+            Task completedTask = await Task.WhenAny(waitForExitTask, timeoutTask);
+            if (completedTask == timeoutTask)
             {
-                logger.Warn($"Failed to start command '{fileName} {argStr}'");
-                tcs.TrySetResult((-1, string.Empty));
-                return tcs.Task;
-            }
-
-            // Start async read
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
-
-            // Wait for process exit and output completion
-            bool exited = process.WaitForExit(timeout);
-            bool outputCompleted = outputWaitHandle.WaitOne(timeout);
-            bool errorCompleted = errorWaitHandle.WaitOne(timeout);
-
-            if (exited && outputCompleted && errorCompleted)
-            {
-                // Optionally ensure all asynchronous events are processed:
-                process.WaitForExit();
-                onCompleted?.Invoke();
-
-                string outputStr = output.ToString();
-                string logMessage = $"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}";
-                if (!string.IsNullOrWhiteSpace(error.ToString()))
+                try
                 {
-                    logMessage += $", Error: {error}";
+                    process.Kill();
                 }
-                logger.Debug(logMessage);
-
-                tcs.TrySetResult((process.ExitCode, outputStr));
-            }
-            else
-            {
-                // Timeout occurred: kill the process to avoid orphan processes
-                try { process.Kill(); } catch { /* process may have already exited */ }
+                catch (InvalidOperationException) { /* process may have exited already */ }
                 logger.Warn($"Timeout executing command '{fileName} {argStr}'");
-                tcs.TrySetResult((-1, string.Empty));
+                return (-1, string.Empty);
             }
         }
-        catch (Exception exc)
+        else
         {
-            logger.Error($"Failed to execute command '{fileName} {argStr}': {exc.Message}");
-            tcs.TrySetResult((-1, string.Empty));
+            await waitForExitTask;
         }
 
-        return tcs.Task;
+        // Await the output tasks to ensure all data is read.
+        string output = await outputTask;
+        string error = await errorTask;
+
+        // Optional callback invoked after process and I/O have completed.
+        onCompleted?.Invoke();
+
+        // Combine output and error as needed.
+        string combinedOutput = output;
+        if (!string.IsNullOrWhiteSpace(error))
+        {
+            combinedOutput += Environment.NewLine + error;
+        }
+
+        logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {combinedOutput}");
+        return (process.ExitCode, combinedOutput);
     }
 
     public static void OpenUrl(string url)
@@ -349,11 +332,11 @@ public class AppService
         Guard.IsNotNullOrWhiteSpace(port);
         Guard.IsNotNull(streamArgs);
 
-        _ = await ExecuteCommand("pkill", [command], timeout: 100);
+        _ = await ExecuteCommandAsync("pkill", [command], timeoutMilliseconds: 100);
 
-        _ = await ExecuteCommand(
+        _ = await ExecuteCommandAsync(
             command,
-            streamArgs, timeout: 1500);
+            streamArgs, timeoutMilliseconds: 1500);
     }
 
     public static string DeviceId()
