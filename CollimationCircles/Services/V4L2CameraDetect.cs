@@ -34,7 +34,7 @@ namespace CollimationCircles.Services
         {
             List<Camera> cameras = [];
 
-            var (errorCode, result, process) = AppService.ExecuteCommand(
+            var (errorCode, result) = AppService.ExecuteCommand(
                 "v4l2-ctl",
             ["--list-devices"]).GetAwaiter().GetResult();
 
@@ -92,7 +92,7 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
-            var (errorCode, result, process) = AppService.ExecuteCommand(
+            var (errorCode, result) = AppService.ExecuteCommand(
                 "v4l2-ctl",
                 ["--list-ctrls", "--device", $"{camera.Path}"]).GetAwaiter().GetResult();
 

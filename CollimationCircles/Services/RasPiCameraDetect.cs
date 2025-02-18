@@ -32,7 +32,7 @@ namespace CollimationCircles.Services
         {
             List<Camera> cameras = [];
 
-            var (errorCode, result, process) = AppService.ExecuteCommand(
+            var (errorCode, result) = AppService.ExecuteCommand(
                 "rpicam-vid",
                 ["--list-cameras"]).GetAwaiter().GetResult();
 

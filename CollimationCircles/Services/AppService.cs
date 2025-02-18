@@ -217,9 +217,9 @@ public class AppService
         await folderOpener.WaitForExitAsync();
     }
 
-    public static Task<(int, string, Process)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
+    public static Task<(int, string)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
     {
-        var tcs = new TaskCompletionSource<(int, string, Process)>();
+        var tcs = new TaskCompletionSource<(int, string)>();
 
         ProcessStartInfo startInfo = new()
         {
@@ -295,26 +295,26 @@ public class AppService
                     }
 
                     logger.Debug(logMessage);
-                    tcs.TrySetResult((process.ExitCode, outputStr, process));
+                    tcs.TrySetResult((process.ExitCode, outputStr));
                 }
                 else
                 {
                     // Timed out.
                     logger.Warn($"Timeout '{fileName} {argStr}'");
-                    tcs.TrySetResult((-1, string.Empty, process));
+                    tcs.TrySetResult((-1, string.Empty));
                 }
             }
             else
             {
                 // Process failed to start
                 logger.Warn($"Failed to execute command '{fileName} {argStr}'");
-                tcs.TrySetResult((process.ExitCode, string.Empty, process));
+                tcs.TrySetResult((process.ExitCode, string.Empty));
             }
         }
         catch (Exception exc)
         {
             logger.Error($"Failed to execute command '{fileName} {argStr}' '{exc.Message}'");
-            tcs.TrySetResult((-1, string.Empty, process));
+            tcs.TrySetResult((-1, string.Empty));
         }
 
         return tcs.Task;
