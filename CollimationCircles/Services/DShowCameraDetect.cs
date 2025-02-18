@@ -162,7 +162,7 @@ namespace CollimationCircles.Services
             return (newStart + ((value - originalStart) * scale));
         }
 
-        public List<string> GetCommandLineParameters(Camera camera)
+        public List<string> GetCommandLineParameters(Camera camera, ICommandBuilder? builder)
         {
             Guard.IsNotNull(camera);
 

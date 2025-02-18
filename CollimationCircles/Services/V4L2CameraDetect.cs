@@ -146,7 +146,7 @@ namespace CollimationCircles.Services
                 ]);
         }
 
-        public List<string> GetCommandLineParameters(Camera camera)
+        public List<string> GetCommandLineParameters(Camera camera, ICommandBuilder? builder)
         {
             Guard.IsNotNull(camera);
 

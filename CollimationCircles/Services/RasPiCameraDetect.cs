@@ -1,14 +1,18 @@
-﻿using CollimationCircles.Models;
+﻿using CollimationCircles.Helper.RpiCameraTools;
+using CollimationCircles.Models;
 using CommunityToolkit.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
     internal class RasPiCameraDetect() : ICameraDetect
     {
+        public const string StreamPort = "8080";
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        RpiCameraAppsCommandBuilder? commandBuilder;
 
         public Dictionary<ControlType, object> ControlMapping => new()
         {
@@ -54,9 +58,14 @@ namespace CollimationCircles.Services
                             Path = m.Groups["path"].Value
                         };
 
-                        cameras.Add(camera);
+                        camera.Controls = GetControls(camera);
 
-                        logger.Info($"Adding camera: '{camera.Path}'");
+                        if (camera.Controls.Count > 0)
+                        {
+                            cameras.Add(camera);
+
+                            logger.Info($"Adding camera: '{camera.Path}'");
+                        }
                     }
                 }
                 else
@@ -76,72 +85,13 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
-            List<ICameraControl> controls = [];
-
-            //decimal? brightness = null;
-            //decimal? contrast = null;
-            //decimal? saturation = null;
-            //decimal? gain = null;
-            //bool autofocusMode = true;
-            //decimal? focus = null;
-            //decimal? whiteBalance = null;
-            //decimal? sharpness = null;
-            //decimal? exposureTime = null;
-            decimal? zoom = null;
-
-            //if (brightness != null)
-            //    controls.Add($"--{ControlMapping[ControlType.Brightness]} {brightness}");
-
-            //if (contrast != null)
-            //    controls.Add($"--{ControlMapping[ControlType.Contrast]} {contrast}");
-
-            //if (saturation != null)
-            //    controls.Add($"--{ControlMapping[ControlType.Saturation]} {saturation}");
-
-            //if (gain != null)
-            //    controls.Add($"--{ControlMapping[ControlType.Gain]} {gain}");
-
-            //var afMode = autofocusMode ? "auto" : "manual";
-            //controls.Add($"--{rpiControls["Autofocus"]} {afMode}");
-
-            //if (focus != null)
-            //    controls.Add($"--{ControlMapping[ControlType.Focus]} {focus}");
-
-            //string wb = "auto";
-
-            //if (whiteBalance >= 2500 && whiteBalance <= 3000)
-            //    wb = "incandescent";
-
-            //if (whiteBalance >= 3000 && whiteBalance <= 3500)
-            //    wb = "tungsten";
-
-            //if (whiteBalance >= 4000 && whiteBalance <= 4700)
-            //    wb = "fluorescent";
-
-            //if (whiteBalance >= 3000 && whiteBalance <= 5000)
-            //    wb = "indoor";
-
-            //if (whiteBalance >= 5500 && whiteBalance <= 6500)
-            //    wb = "daylight";
-
-            //if (whiteBalance >= 7000 && whiteBalance <= 8500)
-            //    wb = "cloudy";
-
-            //controls.Add($"--{rpiControls[ControlType.AutoWhiteBalance]} {wb}");
-
-            //if (sharpness != null)
-            //    controls.Add($"--{ControlMapping[ControlType.Sharpness]} {sharpness}");
-
-            //if (exposureTime != null)
-            //    controls.Add($"--{ControlMapping[ControlType.ExposureTime]} {exposureTime}");
-
-            // ROI = ( (1 – 1/Z)/2 , (1 – 1/Z)/2 , 1/Z , 1/Z )            
-            if (zoom != null)
-            {
-                var cc = new CameraControl(ControlType.Zoom_Absolute, camera);                
-                controls.Add(cc);
-                //$"--{ControlMapping[ControlType.Zoom_Absolute]} {roi},{roi},{roi},{roi}");
-            }
+            List<ICameraControl> controls = [
+                new CameraControl(ControlType.Brightness, camera),
+                new CameraControl(ControlType.Contrast, camera),
+                new CameraControl(ControlType.Saturation, camera),
+                new CameraControl(ControlType.Gain, camera),
+                new CameraControl(ControlType.Zoom_Absolute, camera),
+                ];
 
             return controls;
         }
@@ -150,17 +100,56 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
-            // TODO: implement libcamera camera controls set
-            // Stop video streaming and start new one with new parameters
-            logger.Warn($"{nameof(RasPiCameraDetect)} is not implemented yet.");
+            // Set command type to Vid (video capture)
+            commandBuilder = new RpiCameraAppsCommandBuilder
+            {
+                CommandType = RpicamAppCommand.Vid
+            };
+
+            switch (controlName)
+            {
+                case ControlType.Brightness:
+                    commandBuilder.SetBrightness(value);
+                    break;
+                case ControlType.Saturation:
+                    commandBuilder.SetSaturation(value);
+                    break;
+                case ControlType.Contrast:
+                    commandBuilder.SetContrast(value);
+                    break;
+                case ControlType.Zoom_Absolute:
+                    commandBuilder.SetDigitalZoom(value);
+                    break;
+                case ControlType.Gain:
+                    commandBuilder.SetGain(value);
+                    break;
+                case ControlType.ExposureTime:
+                    commandBuilder.SetShutter((int)value);
+                    break;
+            }
+
+            commandBuilder
+                .SetTimeout(0)
+                .SetInline(true)
+                .SetNoPreview(true)
+                .SetListen(true)
+                .SetOutput($"tcp://0.0.0.0:{StreamPort}")
+                .SetDenoise("off")
+                .SetFramerate(30)
+                .SetMetering("average")
+                .SetWidth(1280)
+                .SetHeight(720)
+                .SetFlush(true);
+
+            //List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(camera, commandBuilder);
+            //Task.Run(async () => await AppService.StartRaspberryPIStream(StreamPort, controls));
         }
 
-        public List<string> GetCommandLineParameters(Camera camera)
+        public List<string> GetCommandLineParameters(Camera camera, ICommandBuilder? builder)
         {
             Guard.IsNotNull(camera);
 
-            logger.Warn($"{nameof(RasPiCameraDetect)}: {nameof(GetCommandLineParameters)} not yet implemented");
-            return [];
+            return builder?.GetParameterList() ?? [];
         }
     }
 }
