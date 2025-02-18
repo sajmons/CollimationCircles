@@ -10,7 +10,7 @@ namespace CollimationCircles.Services
 {
     internal class RasPiCameraDetect() : ICameraDetect
     {
-        public const string StreamPort = "8080";
+        public const string StreamPort = "55555";
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         RpiCameraAppsCommandBuilder? commandBuilder;
 

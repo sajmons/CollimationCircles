@@ -20,7 +20,7 @@ namespace CollimationCircles.Services
         private string address = string.Empty;
         private string port = string.Empty;
         private string pathAndQuery = string.Empty;
-        private const string rpiPort = "55555";
+        private const string rpiPort = RasPiCameraDetect.StreamPort;
 
         public const string SnapshotImageFile = "snapshot.jpg";
 
