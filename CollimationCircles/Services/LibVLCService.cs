@@ -86,7 +86,7 @@ namespace CollimationCircles.Services
             List<string> parametersList = [];
             ICommandBuilder? commandBuilder = null;
 
-            if (camera.APIType == APIType.LibCamera)
+            //if (camera.APIType == APIType.LibCamera)
             {
                 // Set command type to Vid (video capture)
                 commandBuilder = new RpiCameraAppsCommandBuilder
@@ -117,14 +117,14 @@ namespace CollimationCircles.Services
                 List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(camera, commandBuilder);
                 await AppService.StartRaspberryPIStream(rpiPort, controls);
             }
-            else if (camera.APIType == APIType.V4l2)
-            {
-                parametersList = new V4L2CameraDetect().GetCommandLineParameters(camera, commandBuilder);
-            }
-            else if (camera.APIType == APIType.Dshow)
-            {
-                parametersList = new DShowCameraDetect(displayAdvancedDShowDialog).GetCommandLineParameters(camera, commandBuilder);
-            }
+            //else if (camera.APIType == APIType.V4l2)
+            //{
+            //    parametersList = new V4L2CameraDetect().GetCommandLineParameters(camera, commandBuilder);
+            //}
+            //else if (camera.APIType == APIType.Dshow)
+            //{
+            //    parametersList = new DShowCameraDetect(displayAdvancedDShowDialog).GetCommandLineParameters(camera, commandBuilder);
+            //}
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
             {

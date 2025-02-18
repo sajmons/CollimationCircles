@@ -26,7 +26,7 @@ namespace CollimationCircles.Helper
         /// </summary>
         public class RpiCameraAppsCommandBuilder : ICommandBuilder
         {
-            private readonly List<string> _parameters;
+            private readonly Dictionary<string, string> _parameters;
 
             /// <summary>
             /// Gets or sets the command type.
@@ -63,7 +63,7 @@ namespace CollimationCircles.Helper
             /// </summary>
             public RpiCameraAppsCommandBuilder SetTimeout(int milliseconds)
             {
-                _parameters.Add($"--timeout {milliseconds}");
+                _parameters.Add("--timeout", $"{milliseconds}");
                 return this;
             }
 
@@ -75,7 +75,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--inline", RpicamAppCommand.Vid);
                 if (inline)
-                    _parameters.Add("--inline");
+                    _parameters.Add("--inline", "");
                 return this;
             }
 
@@ -87,7 +87,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--nopreview", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
                 if (nopreview)
-                    _parameters.Add("--nopreview");
+                    _parameters.Add("--nopreview", "");
                 return this;
             }
 
@@ -99,7 +99,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--listen", RpicamAppCommand.Vid);
                 if (listen)
-                    _parameters.Add("--listen");
+                    _parameters.Add("--listen", "");
                 return this;
             }
 
@@ -111,7 +111,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--flush", RpicamAppCommand.Vid);
                 if (flush)
-                    _parameters.Add("--flush");
+                    _parameters.Add("--flush", "");
                 return this;
             }
 
@@ -122,7 +122,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetOutput(string output)
             {
                 if (!string.IsNullOrWhiteSpace(output))
-                    _parameters.Add($"--output {output}");
+                    _parameters.Add("--output", $"{output}");
                 return this;
             }
 
@@ -134,7 +134,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--denoise", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
                 if (!string.IsNullOrWhiteSpace(denoiseValue))
-                    _parameters.Add($"--denoise {denoiseValue}");
+                    _parameters.Add("--denoise", $"{denoiseValue}");
                 return this;
             }
 
@@ -145,7 +145,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetFramerate(int framerate)
             {
                 EnsureSupportedOption("--framerate", RpicamAppCommand.Vid);
-                _parameters.Add($"--framerate {framerate}");
+                _parameters.Add("--framerate", $"{framerate}");
                 return this;
             }
 
@@ -157,7 +157,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--codec", RpicamAppCommand.Vid);
                 if (!string.IsNullOrWhiteSpace(codec))
-                    _parameters.Add($"--codec {codec}");
+                    _parameters.Add("--codec", "{codec}");
                 return this;
             }
 
@@ -168,7 +168,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetLevel(double level)
             {
                 EnsureSupportedOption("--level", RpicamAppCommand.Vid);
-                _parameters.Add($"--level {level.ToString(CultureInfo.InvariantCulture)}");
+                _parameters.Add($"--level", $"{level.ToString(CultureInfo.InvariantCulture)}");
                 return this;
             }
 
@@ -180,7 +180,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--viewfinder-mode", RpicamAppCommand.Vid);
                 if (!string.IsNullOrWhiteSpace(mode))
-                    _parameters.Add($"--viewfinder-mode {mode}");
+                    _parameters.Add("--viewfinder-mode", $"{mode}");
                 return this;
             }
 
@@ -192,7 +192,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--profile", RpicamAppCommand.Vid);
                 if (!string.IsNullOrWhiteSpace(profile))
-                    _parameters.Add($"--profile {profile}");
+                    _parameters.Add("--profile", $"{profile}");
                 return this;
             }
 
@@ -203,7 +203,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetIntra(int intra)
             {
                 EnsureSupportedOption("--intra", RpicamAppCommand.Vid);
-                _parameters.Add($"--intra {intra}");
+                _parameters.Add("--intra", $"{intra}");
                 return this;
             }
 
@@ -213,7 +213,7 @@ namespace CollimationCircles.Helper
             /// </summary>
             public RpiCameraAppsCommandBuilder SetWidth(int width)
             {
-                _parameters.Add($"--width {width}");
+                _parameters.Add("--width", $"{width}");
                 return this;
             }
 
@@ -223,7 +223,7 @@ namespace CollimationCircles.Helper
             /// </summary>
             public RpiCameraAppsCommandBuilder SetHeight(int height)
             {
-                _parameters.Add($"--height {height}");
+                _parameters.Add("--height", $"{height}");
                 return this;
             }
 
@@ -234,7 +234,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetSharpness(double sharpness)
             {
                 EnsureSupportedOption("--sharpness", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
-                _parameters.Add($"--sharpness {sharpness.ToString(CultureInfo.InvariantCulture)}");
+                _parameters.Add("--sharpness", $"{sharpness.ToString(CultureInfo.InvariantCulture)}");
                 return this;
             }
 
@@ -245,7 +245,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetGain(double gain)
             {
                 EnsureSupportedOption("--gain", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
-                _parameters.Add($"--gain {gain.ToString(CultureInfo.InvariantCulture)}");
+                _parameters.Add("--gain", $"{gain.ToString(CultureInfo.InvariantCulture)}");
                 return this;
             }
 
@@ -256,7 +256,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetShutter(int shutter)
             {
                 EnsureSupportedOption("--shutter", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
-                _parameters.Add($"--shutter {shutter}");
+                _parameters.Add("--shutter", $"{shutter}");
                 return this;
             }
 
@@ -268,7 +268,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--awbgains", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
                 string gains = $"{red.ToString(CultureInfo.InvariantCulture)},{blue.ToString(CultureInfo.InvariantCulture)}";
-                _parameters.Add($"--awbgains {gains}");
+                _parameters.Add("--awbgains", $"{gains}");
                 return this;
             }
 
@@ -280,7 +280,7 @@ namespace CollimationCircles.Helper
             {
                 EnsureSupportedOption("--metering", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
                 if (!string.IsNullOrWhiteSpace(metering))
-                    _parameters.Add($"--metering {metering}");
+                    _parameters.Add("--metering", $"{metering}");
                 return this;
             }
 
@@ -291,7 +291,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetBrightness(double brightness)
             {
                 EnsureSupportedOption("--brightness", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
-                _parameters.Add($"--brightness {brightness.ToString(CultureInfo.InvariantCulture)}");
+                _parameters.Add("--brightness", $"{brightness.ToString(CultureInfo.InvariantCulture)}");
                 return this;
             }
 
@@ -302,7 +302,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetContrast(double contrast)
             {
                 EnsureSupportedOption("--contrast", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
-                _parameters.Add($"--contrast {contrast.ToString(CultureInfo.InvariantCulture)}");
+                _parameters.Add("--contrast", $"{contrast.ToString(CultureInfo.InvariantCulture)}");
                 return this;
             }
 
@@ -313,7 +313,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetSaturation(double saturation)
             {
                 EnsureSupportedOption("--saturation", RpicamAppCommand.Vid, RpicamAppCommand.Still, RpicamAppCommand.Jpeg);
-                _parameters.Add($"--saturation {saturation.ToString(CultureInfo.InvariantCulture)}");
+                _parameters.Add("--saturation", $"{saturation.ToString(CultureInfo.InvariantCulture)}");
                 return this;
             }
 
@@ -324,7 +324,7 @@ namespace CollimationCircles.Helper
             public RpiCameraAppsCommandBuilder SetROI(double x, double y, double w, double h)
             {
                 string roiValue = string.Format(CultureInfo.InvariantCulture, "{0:F4},{1:F4},{2:F4},{3:F4}", x, y, w, h);
-                _parameters.Add($"--roi {roiValue}");
+                _parameters.Add("--roi", $"{roiValue}");
                 return this;
             }
 
@@ -346,10 +346,10 @@ namespace CollimationCircles.Helper
             /// Adds any custom parameter string.
             /// Allowed for all commands.
             /// </summary>
-            public RpiCameraAppsCommandBuilder AddParameter(string parameter)
+            public RpiCameraAppsCommandBuilder AddParameter(string parameter, string value)
             {
                 if (!string.IsNullOrWhiteSpace(parameter))
-                    _parameters.Add(parameter);
+                    _parameters.Add(parameter, value);
                 return this;
             }            
 
@@ -360,11 +360,10 @@ namespace CollimationCircles.Helper
             {
                 List<string> result = [];
 
-                foreach (string parameter in _parameters)
-                {
-                    string[] p = parameter.Split(" ");
-                    result.Add(p[0]);
-                    result.Add(p[1]);
+                foreach (var parameter in _parameters)
+                {                    
+                    result.Add(parameter.Key);
+                    result.Add(parameter.Value);
                 }
 
                 return result;
