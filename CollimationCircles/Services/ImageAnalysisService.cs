@@ -2,8 +2,6 @@
 using ImageMagick.Drawing;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Printing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +10,51 @@ namespace CollimationCircles.Services
 {
     internal static class ImageAnalysisService
     {
+        public class DetectionAccuracy
+        {
+            public static DetectionParameters Maximum = new()
+            {                
+                CenterProximityThreshold = 5,
+                VoteThresholdFraction = 1,
+                AngleStep = 1,
+                RadiusStep = 1,
+                EdgeThreshold = 80
+            };
+            public static DetectionParameters High = new ()
+            {
+                CenterProximityThreshold = 5,
+                VoteThresholdFraction = 0.85,
+                AngleStep = 2,
+                RadiusStep = 2,
+                EdgeThreshold = 128
+            };
+            public static DetectionParameters Medium = new()
+            {
+                CenterProximityThreshold = 5,
+                VoteThresholdFraction = 0.8,
+                AngleStep = 3,
+                RadiusStep = 3,
+                EdgeThreshold = 150
+            };
+            public static DetectionParameters Low = new()
+            {
+                CenterProximityThreshold = 5,
+                VoteThresholdFraction = 0.6,
+                AngleStep = 5,
+                RadiusStep = 5,
+                EdgeThreshold = 100
+            };
+        }
+
+        public class DetectionParameters
+        {            
+            public int CenterProximityThreshold;
+            public double VoteThresholdFraction;
+            public int AngleStep = 5;
+            public int RadiusStep = 1;
+            public int EdgeThreshold = 128;
+        }
+
         public class FilterComplitedEventArgs(string filterName, byte[] image) : EventArgs
         {
             public string FilterName { get; set; } = filterName;
@@ -53,6 +96,7 @@ namespace CollimationCircles.Services
                 Kernel = Kernel.Disk
             };
             public EdgeOptions EdgeSettings { get; set; } = new();
+            public IMagickGeometry? BoundingBox { get; internal set; }
         }
 
         public class EdgeOptions
@@ -132,6 +176,7 @@ namespace CollimationCircles.Services
 
             if (options.DoCrop && image.BoundingBox is not null)
             {
+                options.BoundingBox = image.BoundingBox;
                 image.Crop(image.BoundingBox);
                 FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Crop), image.ToByteArray()));
             }
@@ -165,9 +210,7 @@ namespace CollimationCircles.Services
         /// Minimum pixel intensity to be considered an edge (0-255). Default is 128.
         /// </param>
         /// <returns>A list of filtered circles detected that meet the criteria.</returns>
-        public static List<Circle> DetectCircles(MagickImage edgeImage, int minRadius, int maxRadius,
-                                                   int centerProximityThreshold, double voteThresholdFraction,
-                                                   int angleStep = 5, int radiusStep = 1, int edgeThreshold = 128)
+        public static List<Circle> DetectCircles(MagickImage edgeImage, int minRadius, int maxRadius, DetectionParameters detectionParameters)
         {
             // Ensure the image is 8-bit grayscale.
             if (edgeImage.ColorSpace != ColorSpace.Gray || edgeImage.Depth != 8)
@@ -175,6 +218,12 @@ namespace CollimationCircles.Services
                 edgeImage.ColorSpace = ColorSpace.Gray;
                 edgeImage.Depth = 8;
             }
+
+            int radiusStep = detectionParameters.RadiusStep;
+            int angleStep = detectionParameters.AngleStep;
+            double voteThresholdFraction = detectionParameters.VoteThresholdFraction;
+            int edgeThreshold = detectionParameters.EdgeThreshold;
+            int centerProximityThreshold = detectionParameters.CenterProximityThreshold;
 
             int width = (int)edgeImage.Width;
             int height = (int)edgeImage.Height;
@@ -221,10 +270,10 @@ namespace CollimationCircles.Services
                     {
                         for (int ri = 0; ri < radiusCount; ri++)
                         {
-                            foreach (var offset in offsetLookup[ri])
+                            foreach (var (dx, dy) in offsetLookup[ri])
                             {
-                                int aX = x - offset.dx;
-                                int aY = y - offset.dy;
+                                int aX = x - dx;
+                                int aY = y - dy;
                                 if (aX >= 0 && aX < width && aY >= 0 && aY < height)
                                 {
                                     int index = (aX + aY * width) + ri * width * height;
@@ -239,7 +288,7 @@ namespace CollimationCircles.Services
             // Collect candidate circles.
             int imageCenterX = width / 2;
             int imageCenterY = height / 2;
-            List<Circle> candidateCircles = new List<Circle>();
+            List<Circle> candidateCircles = [];
             for (int ri = 0; ri < radiusCount; ri++)
             {
                 int r = candidateRadii[ri];
@@ -268,7 +317,7 @@ namespace CollimationCircles.Services
             }
 
             // Non-maximum suppression: merge duplicates (detections with centers and radii differing less than radiusStep).
-            List<Circle> filteredCircles = new List<Circle>();
+            List<Circle> filteredCircles = [];
             foreach (var circle in candidateCircles)
             {
                 bool duplicateFound = false;
@@ -315,27 +364,27 @@ namespace CollimationCircles.Services
             }
         }
 
-        public static AnalysisResult AnalyzeResult(MagickImage image, List<Circle> circles, Options options)
+        public static AnalysisResult AnalyzeResult(MagickImage original, List<Circle> circles, Options options)
         {
-            string? error = null;
-            double? rmse = null;
+            Random rng = new();
 
-            Random rng = new(12345);
+            if (options.DoCrop && options.BoundingBox is not null)
+            {
+                original.Crop(options.BoundingBox);
+            }
 
             // Draw detected circles on the image
             foreach (Circle circle in circles)
             {
                 MagickColor color = new((byte)rng.Next(255), (byte)rng.Next(255), (byte)rng.Next(255));
-                DrawCircle(image, circle.X, circle.Y, circle.Radius, color);
-                DrawCircle(image, circle.X, circle.Y, 2, color);
+                DrawCircle(original, circle.X, circle.Y, circle.Radius, color);
+                DrawCircle(original, circle.X, circle.Y, 2, color);
             }
-
-            rmse = CalculateCenterRMSE(circles);
 
             return new AnalysisResult
             {
                 CircleCount = circles.Count,
-                CenterRMSE = rmse ?? 0.0
+                CenterRMSE = CalculateCenterRMSE(circles)
             };
         }
 

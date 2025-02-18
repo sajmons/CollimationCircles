@@ -140,12 +140,14 @@ namespace CollimationCircles.ViewModels
             {
                 DoNormalize = true,
                 DoGaussianBlur = true,
-                DoThreshold = true,
-                DoErode = true,
-                DoDilate = true,
-                DoEdge = true,
+                //DoThreshold = true,
+                //DoErode = true,
+                //DoDilate = true,
+                //DoEdge = true,
                 DoCrop = true
             };
+
+            MagickImage original = new (image);
 
             Stopwatch sw = new();
             sw.Start();
@@ -156,20 +158,22 @@ namespace CollimationCircles.ViewModels
 
             sw.Start();
             logger.Info($"Start DetectCircles");
-            List<Circle> circles = ImageAnalysisService.DetectCircles(image, 50, (int)image.Width / 2, 128, 0.9, 5, 5);
+            List<Circle> circles = ImageAnalysisService.DetectCircles(
+                image, 50, (int)image.Width / 2,
+                ImageAnalysisService.DetectionAccuracy.Maximum);
             sw.Stop();
             logger.Info($"DetectCircles time: {sw.Elapsed:mm\\:ss\\.ff}");
 
             sw.Start();
             logger.Info($"Start AnalyzeResult");
-            AnalysisResult result = ImageAnalysisService.AnalyzeResult(image, circles, options);
+            AnalysisResult result = ImageAnalysisService.AnalyzeResult(original, circles, options);
             sw.Stop();
             logger.Info($"AnalyzeResult time: {sw.Elapsed:mm\\:ss\\.ff}");
 
             string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");                        
             string resultText = DescribeResult(result);
 
-            ShowResultDialog(windowTitle, image, resultText);
+            ShowResultDialog(windowTitle, original, resultText);
         }
 
         private void ShowResultDialog(string title, MagickImage image, string resultText = "")
