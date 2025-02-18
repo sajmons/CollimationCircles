@@ -217,11 +217,15 @@ public class AppService
         await folderOpener.WaitForExitAsync();
     }
 
-    public static Task<(int, string)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
+    public static Task<(int ExitCode, string Output)> ExecuteCommand(
+        string fileName,
+        List<string> arguments,
+        Action? onCompleted = null,
+        int timeout = -1)
     {
         var tcs = new TaskCompletionSource<(int, string)>();
 
-        ProcessStartInfo startInfo = new()
+        var startInfo = new ProcessStartInfo
         {
             FileName = fileName,
             UseShellExecute = false,
@@ -230,90 +234,79 @@ public class AppService
             CreateNoWindow = true
         };
 
-        using Process process = new()
+        // Populate argument list
+        arguments.ForEach(startInfo.ArgumentList.Add);
+        var argStr = string.Join(" ", startInfo.ArgumentList);
+        logger.Debug($"Executing command '{fileName} {argStr}'");
+
+        using var process = new Process { StartInfo = startInfo };
+        var output = new StringBuilder();
+        var error = new StringBuilder();
+
+        using var outputWaitHandle = new AutoResetEvent(false);
+        using var errorWaitHandle = new AutoResetEvent(false);
+
+        process.OutputDataReceived += (sender, e) =>
         {
-            StartInfo = startInfo
+            if (e.Data == null)
+                outputWaitHandle.Set();
+            else
+                output.AppendLine(e.Data);
         };
 
-        arguments.ForEach(startInfo.ArgumentList.Add);
-
-        var argStr = string.Join(" ", startInfo.ArgumentList);
+        process.ErrorDataReceived += (sender, e) =>
+        {
+            if (e.Data == null)
+                errorWaitHandle.Set();
+            else
+                error.AppendLine(e.Data);
+        };
 
         try
         {
-            logger.Debug($"Executing command '{fileName} {argStr}'");
-
-            StringBuilder output = new();
-            StringBuilder error = new();
-
-            using AutoResetEvent outputWaitHandle = new(false);
-            using AutoResetEvent errorWaitHandle = new(false);
-
-            process.OutputDataReceived += (sender, e) =>
+            if (!process.Start())
             {
-                if (e.Data == null)
-                {
-                    outputWaitHandle.Set();
-                }
-                else
-                {
-                    output.AppendLine(e.Data);
-                }
-            };
+                logger.Warn($"Failed to start command '{fileName} {argStr}'");
+                tcs.TrySetResult((-1, string.Empty));
+                return tcs.Task;
+            }
 
-            process.ErrorDataReceived += (sender, e) =>
+            // Start async read
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
+
+            // Wait for process exit and output completion
+            bool exited = process.WaitForExit(timeout);
+            bool outputCompleted = outputWaitHandle.WaitOne(timeout);
+            bool errorCompleted = errorWaitHandle.WaitOne(timeout);
+
+            if (exited && outputCompleted && errorCompleted)
             {
-                if (e.Data == null)
+                // Optionally ensure all asynchronous events are processed:
+                process.WaitForExit();
+                onCompleted?.Invoke();
+
+                string outputStr = output.ToString();
+                string logMessage = $"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}";
+                if (!string.IsNullOrWhiteSpace(error.ToString()))
                 {
-                    errorWaitHandle.Set();
+                    logMessage += $", Error: {error}";
                 }
-                else
-                {
-                    error.AppendLine(e.Data);
-                }
-            };
+                logger.Debug(logMessage);
 
-            if (process.Start())
-            {
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
-                if (process.WaitForExit(timeout) &&
-                    outputWaitHandle.WaitOne(timeout) &&
-                    errorWaitHandle.WaitOne(timeout))
-                {
-                    started?.Invoke();
-
-                    // Process completed. Check process.ExitCode and output here.
-                    string outputStr = $"{output}";
-
-                    string logMessage = $"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}";
-
-                    if (!string.IsNullOrWhiteSpace($"{error}"))
-                    {
-                        logMessage += $", Error: {error}";
-                    }
-
-                    logger.Debug(logMessage);
-                    tcs.TrySetResult((process.ExitCode, outputStr));
-                }
-                else
-                {
-                    // Timed out.
-                    logger.Warn($"Timeout '{fileName} {argStr}'");
-                    tcs.TrySetResult((-1, string.Empty));
-                }
+                tcs.TrySetResult((process.ExitCode, outputStr));
             }
             else
             {
-                // Process failed to start
-                logger.Warn($"Failed to execute command '{fileName} {argStr}'");
-                tcs.TrySetResult((process.ExitCode, string.Empty));
+                // Timeout occurred: kill the process to avoid orphan processes
+                try { process.Kill(); } catch { /* process may have already exited */ }
+                logger.Warn($"Timeout executing command '{fileName} {argStr}'");
+                tcs.TrySetResult((-1, string.Empty));
             }
         }
         catch (Exception exc)
         {
-            logger.Error($"Failed to execute command '{fileName} {argStr}' '{exc.Message}'");
+            logger.Error($"Failed to execute command '{fileName} {argStr}': {exc.Message}");
             tcs.TrySetResult((-1, string.Empty));
         }
 
