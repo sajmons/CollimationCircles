@@ -295,10 +295,10 @@ public class AppService
 
     public static Task<Process> StartLongRunningProcessAsync(
         string fileName,
-        List<string> arguments,
+        List<string> arguments,        
         Action<string>? onOutputReceived = null,
         Action<string>? onErrorReceived = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken? cancellationToken = null)
     {
         var startInfo = new ProcessStartInfo
         {
@@ -336,7 +336,7 @@ public class AppService
         process.BeginErrorReadLine();
 
         // Optionally: register cancellation to kill the process
-        cancellationToken.Register(() =>
+        cancellationToken?.Register(() =>
         {
             try { process.Kill(); } catch { /* process may have already exited */ }
         });
