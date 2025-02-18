@@ -2,6 +2,7 @@
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -28,21 +29,21 @@ namespace CollimationCircles.Services
             }
         }
 
-        public List<Camera> GetCameraList()
+        public async Task<List<Camera>> GetCameraList()
         {
             List<Camera> cameras = [];
 
             if (OperatingSystem.IsWindows())
             {
-                var dshowCameras = new DShowCameraDetect().GetCameras();
+                var dshowCameras = await new DShowCameraDetect().GetCameras();
                 cameras.AddRange(dshowCameras);
             }
             else
             {
-                var raspiCameras = new RasPiCameraDetect().GetCameras();
+                var raspiCameras = await new RasPiCameraDetect().GetCameras();
                 cameras.AddRange(raspiCameras);
 
-                var v4l2Cameras = new V4L2CameraDetect().GetCameras();
+                var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
                 cameras.AddRange(v4l2Cameras);
             }
 

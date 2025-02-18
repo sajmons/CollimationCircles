@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -22,7 +23,7 @@ namespace CollimationCircles.Services
             { ControlType.Gamma, "Gamma" }
         };
 
-        public List<Camera> GetCameras()
+        public async Task<List<Camera>> GetCameras()
         {
             List<Camera> cameras = [];
 

@@ -28,13 +28,13 @@ namespace CollimationCircles.Services
             { ControlType.Zoom_Absolute, "roi" }
         };
 
-        public List<Camera> GetCameras()
+        public async Task<List<Camera>> GetCameras()
         {
             List<Camera> cameras = [];
 
-            var (errorCode, result) = AppService.ExecuteCommandAsync(
+            var (errorCode, result) = await AppService.ExecuteCommandAsync(
                 "rpicam-vid",
-                ["--list-cameras"]).GetAwaiter().GetResult();
+                ["--list-cameras"]);
 
             if (errorCode == 0)
             {

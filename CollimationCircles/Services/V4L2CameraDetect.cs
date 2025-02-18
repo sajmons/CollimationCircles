@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -30,13 +31,13 @@ namespace CollimationCircles.Services
             { ControlType.Zoom_Absolute, "zoom_absolute" }
         };
 
-        public List<Camera> GetCameras()
+        public async Task<List<Camera>> GetCameras()
         {
             List<Camera> cameras = [];
 
-            var (errorCode, result) = AppService.ExecuteCommandAsync(
+            var (errorCode, result) = await AppService.ExecuteCommandAsync(
                 "v4l2-ctl",
-            ["--list-devices"]).GetAwaiter().GetResult();
+            ["--list-devices"]);
 
             logger.Info($"v4l2-ctl --list-devices result: {result}");
 

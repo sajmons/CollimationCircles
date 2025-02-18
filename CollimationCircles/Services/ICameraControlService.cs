@@ -1,5 +1,6 @@
 ﻿using CollimationCircles.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -7,6 +8,6 @@ namespace CollimationCircles.Services
     {
         public void Set(ControlType propertyname, double value, Camera camera);
 
-        public List<Camera> GetCameraList();
+        public Task<List<Camera>> GetCameraList();
     }
 }

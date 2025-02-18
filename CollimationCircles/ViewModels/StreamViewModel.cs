@@ -11,6 +11,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
@@ -71,9 +72,10 @@ namespace CollimationCircles.ViewModels
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
 
-            CameraList = new ObservableCollection<Camera>(cameraControlService.GetCameraList());
-
-            SelectedCamera = CameraList?.FirstOrDefault(c => c.Name == settingsViewModel!.LastSelectedCamera) ?? CameraList?.FirstOrDefault() ?? null;
+            Dispatcher.UIThread.Post(async () => {
+                CameraList = new ObservableCollection<Camera>(await cameraControlService.GetCameraList());
+                SelectedCamera = CameraList?.FirstOrDefault(c => c.Name == settingsViewModel!.LastSelectedCamera) ?? CameraList?.FirstOrDefault() ?? null;
+            });            
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -188,9 +190,9 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        private void CameraRefresh()
+        private async Task CameraRefresh()
         {
-            CameraList = new ObservableCollection<Camera>(cameraControlService.GetCameraList());
+            CameraList = new ObservableCollection<Camera>(await cameraControlService.GetCameraList());
             SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
         }
 
