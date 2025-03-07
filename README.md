@@ -7,7 +7,7 @@ This program was inspired by Mire De Collimation program written by Gilbert Gril
 
 Main purpose of this program is to help you with aligning optical elements of your telescope such as secondary mirror, primary mirror, focuser, etc.
 
-Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS (only in virtual machine), but it should work.
+Collimation Circles is developed with .NET 8 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS (only in virtual machine), but it should work.
 
 Feel free to report any issues. Suggestions and contributions are welcome!
 
@@ -98,7 +98,7 @@ and then run the CollimationCircles program again. Main Window should now be tra
 Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
 
 # Running from GitHub source code (works on all platforms)
-After installing .NET Framework you type following terminal commands:
+After installing  Framework you type following terminal commands:
 ```
 sudo apt-get install git
 ```
@@ -115,9 +115,9 @@ dotnet run
 # Building and publishing
 
 ## Prerequisites for building
-To use this application, you must first install .NET Framework on your computer.
+To use this application, you must first install  Framework on your computer.
 
-## .NET Framework Instalation
+##  Framework Instalation
 
 ### Windows 10 and above
 https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
@@ -151,7 +151,7 @@ sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
 ### Raspbian OS Bullseye ARM
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
 ```
-wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+wget https://dot/v1/dotnet-install.sh -O dotnet-install.sh
 ```
 ```
 sudo chmod +x ./dotnet-install.sh
