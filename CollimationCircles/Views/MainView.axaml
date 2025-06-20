@@ -37,10 +37,10 @@
 
     <Button
       Theme="{DynamicResource ToolbarButton}"
-      Grid.Column="1"
+      Grid.Column="0"
       HorizontalAlignment="Right"
       VerticalAlignment="Top"
-      Margin="0, 11, 14, 0"
+      Margin="12"
       ToolTip.Tip="{DynamicResource Text.SettingsWindow}"
       Command="{Binding ShowSettingsCommand}"
       IsVisible="{Binding DockInMainWindow}">

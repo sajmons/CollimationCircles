@@ -11,19 +11,25 @@
       Background="{DynamicResource ThemeBackgroundBrush}"
       RowDefinitions="*,Auto">
     <TabControl>
-      <TabItem>
+      <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.Properties}" />
+          <PathIcon
+            Margin="{DynamicResource TabIconMargin}"
+            Height="{DynamicResource PathIconHeight}"
+            Foreground="{DynamicResource Color2}"
+            Data="{StaticResource IconData.Shapes}"
+            ToolTip.Tip="{DynamicResource Text.Properties}" />
         </TabItem.Header>
         <controls:ItemListUserControl/>
       </TabItem>
-      <TabItem>
+      <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.Tools}" />
+          <PathIcon
+              Margin="{DynamicResource TabIconMargin}"
+              Height="{DynamicResource PathIconHeight}"
+              Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Tools}"
+              ToolTip.Tip="{DynamicResource Text.Tools}" />
         </TabItem.Header>
         <ScrollViewer>
           <StackPanel Spacing="{DynamicResource ControlSpacing}">
@@ -57,20 +63,38 @@
           </StackPanel>
         </ScrollViewer>
       </TabItem>
-      <TabItem>
+      <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.Settings}" />
+          <PathIcon
+              Margin="{DynamicResource TabIconMargin}"
+              Height="{DynamicResource PathIconHeight}"
+              Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Settings}"
+              ToolTip.Tip="{DynamicResource Text.Settings}" />
         </TabItem.Header>
         <ScrollViewer>
           <controls:SettingsTabUserControl />
         </ScrollViewer>
       </TabItem>
+      <TabItem Margin="-5 0 -5 0">
+        <TabItem.Header>
+          <PathIcon
+                Margin="{DynamicResource TabIconMargin}"
+                Height="{DynamicResource PathIconHeight}"
+                Foreground="{DynamicResource Color2}"
+                Data="{StaticResource IconData.Info}"
+                ToolTip.Tip="{DynamicResource Text.About}" />
+        </TabItem.Header>
+        <ScrollViewer>
+          <StackPanel>
+            <controls:AboutTabUserControl />            
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
     </TabControl>
-    <StackPanel Grid.Row="1" Spacing="{DynamicResource ControlSpacing}" Margin="12">
-      <controls:LicenseUserControl IsVisible="{Binding InvalidLicense}"/>
-      <controls:SocialButtonBarUserControl/>
-    </StackPanel>
+    <controls:LicenseUserControl
+      Grid.Row="1"
+      Margin="12"
+      IsVisible="{Binding InvalidLicense}"/>
   </Grid>
 </UserControl>

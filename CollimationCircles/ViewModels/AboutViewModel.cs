@@ -12,13 +12,7 @@ namespace CollimationCircles.ViewModels
         public AboutViewModel()
         {
             Title = $"{ResSvc.TryGetString("About")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
-        }
-
-        [RelayCommand]
-        internal static void OpenPatreonWebSite()
-        {
-            AppService.OpenUrl(AppService.PatreonWebPage);
-        }
+        }        
 
         [RelayCommand]
         internal void CloseDialog()
@@ -36,6 +30,42 @@ namespace CollimationCircles.ViewModels
             string url = $"https://www.paypal.com/donate/?business=DBUQU9W2LNS2G&no_recurring=0&item_name={encodedText}&currency_code=EUR";
 
             AppService.OpenUrl(url);
+        }
+
+        [RelayCommand]
+        internal static void OpenContactWebPage()
+        {
+            AppService.OpenUrl(AppService.ContactPage);
+        }
+
+        [RelayCommand]
+        internal static void OpenGitHubPage()
+        {
+            AppService.OpenUrl(AppService.GitHubPage);
+        }
+
+        [RelayCommand]
+        internal static void OpenTwitter()
+        {
+            AppService.OpenUrl(AppService.TwitterPage);
+        }
+
+        [RelayCommand]
+        internal static void OpenYouTubeChannel()
+        {
+            AppService.OpenUrl(AppService.YouTubeChannel);
+        }
+
+        [RelayCommand]
+        internal static void OpenPatreonWebSite()
+        {
+            AppService.OpenUrl(AppService.PatreonWebPage);
+        }
+
+        [RelayCommand]
+        internal static void GitHubIssue()
+        {
+            AppService.OpenUrl(AppService.GitHubIssue);
         }
     }
 }
