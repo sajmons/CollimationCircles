@@ -10,49 +10,13 @@ namespace CollimationCircles.Services
 {
     internal static class ImageAnalysisService
     {
-        public class DetectionAccuracy
-        {
-            public static DetectionParameters Maximum = new()
-            {                
-                CenterProximityThreshold = 5,
-                VoteThresholdFraction = 1,
-                AngleStep = 1,
-                RadiusStep = 1,
-                EdgeThreshold = 80
-            };
-            public static DetectionParameters High = new ()
-            {
-                CenterProximityThreshold = 5,
-                VoteThresholdFraction = 0.85,
-                AngleStep = 2,
-                RadiusStep = 2,
-                EdgeThreshold = 128
-            };
-            public static DetectionParameters Medium = new()
-            {
-                CenterProximityThreshold = 5,
-                VoteThresholdFraction = 0.8,
-                AngleStep = 3,
-                RadiusStep = 3,
-                EdgeThreshold = 150
-            };
-            public static DetectionParameters Low = new()
-            {
-                CenterProximityThreshold = 5,
-                VoteThresholdFraction = 0.6,
-                AngleStep = 5,
-                RadiusStep = 5,
-                EdgeThreshold = 100
-            };
-        }
-
         public class DetectionParameters
         {            
-            public int CenterProximityThreshold;
-            public double VoteThresholdFraction;
-            public int AngleStep = 5;
-            public int RadiusStep = 1;
-            public int EdgeThreshold = 128;
+            public int CenterProximityThreshold { get; set; } = 5;
+            public double VoteThresholdFraction { get; set; } = 0.65;
+            public int AngleStep { get; set; } = 5;
+            public int RadiusStep { get; set; } = 5;
+            public int EdgeThreshold { get; set; } = 40;
         }
 
         public class FilterComplitedEventArgs(string filterName, byte[] image) : EventArgs

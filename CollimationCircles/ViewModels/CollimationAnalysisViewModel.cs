@@ -140,11 +140,11 @@ namespace CollimationCircles.ViewModels
             {
                 DoNormalize = true,
                 DoGaussianBlur = true,
-                //DoThreshold = true,
-                //DoErode = true,
-                //DoDilate = true,
-                //DoEdge = true,
-                DoCrop = true
+                DoThreshold = true,
+                DoErode = true,
+                DoDilate = true,
+                DoEdge = true,
+                //DoCrop = true
             };
 
             MagickImage original = new (image);
@@ -160,7 +160,7 @@ namespace CollimationCircles.ViewModels
             logger.Info($"Start DetectCircles");
             List<Circle> circles = ImageAnalysisService.DetectCircles(
                 image, 50, (int)image.Width / 2,
-                ImageAnalysisService.DetectionAccuracy.Maximum);
+                new ImageAnalysisService.DetectionParameters());
             sw.Stop();
             logger.Info($"DetectCircles time: {sw.Elapsed:mm\\:ss\\.ff}");
 
