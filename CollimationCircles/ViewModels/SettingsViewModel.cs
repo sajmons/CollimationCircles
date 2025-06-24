@@ -598,50 +598,6 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        [RelayCommand]
-        internal async Task OpenAboutDialog()
-        {
-            var dialogViewModel = DialogService.CreateViewModel<AboutViewModel>();
-
-            _ = await DialogService.ShowDialogAsync(this, dialogViewModel);
-        }
-
-        [RelayCommand]
-        internal static void OpenContactWebPage()
-        {
-            AppService.OpenUrl(AppService.ContactPage);
-        }
-
-        [RelayCommand]
-        internal static void OpenGitHubPage()
-        {
-            AppService.OpenUrl(AppService.GitHubPage);
-        }
-
-        [RelayCommand]
-        internal static void OpenTwitter()
-        {
-            AppService.OpenUrl(AppService.TwitterPage);
-        }
-
-        [RelayCommand]
-        internal static void OpenYouTubeChannel()
-        {
-            AppService.OpenUrl(AppService.YouTubeChannel);
-        }
-
-        [RelayCommand]
-        internal static void OpenPatreonWebSite()
-        {
-            AppService.OpenUrl(AppService.PatreonWebPage);
-        }
-
-        [RelayCommand]
-        internal static void GitHubIssue()
-        {
-            AppService.OpenUrl(AppService.GitHubIssue);
-        }
-
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

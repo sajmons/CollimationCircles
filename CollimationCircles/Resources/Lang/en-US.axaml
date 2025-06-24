@@ -145,7 +145,7 @@
   <system:String x:Key="Text.UpgradeLicenseMessage">Would you like to upgrade your license or request trial license?</system:String>
   <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Valid until:</system:String>
-  <system:String x:Key="Text.RequestLicense">Buy licence</system:String>
+  <system:String x:Key="Text.RequestLicense">Request licence</system:String>
   <system:String x:Key="Text.Product">Product:</system:String>
   <system:String x:Key="Text.ProductMajorVersion">Product major version:</system:String>
   <system:String x:Key="Text.LicenseType">Licence type:</system:String>
