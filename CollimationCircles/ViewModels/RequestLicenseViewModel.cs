@@ -2,11 +2,7 @@ using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using HanumanInstitute.MvvmDialogs;
-using Newtonsoft.Json;
-using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using TextCopy;
 
 namespace CollimationCircles.ViewModels
@@ -23,9 +19,17 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool isTrialLicense = false;
 
+        [ObservableProperty]
+        private string licenseRequestText = string.Empty;        
+
+        private decimal licensePrice = 10.00m;
+        private string licenseDuration = "Unlimited";
+
         public RequestLicenseViewModel()
         {
             Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
+            
+            LicenseRequestText = GetLicenceText();
         }
 
         [RelayCommand]
@@ -45,43 +49,23 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal async Task Submit()
+        internal void Submit()
         {
-            logger.Info("Licence request submited");
-
             if (IsStandardLicense)
             {
                 AppService.OpenUrl(AppService.PatreonShop);
             }
             else
             {
-                // submit licence to author
-                var a = new
-                {
-                    ClientId,
-                    Product,
-                    ProductMajorVersion
-                };
-
-                string licenceJson = $"{AppService.Serialize(a, Formatting.Indented)}";
-
-                string trialLicenseInstructions = ResSvc.TryGetString("TrialLicenseInstructions");
-
-                bool? result = await DialogService.ShowMessageBoxAsync(null,
-                    $"{trialLicenseInstructions} {AppService.RequestLicensePage}.\n\n{licenceJson}",
-                    ResSvc.TryGetString("RequestLicense"),
-                    HanumanInstitute.MvvmDialogs.FrameworkDialogs.MessageBoxButton.OkCancel);
-
-                if (result is true)
-                {
-                    AppService.OpenUrl(AppService.RequestLicensePage);
-                }
+                AppService.OpenUrl(AppService.RequestLicensePage);
             }
 
             if (dialog != null)
             {
+                ClipboardService.SetText(LicenseRequestText);
                 DialogService.Close(dialog);
-                logger.Info("Request licence dialog closed");
+                logger.Info($"Request licence dialog closed");
+                logger.Info($"License data submited: {LicenseRequestText}");
             }
         }
 
@@ -89,6 +73,23 @@ namespace CollimationCircles.ViewModels
         {
             IsStandardLicense = value;
             IsTrialLicense = !IsStandardLicense;
+
+            licensePrice = IsStandardLicense ? 10.00m : 0.00m; // Set price based on license type
+            licenseDuration = IsStandardLicense ? "Unlimited" : "30 days"; // Set duration based on license type
+
+            LicenseRequestText = GetLicenceText();            
+        }
+
+        private string GetLicenceText()
+        {
+            // licence information
+            string licenseType = IsStandardLicense ? "Standard" : "Trial";
+
+            return $"ClientId: {ClientId}" +
+                $"\nProduct: {Product} {ProductMajorVersion}" +
+                $"\nLicense Type: {licenseType}" +
+                $"\nPrice: {licensePrice:C}" +
+                $"\nDuration: {licenseDuration}";
         }
     }
 }

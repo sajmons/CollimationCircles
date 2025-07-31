@@ -3,68 +3,45 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="650"
-        d:DesignHeight="230"
+        d:DesignHeight="300"
         x:Class="CollimationCircles.Views.RequestLicenseView"
         xmlns:controls="clr-namespace:CollimationCircles.Controls"
         Title="{Binding Title}"
         xmlns:vm="using:CollimationCircles.ViewModels"
         x:DataType="vm:RequestLicenseViewModel"
-        Width="650" Height="230"
+        Width="650" Height="300"
         Icon="/Resources/Images/icon_256px.ico"
         WindowStartupLocation="CenterScreen">
   <StackPanel
     Margin="20"
     Spacing="10"
     Orientation="Vertical">
-    <Grid
-      ColumnDefinitions="*,Auto"
-      RowDefinitions="30,8,30,8,30">
-      <TextBlock
-        Text="{DynamicResource Text.ClientId}"/>
-      <TextBlock
-        Grid.Column="1"
-        Text="{ReflectionBinding ClientId}"/>
 
+    <StackPanel
+      Spacing="10"
+      Orientation="Horizontal">
       <TextBlock
-        Grid.Row="2"
-        Text="{DynamicResource Text.Product}"/>
-      <TextBlock
-        Grid.Column="1"
-        Grid.Row="2">
-        <TextBlock.Text>
-          <MultiBinding StringFormat="{}{0} {1}">
-            <Binding Path="Product" />
-            <Binding Path="ProductMajorVersion" />
-          </MultiBinding>
-        </TextBlock.Text>
-      </TextBlock>
-
-      <TextBlock
-        Grid.Row="4"
+        VerticalAlignment="Center"
         Text="{DynamicResource Text.LicenseType}"/>
-      <StackPanel
-        Spacing="10"
-        Orientation="Horizontal"
-        Grid.Column="1"
-        Grid.Row="4">
-        <RadioButton
-          Content="{DynamicResource Text.StandardLicense}"
-          GroupName="LicenseType"
-          IsChecked="{ReflectionBinding IsStandardLicense}"/>
-        <RadioButton
-          IsChecked="{ReflectionBinding !IsStandardLicense}"
-          GroupName="LicenseType"
-          Content="{DynamicResource Text.TrialLicense}"/>
-      </StackPanel>
-    </Grid>
+      <RadioButton
+        Content="{DynamicResource Text.StandardLicense}"
+        GroupName="LicenseType"
+        IsChecked="{ReflectionBinding IsStandardLicense}"/>
+      <RadioButton
+        IsChecked="{ReflectionBinding !IsStandardLicense}"
+        GroupName="LicenseType"
+        Content="{DynamicResource Text.TrialLicense}"/>
+    </StackPanel>
+
+    <TextBlock
+      Text="{DynamicResource Text.LicenseData}"/>
+    <SelectableTextBlock
+      TextWrapping="Wrap"
+      Text="{ReflectionBinding LicenseRequestText}"/>
     <TextBlock
       TextWrapping="Wrap"
-      Text="{DynamicResource Text.LicenseInstructions}"
-      IsVisible="{Binding IsTrialLicense}"/>
-    <TextBlock
-      TextWrapping="Wrap"
-      Text="{DynamicResource Text.StandardLicenseInstructions}"
-      IsVisible="{Binding IsStandardLicense}"/>
+      Text="{DynamicResource Text.LicenseInstructions}"/>
+
     <Button
       Content="{DynamicResource Text.RequestLicense}"
       Command="{ReflectionBinding Submit}"/>

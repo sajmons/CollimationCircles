@@ -78,6 +78,7 @@
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako izbranega</system:String>
+  <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>
   <system:String x:Key="Text.ShowKeyboardShortcuts">Prikaži bližnjice na tipkovnici</system:String>
   <system:String x:Key="Text.TwitterWebSite">Avtorjeva Twitter spletna stran</system:String>
@@ -99,6 +100,7 @@
   <system:String x:Key="Text.Fans">Oboževalci</system:String>
   <system:String x:Key="Text.PatreonDesc">Razvoj te aplikacije zahteva veliko truda, prostega časa in angažiranosti. V kolikor to cenite in me želite podpreti, vas prosim, da obiščete mojo Patreon spletno stran in se naroči na članske ugodnosti ali kupite katerega od izdelkov. Hvala za vso vašo podporo!</system:String>
   <system:String x:Key="Text.PatreonWebSite">Obiščite Patreon spletno stran</system:String>
+  <system:String x:Key="Text.Patreon">Patreon</system:String>
   <system:String x:Key="Text.AppLog">Dnevnik aplikacije</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Dnevnik</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Prikaži dnevnik aplikacije</system:String>
@@ -131,7 +133,6 @@
   <system:String x:Key="Text.Default">Privzeto</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Vpišite naslov</system:String>
   <system:String x:Key="Text.RefreshCameras">Osveži kamere</system:String>
-  <system:String x:Key="Text.ClientId">Id Odjemalca:</system:String>
   <system:String x:Key="Text.License">Licenca:</system:String>
   <system:String x:Key="Text.ProfileManagerTitle">Upravljalec profilov</system:String>
   <system:String x:Key="Text.AddCurrentProfile">Dodaj nov profil</system:String>
@@ -144,8 +145,7 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">Ta licenca je potekla {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Velja do:</system:String>
   <system:String x:Key="Text.RequestLicense">Zahtevaj licenco</system:String>
-  <system:String x:Key="Text.Product">Izdelek:</system:String>
-  <system:String x:Key="Text.ProductMajorVersion">Glavna verzija izdelka:</system:String>
+  <system:String x:Key="Text.LicenseData">Podatki licence:</system:String>
   <system:String x:Key="Text.LicenseType">Tip licence:</system:String>
   <system:String x:Key="Text.StandardLicense">Standarden</system:String>
   <system:String x:Key="Text.TrialLicense">Začasna</system:String>
@@ -164,8 +164,6 @@
   <system:String x:Key="Text.ContourMinEnclosingCircle">Minimalen krog konture</system:String>
   <system:String x:Key="Text.AiryDiscAnalysis">Analiza zračnih diskov zvezde</system:String>
   <system:String x:Key="Text.AiryDiscAnalysisDebug">Prikaz vmesnih slik postopka</system:String>
-  <system:String x:Key="Text.StandardLicenseInstructions">V spletnem brskalniku se bo odprla spletna stran patreon.com, kjer lahko kupite licenco.</system:String>
-  <system:String x:Key="Text.TrialLicenseInstructions">Prosim označite spodnje besedilo in ga skopirajte v odložišče (CRTL+C).\nPo izbiri gumba OK, boste preusmerjeni na spletno stran za naročilo licence.</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Rezultat analize</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Pred uporabo te funkcije morate aktivirati video pretok.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Ni video pretoka</system:String>

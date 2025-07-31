@@ -100,6 +100,7 @@
   <system:String x:Key="Text.Fans">Ventilateurs</system:String>
   <system:String x:Key="Text.PatreonDesc">Le développement de cette application demande beaucoup d’efforts, de temps libre et d’engagement. Si vous appréciez cela et souhaitez montrer un certain soutien, veuillez visiter mon site Web Patreon et vous abonner aux niveaux d'adhésion ou acheter des actifs. Merci pour tout votre support!</system:String>
   <system:String x:Key="Text.PatreonWebSite">Visitez le site Patreon</system:String>
+  <system:String x:Key="Text.Patreon">Patreon</system:String>
   <system:String x:Key="Text.AppLog">Journal des applications</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Journal</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Afficher le journal des applications</system:String>
@@ -132,7 +133,6 @@
   <system:String x:Key="Text.Default">Défaut</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Entrer l'adresse</system:String>
   <system:String x:Key="Text.RefreshCameras">Actualiser la liste des caméras</system:String>
-  <system:String x:Key="Text.ClientId">Identifiant client:</system:String>
   <system:String x:Key="Text.License">Licence:</system:String>
   <system:String x:Key="Text.ProfileManagerTitle">Gestionnaire de profil</system:String>
   <system:String x:Key="Text.AddCurrentProfile">Ajouter un nouveau profil</system:String>
@@ -145,8 +145,7 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">Cette licence a expiré à {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Valable jusqu'au:</system:String>
   <system:String x:Key="Text.RequestLicense">Demander une licence</system:String>
-  <system:String x:Key="Text.Product">Produit:</system:String>
-  <system:String x:Key="Text.ProductMajorVersion">Version majeure du produit:</system:String>
+  <system:String x:Key="Text.LicenseData">Données de licence:</system:String>
   <system:String x:Key="Text.LicenseType">Type de licence:</system:String>
   <system:String x:Key="Text.StandardLicense">Standard</system:String>
   <system:String x:Key="Text.TrialLicense">Temporaire</system:String>
@@ -165,8 +164,6 @@
   <system:String x:Key="Text.ContourMinEnclosingCircle">Cercle englobant minimum de contour</system:String>
   <system:String x:Key="Text.AiryDiscAnalysis">Analyse du disque Star Airy</system:String>
   <system:String x:Key="Text.AiryDiscAnalysisDebug">Afficher les images intermédiaires</system:String>
-  <system:String x:Key="Text.StandardLicenseInstructions">La page Web patreon.com s'ouvrira dans votre navigateur Internet, où vous pourrez acheter une licence.</system:String>
-  <system:String x:Key="Text.TrialLicenseInstructions">Veuillez sélectionner le texte ci-dessous et copiez-le dans votre presse-papiers (CRTL+C).\nAprès avoir cliqué sur le bouton OK, vous serez redirigé vers la page Web où vous pourrez commander votre licence d'essai.</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Résultat de l'analyse</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Veuillez démarrer le flux vidéo avant d'utiliser cette fonction.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Pas de flux vidéo</system:String>

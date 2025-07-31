@@ -133,7 +133,6 @@
   <system:String x:Key="Text.Default">Default</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Enter address</system:String>
   <system:String x:Key="Text.RefreshCameras">Refresh camera list</system:String>
-  <system:String x:Key="Text.ClientId">Client Id:</system:String>
   <system:String x:Key="Text.License">License:</system:String>
   <system:String x:Key="Text.ProfileManagerTitle">Profile manager</system:String>
   <system:String x:Key="Text.AddCurrentProfile">Add current setup to profile manager</system:String>
@@ -146,8 +145,7 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Valid until:</system:String>
   <system:String x:Key="Text.RequestLicense">Request licence</system:String>
-  <system:String x:Key="Text.Product">Product:</system:String>
-  <system:String x:Key="Text.ProductMajorVersion">Product major version:</system:String>
+  <system:String x:Key="Text.LicenseData">Licence data:</system:String>
   <system:String x:Key="Text.LicenseType">Licence type:</system:String>
   <system:String x:Key="Text.StandardLicense">Standard</system:String>
   <system:String x:Key="Text.TrialLicense">Trial</system:String>
@@ -166,8 +164,6 @@
   <system:String x:Key="Text.ContourMinEnclosingCircle">Contour min. enclosing circle</system:String>
   <system:String x:Key="Text.AiryDiscAnalysis">Star Airy Disc analysis</system:String>
   <system:String x:Key="Text.AiryDiscAnalysisDebug">Display intermediate images</system:String>
-  <system:String x:Key="Text.StandardLicenseInstructions">Web page patreon.com will be opened in your internet browser, where you can buy license.</system:String>
-  <system:String x:Key="Text.TrialLicenseInstructions">Please select text below and copy it to your clipboard (CRTL+C).\nAfter clicking OK button you will be redirected to my web page</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analysis result</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Please start video stream before using this function.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">No video stream</system:String>

@@ -78,7 +78,8 @@
   <system:String x:Key="Text.StayOnTop">Das Fenster bleibt immer oben</system:String>
   <system:String x:Key="Text.DockInMainWindow">Im Hauptfenster andocken</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Markierung bei ausgewählter Form anzeigen</system:String>
-  <system:String x:Key="Text.UserInterfaceTheme">Thema</system:String>
+  <system:String x:Key="Text.GitHub">GitHub</system:String>
+  <system:String x:Key="Text.UserInterfaceTheme">Theme</system:String>
   <system:String x:Key="Text.ShowKeyboardShortcuts">Tastaturkürzel anzeigen</system:String>
   <system:String x:Key="Text.TwitterWebSite">Öffnen Sie die Twitter-Website des Autors</system:String>
   <system:String x:Key="Text.YouTubeChannel">Öffnen Sie den YouTube-Kanal des Autors</system:String>
@@ -99,12 +100,13 @@
   <system:String x:Key="Text.Fans">Fans</system:String>
   <system:String x:Key="Text.PatreonDesc">Die Entwicklung dieser Anwendung erfordert viel Aufwand, Freizeit und Engagement. Wenn Sie das zu schätzen wissen und etwas Unterstützung zeigen möchten, besuchen Sie bitte meine Patreon-Website und abonnieren Sie die Mitgliedschaftsstufen oder kaufen Sie einige Assets. Vielen Dank für all Ihre Unterstützung!</system:String>
   <system:String x:Key="Text.PatreonWebSite">Besuchen Sie die Patreon-Website</system:String>
+  <system:String x:Key="Text.Patreon">Patreon</system:String>
   <system:String x:Key="Text.AppLog">Anwendungsprotokoll</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Protokoll</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Anwendungsprotokoll anzeigen</system:String>
-  <system:String x:Key="Text.AutoStartCameraStream">Starten Sie den Kamerastream nach Möglichkeit automatisch</system:String>
-  <system:String x:Key="Text.AutoStartCameraStreamHelp">Funktioniert nur mit Libcamera und Linux. In anderen Fällen muss der Benutzer die URL-Adresse des Videostreams angeben.</system:String>
   <system:String x:Key="Text.OpenLogFileLocation">Speicherort der Anwendungsprotokolldatei anzeigen</system:String>
+  <system:String x:Key="Text.AutoStartCameraStream">Starten Sie den Kamerastream nach Möglichkeit automatisch</system:String>
+  <system:String x:Key="Text.AutoStartCameraStreamHelp">Funktioniert nur mit Libcamera und Linux. In anderen Fällen muss der Benutzer die URL-Adresse des Videostreams angeben.</system:String>  
   <system:String x:Key="Text.Tools">Werkzeuge</system:String>
   <system:String x:Key="Text.ShowAboutDialog">Über diese Anwendung</system:String>
   <system:String x:Key="Text.Close">Schließen</system:String>
@@ -131,7 +133,6 @@
   <system:String x:Key="Text.Default">Standard</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Adresse eingeben</system:String>
   <system:String x:Key="Text.RefreshCameras">Refresh camera list</system:String>
-  <system:String x:Key="Text.ClientId">Kunden-ID:</system:String>
   <system:String x:Key="Text.License">Lizenz:</system:String>
   <system:String x:Key="Text.ProfileManagerTitle">Profilmanager</system:String>
   <system:String x:Key="Text.AddCurrentProfile">Neues Profil hinzufügen</system:String>
@@ -144,8 +145,7 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">Diese Lizenz ist abgelaufen um {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Gültig bis:</system:String>
   <system:String x:Key="Text.RequestLicense">Lizenz anfordern</system:String>
-  <system:String x:Key="Text.Product">Produkt:</system:String>
-  <system:String x:Key="Text.ProductMajorVersion">Hauptversion des Produkts:</system:String>
+  <system:String x:Key="Text.LicenseData">Lizenzdaten:</system:String>
   <system:String x:Key="Text.LicenseType">Lizenztyp:</system:String>
   <system:String x:Key="Text.StandardLicense">Standard</system:String>
   <system:String x:Key="Text.TrialLicense">Versuch</system:String>
@@ -164,8 +164,6 @@
   <system:String x:Key="Text.ContourMinEnclosingCircle">Kontur minimaler umschließender Kreis</system:String>
   <system:String x:Key="Text.AiryDiscAnalysis">Star Airy Disc-Analyse</system:String>
   <system:String x:Key="Text.AiryDiscAnalysisDebug">Zwischenbilder anzeigen</system:String>
-  <system:String x:Key="Text.StandardLicenseInstructions">In Ihrem Internetbrowser wird die Webseite patreon.com geöffnet, auf der Sie eine Lizenz kaufen können.</system:String>
-  <system:String x:Key="Text.TrialLicenseInstructions">Bitte wählen Sie unten den Text aus und kopieren Sie ihn in Ihre Zwischenablage (STRG+C).\nNachdem Sie auf die Schaltfläche „OK“ geklickt haben, werden Sie zur Webseite weitergeleitet, auf der Sie Ihre Testlizenz bestellen können.</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analyseergebnis</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Bitte starten Sie den Videostream, bevor Sie diese Funktion verwenden.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Kein Videostream</system:String>
