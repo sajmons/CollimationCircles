@@ -12,11 +12,11 @@ namespace CollimationCircles.Services
     {
         public class DetectionParameters
         {            
-            public int CenterProximityThreshold { get; set; } = 5;
-            public double VoteThresholdFraction { get; set; } = 0.65;
+            public int CenterProximityThreshold { get; set; } = 40;
+            public double VoteThresholdFraction { get; set; } = 0.8;
             public int AngleStep { get; set; } = 5;
             public int RadiusStep { get; set; } = 5;
-            public int EdgeThreshold { get; set; } = 40;
+            public int EdgeThreshold { get; set; } = 128;
         }
 
         public class FilterComplitedEventArgs(string filterName, byte[] image) : EventArgs
@@ -158,21 +158,9 @@ namespace CollimationCircles.Services
         /// </param>
         /// <param name="minRadius">Minimum circle radius to search.</param>
         /// <param name="maxRadius">Maximum circle radius to search.</param>
-        /// <param name="centerProximityThreshold">
-        /// Maximum Euclidean distance from the image center that a circle center can have to be accepted.
-        /// </param>
-        /// <param name="voteThresholdFraction">
-        /// Fraction (0 to 1) representing the minimum percentage of maximum votes (number of angles) needed for acceptance.
-        /// </param>
-        /// <param name="angleStep">
-        /// Angular discretization in degrees. Smaller values improve accuracy at the cost of speed.
-        /// </param>
-        /// <param name="radiusStep">
-        /// Step (in pixels) for increasing the candidate radius. For example, 1 tests every radius; 2 tests every other radius.
-        /// </param>
-        /// <param name="edgeThreshold">
-        /// Minimum pixel intensity to be considered an edge (0-255). Default is 128.
-        /// </param>
+        /// <param name="detectionParameters">
+        /// Detection parameters. See <see cref="DetectionParameters"/> for details.
+        /// </param>        
         /// <returns>A list of filtered circles detected that meet the criteria.</returns>
         public static List<Circle> DetectCircles(MagickImage edgeImage, int minRadius, int maxRadius, DetectionParameters detectionParameters)
         {

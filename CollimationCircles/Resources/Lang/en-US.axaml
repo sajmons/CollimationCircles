@@ -173,4 +173,10 @@
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">No video stream</system:String>
   <system:String x:Key="Text.CombinedDetectionMode">Both</system:String>
   <system:String x:Key="Text.Apply">Apply</system:String>
+  <system:String x:Key="Text.DetectionThreshold">Circle threshold</system:String>
+  <system:String x:Key="Text.DetectionThresholdTip">Higher value means less circles will be detected (min: 0.1, max: 2.0)</system:String>
+  <system:String x:Key="Text.NoCirclesDetected">No circles detected</system:String>
+  <system:String x:Key="Text.TooManyCirclesDetected">Too many circles detected</system:String>  
+  <system:String x:Key="Text.DetectionThresholdHelp">Try changing threshold.</system:String>
+  <system:String x:Key="Text.DetectionThresholdHelp2">Image should contain centered defocused star</system:String>
 </ResourceDictionary>

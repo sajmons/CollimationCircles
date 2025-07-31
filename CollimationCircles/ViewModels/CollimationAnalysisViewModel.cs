@@ -36,6 +36,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         bool isImageLoaded = false;
 
+        [ObservableProperty]
+        double detectionThreshold = new DetectionParameters().VoteThresholdFraction;
+
         bool loadedFromFile = false;
 
         public CollimationAnalysisViewModel(ILibVLCService libVLCService)
@@ -45,8 +48,8 @@ namespace CollimationCircles.ViewModels
             ImageAnalysisService.FilterComplited += (s, e) =>
             {
                 if (IsDebug)
-                {                    
-                    MagickImage image = new (e.ImageBytes);
+                {
+                    MagickImage image = new(e.ImageBytes);
                     ShowResultDialog(e.FilterName, image);
                 }
             };
@@ -147,7 +150,7 @@ namespace CollimationCircles.ViewModels
                 //DoCrop = true
             };
 
-            MagickImage original = new (image);
+            MagickImage original = new(image);
 
             Stopwatch sw = new();
             sw.Start();
@@ -160,7 +163,10 @@ namespace CollimationCircles.ViewModels
             logger.Info($"Start DetectCircles");
             List<Circle> circles = ImageAnalysisService.DetectCircles(
                 image, 50, (int)image.Width / 2,
-                new ImageAnalysisService.DetectionParameters());
+                new ImageAnalysisService.DetectionParameters()
+                {                    
+                    VoteThresholdFraction = DetectionThreshold,
+                });
             sw.Stop();
             logger.Info($"DetectCircles time: {sw.Elapsed:mm\\:ss\\.ff}");
 
@@ -170,8 +176,28 @@ namespace CollimationCircles.ViewModels
             sw.Stop();
             logger.Info($"AnalyzeResult time: {sw.Elapsed:mm\\:ss\\.ff}");
 
-            string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");                        
+            string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");
             string resultText = DescribeResult(result);
+
+            if (circles.Count == 0)
+            {
+                resultText += "\n" + ResSvc.TryGetString("NoCirclesDetected")
+                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp")
+                    + " " + ResSvc.TryGetString("DetectionThresholdTip")
+                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp2");
+                logger.Warn(resultText);
+            }
+
+            if (circles.Count > 50)
+            {
+                resultText += "\n" + ResSvc.TryGetString("TooManyCirclesDetected")
+                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp")
+                    + " " + ResSvc.TryGetString("DetectionThresholdTip")
+                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp2");
+                logger.Warn(resultText);
+            }
+
+            logger.Info(resultText);
 
             ShowResultDialog(windowTitle, original, resultText);
         }
@@ -180,7 +206,7 @@ namespace CollimationCircles.ViewModels
         {
             var dialogViewModel = DialogService.CreateViewModel<ImageViewModel>();
 
-            Stream stream = new MemoryStream(image.ToByteArray());            
+            Stream stream = new MemoryStream(image.ToByteArray());
 
             dialogViewModel.ImageToDisplay = Bitmap.DecodeToWidth(stream, (int)image.Width);
             dialogViewModel.ImageDescription = resultText;
@@ -193,9 +219,9 @@ namespace CollimationCircles.ViewModels
         {
             string message = $"Number of circles detected: {result.CircleCount}\n" +
                 $"Center RMSE: {result.CenterRMSE:F2}\n" +
-                $"Lower RMSE means better collimation.";            
+                $"Lower RMSE means better collimation.";
 
             return message;
-        }        
+        }
     }
 }
