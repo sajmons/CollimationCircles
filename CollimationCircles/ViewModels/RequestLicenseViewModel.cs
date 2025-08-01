@@ -22,7 +22,6 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string licenseRequestText = string.Empty;        
 
-        private decimal licensePrice = 10.00m;
         private string licenseDuration = "Unlimited";
 
         public RequestLicenseViewModel()
@@ -50,15 +49,8 @@ namespace CollimationCircles.ViewModels
 
         [RelayCommand]
         internal void Submit()
-        {
-            if (IsStandardLicense)
-            {
-                AppService.OpenUrl(AppService.PatreonShop);
-            }
-            else
-            {
-                AppService.OpenUrl(AppService.RequestLicensePage);
-            }
+        {            
+            AppService.OpenUrl(AppService.RequestLicensePage);            
 
             if (dialog != null)
             {
@@ -74,7 +66,6 @@ namespace CollimationCircles.ViewModels
             IsStandardLicense = value;
             IsTrialLicense = !IsStandardLicense;
 
-            licensePrice = IsStandardLicense ? 10.00m : 0.00m; // Set price based on license type
             licenseDuration = IsStandardLicense ? "Unlimited" : "30 days"; // Set duration based on license type
 
             LicenseRequestText = GetLicenceText();            
@@ -88,7 +79,6 @@ namespace CollimationCircles.ViewModels
             return $"ClientId: {ClientId}" +
                 $"\nProduct: {Product} {ProductMajorVersion}" +
                 $"\nLicense Type: {licenseType}" +
-                $"\nPrice: {licensePrice:C}" +
                 $"\nDuration: {licenseDuration}";
         }
     }
