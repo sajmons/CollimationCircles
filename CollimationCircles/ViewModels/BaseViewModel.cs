@@ -24,6 +24,10 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool alwaysOnTop = true;
 
+        [JsonProperty]
+        [ObservableProperty]
+        private string openApiKey = string.Empty;
+
         [ObservableProperty]
         private bool invalidLicense = true;
 

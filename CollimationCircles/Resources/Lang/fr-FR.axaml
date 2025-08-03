@@ -175,4 +175,6 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Trop de cercles détectés</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Essayez de changer le seuil.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">L'image doit contenir une étoile centrée et défocalisée</system:String>
+  <system:String x:Key="Text.AIToolsTitle">AI tools</system:String>
+  <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
 </ResourceDictionary>

@@ -55,6 +55,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="6.0.2" />
     <PackageReference Include="Octokit" Version="14.0.0" />
+    <PackageReference Include="OpenAI" Version="2.2.0" />
     <PackageReference Include="Standard.Licensing" Version="1.2.1" />
     <PackageReference Include="System.Management" Version="9.0.7" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
@@ -73,6 +74,9 @@
     </AvaloniaXaml>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\AIUserControl.axaml.cs">
+      <DependentUpon>AIUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\LicenseUserControl.axaml.cs">
       <DependentUpon>LicenseUserControl.axaml</DependentUpon>
     </Compile>

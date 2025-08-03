@@ -175,4 +175,6 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Too many circles detected</system:String>  
   <system:String x:Key="Text.DetectionThresholdHelp">Try changing threshold.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Image should contain centered defocused star</system:String>
+  <system:String x:Key="Text.AIToolsTitle">AI tools</system:String>
+  <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>  
 </ResourceDictionary>

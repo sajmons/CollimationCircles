@@ -153,6 +153,10 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        private bool aiToolsExpanded = true;
+
+        [JsonProperty]
+        [ObservableProperty]
         private bool pinVideoWindowToMainWindow = true;
 
         [JsonProperty]
@@ -307,7 +311,7 @@ namespace CollimationCircles.ViewModels
             RotationAngle = 0;
             Scale = 1;            
             CheckForNewVersionOnStartup = true;
-            AlwaysOnTop = true;
+            AlwaysOnTop = true;            
             ShowMarkAtSelectedItem = true;
             ShowApplicationLog = false;
 
@@ -522,6 +526,7 @@ namespace CollimationCircles.ViewModels
                     SelectedTheme = vm.SelectedTheme;
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
                     AlwaysOnTop = vm.AlwaysOnTop;
+                    OpenApiKey = vm.OpenApiKey;
                     DockInMainWindow = vm.DockInMainWindow;
                     ShowMarkAtSelectedItem = vm.ShowMarkAtSelectedItem;
                     Version = vm.Version ?? AppService.GetAppVersion();
@@ -536,6 +541,7 @@ namespace CollimationCircles.ViewModels
                     SettingsExpanded = vm.SettingsExpanded;
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
                     ProfileManagerExpanded = vm.ProfileManagerExpanded;
+                    AiToolsExpanded = vm.AiToolsExpanded;
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
@@ -606,6 +612,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(Scale):
                 case nameof(LabelSize):
                 case nameof(AlwaysOnTop):
+                case nameof(OpenApiKey):
                 case nameof(SelectedIndex):
                 case nameof(ShowMarkAtSelectedItem):
                 case nameof(DockInMainWindow):
