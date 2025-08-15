@@ -75,7 +75,7 @@ namespace CollimationCircles.ViewModels
             Dispatcher.UIThread.Post(async () =>
             {
                 CameraList = [.. await cameraControlService.GetCameraList()];
-                SelectedCamera = CameraList?.Where(c => c.Name == settingsViewModel.LastSelectedCamera)?.First() ?? CameraList?.First() ?? new();
+                SelectedCamera = CameraList?.Where(c => c.Name == settingsViewModel.LastSelectedCamera)?.FirstOrDefault() ?? CameraList?.FirstOrDefault() ?? new();
             });
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
