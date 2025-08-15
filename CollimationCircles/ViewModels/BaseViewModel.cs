@@ -26,7 +26,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private string openApiKey = string.Empty;
+        private string openAiApiKey = string.Empty;
 
         [ObservableProperty]
         private bool invalidLicense = true;

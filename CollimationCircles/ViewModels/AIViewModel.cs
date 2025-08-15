@@ -1,16 +1,8 @@
-using Avalonia;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
-using OpenAI.Assistants;
-using OpenAI;
-using OpenAI.Chat;
-using OpenAI.Files;
 using System;
-using System.ClientModel;
 using System.ComponentModel;
-using TextCopy;
 using HanumanInstitute.MvvmDialogs;
 using System.Threading.Tasks;
 
@@ -47,7 +39,9 @@ namespace CollimationCircles.ViewModels
             }
 
             libVLCService.TakeSnapshot();
-            aIService.AnalyzeImage(ApiKey, $".\\{LibVLCService.SnapshotImageFile}");
+            string result = await aIService.AnalyzeImageAsync(ApiKey, $".\\{LibVLCService.SnapshotImageFile}");
+
+            logger.Info("AI analysis result: {0}", result);
         }
 
         [RelayCommand]
@@ -59,7 +53,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void SetOpenApiKey()
         {
-            OpenApiKey = ApiKey;
+            OpenAiApiKey = ApiKey;
         }
 
         partial void OnApiKeyChanged(string value)

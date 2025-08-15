@@ -526,7 +526,7 @@ namespace CollimationCircles.ViewModels
                     SelectedTheme = vm.SelectedTheme;
                     CheckForNewVersionOnStartup = vm.CheckForNewVersionOnStartup;
                     AlwaysOnTop = vm.AlwaysOnTop;
-                    OpenApiKey = vm.OpenApiKey;
+                    OpenAiApiKey = vm.OpenAiApiKey;
                     DockInMainWindow = vm.DockInMainWindow;
                     ShowMarkAtSelectedItem = vm.ShowMarkAtSelectedItem;
                     Version = vm.Version ?? AppService.GetAppVersion();
@@ -612,7 +612,7 @@ namespace CollimationCircles.ViewModels
                 case nameof(Scale):
                 case nameof(LabelSize):
                 case nameof(AlwaysOnTop):
-                case nameof(OpenApiKey):
+                case nameof(OpenAiApiKey):
                 case nameof(SelectedIndex):
                 case nameof(ShowMarkAtSelectedItem):
                 case nameof(DockInMainWindow):

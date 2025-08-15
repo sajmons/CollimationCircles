@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
     interface IAIService
     {
-        public void AnalyzeImage(string apiKey, string pathToImage);
+        public Task<string> AnalyzeImageAsync(string openApiKey, string pathToLocalImage, string openAiModel = "gpt-4o");
     }
 }
