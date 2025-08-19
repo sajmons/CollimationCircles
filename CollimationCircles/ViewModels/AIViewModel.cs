@@ -39,7 +39,9 @@ namespace CollimationCircles.ViewModels
             }
 
             libVLCService.TakeSnapshot();
-            string result = await aIService.AnalyzeImageAsync(ApiKey, $".\\{LibVLCService.SnapshotImageFile}");
+            //string result = await aIService.AnalyzeImageAsync(ApiKey, $".\\{LibVLCService.SnapshotImageFile}");
+            string result = await aIService.AnalyzeCollimationWithGeminiAsync(ApiKey, $".\\{LibVLCService.SnapshotImageFile}");
+            
 
             logger.Info("AI analysis result: {0}", result);
         }
