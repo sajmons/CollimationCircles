@@ -64,7 +64,8 @@
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
               Header="{DynamicResource Text.AIToolsTitle}"
-              IsExpanded="{Binding AiToolsExpanded}">
+              IsExpanded="{Binding AiToolsExpanded}"
+              IsVisible="False">
               <StackPanel Orientation="Vertical">
                 <controls:AIUserControl/>
               </StackPanel>
