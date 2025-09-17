@@ -15,8 +15,6 @@ namespace CollimationCircles.ViewModels
         private readonly ILibVLCService libVLCService;
         private readonly IAIService aIService;
 
-        private INotifyPropertyChanged? dialog;        
-
         [ObservableProperty]
         private string apiKey = string.Empty;
 
