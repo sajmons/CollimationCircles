@@ -47,6 +47,7 @@
     <PackageReference Include="DeviceId.Linux" Version="6.9.0" />
     <PackageReference Include="DeviceId.Mac" Version="6.9.0" />
     <PackageReference Include="DeviceId.Windows.WmiLight" Version="6.9.0" />
+    <PackageReference Include="Google_GenerativeAI" Version="3.0.0" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.4" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.8.2" />

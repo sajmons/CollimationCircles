@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Diagnostics;
+using GenerativeAI;
 using OpenAI;
 using OpenAI.Assistants;
 using OpenAI.Files;
@@ -128,7 +129,46 @@ public class AIService : IAIService
         {
             return $"Error during collimation analysis: {ex.Message}";
         }
+
+#pragma warning restore OPENAI001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
     }
 
-    #pragma warning restore OPENAI001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+    public async Task<string> AnalyzeCollimationWithGeminiAsync(
+        string googleApiKey,
+        string pathToImageFile,
+        string modelName = "gemini-2.0-flash")
+    {
+        if (string.IsNullOrEmpty(googleApiKey))
+            throw new ArgumentException("Google API key is required", nameof(googleApiKey));
+
+        if (string.IsNullOrEmpty(pathToImageFile) || !File.Exists(pathToImageFile))
+            throw new FileNotFoundException("Image file not found", pathToImageFile);
+
+        // Configure the Gemini client
+        GenerativeModel model = new GenerativeModel(modelName, googleApiKey);
+
+        // Create your expert prompt
+        string prompt = @"
+You are a highly skilled telescope collimation expert. You will receive a single defocused star or optical path (Cheshire) image.
+Provide a detailed technician-grade collimation analysis report with:
+1) Verdict: well, slightly, or significantly miscollimated.
+2) Visual cues used (e.g., concentric rings, Poisson spot, secondary offset, spider alignment).
+3) Estimated offsets or tilt directions with a 0–10 severity scale.
+4) Specific step-by-step adjustments (secondary first, then primary).
+5) Confidence and any caveats (seeing, focus side, centering).
+If no text output is produced, include a diagnostic note.";
+
+        // Send image + prompt to Gemini
+        var response = await model.GenerateContentAsync(prompt, pathToImageFile, "image/jpeg");
+
+        // Retrieve text output
+        string output = response?.Text ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(output))
+        {
+            return "No analysis text returned by Gemini. Possible issues: model couldn’t interpret image, prompt not understood, or API error occurred.";
+        }
+
+        return output.Trim();
+    }
 }
