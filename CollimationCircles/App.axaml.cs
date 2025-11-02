@@ -65,8 +65,6 @@ public partial class App : Application
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
             .AddTransient<ImageViewModel>()
-            .AddTransient<AIViewModel>()
-            .AddSingleton<IAIService, AIService>()
             .BuildServiceProvider());
     }
 }

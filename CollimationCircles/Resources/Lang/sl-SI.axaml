@@ -175,6 +175,5 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Zaznanih je preveč krogov</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Poskusite spremeniti prag.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Slika mora vsebovati centrirano defokusirano zvezdo</system:String>
-  <system:String x:Key="Text.AIToolsTitle">AI tools</system:String>
   <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
 </ResourceDictionary>

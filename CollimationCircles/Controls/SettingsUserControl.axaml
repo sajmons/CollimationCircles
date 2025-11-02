@@ -60,16 +60,6 @@
                 <controls:CollimationAnalysisUserControl/>
               </StackPanel>
             </Expander>
-            <Expander
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Header="{DynamicResource Text.AIToolsTitle}"
-              IsExpanded="{Binding AiToolsExpanded}"
-              IsVisible="False">
-              <StackPanel Orientation="Vertical">
-                <controls:AIUserControl/>
-              </StackPanel>
-            </Expander>
           </StackPanel>
         </ScrollViewer>
       </TabItem>

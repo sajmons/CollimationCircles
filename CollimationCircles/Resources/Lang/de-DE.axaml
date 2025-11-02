@@ -175,6 +175,5 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Zu viele Kreise erkannt</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Versuchen Sie, den Schwellenwert zu ändern.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Das Bild sollte einen zentrierten, defokussierten Stern enthalten</system:String>
-  <system:String x:Key="Text.AIToolsTitle">AI tools</system:String>
   <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
 </ResourceDictionary>
