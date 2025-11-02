@@ -153,10 +153,6 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private bool aiToolsExpanded = true;
-
-        [JsonProperty]
-        [ObservableProperty]
         private bool pinVideoWindowToMainWindow = true;
 
         [JsonProperty]
@@ -541,7 +537,6 @@ namespace CollimationCircles.ViewModels
                     SettingsExpanded = vm.SettingsExpanded;
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
                     ProfileManagerExpanded = vm.ProfileManagerExpanded;
-                    AiToolsExpanded = vm.AiToolsExpanded;
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
