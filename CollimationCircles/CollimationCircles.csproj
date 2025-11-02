@@ -36,10 +36,10 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.6" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.6" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.6">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
@@ -47,18 +47,17 @@
     <PackageReference Include="DeviceId.Linux" Version="6.9.0" />
     <PackageReference Include="DeviceId.Mac" Version="6.9.0" />
     <PackageReference Include="DeviceId.Windows.WmiLight" Version="6.9.0" />
-    <PackageReference Include="Google_GenerativeAI" Version="3.0.0" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.4" />
-    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.8.2" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="8.0.10" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.9.1" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="8.0.12" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="NLog" Version="6.0.4" />
+    <PackageReference Include="NLog" Version="6.0.5" />
     <PackageReference Include="Octokit" Version="14.0.0" />
-    <PackageReference Include="OpenAI" Version="2.4.0" />
+    <PackageReference Include="OpenAI" Version="2.6.0" />
     <PackageReference Include="Standard.Licensing" Version="1.2.1" />
-    <PackageReference Include="System.Management" Version="9.0.9" />
+    <PackageReference Include="System.Management" Version="9.0.10" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
 
@@ -75,9 +74,6 @@
     </AvaloniaXaml>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Controls\AIUserControl.axaml.cs">
-      <DependentUpon>AIUserControl.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Controls\LicenseUserControl.axaml.cs">
       <DependentUpon>LicenseUserControl.axaml</DependentUpon>
     </Compile>
