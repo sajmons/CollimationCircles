@@ -36,10 +36,10 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.3.8" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.8" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.8">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
@@ -51,13 +51,12 @@
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.4" />
     <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.9.1" />
     <PackageReference Include="Magick.NET.SystemDrawing" Version="8.0.12" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="NLog" Version="6.0.5" />
+    <PackageReference Include="NLog" Version="6.0.6" />
     <PackageReference Include="Octokit" Version="14.0.0" />
-    <PackageReference Include="OpenAI" Version="2.6.0" />
     <PackageReference Include="Standard.Licensing" Version="1.2.1" />
-    <PackageReference Include="System.Management" Version="9.0.10" />
+    <PackageReference Include="System.Management" Version="10.0.0" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
 
