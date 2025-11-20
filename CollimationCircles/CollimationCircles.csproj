@@ -12,7 +12,7 @@
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Version>4.0.0</Version>
-    <InformationalVersion>4.0.0 alpha2</InformationalVersion>
+    <InformationalVersion>4.0.0 beta1</InformationalVersion>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
@@ -98,12 +98,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Update="icon.icns">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="license.lic">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="trial expired license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="license1.lic">
