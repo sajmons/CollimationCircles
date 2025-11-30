@@ -15,7 +15,7 @@ Param(
     [Parameter(Mandatory=$False)]
     [ValidateNotNullOrEmpty()]
     [Alias("f")]
-    [string]$Framework = "net8.0",
+    [string]$Framework = "net10.0",
 	# Output
     [Parameter(Mandatory=$False)]
     [ValidateNotNullOrEmpty()]
