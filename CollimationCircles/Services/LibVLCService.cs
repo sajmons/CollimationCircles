@@ -32,39 +32,29 @@ namespace CollimationCircles.Services
             // https://wiki.videolan.org/VLC_command-line_help/
 
             string[] libVLCOptions = [
-                //$"--width=320",
-                //$"--height=240",
-                //$"--zoom=1.5",
-                //$"--log-verbose=0"
-                //"--video-filter=adjust{contrast=1.0,brightness=1.0,hue=0,saturation=1.0,gamma=1.0}"
-                "--log-verbose=3",
-                "--logfile=logs\\vlclog.txt",
-                "--file-logging"
+                "--verbose=3"
             ];
 
             libVLC = new(libVLCOptions);
 
-            if (OperatingSystem.IsWindows())
+            libVLC.Log += (sender, e) =>
             {
-                libVLC.Log += (sender, e) =>
+                switch (e.Level)
                 {
-                    switch (e.Level)
-                    {
-                        case LogLevel.Error:
-                            logger.Error($"LibVLC: {e.Module} {e.Message}");
-                            break;
-                        case LogLevel.Debug:
-                            logger.Debug($"LibVLC: {e.Module} {e.Message}");
-                            break;
-                        case LogLevel.Warning:
-                            logger.Warn($"LibVLC: {e.Module} {e.Message}");
-                            break;
-                        case LogLevel.Notice:
-                            logger.Info($"LibVLC: {e.Module} {e.Message}");
-                            break;
-                    }
-                };
-            }
+                    case LogLevel.Error:
+                        logger.Error($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                    case LogLevel.Debug:
+                        logger.Debug($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                    case LogLevel.Warning:
+                        logger.Warn($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                    case LogLevel.Notice:
+                        logger.Info($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                }
+            };
 
             MediaPlayer = new(libVLC)
             {
@@ -92,7 +82,7 @@ namespace CollimationCircles.Services
                 commandBuilder = new RpiCameraAppsCommandBuilder
                 {
                     CommandType = RpicamAppCommand.Vid
-                }.SetDefaultParameters();                
+                }.SetDefaultParameters();
 
                 // with libcamera we need first to create video stream
                 List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(camera, commandBuilder);
