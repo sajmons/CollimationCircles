@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
@@ -234,8 +235,11 @@ namespace CollimationCircles.ViewModels
                 Themes.Custom.Night
             ];
 
+            var osTheme = Application.Current?.PlatformSettings?.GetColorValues();
+            bool isDark = osTheme?.ThemeVariant is Avalonia.Platform.PlatformThemeVariant.Dark;
+
             ThemeList = new ObservableCollection<ThemeVariant>(themes);
-            //SelectedTheme = ThemeList.FirstOrDefault() ?? ThemeVariant.Default;
+            SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
 
             logger.Info("Initialized themes");
         }
@@ -252,7 +256,7 @@ namespace CollimationCircles.ViewModels
             ];
 
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
-            //SelectedLanguage = LanguageList.FirstOrDefault();
+            SelectedLanguage = LanguageList.FirstOrDefault();
 
             logger.Info("Initialized languages");
         }

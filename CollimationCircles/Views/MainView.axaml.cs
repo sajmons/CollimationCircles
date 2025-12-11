@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Styling;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
@@ -40,6 +41,13 @@ namespace CollimationCircles.Views
             khs = Ioc.Default.GetRequiredService<IKeyHandlingService>();
 
             PositionChanged += MainView_PositionChanged;
+
+            // react to system theme changes
+            Application.Current!.PlatformSettings!.ColorValuesChanged += (sender, args) =>
+            {
+                bool isDark = args.ThemeVariant == Avalonia.Platform.PlatformThemeVariant.Dark;
+                vm.SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
+            };
         }
 
         private void MainView_PositionChanged(object? sender, PixelPointEventArgs e)
