@@ -46,11 +46,14 @@ namespace CollimationCircles.Views
         {
             if (svm.PinVideoWindowToMainWindow == false) return;
 
-            Position = svm.MainWindowPosition;
+            Position = new Avalonia.PixelPoint(
+                svm.MainWindowPosition.X + 1,
+                svm.MainWindowPosition.Y
+            );
 
             if (svm.DockInMainWindow)
             {
-                Width = svm.MainWindowWidth - svm.SettingsWindowWidth / 2;
+                Width = svm.MainWindowWidth - svm.SettingsWindowWidth / 2 + 9;
             }
             else
             {
