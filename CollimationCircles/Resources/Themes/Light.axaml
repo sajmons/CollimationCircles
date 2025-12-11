@@ -14,6 +14,7 @@
 
       <Color x:Key="Color1">#de2626</Color>
       <Color x:Key="Color2">#1B1C18</Color>
+      <Color x:Key="Color5">#de2626</Color>
       <Color x:Key="BackgroundColor">#FEFCF6</Color>      
             
       <SolidColorBrush x:Key="TextControlForeground" Color="{StaticResource Color2}"/>

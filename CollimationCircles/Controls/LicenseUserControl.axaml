@@ -11,7 +11,7 @@
   <StackPanel>    
     <Button
       IsVisible="{Binding InvalidLicense}"
-      Background="{DynamicResource Color1}"
+      Background="{DynamicResource Color5}"
       Content="{DynamicResource Text.RequestLicense}"
       Command="{ReflectionBinding RequestLicense}"/>
   </StackPanel>
