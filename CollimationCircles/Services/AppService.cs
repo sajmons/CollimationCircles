@@ -34,7 +34,7 @@ public class AppService
     public const string LangDir = "CollimationCircles/Resources/Lang";
     public const string ProductName = "Collimation Circles";
     public const string RequestLicensePage = $"{BasePage}/software/request-license";
-    public const string PatreonShop = $"https://www.patreon.com/SaimonsAstronomy/shop/collimation-circles-4-licence-984002";
+    public const string PatreonShop = $"https://www.patreon.com/SaimonsAstronomy/shop";
 
     public static string GetAppMajorVersion()
     {
