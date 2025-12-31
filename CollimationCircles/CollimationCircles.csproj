@@ -49,8 +49,8 @@
     <PackageReference Include="DeviceId.Windows.WmiLight" Version="6.9.0" />
     <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.5" />
-    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.10.0" />
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="8.0.13" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.10.1" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="8.0.14" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NLog" Version="6.0.7" />
