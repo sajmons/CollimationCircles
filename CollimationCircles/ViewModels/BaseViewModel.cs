@@ -24,10 +24,6 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool alwaysOnTop = true;
 
-        [JsonProperty]
-        [ObservableProperty]
-        private string openAiApiKey = string.Empty;
-
         [ObservableProperty]
         private bool invalidLicense = true;
 
@@ -45,6 +41,14 @@ namespace CollimationCircles.ViewModels
 
         [ObservableProperty]
         private string productMajorVersion = AppService.GetAppMajorVersion();
+
+#if DEBUG
+        [ObservableProperty]
+        private bool isDebug = true;
+#else 
+        [ObservableProperty]
+        private bool isDebug = false;
+#endif
 
         internal readonly IResourceService ResSvc;
         internal readonly IDialogService DialogService;

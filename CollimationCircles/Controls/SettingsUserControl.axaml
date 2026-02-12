@@ -55,7 +55,8 @@
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
               Header="{DynamicResource Text.AiryDiscAnalysis}"
-              IsExpanded="{Binding CameraVideoStreamExpanded}">
+              IsExpanded="{Binding CameraVideoStreamExpanded}"
+              IsVisible="{Binding IsDebug}">
               <StackPanel Orientation="Vertical">
                 <controls:CollimationAnalysisUserControl/>
               </StackPanel>
