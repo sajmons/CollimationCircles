@@ -61,7 +61,7 @@ jobs:
           echo "APP_VERSION=$version" >> $env:GITHUB_OUTPUT
 
       - name: Restore dependencies
-        run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }}
+        run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:PublishReadyToRun=${{ matrix.ready2run }}
 
       - name: Publish
         shell: pwsh
