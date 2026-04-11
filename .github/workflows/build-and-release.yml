@@ -117,20 +117,21 @@ jobs:
       # ?? macOS: Create .app bundle ???????????????????????????????????????
       - name: Create macOS .app bundle
         if: matrix.runtime == 'osx-x64'
-        shell: pwsh
+        shell: bash
+        env:
+          APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
+          RUNTIME: ${{ matrix.runtime }}
         run: |
-          $appName = "${{ env.APP_NAME }}"
-          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
-          $bundle = "$appName.app"
-          $output = "./publish"
-          $runtime = "${{ matrix.runtime }}"
+          set -euo pipefail
+          bundle="${APP_NAME}.app"
+          output="./publish"
 
           # Create bundle directory structure
-          New-Item -Path "$output/$bundle/Contents/MacOS" -ItemType Directory -Force
-          New-Item -Path "$output/$bundle/Contents/Resources" -ItemType Directory -Force
+          mkdir -p "${output}/${bundle}/Contents/MacOS"
+          mkdir -p "${output}/${bundle}/Contents/Resources"
 
           # Create Info.plist
-          $plistContent = @"
+          cat > "${output}/${bundle}/Contents/Info.plist" <<EOF
           <?xml version="1.0" encoding="utf-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
@@ -138,41 +139,39 @@ jobs:
               <key>CFBundleIconFile</key>
               <string>icon.icns</string>
               <key>CFBundleIdentifier</key>
-              <string>com.saimons.$appName</string>
+              <string>com.saimons.${APP_NAME}</string>
               <key>CFBundleName</key>
-              <string>$appName</string>
+              <string>${APP_NAME}</string>
               <key>CFBundleVersion</key>
-              <string>$appVersion</string>
+              <string>${APP_VERSION}</string>
               <key>LSMinimumSystemVersion</key>
               <string>11</string>
               <key>CFBundleExecutable</key>
-              <string>$appName</string>
+              <string>${APP_NAME}</string>
               <key>CFBundleInfoDictionaryVersion</key>
               <string>6.0</string>
               <key>CFBundlePackageType</key>
               <string>APPL</string>
               <key>CFBundleShortVersionString</key>
-              <string>$appVersion</string>
+              <string>${APP_VERSION}</string>
               <key>NSHighResolutionCapable</key>
               <true/>
             </dict>
           </plist>
-          "@
-
-          $plistContent | Set-Content -Path "$output/$bundle/Contents/Info.plist" -Encoding UTF8
+          EOF
 
           # Copy application files to Contents/MacOS
-          Copy-Item -Path "$output/$runtime/*" -Destination "$output/$bundle/Contents/MacOS" -Recurse
+          cp -R "${output}/${RUNTIME}/"* "${output}/${bundle}/Contents/MacOS/"
 
           # Move icon to Contents/Resources
-          if (Test-Path "$output/$bundle/Contents/MacOS/icon.icns") {
-            Move-Item -Path "$output/$bundle/Contents/MacOS/icon.icns" -Destination "$output/$bundle/Contents/Resources/"
-          }
+          if [ -f "${output}/${bundle}/Contents/MacOS/icon.icns" ]; then
+            mv "${output}/${bundle}/Contents/MacOS/icon.icns" "${output}/${bundle}/Contents/Resources/"
+          fi
 
-          # Make executable
-          chmod +x "$output/$bundle/Contents/MacOS/$appName"
+          # Make the main binary executable
+          chmod +x "${output}/${bundle}/Contents/MacOS/${APP_NAME}"
 
-      # ?? Windows / macOS: Package as ZIP ?????????????????????????????????
+      # ?? Windows: Package as ZIP ??????????????????????????????????????????
       - name: Package (Windows)
         if: startsWith(matrix.runtime, 'win-')
         shell: pwsh
@@ -191,18 +190,21 @@ jobs:
           Compress-Archive -Force "$output/$runtime/*" $zipName
           Write-Host "Created: $zipName" -ForegroundColor Green
 
+      # ?? macOS: Package as tar.gz (preserves executable permissions) ????????
       - name: Package (macOS)
         if: matrix.runtime == 'osx-x64'
-        shell: pwsh
+        shell: bash
+        env:
+          APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
+          RUNTIME: ${{ matrix.runtime }}
         run: |
-          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
-          $runtime = "${{ matrix.runtime }}"
-          $output = "./publish"
-          $bundle = "${{ env.APP_NAME }}.app"
+          set -euo pipefail
+          output="./publish"
+          bundle="${APP_NAME}.app"
 
-          $zipName = "$output/${{ matrix.index }}-${{ env.APP_NAME }}-$appVersion-$runtime.zip"
-          Compress-Archive -Force "$output/$bundle" $zipName
-          Write-Host "Created: $zipName" -ForegroundColor Green
+          tarName="${output}/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.tar.gz"
+          tar -czf "${tarName}" -C "${output}" "${bundle}"
+          echo "Created: ${tarName}"
 
       # ?? Upload artifacts ????????????????????????????????????????????????
       - name: Upload build artifact
@@ -212,6 +214,7 @@ jobs:
           path: |
             ./publish/${{ matrix.index }}-*.zip
             ./publish/${{ matrix.index }}-*.tar.gz
+          compression-level: 0
           retention-days: 30
 
   release:
