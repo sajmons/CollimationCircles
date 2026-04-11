@@ -186,7 +186,7 @@ Function PublishOne
 	$appName = [System.IO.Path]::GetFileNameWithoutExtension($Project)
 
 	$xml = [Xml] (Get-Content $Project)
-    $versionInfo = [String] $xml.Project.PropertyGroup.InformationalVersion
+	$versionInfo = ([String] $xml.Project.PropertyGroup.InformationalVersion).Trim()
 	
     $commandRestore = "dotnet restore -r $Runtime"
 
