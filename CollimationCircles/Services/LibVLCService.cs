@@ -1,4 +1,4 @@
-﻿using CollimationCircles.Helper.RpiCameraTools;
+using CollimationCircles.Helper.RpiCameraTools;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CommunityToolkit.Diagnostics;
@@ -7,6 +7,7 @@ using LibVLCSharp.Shared;
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
@@ -32,7 +33,10 @@ namespace CollimationCircles.Services
             // https://wiki.videolan.org/VLC_command-line_help/
 
             string[] libVLCOptions = [
-                "--verbose=3"
+                "--verbose=3",
+                "--no-snapshot-preview",
+                "--no-osd",
+                "--no-video-title-show"
             ];
 
             libVLC = new(libVLCOptions);
@@ -60,7 +64,7 @@ namespace CollimationCircles.Services
             {
                 FileCaching = 0,
                 NetworkCaching = 0,
-                EnableHardwareDecoding = true
+                EnableHardwareDecoding = false
             };
 
             MediaPlayer.Opening += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Opening));
@@ -177,14 +181,35 @@ namespace CollimationCircles.Services
 
             FullAddress = GetFullUrlFromParts(camera);
             return FullAddress;
-        }
+        }        
 
-        public void TakeSnapshot()
+        public async Task<byte[]?> TakeSnapshotDataAsync()
         {
-            if (MediaPlayer.IsPlaying)
+            if (!MediaPlayer.IsPlaying) return null;
+
+            string tempFile = Path.Combine(Path.GetTempPath(), $"live_collimation_{Guid.NewGuid()}.jpg");
+            try
             {
-                MediaPlayer.TakeSnapshot(0, $".\\{SnapshotImageFile}", 800, 600);
+                if (MediaPlayer.TakeSnapshot(0, tempFile, 0, 0))
+                {
+                    // Wait a moment for file to be written (LibVLC snapshot is async internally)
+                    for (int i = 0; i < 5; i++)
+                    {
+                        if (File.Exists(tempFile))
+                        {
+                            byte[] data = await File.ReadAllBytesAsync(tempFile);
+                            File.Delete(tempFile);
+                            return data;
+                        }
+                        await Task.Delay(50);
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to capture live snapshot data");
+            }
+            return null;
         }
     }
 }

@@ -345,7 +345,7 @@ public class AppService
             .AddMotherboardSerialNumber()
             .AddSystemDriveSerialNumber())
         .OnMac(mac => mac
-            .AddSystemDriveSerialNumber()
+            .AddSystemDriveVolumeUUID()
             .AddPlatformSerialNumber())
         .ToString();
     }
