@@ -93,60 +93,26 @@ jobs:
             throw "dotnet publish failed with exit code $LASTEXITCODE"
           }
 
-      # ?? Linux: Create AppImage ??????????????????????????????????????????
-      - name: Create AppImage
+      # ?? Linux: Package as tar.gz (preserves executable permissions) ????????
+      - name: Package (Linux)
         if: startsWith(matrix.runtime, 'linux-')
         shell: bash
         env:
           APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
           RUNTIME: ${{ matrix.runtime }}
-          ARCH_APPIMAGE: ${{ matrix.runtime == 'linux-x64' && 'x86_64' || 'aarch64' }}
         run: |
           set -euo pipefail
+          output="./publish"
 
-          APP_DIR="./AppDir"
-
-          # Create AppDir structure
-          mkdir -p "${APP_DIR}/usr/bin"
-          mkdir -p "${APP_DIR}/usr/share/icons/hicolor/256x256/apps"
-          mkdir -p "${APP_DIR}/usr/share/applications"
-
-          # Copy published files into AppDir
-          cp -r ./publish/${RUNTIME}/* "${APP_DIR}/usr/bin/"
-
-          # Remove icon.icns (macOS only)
-          rm -f "${APP_DIR}/usr/bin/icon.icns"
-
-          # Copy PNG icon for AppImage
-          cp "CollimationCircles/Resources/Images/icon_256px.png" \
-             "${APP_DIR}/usr/share/icons/hicolor/256x256/apps/${APP_NAME}.png"
-
-          # Copy .desktop file
-          cp "CollimationCircles/${APP_NAME}.desktop" "${APP_DIR}/usr/share/applications/${APP_NAME}.desktop"
-
-          # Symlink .desktop and icon to AppDir root (required by AppImage spec)
-          ln -sf "usr/share/applications/${APP_NAME}.desktop" "${APP_DIR}/${APP_NAME}.desktop"
-          ln -sf "usr/share/icons/hicolor/256x256/apps/${APP_NAME}.png" "${APP_DIR}/${APP_NAME}.png"
-
-          # Create AppRun script
-          printf '#!/bin/bash\nSELF=$(readlink -f "$0")\nHERE=$(dirname "$SELF")\nexport PATH="${HERE}/usr/bin:${PATH}"\nexec "${HERE}/usr/bin/CollimationCircles" "$@"\n' > "${APP_DIR}/AppRun"
-          chmod +x "${APP_DIR}/AppRun"
+          # Remove icon.icns since it's only for macOS
+          rm -f "${output}/${RUNTIME}/icon.icns"
 
           # Make the main binary executable
-          chmod +x "${APP_DIR}/usr/bin/${APP_NAME}"
+          chmod +x "${output}/${RUNTIME}/${APP_NAME}"
 
-          # Download appimagetool
-          APPIMAGETOOL="appimagetool-x86_64.AppImage"
-          curl -fsSL -o "${APPIMAGETOOL}" \
-            "https://github.com/AppImage/appimagetool/releases/download/continuous/${APPIMAGETOOL}"
-          chmod +x "${APPIMAGETOOL}"
-
-          # Build AppImage (--appimage-extract-and-run avoids FUSE requirement in CI)
-          ARCH="${ARCH_APPIMAGE}" ./${APPIMAGETOOL} --appimage-extract-and-run \
-            "${APP_DIR}" \
-            "./publish/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.AppImage"
-
-          echo "Created: ./publish/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.AppImage"
+          tarName="${output}/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.tar.gz"
+          tar -czf "${tarName}" -C "${output}/${RUNTIME}" .
+          echo "Created: ${tarName}"
 
       # ?? macOS: Create .app bundle ???????????????????????????????????????
       - name: Create macOS .app bundle
@@ -239,20 +205,13 @@ jobs:
           Write-Host "Created: $zipName" -ForegroundColor Green
 
       # ?? Upload artifacts ????????????????????????????????????????????????
-      - name: Upload build artifact (ZIP)
-        if: ${{ !startsWith(matrix.runtime, 'linux-') }}
+      - name: Upload build artifact
         uses: actions/upload-artifact@v5
         with:
           name: ${{ env.APP_NAME }}-${{ matrix.runtime }}
-          path: ./publish/${{ matrix.index }}-*.zip
-          retention-days: 30
-
-      - name: Upload build artifact (AppImage)
-        if: startsWith(matrix.runtime, 'linux-')
-        uses: actions/upload-artifact@v5
-        with:
-          name: ${{ env.APP_NAME }}-${{ matrix.runtime }}
-          path: ./publish/${{ matrix.index }}-*.AppImage
+          path: |
+            ./publish/${{ matrix.index }}-*.zip
+            ./publish/${{ matrix.index }}-*.tar.gz
           retention-days: 30
 
   release:
@@ -270,7 +229,7 @@ jobs:
           merge-multiple: true
 
       - name: List artifacts
-        run: find ./artifacts -type f \( -name "*.zip" -o -name "*.AppImage" \) | sort
+        run: find ./artifacts -type f \( -name "*.zip" -o -name "*.tar.gz" \) | sort
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -280,6 +239,6 @@ jobs:
           prerelease: false
           files: |
             ./artifacts/*.zip
-            ./artifacts/*.AppImage
+            ./artifacts/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
