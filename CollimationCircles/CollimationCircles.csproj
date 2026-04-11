@@ -18,7 +18,7 @@
     <Copyright>Copyright © 2023</Copyright>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <RuntimeIdentifiers>win-x64;linux-x64;linux-arm64;osx-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64;osx-x64</RuntimeIdentifiers>
     <UseAppHost>true</UseAppHost>
     <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
     <ApplicationIcon>Resources\Images\icon_256px.ico</ApplicationIcon>
