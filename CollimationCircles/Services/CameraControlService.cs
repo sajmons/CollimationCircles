@@ -1,13 +1,11 @@
 ﻿using CollimationCircles.Models;
-using CommunityToolkit.Diagnostics;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
     internal class CameraControlService : ICameraControlService
     {
+        private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public void Set(ControlType controlName, double value, Camera camera)
         {
             Guard.IsNotNull(camera);
@@ -33,21 +31,28 @@ namespace CollimationCircles.Services
         {
             List<Camera> cameras = [];
 
-            if (OperatingSystem.IsWindows())
+            try
             {
-                var dshowCameras = await new DShowCameraDetect().GetCameras();
-                cameras.AddRange(dshowCameras);
+                if (OperatingSystem.IsWindows())
+                {
+                    var dshowCameras = await new DShowCameraDetect().GetCameras();
+                    cameras.AddRange(dshowCameras);
+                }
+                else
+                {
+                    var raspiCameras = await new RasPiCameraDetect().GetCameras();
+                    cameras.AddRange(raspiCameras);
+
+                    var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
+                    cameras.AddRange(v4l2Cameras);
+                }
+
+                cameras.Add(new Camera() { APIType = APIType.Remote });
             }
-            else
+            catch (Exception ex)
             {
-                var raspiCameras = await new RasPiCameraDetect().GetCameras();
-                cameras.AddRange(raspiCameras);
-
-                var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
-                cameras.AddRange(v4l2Cameras);
+                logger.Error(ex, "Error while getting camera list");
             }
-
-            cameras.Add(new Camera() { APIType = APIType.Remote });
 
             return cameras;
         }
