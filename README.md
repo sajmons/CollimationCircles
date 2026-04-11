@@ -3,11 +3,11 @@
 <img src="https://github.com/sajmons/CollimationCircles/assets/7437280/1424b10e-b81e-483d-bd1b-cf2ce30869a5" width="500">
 <img src="https://github.com/sajmons/CollimationCircles/assets/7437280/2495c622-4683-4d8e-b39d-667203580c19" width="500">
 
-This program was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
+This application was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
 
 Main purpose of this program is to help you with aligning optical elements of your telescope such as secondary mirror, primary mirror, focuser, etc.
 
-Collimation Circles is developed with .NET 7 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS (only in virtual machine), but it should work.
+Collimation Circles is developed with .NET 8 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS (only in virtual machine), but it should work.
 
 Feel free to report any issues. Suggestions and contributions are welcome!
 
@@ -98,7 +98,7 @@ and then run the CollimationCircles program again. Main Window should now be tra
 Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
 
 # Running from GitHub source code (works on all platforms)
-After installing .NET Framework you type following terminal commands:
+After installing  Framework you type following terminal commands:
 ```
 sudo apt-get install git
 ```
@@ -115,9 +115,9 @@ dotnet run
 # Building and publishing
 
 ## Prerequisites for building
-To use this application, you must first install .NET Framework on your computer.
+To use this application, you must first install  Framework on your computer.
 
-## .NET Framework Instalation
+##  Framework Instalation
 
 ### Windows 10 and above
 https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
@@ -130,7 +130,7 @@ winget install Microsoft.DotNet.SDK.7
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
 
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
 ```
 
 ### Raspbian OS Bullseye x64
@@ -145,19 +145,19 @@ sudo dpkg -i packages-microsoft-prod.deb
 rm packages-microsoft-prod.deb
 ```
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-7.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
 ```
 
 ### Raspbian OS Bullseye ARM
 https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
 ```
-wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh
+wget https://dot/v1/dotnet-install.sh -O dotnet-install.sh
 ```
 ```
 sudo chmod +x ./dotnet-install.sh
 ```
 ```
-sudo ./dotnet-install.sh --channel 7.0 --install-dir /opt/dotnet/
+sudo ./dotnet-install.sh --channel 8.0 --install-dir /opt/dotnet/
 ```
 ```
 echo 'export DOTNET_ROOT=/opt/dotnet/' >> ~/.bashrc
@@ -180,6 +180,6 @@ On windows I'm using these commands to make prebuild binaries.
 dotnet restore .\CollimationCircles.sln -r win-x64
 ```
 ```
-dotnet publish -c Release -f net7.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
+dotnet publish -c Release -f net8.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
 ```
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
