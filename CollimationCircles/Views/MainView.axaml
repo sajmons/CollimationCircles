@@ -27,6 +27,10 @@
       <RowDefinition Height="100" />
     </Grid.RowDefinitions>    
 
+    <controls:CollimationAnalysisUserControl
+      Width="{Binding SettingsMinWidth}"
+      Height="{Binding MainWindowHeight}"/>
+
     <controls:SettingsUserControl
       Grid.Column="1"
       Grid.RowSpan="2"
