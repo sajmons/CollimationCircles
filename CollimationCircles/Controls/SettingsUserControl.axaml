@@ -50,17 +50,7 @@
               <StackPanel Orientation="Vertical">
                 <controls:ProfileManagerUserControl/>
               </StackPanel>
-            </Expander>
-            <Expander
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Header="{DynamicResource Text.AiryDiscAnalysis}"
-              IsExpanded="{Binding CameraVideoStreamExpanded}"
-              IsVisible="{Binding IsDebug}">
-              <StackPanel Orientation="Vertical">
-                <controls:CollimationAnalysisUserControl/>
-              </StackPanel>
-            </Expander>
+            </Expander>            
           </StackPanel>
         </ScrollViewer>
       </TabItem>
