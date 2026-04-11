@@ -35,55 +35,63 @@ namespace CollimationCircles.Services
         {
             List<Camera> cameras = [];
 
-            var (errorCode, result) = await AppService.StartProcessAsync(
+            try
+            {
+
+                var (errorCode, result) = await AppService.StartProcessAsync(
                 "v4l2-ctl",
                 ["--list-devices"]);
 
-            logger.Info($"v4l2-ctl --list-devices result: {result}");
+                logger.Info($"v4l2-ctl --list-devices result: {result}");
 
-            if (errorCode == 0)
-            {
-                string pattern = @"(.*):.*.*usb.*:\n((\s*\/dev\/.*\n)*)";
-
-                var match = Regex.Match(result, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
-
-                if (match.Success)
+                if (errorCode == 0)
                 {
-                    string name = match.Groups[1].Value.Trim();
+                    string pattern = @"(.*):.*.*usb.*:\n((\s*\/dev\/.*\n)*)";
 
-                    string[] camStr = match.Groups[2].Value.Trim().Split("\t");
+                    var match = Regex.Match(result, pattern, RegexOptions.Multiline | RegexOptions.IgnoreCase);
 
-                    logger.Info($"Parsed {camStr.Length} V4L2 cameras");
-
-                    for (int i = 0; i < camStr.Length; i++)
+                    if (match.Success)
                     {
-                        string cam = camStr[i].Trim();
+                        string name = match.Groups[1].Value.Trim();
 
-                        Camera c = new()
+                        string[] camStr = match.Groups[2].Value.Trim().Split("\t");
+
+                        logger.Info($"Parsed {camStr.Length} V4L2 cameras");
+
+                        for (int i = 0; i < camStr.Length; i++)
                         {
-                            Index = i,
-                            APIType = APIType.V4l2,
-                            Name = name,
-                            Path = cam
-                        };
+                            string cam = camStr[i].Trim();
 
-                        c.Controls = await GetControls(c);
+                            Camera c = new()
+                            {
+                                Index = i,
+                                APIType = APIType.V4l2,
+                                Name = name,
+                                Path = cam
+                            };
 
-                        if (c.Controls.Count > 0)
-                        {
-                            cameras.Add(c);
-                            logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                            c.Controls = await GetControls(c);
+
+                            if (c.Controls.Count > 0)
+                            {
+                                cameras.Add(c);
+                                logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                            }
                         }
+                    }
+                    else
+                    {
+                        logger.Info($"No V4L2 camera parsed!");
                     }
                 }
                 else
                 {
-                    logger.Info($"No V4L2 camera parsed!");
+                    logger.Warn($"No V4L2 compatible cameras detected!");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                logger.Warn($"No V4L2 compatible cameras detected!");
+                logger.Error(ex, "Error while detecting cameras with v4l2-ctl --list-devices");
             }
 
             return cameras;

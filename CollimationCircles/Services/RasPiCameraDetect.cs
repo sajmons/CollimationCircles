@@ -32,50 +32,58 @@ namespace CollimationCircles.Services
         {
             List<Camera> cameras = [];
 
-            var (errorCode, result) = await AppService.StartProcessAsync(
-                "rpicam-vid",
-                ["--list-cameras"]);
-
-            if (errorCode == 0)
+            try
             {
-                string pattern = @"^(?<index>\d+)\s:\s(?<name>\w+)\s\[?.+\]\s\((?<path>.+)\)$";
 
-                var matches = Regex.Matches(result, pattern, RegexOptions.Multiline);
+                var (errorCode, result) = await AppService.StartProcessAsync(
+                    "rpicam-vid",
+                    ["--list-cameras"]);
 
-                if (matches.Count > 0)
+                if (errorCode == 0)
                 {
-                    logger.Info($"Parsed {matches.Count} LibCamera cameras");
+                    string pattern = @"^(?<index>\d+)\s:\s(?<name>\w+)\s\[?.+\]\s\((?<path>.+)\)$";
 
-                    foreach (Match m in matches.Cast<Match>())
+                    var matches = Regex.Matches(result, pattern, RegexOptions.Multiline);
+
+                    if (matches.Count > 0)
                     {
-                        _ = int.TryParse(m.Groups["index"].Value, out int index);
+                        logger.Info($"Parsed {matches.Count} LibCamera cameras");
 
-                        var camera = new Camera()
+                        foreach (Match m in matches.Cast<Match>())
                         {
-                            Index = index,
-                            APIType = APIType.LibCamera,
-                            Name = m.Groups["name"].Value,
-                            Path = m.Groups["path"].Value
-                        };
+                            _ = int.TryParse(m.Groups["index"].Value, out int index);
 
-                        camera.Controls = await GetControls(camera);
+                            var camera = new Camera()
+                            {
+                                Index = index,
+                                APIType = APIType.LibCamera,
+                                Name = m.Groups["name"].Value,
+                                Path = m.Groups["path"].Value
+                            };
 
-                        if (camera.Controls.Count > 0)
-                        {
-                            cameras.Add(camera);
+                            camera.Controls = await GetControls(camera);
 
-                            logger.Info($"Adding camera: '{camera.Path}'");
+                            if (camera.Controls.Count > 0)
+                            {
+                                cameras.Add(camera);
+
+                                logger.Info($"Adding camera: '{camera.Path}'");
+                            }
                         }
+                    }
+                    else
+                    {
+                        logger.Info($"No LibCamera camera parsed!");
                     }
                 }
                 else
                 {
-                    logger.Info($"No LibCamera camera parsed!");
+                    logger.Info($"No LibCamera compatible cameras detected!");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                logger.Info($"No LibCamera compatible cameras detected!");
+                logger.Error(ex, "Error while detecting cameras with rpicam-vid --list-cameras");
             }
 
             return cameras;

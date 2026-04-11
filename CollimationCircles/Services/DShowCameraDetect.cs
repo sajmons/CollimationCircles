@@ -27,41 +27,48 @@ namespace CollimationCircles.Services
         {
             List<Camera> cameras = [];
 
-            if (OperatingSystem.IsWindows())
+            try
             {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera') AND DeviceID Like 'USB%'"))
+                if (OperatingSystem.IsWindows())
                 {
-                    var devices = searcher.Get().Cast<ManagementObject>().ToList();
-
-                    int camIndex = 0;
-                    foreach (var device in devices)
+                    using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera') AND DeviceID Like 'USB%'"))
                     {
-                        if (device != null)
+                        var devices = searcher.Get().Cast<ManagementObject>().ToList();
+
+                        int camIndex = 0;
+                        foreach (var device in devices)
                         {
-                            string deviceName = (string)device.GetPropertyValue("Name");
-                            string deviceId = (string)device.GetPropertyValue("DeviceID");
-                            string service = (string)device.GetPropertyValue("Service");
-
-                            logger.Debug($"DeviceName: '{deviceName}', DeviceId: '{deviceId}', Service: '{service}'");
-
-                            Camera c = new()
+                            if (device != null)
                             {
-                                Name = deviceName,
-                                Path = deviceId,
-                                APIType = APIType.Dshow,
-                                Index = camIndex++
-                            };
+                                string deviceName = (string)device.GetPropertyValue("Name");
+                                string deviceId = (string)device.GetPropertyValue("DeviceID");
+                                string service = (string)device.GetPropertyValue("Service");
 
-                            c.Controls = await GetControls(c);
+                                logger.Debug($"DeviceName: '{deviceName}', DeviceId: '{deviceId}', Service: '{service}'");
 
-                            if (c.Controls.Count > 0)
-                            {
-                                cameras.Add(c);
-                                logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                                Camera c = new()
+                                {
+                                    Name = deviceName,
+                                    Path = deviceId,
+                                    APIType = APIType.Dshow,
+                                    Index = camIndex++
+                                };
+
+                                c.Controls = await GetControls(c);
+
+                                if (c.Controls.Count > 0)
+                                {
+                                    cameras.Add(c);
+                                    logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                }
+            }
+            catch (Exception exc)
+            {
+                logger.Error(ex, "Error while detecting cameras with ManagementObjectSearcher");
             }
 
             return cameras;
