@@ -3,8 +3,8 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*'          # Triggered when you push a tag like v4.0.0
-  workflow_dispatch:    # Allow manual trigger from GitHub UI
+      - 'v*'
+  workflow_dispatch:
 
 env:
   PROJECT_PATH: CollimationCircles/CollimationCircles.csproj
@@ -15,23 +15,29 @@ env:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         include:
           - runtime: win-x64
             os: windows-latest
             index: 1
+            ready2run: true
           - runtime: win-arm64
             os: windows-latest
             index: 2
+            ready2run: false
           - runtime: linux-x64
             os: ubuntu-latest
             index: 3
+            ready2run: true
           - runtime: linux-arm64
             os: ubuntu-latest
             index: 4
+            ready2run: false
           - runtime: osx-x64
             os: macos-latest
             index: 5
+            ready2run: true
 
     runs-on: ${{ matrix.os }}
 
@@ -55,7 +61,7 @@ jobs:
           echo "APP_VERSION=$version" >> $env:GITHUB_OUTPUT
 
       - name: Restore dependencies
-        run: dotnet restore -r ${{ matrix.runtime }}
+        run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }}
 
       - name: Publish
         shell: pwsh
@@ -69,7 +75,7 @@ jobs:
             "-o", "./publish/${{ matrix.runtime }}"
             "--self-contained", "true"
             "/p:PublishSingleFile=true"
-            "/p:PublishReadyToRun=true"
+            "/p:PublishReadyToRun=${{ matrix.ready2run }}"
             "/p:DebugType=None"
             "/p:DebugSymbols=false"
           )
