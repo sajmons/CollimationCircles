@@ -2,6 +2,7 @@
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,13 +11,13 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
 {
     public partial class StreamViewModel : BaseViewModel, IViewClosed
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly IDialogService dialogService;
         private readonly ICameraControlService cameraControlService;
         private readonly ILibVLCService libVLCService;
 
@@ -29,7 +30,7 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            get => !string.IsNullOrWhiteSpace(FullAddress);
+            get => !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
         }
 
         [ObservableProperty]
@@ -50,18 +51,20 @@ namespace CollimationCircles.ViewModels
         private INotifyPropertyChanged? settingsDialogViewModel;
 
         [ObservableProperty]
-        private ObservableCollection<ICamera> cameraList = [];
+        private ObservableCollection<Camera> cameraList = [];
 
         [ObservableProperty]
-        private ICamera selectedCamera;
+        private Camera selectedCamera = new();
 
         [ObservableProperty]
         private bool controlsEnabled = false;
 
-        public StreamViewModel(ILibVLCService libVLCService, IDialogService dialogService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
+        [ObservableProperty]
+        bool displayAdvancedDShowDialog = false;
+
+        public StreamViewModel(ILibVLCService libVLCService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
         {
             this.libVLCService = libVLCService;
-            this.dialogService = dialogService;
             this.settingsViewModel = settingsViewModel;
             this.cameraControlService = cameraControlService;
 
@@ -69,9 +72,11 @@ namespace CollimationCircles.ViewModels
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
 
-            CameraList = new ObservableCollection<ICamera>(cameraControlService.GetCameraList());
-
-            SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
+            Dispatcher.UIThread.Post(async () =>
+            {
+                CameraList = [.. await cameraControlService.GetCameraList()];
+                SelectedCamera = CameraList?.Where(c => c.Name == settingsViewModel.LastSelectedCamera)?.FirstOrDefault() ?? CameraList?.FirstOrDefault() ?? new();
+            });
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -101,9 +106,11 @@ namespace CollimationCircles.ViewModels
 
         private void MediaPlayer_Playing()
         {
+            Guard.IsNotNull(SelectedCamera);
+
             logger.Trace($"MediaPlayer playing");
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
-            ControlsEnabled = IsPlaying && SelectedCamera.APIType == APIType.Dshow || SelectedCamera.APIType == APIType.V4l2;
+            ControlsEnabled = IsPlaying;
         }
 
         private void MediaPlayer_Closed()
@@ -118,11 +125,13 @@ namespace CollimationCircles.ViewModels
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
         private void PlayPause()
         {
+            Guard.IsNotNull(SelectedCamera);
+
             if (libVLCService.MediaPlayer != null)
             {
                 if (!libVLCService.MediaPlayer.IsPlaying)
                 {
-                    libVLCService.Play();
+                    libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
                 }
                 else
                 {
@@ -135,7 +144,7 @@ namespace CollimationCircles.ViewModels
         {
             Dispatcher.UIThread.Post(() =>
             {
-                dialogService.Show<StreamViewModel>(null, this);
+                DialogService.Show<StreamViewModel>(null, this);
                 logger.Trace($"Opened web camera stream window");
             });
         }
@@ -146,7 +155,7 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
-                    dialogService.Close(this);
+                    DialogService.Close(this);
                     logger.Trace($"Closed web camera stream window");
                 }
                 catch (Exception exc)
@@ -166,25 +175,25 @@ namespace CollimationCircles.ViewModels
         {
             if (SettingsDialogViewModel is null)
             {
-                SettingsDialogViewModel = dialogService.CreateViewModel<CameraControlsViewModel>();
+                SettingsDialogViewModel = DialogService.CreateViewModel<CameraControlsViewModel>();
 
                 if (SettingsDialogViewModel is not null)
                 {
-                    dialogService.Show(null, SettingsDialogViewModel);
+                    DialogService.Show(null, SettingsDialogViewModel);
                     logger.Info("Opened camera controls dialog");
                 }
             }
             else
             {
-                dialogService.Close(SettingsDialogViewModel);
-                dialogService.Show(null, SettingsDialogViewModel);
+                DialogService.Close(SettingsDialogViewModel);
+                DialogService.Show(null, SettingsDialogViewModel);
             }
         }
 
         [RelayCommand]
-        private void CameraRefresh()
+        private async Task CameraRefresh()
         {
-            CameraList = new ObservableCollection<ICamera>(cameraControlService.GetCameraList());
+            CameraList = new ObservableCollection<Camera>(await cameraControlService.GetCameraList());
             SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
         }
 
@@ -193,7 +202,7 @@ namespace CollimationCircles.ViewModels
             SettingsDialogViewModel = null;
         }
 
-        partial void OnSelectedCameraChanged(ICamera? oldValue, ICamera newValue)
+        partial void OnSelectedCameraChanged(Camera? oldValue, Camera newValue)
         {
             if (newValue is not null)
             {

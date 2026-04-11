@@ -19,6 +19,8 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        AppService.LogSystemInformation();
+
         ConfigureServices();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -36,12 +38,14 @@ public partial class App : Application
         base.OnFrameworkInitializationCompleted();
     }
 
-    public static string LangDir = "CollimationCircles/Resources/Lang";
-
     private static void ConfigureServices()
     {
+        IResourceService resourceService = new ResourceService(AppService.LangDir);
+
         Ioc.Default.ConfigureServices(
         new ServiceCollection()
+            .AddSingleton<IResourceService>(resourceService)
+            .AddSingleton<ILicenseService>(new LicenseService(AppService.ProductName, resourceService))
             .AddSingleton<IDialogService>(new DialogService(
                 new DialogManager(
                     viewLocator: new ViewLocator(),
@@ -52,12 +56,15 @@ public partial class App : Application
             .AddSingleton<StreamViewModel>()
             .AddSingleton<AppLogViewModel>()
             .AddSingleton<CameraControlsViewModel>()
+            .AddSingleton<ProfileManagerViewModel>()
             .AddTransient<AboutViewModel>()
+            .AddSingleton<RequestLicenseViewModel>()
+            .AddSingleton<CollimationAnalysisViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
-            .AddSingleton<IResourceService>(new ResourceService(LangDir))
+            .AddTransient<ImageViewModel>()
             .BuildServiceProvider());
     }
 }

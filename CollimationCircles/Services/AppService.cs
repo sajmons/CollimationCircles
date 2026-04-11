@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using CommunityToolkit.Diagnostics;
+using DeviceId;
+using Newtonsoft.Json;
 using Octokit;
 using System;
 using System.Collections.Generic;
@@ -21,13 +23,37 @@ public class AppService
     private static readonly string owner = "sajmons";
     private static readonly string reponame = "CollimationCircles";
 
-    public const string WebPage = "https://saimons-astronomy.webador.com/software/collimation-circles";
-    public const string ContactPage = "https://saimons-astronomy.webador.com/about";
+    public const string BasePage = "https://www.saimons-astronomy.com";
+    public const string WebPage = $"{BasePage}/software/collimation-circles";
+    public const string ContactPage = $"{BasePage}/about";
     public const string GitHubPage = "https://github.com/sajmons/CollimationCircles";
     public const string TwitterPage = "https://twitter.com/saimons_art";
     public const string YouTubeChannel = "https://www.youtube.com/channel/UCz6iFL9ziUcWgs_n6n2gwZw";
     public const string GitHubIssue = "https://github.com/sajmons/CollimationCircles/issues/new";
     public const string PatreonWebPage = "https://www.patreon.com/SaimonsAstronomy";
+    public const string LangDir = "CollimationCircles/Resources/Lang";
+    public const string ProductName = "Collimation Circles";
+    public const string RequestLicensePage = $"{BasePage}/software/request-license";
+    public const string PatreonShop = $"https://www.patreon.com/SaimonsAstronomy/shop";
+
+    public static string GetAppMajorVersion()
+    {
+        var entryAssembly = Assembly.GetEntryAssembly();
+
+        var assemblyVersion = entryAssembly?.GetName().Version;
+
+        int major = assemblyVersion?.Major ?? 0;
+
+        return $"{major}";
+    }
+    public static string GetAppName()
+    {
+        var entryAssembly = Assembly.GetEntryAssembly();
+
+        var assemblyVersion = entryAssembly?.GetName().Name;
+
+        return assemblyVersion?.ToString() ?? nameof(CollimationCircles);
+    }
 
     public static string GetAppVersion()
     {
@@ -58,11 +84,12 @@ public class AppService
             });
     }
 
-    public static string Serialize<T>(T obj)
+    public static string Serialize<T>(T obj, Formatting formating = Formatting.None)
     {
         return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.Auto
+            TypeNameHandling = TypeNameHandling.Auto,
+            Formatting = formating
         });
     }
 
@@ -190,11 +217,15 @@ public class AppService
         await folderOpener.WaitForExitAsync();
     }
 
-    public static Task<(int, string, Process)> ExecuteCommand(string fileName, List<string> arguments, Action? started = null, int timeout = -1)
+    public static async Task<(int ExitCode, string Output)> StartProcessAsync(
+        string fileName,
+        List<string> arguments,
+        Action? onCompleted = null,
+        int timeoutMilliseconds = 0,  // 0 (or negative) means wait indefinitely
+        CancellationToken cancellationToken = default)
     {
-        var tcs = new TaskCompletionSource<(int, string, Process)>();
-
-        ProcessStartInfo startInfo = new()
+        // Build process start info.
+        var startInfo = new ProcessStartInfo
         {
             FileName = fileName,
             UseShellExecute = false,
@@ -203,95 +234,64 @@ public class AppService
             CreateNoWindow = true
         };
 
-        using Process process = new()
+        // Add arguments
+        foreach (var arg in arguments)
         {
-            StartInfo = startInfo
-        };
-
-        var argStr = string.Join(' ', arguments);
-
-        try
-        {
-            arguments.ForEach(startInfo.ArgumentList.Add);
-
-            logger.Debug($"Executing command '{fileName} {argStr}'");
-
-            StringBuilder output = new();
-            StringBuilder error = new();
-
-            using AutoResetEvent outputWaitHandle = new(false);
-            using AutoResetEvent errorWaitHandle = new(false);
-
-            process.OutputDataReceived += (sender, e) =>
-            {
-                if (e.Data == null)
-                {
-                    outputWaitHandle.Set();
-                }
-                else
-                {
-                    output.AppendLine(e.Data);
-                }
-            };
-
-            process.ErrorDataReceived += (sender, e) =>
-            {
-                if (e.Data == null)
-                {
-                    errorWaitHandle.Set();
-                }
-                else
-                {
-                    error.AppendLine(e.Data);
-                }
-            };
-
-            if (process.Start())
-            {
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
-                if (process.WaitForExit(timeout) &&
-                    outputWaitHandle.WaitOne(timeout) &&
-                    errorWaitHandle.WaitOne(timeout))
-                {
-                    started?.Invoke();
-
-                    // Process completed. Check process.ExitCode and output here.
-                    string outputStr = $"{output}";
-
-                    string logMessage = $"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {outputStr}";
-
-                    if (!string.IsNullOrWhiteSpace($"{error}"))
-                    {
-                        logMessage += $", Error: {error}";
-                    }
-
-                    logger.Debug(logMessage);
-                    tcs.TrySetResult((process.ExitCode, outputStr, process));
-                }
-                else
-                {
-                    // Timed out.
-                    logger.Warn($"Timeout '{fileName} {argStr}'");
-                    tcs.TrySetResult((-1, string.Empty, process));
-                }
-            }
-            else
-            {
-                // Process failed to start
-                logger.Warn($"Failed to execute command '{fileName} {argStr}'");
-                tcs.TrySetResult((process.ExitCode, string.Empty, process));
-            }
+            startInfo.ArgumentList.Add(arg);
         }
-        catch (Exception exc)
+        string argStr = string.Join(" ", startInfo.ArgumentList);
+        logger.Debug($"Executing command '{fileName} {argStr}'");
+
+        using var process = new Process { StartInfo = startInfo };
+
+        if (!process.Start())
         {
-            logger.Error($"Failed to execute command '{fileName} {argStr}' '{exc.Message}'");
-            tcs.TrySetResult((-1, string.Empty, process));
+            logger.Warn($"Failed to start command '{fileName} {argStr}'");
+            return (-1, string.Empty);
         }
 
-        return tcs.Task;
-    }
+        // Begin asynchronous reads on both streams.
+        Task<string> outputTask = process.StandardOutput.ReadToEndAsync(cancellationToken);
+        Task<string> errorTask = process.StandardError.ReadToEndAsync(cancellationToken);
+
+        // Wait for the process to exit asynchronously.
+        Task waitForExitTask = process.WaitForExitAsync(cancellationToken);
+
+        if (timeoutMilliseconds > 0)
+        {
+            // Create a delay task for the timeout.
+            Task timeoutTask = Task.Delay(timeoutMilliseconds, cancellationToken);
+            Task completedTask = await Task.WhenAny(waitForExitTask, timeoutTask);
+            if (completedTask == timeoutTask)
+            {
+                //try { process.Kill(); } catch (InvalidOperationException) { /* process already exited */ }
+                logger.Warn($"Timeout executing command '{fileName} {argStr}'");
+                return (-1, string.Empty);
+            }
+        }
+        else
+        {
+            // No timeout specified: wait indefinitely.
+            await waitForExitTask;
+        }
+
+        // Read remaining output.
+        string output = await outputTask;
+        string error = await errorTask;
+
+        // Invoke the optional completion callback.
+        onCompleted?.Invoke();
+
+        // Combine output and error (if needed).
+        string combinedOutput = output;
+        if (!string.IsNullOrWhiteSpace(error))
+        {
+            combinedOutput += Environment.NewLine + error;
+        }
+
+        logger.Debug($"Command '{fileName} {argStr}' executed. Return code: {process.ExitCode}, Output: {combinedOutput}");
+        return (process.ExitCode, combinedOutput);
+    }    
 
     public static void OpenUrl(string url)
     {
@@ -324,46 +324,37 @@ public class AppService
         return endPoint?.Address.ToString();
     }
 
-    public static async Task StartRaspberryPIStream(string port, List<string>? streamArgs = null)
+    public static async Task StartRaspberryPIStream(string port, List<string> streamArgs, string command = "rpicam-vid")
     {
-        _ = await ExecuteCommand("pkill", ["rpicam-vid"], timeout: 100);
+        Guard.IsNotNullOrWhiteSpace(port);
+        Guard.IsNotNull(streamArgs);
 
-        List<string> parameters = [
-            "--timeout",
-            "0",
-            "--inline",
-            "--listen",
-            "--nopreview",
-            "--output",
-            $"tcp://0.0.0.0:{port}",
-            "--shutter",
-            "60000",
-            "--gain",
-            "22",
-            "--width",
-            "640",
-            "--height",
-            "480",
-            "--framerate",
-            "30",
-            "--quality",
-            "25",
-            "--bitrate",
-            "15000000",
-            "--denoise",
-            "cdn_off",
-            "--level",
-            "4.2"
-        ];
+        await StartProcessAsync("pkill", [command], timeoutMilliseconds: 150);
+        await StartProcessAsync(command, streamArgs, timeoutMilliseconds: 1500);
+    }
 
-        if (streamArgs != null)
-        {
-            // FIXME: parametri morajo biti filtrirani glede na to kaj katera kamera podpira
-            //parameters.AddRange(streamArgs);
-        }
+    public static string DeviceId()
+    {
+        return new DeviceIdBuilder()
+        .AddMachineName()
+        .AddOsVersion()
+        .OnWindows(windows => windows
+            .AddMotherboardSerialNumber()
+            .AddSystemDriveSerialNumber())
+        .OnLinux(linux => linux
+            .AddMotherboardSerialNumber()
+            .AddSystemDriveSerialNumber())
+        .OnMac(mac => mac
+            .AddSystemDriveSerialNumber()
+            .AddPlatformSerialNumber())
+        .ToString();
+    }
 
-        _ = await ExecuteCommand(
-            "rpicam-vid",
-            parameters, timeout: 1500);
+    public static void LogSystemInformation()
+    {
+        logger.Info($"Application Name: {GetAppName()}, Version: {GetAppVersionTitle()}");
+        logger.Info($"OS Version: {RuntimeInformation.OSDescription}");
+        logger.Info($"OS Architecture: {RuntimeInformation.OSArchitecture}");
+        logger.Info($"Device ID: {DeviceId()}");
     }
 }

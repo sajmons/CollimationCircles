@@ -12,7 +12,7 @@
         Focus,
         AutoFocus,
         WhiteBalance,
-        //AutoWhiteBalance,
+        AutoWhiteBalance,
         Temperature,
         Sharpness,
         ExposureTime,

@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             xmlns:controls="clr-namespace:CollimationCircles.Controls"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.ProfileManagerUserControl"
+             x:DataType="vm:ProfileManagerViewModel">
+  <StackPanel Spacing="{DynamicResource ControlSpacing}">
+    <Border Height="160">
+      <ScrollViewer>
+        <ListBox
+            SelectedItem="{ReflectionBinding SelectedProfile}"
+            SelectionMode="Single"
+            ItemsSource="{ReflectionBinding Profiles}">
+          <ListBox.Template>
+            <ControlTemplate>
+              <DockPanel LastChildFill="True">
+                <Grid 
+                  DockPanel.Dock="Top"
+                  ColumnDefinitions="*,Auto,Auto,Auto">
+                  <TextBox
+                    Text="{ReflectionBinding ProfileName}"
+                    Watermark="{DynamicResource Text.EnterProfileName}"/>
+                  <Border
+                    Grid.Column="1"
+                    Width="{DynamicResource ControlSpacing}"/>
+                  <Button
+                    Grid.Column="2"
+                    HorizontalAlignment="Right"
+                    Theme="{DynamicResource ToolbarButton}"
+                    Command="{ReflectionBinding AddCurrentProfileCommand}"
+                    ToolTip.Tip="{DynamicResource Text.AddCurrentProfile}">
+                    <PathIcon
+                      Width="{DynamicResource PathIconWidth}"
+                      Height="{DynamicResource PathIconHeight}"
+                      Foreground="{DynamicResource Color2}"
+                      Data="{StaticResource IconData.Add}" />
+                  </Button>
+                  <Border
+                    Grid.Column="3"
+                    Width="{DynamicResource ControlSpacing}"/>
+                </Grid>
+                <ItemsPresenter></ItemsPresenter>
+              </DockPanel>
+            </ControlTemplate>
+          </ListBox.Template>
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid
+                ColumnDefinitions="*,Auto">
+                <TextBlock 
+                  Text="{ReflectionBinding Name}"
+                  VerticalAlignment="Center"/>
+                <Button
+                  Theme="{DynamicResource ToolbarButton}"
+                  Grid.Column="1"
+                  Command="{ReflectionBinding $parent[ListBox].DataContext.RemoveProfileCommand}"
+                  CommandParameter="{ReflectionBinding .}"
+                  ToolTip.Tip="{DynamicResource Text.RemoveItem}">
+                  <Viewbox Margin="7">
+                    <PathIcon
+                      Width="{DynamicResource PathIconWidth}"
+                      Height="{DynamicResource PathIconHeight}"
+                      Foreground="{DynamicResource Color2}"
+                      Data="{StaticResource IconData.Remove}" />
+                  </Viewbox>
+                </Button>
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </ScrollViewer>
+    </Border>
+  </StackPanel>
+
+</UserControl>

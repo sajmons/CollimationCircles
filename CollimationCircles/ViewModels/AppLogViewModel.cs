@@ -13,7 +13,7 @@ namespace CollimationCircles.ViewModels
 {
     public partial class AppLogViewModel : BaseViewModel
     {
-        private readonly MemoryTarget memoryTarget;
+        private readonly MemoryTarget? memoryTarget;
 #pragma warning disable IDE0052 // Remove unread private members
         private readonly Timer timer;
 #pragma warning restore IDE0052 // Remove unread private members
@@ -30,7 +30,7 @@ namespace CollimationCircles.ViewModels
         {
             ShowApplicationLog = settingsViewModel.ShowApplicationLog;
 
-            memoryTarget = (MemoryTarget)LogManager.Configuration.FindTargetByName("memory");
+            memoryTarget = (MemoryTarget?)LogManager.Configuration?.FindTargetByName("memory");
 
             timer = new Timer(
                 new TimerCallback(TickTimer),
@@ -46,6 +46,8 @@ namespace CollimationCircles.ViewModels
 
         private void TickTimer(object? state)
         {
+            if (memoryTarget == null) return;
+
             var log = string.Join("\r\n", memoryTarget.Logs);
             LogContent = log;
         }

@@ -3,7 +3,6 @@ using Avalonia.Media;
 using CollimationCircles.Models;
 using CollimationCircles.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 
 namespace CollimationCircles.Services
@@ -45,22 +44,15 @@ namespace CollimationCircles.Services
             }
         }
 
-        public void DrawShortcuts(DrawingContext context, Dictionary<string, string> shortcutsList, Point location)
+        public void DrawText(DrawingContext context, string text, Point location, IBrush foregroundColor, double size)
         {
-            string shortcutsString = string.Empty;
-
-            foreach (var sk in shortcutsList)
-            {
-                shortcutsString += $"{sk.Key}: {sk.Value}{Environment.NewLine}";
-            }
-
             FormattedText shortcutsFormatedText = new(
-                    shortcutsString,
+                    text,
                     CultureInfo.CurrentCulture,
                     FlowDirection.LeftToRight,
                     Typeface.Default,
-                    12,
-                    Brushes.Yellow);
+                    size,
+                    foregroundColor);
 
             context.DrawText(shortcutsFormatedText, location);
         }
@@ -73,7 +65,7 @@ namespace CollimationCircles.Services
 
                 context.DrawEllipse(Brushes.Transparent, new Pen(brush, item.Thickness), new Point(0, 0), item.Radius, item.Radius);
 
-                if (vm.ShowLabels)
+                if (item.IsLabelVisible)
                 {
                     var formattedText = new FormattedText(
                         item?.Label ?? "Undefined",
@@ -91,7 +83,7 @@ namespace CollimationCircles.Services
 
                 if (vm.SelectedItem is CircleViewModel && vm.ShowMarkAtSelectedItem && item is not null && vm.SelectedItem == item)
                 {
-                    context.DrawText(selectedMark, new Point(-item.Size, -item.Radius));
+                    context.DrawText(selectedMark, new Point(-item.Size, item.Radius));
                 }
             }
         }
@@ -112,7 +104,7 @@ namespace CollimationCircles.Services
 
                         context.DrawEllipse(brush, new Pen(brush, item.Thickness), new Point(0, item.Radius), item.Size, item.Size);
 
-                        if (vm.ShowLabels)
+                        if (item.IsLabelVisible)
                         {
                             var formattedText = new FormattedText(
                                 $"{item.Label} {i + 1}",
@@ -150,7 +142,7 @@ namespace CollimationCircles.Services
 
                         context.DrawRectangle(new Pen(brush, item.Thickness), new Rect(-item.Size / 2, item.Radius - item.Size / 2, item.Size, item.Size / 3));
 
-                        if (vm.ShowLabels)
+                        if (item.IsLabelVisible)
                         {
                             var formattedText = new FormattedText(
                                 $"{item.Label} {i + 1}",
@@ -194,7 +186,7 @@ namespace CollimationCircles.Services
 
                 using (context.PushTransform(translate))
                 {
-                    if (vm.ShowLabels)
+                    if (item.IsLabelVisible)
                     {
                         var formattedText = new FormattedText(
                             $"{item.Label}",
@@ -240,7 +232,7 @@ namespace CollimationCircles.Services
                 {
                     using (context.PushTransform(translate))
                     {
-                        if (vm.ShowLabels)
+                        if (item.IsLabelVisible)
                         {
                             var formattedText = new FormattedText(
                                 $"{item.Label}",

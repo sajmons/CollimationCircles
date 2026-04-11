@@ -18,7 +18,7 @@ namespace CollimationCircles.Services
     {
         private static async Task<List<ArpItem>> GetArpResult()
         {
-            var (code, output, process) = await AppService.ExecuteCommand("arp", ["-a"]);
+            var (code, output) = await AppService.StartProcessAsync("arp", ["-a"]);
 
             return ParseArpResult(output);
         }
@@ -55,9 +55,9 @@ namespace CollimationCircles.Services
             return false;
         }
 
-        public static string DetectRaspberryPIIPAddress()
+        public static async Task<string> DetectRaspberryPIIPAddress()
         {
-            List<ArpItem> dynamic = GetArpResult().GetAwaiter().GetResult();
+            List<ArpItem> dynamic = await GetArpResult();
             var pis = dynamic.Where(x => IsRaspberryPI(x.MacAddress) == true);
 
             string ip = pis.FirstOrDefault()?.Ip ?? string.Empty;

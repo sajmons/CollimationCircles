@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.CollimationAnalysisUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:CollimationAnalysisViewModel">
+
+  <StackPanel
+    Orientation="Vertical"
+    Spacing="{DynamicResource ControlSpacing}">
+
+    <StackPanel
+      Orientation="Horizontal"
+      Spacing="{DynamicResource ControlSpacing}">
+      <Button
+          Theme="{DynamicResource ToolbarButton}"
+          Command="{Binding TakeSnapshotCommand}"
+          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisCam}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.Camera}" />
+      </Button>
+      <Button
+          Theme="{DynamicResource ToolbarButton}"
+          Command="{Binding LoadImageCommand}"
+          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisImage}">
+        <PathIcon
+          Width="{DynamicResource PathIconWidth}"
+          Height="{DynamicResource PathIconHeight}"
+          Foreground="{DynamicResource Color2}"
+          Data="{StaticResource IconData.ImageAnalysis}" />
+      </Button>
+    </StackPanel>
+
+    <StackPanel
+      Orientation="Vertical"
+      Spacing="{DynamicResource ControlSpacing}">
+      <CheckBox
+        Content="{DynamicResource Text.AiryDiscAnalysisDebug}"
+        IsChecked="{Binding IsDebug}"/>
+      <UniformGrid
+        Columns="2">
+        <TextBlock
+          VerticalAlignment="Bottom"
+          Text="{DynamicResource Text.DetectionThreshold}" />
+        <NumericUpDown
+          Increment="0.1"
+          Value="{ReflectionBinding DetectionThreshold}"
+          Minimum="0.1"
+          Maximum="2"
+          ToolTip.Tip="{DynamicResource Text.DetectionThresholdToolTip}"/>
+      </UniformGrid>
+
+    </StackPanel>
+
+  </StackPanel>
+
+</UserControl>

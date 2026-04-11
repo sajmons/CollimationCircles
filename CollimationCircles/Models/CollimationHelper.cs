@@ -20,7 +20,7 @@ namespace CollimationCircles.Models
 
         [JsonProperty]
         [ObservableProperty]
-        private Guid id = Guid.NewGuid();
+        private string id = Guid.NewGuid().ToString();
 
         [JsonProperty]
         [ObservableProperty]
@@ -104,6 +104,10 @@ namespace CollimationCircles.Models
         [NotifyDataErrorInfo]
         private int maxCount = 10;
 
+        [JsonProperty]
+        [ObservableProperty]
+        private bool isLabelVisible = true;
+
         [ObservableProperty]
         private string? invalidateGraphics;
 
@@ -157,6 +161,7 @@ namespace CollimationCircles.Models
                 case nameof(Thickness):
                 case nameof(IsVisible):
                 case nameof(Opacity):
+                case nameof(IsLabelVisible):
                     if (!HasErrors)
                     {
                         base.OnPropertyChanged(e);

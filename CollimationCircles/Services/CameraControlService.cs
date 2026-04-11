@@ -1,13 +1,17 @@
 ﻿using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
     internal class CameraControlService : ICameraControlService
     {
-        public void Set(ControlType controlName, double value, ICamera camera)
+        public void Set(ControlType controlName, double value, Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             // set camera control for V4L2
             if (camera.APIType is APIType.V4l2 || camera.APIType is APIType.QTCapture)
             {
@@ -25,21 +29,21 @@ namespace CollimationCircles.Services
             }
         }
 
-        public List<ICamera> GetCameraList()
+        public async Task<List<Camera>> GetCameraList()
         {
-            List<ICamera> cameras = [];
+            List<Camera> cameras = [];
 
             if (OperatingSystem.IsWindows())
             {
-                var dshowCameras = new DShowCameraDetect().GetCameras();
+                var dshowCameras = await new DShowCameraDetect().GetCameras();
                 cameras.AddRange(dshowCameras);
             }
             else
             {
-                var raspiCameras = new RasPiCameraDetect().GetCameras();
+                var raspiCameras = await new RasPiCameraDetect().GetCameras();
                 cameras.AddRange(raspiCameras);
 
-                var v4l2Cameras = new V4L2CameraDetect().GetCameras();
+                var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
                 cameras.AddRange(v4l2Cameras);
             }
 

@@ -62,7 +62,7 @@
   <system:String x:Key="Text.SelectedItemProperties">Lastnosti izbranega</system:String>
   <system:String x:Key="Text.Settings">Nastavitve</system:String>
   <system:String x:Key="Text.SettingsWindow">Odpni v ločeno okno</system:String>
-  <system:String x:Key="Text.ShowLabels">Prikaži nazive oblik</system:String>
+  <system:String x:Key="Text.ShowLabel">Prikaži naziv</system:String>
   <system:String x:Key="Text.Size">Velikost</system:String>
   <system:String x:Key="Text.Spacing">Širina</system:String>
   <system:String x:Key="Text.Spider">Pajek</system:String>
@@ -78,6 +78,7 @@
   <system:String x:Key="Text.StayOnTop">Okno vedno ostane na vrhu</system:String>
   <system:String x:Key="Text.DockInMainWindow">Pripni v glavno okno</system:String>
   <system:String x:Key="Text.ShowMarkAtSelectedItem">Pokaži oznako izbranega</system:String>
+  <system:String x:Key="Text.GitHub">GitHub</system:String>
   <system:String x:Key="Text.UserInterfaceTheme">Tema</system:String>
   <system:String x:Key="Text.ShowKeyboardShortcuts">Prikaži bližnjice na tipkovnici</system:String>
   <system:String x:Key="Text.TwitterWebSite">Avtorjeva Twitter spletna stran</system:String>
@@ -99,6 +100,7 @@
   <system:String x:Key="Text.Fans">Oboževalci</system:String>
   <system:String x:Key="Text.PatreonDesc">Razvoj te aplikacije zahteva veliko truda, prostega časa in angažiranosti. V kolikor to cenite in me želite podpreti, vas prosim, da obiščete mojo Patreon spletno stran in se naroči na članske ugodnosti ali kupite katerega od izdelkov. Hvala za vso vašo podporo!</system:String>
   <system:String x:Key="Text.PatreonWebSite">Obiščite Patreon spletno stran</system:String>
+  <system:String x:Key="Text.Patreon">Patreon</system:String>
   <system:String x:Key="Text.AppLog">Dnevnik aplikacije</system:String>
   <system:String x:Key="Text.AppLogTabTitle">Dnevnik</system:String>
   <system:String x:Key="Text.ShowApplicationLog">Prikaži dnevnik aplikacije</system:String>
@@ -130,8 +132,48 @@
   <system:String x:Key="Text.CameraControls">Lastnosti kamere</system:String>
   <system:String x:Key="Text.Default">Privzeto</system:String>
   <system:String x:Key="Text.EnterRemoteAddress">Vpišite naslov</system:String>
-
-  <!-- Non translatable -->
-  <system:String x:Key="Text.StarChar">*</system:String>
-  <system:String x:Key="Text.StarJson">json</system:String>
+  <system:String x:Key="Text.RefreshCameras">Osveži kamere</system:String>
+  <system:String x:Key="Text.License">Licenca:</system:String>
+  <system:String x:Key="Text.ProfileManagerTitle">Upravljalec profilov</system:String>
+  <system:String x:Key="Text.AddCurrentProfile">Dodaj nov profil</system:String>
+  <system:String x:Key="Text.EnterProfileName">Vpišite ime profila</system:String>
+  <system:String x:Key="Text.DefaultProfileName">Profil</system:String>
+  <system:String x:Key="Text.InsifficientLicenseTitle">Neustrezna licenca</system:String>
+  <system:String x:Key="Text.InsifficientLicenseMessage">Ta funkcionalnosti zahteva veljavno licenco.</system:String>
+  <system:String x:Key="Text.InsifficientLicenseCountMessage">Funkcionalnosti '{0}' v številu '{1}' zahteva veljavno licenco</system:String>
+  <system:String x:Key="Text.UpgradeLicenseMessage">Bi želeli nadgraditi vašo licenco ali zahteveti preizkusno licenco?</system:String>
+  <system:String x:Key="Text.ExpiredLicenseMessage">Ta licenca je potekla {0}</system:String>
+  <system:String x:Key="Text.ValidUntil">Velja do:</system:String>
+  <system:String x:Key="Text.RequestLicense">Zahtevaj licenco</system:String>
+  <system:String x:Key="Text.LicenseData">Podatki licence:</system:String>
+  <system:String x:Key="Text.LicenseType">Tip licence:</system:String>
+  <system:String x:Key="Text.StandardLicense">Standarden</system:String>
+  <system:String x:Key="Text.TrialLicense">Začasna</system:String>
+  <system:String x:Key="Text.LicenseInstructions">Podatki o licenci bodo shranjeni v odložišče. Prilepite te podatke v spletni obrazec, ki se bo odprl v vašem spletnem brskalniku.</system:String>
+  <system:String x:Key="Text.PayPalTransactionId">ID PayPal transakcije:</system:String>
+  <system:String x:Key="Text.RemoveProfileDialogText">Želite odstraniti profil '{0}'?</system:String>
+  <system:String x:Key="Text.RemoveProfileDialogTitle">Odstrani profil</system:String>
+  <system:String x:Key="Text.DisplayAdvancedDShowDialog">Prikaži napredne nastavitve</system:String>
+  <system:String x:Key="Text.UnlicensedVersion">Nelicencirana različica</system:String>
+  <system:String x:Key="Text.ShapeList">Oblike</system:String>
+  <system:String x:Key="Text.ShapeProperties">Lastnosti oblike</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisCam">Analiza zračnega diska zvezde iz kamere</system:String>
+  <system:String x:Key="Text.AiryDiskAnalysisImage">Analiza zračnega diska zvezde iz slike</system:String>
+  <system:String x:Key="Text.CircleDetectionMethod">Metoda zaznavanja krogov</system:String>
+  <system:String x:Key="Text.CircleHoughTransform">Hough-ova transformacija (CHT)</system:String>
+  <system:String x:Key="Text.ContourMinEnclosingCircle">Minimalen krog konture</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysis">Analiza zračnih diskov zvezde</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysisDebug">Prikaz vmesnih slik postopka</system:String>
+  <system:String x:Key="Text.StarAiryDiscAnalysisResult">Rezultat analize</system:String>
+  <system:String x:Key="Text.NoVideoStreamWarning">Pred uporabo te funkcije morate aktivirati video pretok.</system:String>
+  <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Ni video pretoka</system:String>
+  <system:String x:Key="Text.CombinedDetectionMode">Oboje</system:String>
+  <system:String x:Key="Text.Apply">Uporabi</system:String>
+  <system:String x:Key="Text.DetectionThreshold">Prag zaznave</system:String>
+  <system:String x:Key="Text.DetectionThresholdTip">Višja vrednost pomeni, da bo zaznanih manj krogov (min: 0.1, max: 2.0)</system:String>
+  <system:String x:Key="Text.NoCirclesDetected">Ni zaznanih krogov</system:String>
+  <system:String x:Key="Text.TooManyCirclesDetected">Zaznanih je preveč krogov</system:String>
+  <system:String x:Key="Text.DetectionThresholdHelp">Poskusite spremeniti prag.</system:String>
+  <system:String x:Key="Text.DetectionThresholdHelp2">Slika mora vsebovati centrirano defokusirano zvezdo</system:String>
+  <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
 </ResourceDictionary>

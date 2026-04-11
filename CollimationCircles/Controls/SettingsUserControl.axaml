@@ -3,63 +3,99 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:CollimationCircles.Controls"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="650"
              x:Class="CollimationCircles.Controls.SettingsUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
   <Grid
       Background="{DynamicResource ThemeBackgroundBrush}"
-      RowDefinitions="*,50">
+      RowDefinitions="*,Auto">
     <TabControl>
-      <TabItem>
+      <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.Properties}" />
+          <PathIcon
+            Margin="{DynamicResource TabIconMargin}"
+            Height="{DynamicResource PathIconHeight}"
+            Foreground="{DynamicResource Color2}"
+            Data="{StaticResource IconData.Shapes}"
+            ToolTip.Tip="{DynamicResource Text.Properties}" />
         </TabItem.Header>
         <controls:ItemListUserControl/>
       </TabItem>
-      <TabItem>
+      <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.Tools}" />
+          <PathIcon
+              Margin="{DynamicResource TabIconMargin}"
+              Height="{DynamicResource PathIconHeight}"
+              Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Tools}"
+              ToolTip.Tip="{DynamicResource Text.Tools}" />
         </TabItem.Header>
         <ScrollViewer>
-          <StackPanel Spacing="12">
+          <StackPanel Spacing="{DynamicResource ControlSpacing}">
             <Expander
                 VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
-                Width="{Binding SettingsWidth}"
-                Header="{DynamicResource Text.AllItemsControls}"
-                IsExpanded="{Binding GlobalPropertiesExpanded}">
-              <controls:GlobalPropertiesUserControl />
+                Header="{DynamicResource Text.WebCamStream}"
+                IsExpanded="{Binding CameraVideoStreamExpanded}">
+              <StackPanel Orientation="Vertical">
+                <controls:StreamUserControl/>
+              </StackPanel>
             </Expander>
             <Expander
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
-              Width="{Binding SettingsWidth}"
-              Header="{DynamicResource Text.WebCamStream}"
-              IsExpanded="{Binding CameraVideoStreamExpanded}">
+              Header="{DynamicResource Text.ProfileManagerTitle}"
+              IsExpanded="{Binding ProfileManagerExpanded}">
               <StackPanel Orientation="Vertical">
-                <controls:StreamUserControl/>
+                <controls:ProfileManagerUserControl/>
+              </StackPanel>
+            </Expander>
+            <Expander
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              Header="{DynamicResource Text.AiryDiscAnalysis}"
+              IsExpanded="{Binding CameraVideoStreamExpanded}"
+              IsVisible="{Binding IsDebug}">
+              <StackPanel Orientation="Vertical">
+                <controls:CollimationAnalysisUserControl/>
               </StackPanel>
             </Expander>
           </StackPanel>
         </ScrollViewer>
       </TabItem>
-      <TabItem>
+      <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>
-          <TextBlock
-            FontSize="14"
-            Text="{DynamicResource Text.Settings}" />
+          <PathIcon
+              Margin="{DynamicResource TabIconMargin}"
+              Height="{DynamicResource PathIconHeight}"
+              Foreground="{DynamicResource Color2}"
+              Data="{StaticResource IconData.Settings}"
+              ToolTip.Tip="{DynamicResource Text.Settings}" />
         </TabItem.Header>
         <ScrollViewer>
           <controls:SettingsTabUserControl />
         </ScrollViewer>
       </TabItem>
+      <TabItem Margin="-5 0 -5 0">
+        <TabItem.Header>
+          <PathIcon
+                Margin="{DynamicResource TabIconMargin}"
+                Height="{DynamicResource PathIconHeight}"
+                Foreground="{DynamicResource Color2}"
+                Data="{StaticResource IconData.Info}"
+                ToolTip.Tip="{DynamicResource Text.About}" />
+        </TabItem.Header>
+        <ScrollViewer>
+          <StackPanel>
+            <controls:AboutTabUserControl />            
+          </StackPanel>
+        </ScrollViewer>
+      </TabItem>
     </TabControl>
-    <controls:SocialButtonBarUserControl
-      Grid.Row="1"/>
+    <controls:LicenseUserControl
+      Grid.Row="1"
+      Margin="12"
+      IsVisible="{Binding InvalidLicense}"/>
   </Grid>
 </UserControl>

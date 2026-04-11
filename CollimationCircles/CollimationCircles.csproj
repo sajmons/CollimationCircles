@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
     <TrimMode>copyused</TrimMode>
@@ -11,8 +11,8 @@
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>3.2.1</Version>
-    <InformationalVersion>3.2.1</InformationalVersion>
+    <Version>4.0.0</Version>
+    <InformationalVersion>4.0.0</InformationalVersion>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
@@ -24,6 +24,9 @@
     <ApplicationIcon>Resources\Images\icon_256px.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Label="Avalonia">
+    <AvaloniaXamlReportImportance>Normal</AvaloniaXamlReportImportance>
+  </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Resources\**" />
   </ItemGroup>
@@ -33,35 +36,78 @@
     <TrimmableAssembly Include="Avalonia.Themes.Default" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia.Desktop" Version="11.2.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.12" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.0" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.2.0">
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.12" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.12">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.1.0" />
-    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.3.4" />
-    <PackageReference Include="Octokit" Version="13.0.1" />
-    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="DeviceId.Linux" Version="6.10.0" />
+    <PackageReference Include="DeviceId.Mac" Version="6.10.0" />
+    <PackageReference Include="DeviceId.Windows.WmiLight" Version="6.10.0" />
+    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.MessageBox" Version="2.2.0" />
+    <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.6" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.10.3" />
+    <PackageReference Include="Magick.NET.SystemDrawing" Version="8.0.16" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="NLog" Version="6.1.1" />
+    <PackageReference Include="Octokit" Version="14.0.0" />
+    <PackageReference Include="Standard.Licensing" Version="1.2.2" />
+    <PackageReference Include="System.Management" Version="10.0.3" />
+    <PackageReference Include="TextCopy" Version="6.2.1" />
 
-    <PackageReference Condition="$(RuntimeIdentifier.StartsWith('win')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
+    <PackageReference Condition="$(RuntimeIdentifier.StartsWith('win')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
     <PackageReference Condition="$(RuntimeIdentifier.StartsWith('osx')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />
-    <PackageReference Condition="$([MSBuild]::IsOsPlatform('Windows')) And '$(Configuration)' == 'Debug'" Include="VideoLAN.LibVLC.Windows" Version="3.0.20" />
+    <PackageReference Condition="$([MSBuild]::IsOsPlatform('Windows')) And '$(Configuration)' == 'Debug'" Include="VideoLAN.LibVLC.Windows" Version="3.0.23" />
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <Content Include="libvlc\**\*.*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CollimationCirclesFeatures\CollimationCirclesFeatures.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaXaml Update="Controls\CollimationAnalysisUserControl.axaml">
+      <SubType>Designer</SubType>
+    </AvaloniaXaml>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Controls\LicenseUserControl.axaml.cs">
+      <DependentUpon>LicenseUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\ProfileManagerUserControl.axaml.cs">
+      <DependentUpon>ProfileManagerUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\AboutUserControl.axaml.cs">
       <DependentUpon>AboutUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\CollimationAnalysisUserControl.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>CollimationAnalysisUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\RequestLicenseView.axaml.cs">
+      <DependentUpon>RequestLicenseView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\CameraControlsView.axaml.cs">
       <DependentUpon>CameraControlsView.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ImageView.axaml.cs">
+      <DependentUpon>ImageView.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="icon.icns">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="license1.lic">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="trial license.lic">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NLog.config">

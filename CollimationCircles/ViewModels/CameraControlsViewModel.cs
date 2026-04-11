@@ -11,16 +11,23 @@ namespace CollimationCircles.ViewModels
     public partial class CameraControlsViewModel : BaseViewModel
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+        private readonly ILibVLCService libVLCService;
 
         [ObservableProperty]
         private bool isOpened = true;
 
         [ObservableProperty]
-        private ICamera camera = new Camera();
+        private Camera camera;
 
-        public CameraControlsViewModel()
+        [ObservableProperty]
+        private bool isLibCamera;
+
+        public CameraControlsViewModel(ILibVLCService libVLCService)
         {
-            Camera = Ioc.Default.GetRequiredService<ILibVLCService>().Camera;
+            this.libVLCService = libVLCService;
+            camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
+
+            IsLibCamera = Camera.APIType == APIType.LibCamera;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -36,5 +43,12 @@ namespace CollimationCircles.ViewModels
             Camera.SetDefaultControls();
             logger.Info("Default camera controls buton clicked");
         }
+
+        [RelayCommand]
+        private void Apply()
+        {
+            libVLCService.Play(Camera, false);
+            logger.Info("Apply camera controls buton clicked");
+        }        
     }
 }

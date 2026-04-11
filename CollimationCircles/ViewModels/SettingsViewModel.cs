@@ -6,6 +6,7 @@ using CollimationCircles.Helper;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
@@ -27,8 +28,6 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly IDialogService dialogService;
-
         [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
 
@@ -38,11 +37,11 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private double mainWindowWidth = 900;
+        private double mainWindowWidth = 1152;
 
         [JsonProperty]
         [ObservableProperty]
-        private double mainWindowHeight = 700;
+        private double mainWindowHeight = 800;
 
         [JsonProperty]
         [ObservableProperty]
@@ -64,17 +63,13 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private double labelSize = 10;
+        private double labelSize = 16;
 
         [JsonProperty]
         [ObservableProperty]
         [Range(Constraints.RotationAngleMin, Constraints.RotationAngleMax)]
         [NotifyDataErrorInfo]
-        private double rotationAngle = 0;
-
-        [JsonProperty]
-        [ObservableProperty]
-        public bool showLabels = true;
+        private double rotationAngle = 0;        
 
         [JsonProperty]
         [ObservableProperty]
@@ -99,19 +94,15 @@ namespace CollimationCircles.ViewModels
         private KeyValuePair<string, string> selectedLanguage = new();
 
         [ObservableProperty]
-        private ObservableCollection<string> themeList = [];
+        private ObservableCollection<ThemeVariant> themeList = [];
 
         [JsonProperty]
         [ObservableProperty]
-        private string selectedTheme = "Dark";
+        private ThemeVariant selectedTheme = ThemeVariant.Default;
 
         [JsonProperty]
         [ObservableProperty]
         private bool checkForNewVersionOnStartup = true;
-
-        [JsonProperty]
-        [ObservableProperty]
-        private bool alwaysOnTop = true;
 
         [JsonProperty]
         [ObservableProperty]
@@ -157,7 +148,9 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool cameraVideoStreamExpanded = true;
 
-        private bool oldAllwysOnTop = false;
+        [JsonProperty]
+        [ObservableProperty]
+        private bool profileManagerExpanded = true;
 
         [JsonProperty]
         [ObservableProperty]
@@ -181,21 +174,26 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private string lastSelectedCamera = string.Empty;
 
-        public SettingsViewModel(IDialogService dialogService)
-        {
-            this.dialogService = dialogService;
+        [JsonProperty]
+        [ObservableProperty]
+        private ObservableCollection<Profile> profiles = [];
 
-            Initialize();
-        }
+        [JsonProperty]
+        [ObservableProperty]
+        private bool shapeListExpanded = true;
 
-        public void Initialize()
+        [JsonProperty]
+        [ObservableProperty]
+        private bool shapePropertiesExpanded = true;
+
+        protected override void Initialize()
         {
+            base.Initialize();
+
             InitializeLanguage();
             InitializeThemes();
             InitializeColors();
             InitializeKeyboardShortcuts();
-
-            Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
         }
 
         private void InitializeKeyboardShortcuts()
@@ -229,18 +227,19 @@ namespace CollimationCircles.ViewModels
 
         private void InitializeThemes()
         {
-            // initialize languages
-            List<string> l =
+            // initialize themes
+            List<ThemeVariant> themes =
             [
-                nameof(ThemeVariant.Light),
-                nameof(ThemeVariant.Dark),
-                nameof(Themes.Custom.Night)
+                ThemeVariant.Light,
+                ThemeVariant.Dark,
+                Themes.Custom.Night
             ];
 
-            ThemeList = new ObservableCollection<string>(l);
-            SelectedTheme = ThemeList.FirstOrDefault() ?? nameof(ThemeVariant.Dark);
+            var osTheme = Application.Current?.PlatformSettings?.GetColorValues();
+            bool isDark = osTheme?.ThemeVariant is Avalonia.Platform.PlatformThemeVariant.Dark;
 
-            Translate(SelectedLanguage.Value);
+            ThemeList = new ObservableCollection<ThemeVariant>(themes);
+            SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
 
             logger.Info("Initialized themes");
         }
@@ -258,8 +257,6 @@ namespace CollimationCircles.ViewModels
 
             LanguageList = new ObservableCollection<KeyValuePair<string, string>>(l);
             SelectedLanguage = LanguageList.FirstOrDefault();
-
-            Translate(SelectedLanguage.Value);
 
             logger.Info("Initialized languages");
         }
@@ -303,10 +300,7 @@ namespace CollimationCircles.ViewModels
                 new ScrewViewModel(),
 
                 // Primary Clip
-                new PrimaryClipViewModel(),
-
-                // Focus mask
-                new BahtinovMaskViewModel()
+                new PrimaryClipViewModel()
             ];
 
             Items.Clear();
@@ -315,10 +309,9 @@ namespace CollimationCircles.ViewModels
             SelectedIndex = 0;
 
             RotationAngle = 0;
-            Scale = 1;
-            ShowLabels = true;
+            Scale = 1;            
             CheckForNewVersionOnStartup = true;
-            AlwaysOnTop = true;
+            AlwaysOnTop = true;            
             ShowMarkAtSelectedItem = true;
             ShowApplicationLog = false;
 
@@ -332,11 +325,11 @@ namespace CollimationCircles.ViewModels
         {
             if (SettingsDialogViewModel is null)
             {
-                SettingsDialogViewModel = dialogService?.CreateViewModel<SettingsViewModel>();
+                SettingsDialogViewModel = DialogService?.CreateViewModel<SettingsViewModel>();
 
                 if (SettingsDialogViewModel is not null)
                 {
-                    dialogService?.Show(null, SettingsDialogViewModel);
+                    DialogService?.Show(null, SettingsDialogViewModel);
                     logger.Info("Opened settings window");
                 }
 
@@ -403,13 +396,12 @@ namespace CollimationCircles.ViewModels
                 Title = ResSvc.TryGetString("SaveFile"),
                 Filters =
                 [
-                    new(ResSvc.TryGetString("JSONDocuments"), ResSvc.TryGetString("StarJson")),
-                    new(ResSvc.TryGetString("AllFiles"), ResSvc.TryGetString("StarChar"))
+                    new("JSON", "json")
                 ],
-                DefaultExtension = ResSvc.TryGetString("StarJson")
+                DefaultExtension = "json"
             };
 
-            var path = await dialogService.ShowSaveFileDialogAsync(this, settings);
+            var path = await DialogService.ShowSaveFileDialogAsync(this, settings);
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
@@ -425,18 +417,17 @@ namespace CollimationCircles.ViewModels
                 Title = ResSvc.TryGetString("OpenFile"),
                 Filters =
                 [
-                    new(ResSvc.TryGetString("JSONDocuments"), ResSvc.TryGetString("StarJson")),
-                    new(ResSvc.TryGetString("AllFiles"), ResSvc.TryGetString("StarChar")),
+                    new("JSON", "json"),
                 ]
             };
 
-            var path = await dialogService.ShowOpenFileDialogAsync(this, settings);
+            var path = await DialogService.ShowOpenFileDialogAsync(this, settings);
 
             if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
             {
                 if (!LoadState(path: path?.Path?.LocalPath))
                 {
-                    await dialogService.ShowMessageBoxAsync(this, ResSvc.TryGetString("UnableToOpenFile"), ResSvc.TryGetString("Error"));
+                    await DialogService.ShowMessageBoxAsync(this, ResSvc.TryGetString("UnableToOpenFile"), ResSvc.TryGetString("Error"));
                 }
             }
         }
@@ -490,23 +481,17 @@ namespace CollimationCircles.ViewModels
             {
                 logger.Info($"Found new version {newVersion}");
 
-                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
-
-                var dialogResult = await dialogService.ShowMessageBoxAsync(null,
+                var dialogResult = await DialogService.ShowMessageBoxAsync(null,
                     ResSvc.TryGetString("NewVersionDownload").F(newVersion), ResSvc.TryGetString("NewVersion"), MessageBoxButton.YesNo);
 
                 if (dialogResult is true)
                 {
                     AppService.OpenUrl(result);
                 }
-
-                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
             }
             else if (!success)
             {
-                DissableAlwaysOnTop();   // prevent new version dialog to appear behind MainWindow                        
-                await dialogService.ShowMessageBoxAsync(null, result, ResSvc.TryGetString("Error"));
-                RestoreAlwaysOnTop();       // restore previous AlwaysOnTop setting
+                await DialogService.ShowMessageBoxAsync(null, result, ResSvc.TryGetString("Error"));
             }
         }
 
@@ -529,7 +514,6 @@ namespace CollimationCircles.ViewModels
 
                     Scale = vm.Scale;
                     RotationAngle = vm.RotationAngle;
-                    ShowLabels = vm.ShowLabels;
                     ColorList = vm.ColorList;
                     LabelSize = vm.LabelSize;
 
@@ -555,10 +539,15 @@ namespace CollimationCircles.ViewModels
                     ShowKeyboardShortcuts = vm.ShowKeyboardShortcuts;
                     SettingsExpanded = vm.SettingsExpanded;
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
+                    ProfileManagerExpanded = vm.ProfileManagerExpanded;
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
+                    ShapeListExpanded = vm.ShapeListExpanded;
+                    ShapePropertiesExpanded = vm.ShapePropertiesExpanded;
+
                     LastSelectedCamera = vm.LastSelectedCamera;
+                    Profiles = vm.Profiles;
 
                     if (!DockInMainWindow)
                     {
@@ -590,77 +579,27 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        partial void OnSelectedThemeChanged(string value)
+        partial void OnSelectedThemeChanged(ThemeVariant? oldValue, ThemeVariant newValue)
         {
-            if (SelectedTheme is not null)
+            Guard.IsNotNull(SelectedTheme, nameof(SelectedTheme));
+            Guard.IsNotNull(Application.Current, nameof(Application.Current));
+            Guard.IsNotNull(newValue, nameof(newValue));
+
+            if (oldValue == newValue)
             {
-                if (Application.Current is not null)
-                {
-                    switch (value)
-                    {
-                        default:
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Default;
-                            break;
-                        case nameof(ThemeVariant.Light):
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Light;
-                            break;
-                        case nameof(Themes.Custom.Night):
-                            Application.Current.RequestedThemeVariant = Themes.Custom.Night;
-                            break;
-                        case nameof(ThemeVariant.Dark):
-                            Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
-                            break;
-                    };
-                }
+                return;
             }
 
-            logger.Info($"Application theme changed to '{value}'");
-        }
-
-        [RelayCommand]
-        internal async Task OpenAboutDialog()
-        {
-            var dialogViewModel = dialogService.CreateViewModel<AboutViewModel>();
-
-            DissableAlwaysOnTop();
-            _ = await dialogService.ShowDialogAsync(this, dialogViewModel);
-            RestoreAlwaysOnTop();
-        }
-
-        [RelayCommand]
-        internal static void OpenContactWebPage()
-        {
-            AppService.OpenUrl(AppService.ContactPage);
-        }
-
-        [RelayCommand]
-        internal static void OpenGitHubPage()
-        {
-            AppService.OpenUrl(AppService.GitHubPage);
-        }
-
-        [RelayCommand]
-        internal static void OpenTwitter()
-        {
-            AppService.OpenUrl(AppService.TwitterPage);
-        }
-
-        [RelayCommand]
-        internal static void OpenYouTubeChannel()
-        {
-            AppService.OpenUrl(AppService.YouTubeChannel);
-        }
-
-        [RelayCommand]
-        internal static void OpenPatreonWebSite()
-        {
-            AppService.OpenUrl(AppService.PatreonWebPage);
-        }
-
-        [RelayCommand]
-        internal static void GitHubIssue()
-        {
-            AppService.OpenUrl(AppService.GitHubIssue);
+            if (newValue == Themes.Custom.Night)
+            {
+                Application.Current.RequestedThemeVariant = newValue;
+                logger.Info($"Application theme changed to '{Application.Current.ActualThemeVariant}'");
+            }
+            else
+            {
+                Application.Current.RequestedThemeVariant = newValue;
+                logger.Info($"Application theme changed to '{Application.Current.ActualThemeVariant}'");
+            }
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
@@ -670,7 +609,6 @@ namespace CollimationCircles.ViewModels
                 case nameof(RotationAngle):
                 case nameof(Scale):
                 case nameof(LabelSize):
-                case nameof(ShowLabels):
                 case nameof(AlwaysOnTop):
                 case nameof(SelectedIndex):
                 case nameof(ShowMarkAtSelectedItem):
@@ -696,17 +634,6 @@ namespace CollimationCircles.ViewModels
                     }
                     break;
             }
-        }
-
-        public void DissableAlwaysOnTop()
-        {
-            oldAllwysOnTop = AlwaysOnTop;
-            AlwaysOnTop = false;
-        }
-
-        public void RestoreAlwaysOnTop()
-        {
-            AlwaysOnTop = oldAllwysOnTop;
         }
     }
 }

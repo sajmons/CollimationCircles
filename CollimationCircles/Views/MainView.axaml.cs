@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Styling;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
@@ -40,6 +41,13 @@ namespace CollimationCircles.Views
             khs = Ioc.Default.GetRequiredService<IKeyHandlingService>();
 
             PositionChanged += MainView_PositionChanged;
+
+            // react to system theme changes
+            Application.Current!.PlatformSettings!.ColorValuesChanged += (sender, args) =>
+            {
+                bool isDark = args.ThemeVariant == Avalonia.Platform.PlatformThemeVariant.Dark;
+                vm.SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
+            };
         }
 
         private void MainView_PositionChanged(object? sender, PixelPointEventArgs e)
@@ -59,15 +67,29 @@ namespace CollimationCircles.Views
         {
             try
             {
-                SettingsViewModel vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
-
                 int dockedWidth = vm.DockInMainWindow ? vm.SettingsMinWidth / 2 : 0;
                 var items = vm.Items;
 
                 if (vm.ShowKeyboardShortcuts == true)
                 {
-                    dhs.DrawShortcuts(context, vm.GlobalShortcuts, new Point(5, 0));
-                    dhs.DrawShortcuts(context, vm.ShapeShortcuts, new Point(5, 80));
+                    string shortcutsString = string.Empty;
+
+                    foreach (var sk in vm.GlobalShortcuts)
+                    {
+                        shortcutsString += $"{sk.Key}: {sk.Value}{Environment.NewLine}";
+                    }
+
+                    foreach (var sk in vm.ShapeShortcuts)
+                    {
+                        shortcutsString += $"{sk.Key}: {sk.Value}{Environment.NewLine}";
+                    }
+
+                    dhs.DrawText(context, shortcutsString, new Point(8, 2), Brushes.Yellow, vm.LabelSize);
+                }
+
+                if (!vm.LicenseService.IsValid)
+                {
+                    dhs.DrawText(context, vm.ResSvc.TryGetString("UnlicensedVersion"), new Point(8, vm.MainWindowHeight - 30), Brushes.Red, vm.LabelSize);
                 }
 
                 if (items is not null)
@@ -135,6 +157,11 @@ namespace CollimationCircles.Views
 
         protected override void OnKeyDown(KeyEventArgs e)
         {
+            if (FocusManager?.GetFocusedElement() is TextBox)
+            {
+                TopGrid.Focus();
+            }
+
             khs.HandleMovement(this, vm, e);
             khs.HandleGlobalScale(vm, e);
             khs.HandleHelperRadius(vm, e);

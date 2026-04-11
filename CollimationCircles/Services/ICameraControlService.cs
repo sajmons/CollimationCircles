@@ -1,12 +1,13 @@
 ﻿using CollimationCircles.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
     public interface ICameraControlService
     {
-        public void Set(ControlType propertyname, double value, ICamera camera);
+        public void Set(ControlType propertyname, double value, Camera camera);
 
-        public List<ICamera> GetCameraList();
+        public Task<List<Camera>> GetCameraList();
     }
 }

@@ -1,7 +1,11 @@
-﻿using CollimationCircles.Messages;
+﻿using CollimationCircles.Helper.RpiCameraTools;
+using CollimationCircles.Messages;
 using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
+using Octokit;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,27 +20,41 @@ namespace CollimationCircles.Services
         private string address = string.Empty;
         private string port = string.Empty;
         private string pathAndQuery = string.Empty;
-        private const string rpiPort = "55555";
+        private const string rpiPort = RasPiCameraDetect.StreamPort;
+
+        public const string SnapshotImageFile = "snapshot.jpg";
 
         public string FullAddress { get; set; } = string.Empty;
         public MediaPlayer MediaPlayer { get; }
-        public ICamera Camera { get; set; } = new Camera();
 
         public LibVLCService()
         {
-            FullAddress = GetFullUrlFromParts();
-
             // https://wiki.videolan.org/VLC_command-line_help/
 
             string[] libVLCOptions = [
-                //$"--width=320",
-                //$"--height=240",
-                //$"--zoom=1.5",
-                //$"--log-verbose=0"
-                //"--video-filter=adjust{contrast=1.0,brightness=1.0,hue=0,saturation=1.0,gamma=1.0}"
+                "--verbose=3"
             ];
 
             libVLC = new(libVLCOptions);
+
+            libVLC.Log += (sender, e) =>
+            {
+                switch (e.Level)
+                {
+                    case LogLevel.Error:
+                        logger.Error($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                    case LogLevel.Debug:
+                        logger.Debug($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                    case LogLevel.Warning:
+                        logger.Warn($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                    case LogLevel.Notice:
+                        logger.Info($"LibVLC: {e.Module} {e.Message}");
+                        break;
+                }
+            };
 
             MediaPlayer = new(libVLC)
             {
@@ -51,23 +69,32 @@ namespace CollimationCircles.Services
             MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
         }
 
-        public async Task Play()
+        public async Task Play(Camera camera, bool displayAdvancedDShowDialog)
         {
-            List<string> parametersList = [];
+            Guard.IsNotNull(camera);
 
-            if (Camera.APIType == APIType.LibCamera)
+            List<string> parametersList = [];
+            ICommandBuilder? commandBuilder = null;
+
+            if (camera.APIType == APIType.LibCamera)
             {
+                // Set command type to Vid (video capture)
+                commandBuilder = new RpiCameraAppsCommandBuilder
+                {
+                    CommandType = RpicamAppCommand.Vid
+                }.SetDefaultParameters();
+
                 // with libcamera we need first to create video stream
-                List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(Camera);
+                List<string> controls = new RasPiCameraDetect().GetCommandLineParameters(camera, commandBuilder);
                 await AppService.StartRaspberryPIStream(rpiPort, controls);
             }
-            else if (Camera.APIType == APIType.V4l2)
+            else if (camera.APIType == APIType.V4l2)
             {
-                parametersList = new V4L2CameraDetect().GetCommandLineParameters(Camera);
+                parametersList = new V4L2CameraDetect().GetCommandLineParameters(camera, commandBuilder);
             }
-            else if (Camera.APIType == APIType.Dshow)
+            else if (camera.APIType == APIType.Dshow)
             {
-                parametersList = new DShowCameraDetect().GetCommandLineParameters(Camera);
+                parametersList = new DShowCameraDetect(displayAdvancedDShowDialog).GetCommandLineParameters(camera, commandBuilder);
             }
 
             if (!string.IsNullOrWhiteSpace(FullAddress))
@@ -88,33 +115,43 @@ namespace CollimationCircles.Services
                     media.AddOption(parameter);
                 }
 
-                MediaPlayer.Play(media);
-                logger.Info($"Playing web camera stream: '{media.Mrl}'");
+                bool result = MediaPlayer.Play(media);
+
+                if (result)
+                {
+                    logger.Info($"Playing web camera stream: '{media.Mrl}'");
+                }
+                else
+                {
+                    logger.Info($"Failed to play web camera stream: '{media.Mrl}'");
+                }
             }
         }
 
-        private string GetFullUrlFromParts()
+        private string GetFullUrlFromParts(Camera? camera)
         {
+            Guard.IsNotNull(camera);
+
             protocol = string.Empty;
             pathAndQuery = string.Empty;
             port = string.Empty;
             address = string.Empty;
 
-            if (Camera.APIType == APIType.Dshow)
+            if (camera.APIType == APIType.Dshow)
             {
                 protocol = "dshow";
             }
-            else if (Camera.APIType == APIType.QTCapture)
+            else if (camera.APIType == APIType.QTCapture)
             {
                 protocol = "qtcapture";
-                address = Camera.Path;
+                address = camera.Path;
             }
-            else if (Camera.APIType == APIType.V4l2)
+            else if (camera.APIType == APIType.V4l2)
             {
                 protocol = "v4l2";
-                address = Camera.Path;
+                address = camera.Path;
             }
-            else if (Camera.APIType == APIType.LibCamera)
+            else if (camera.APIType == APIType.LibCamera)
             {
                 protocol = "tcp/h264";
                 address = "localhost";
@@ -134,11 +171,20 @@ namespace CollimationCircles.Services
             return $"{protocol}{addr}{prt}{pth}";
         }
 
-        public string DefaultAddress(ICamera camera)
+        public string DefaultAddress(Camera camera)
         {
-            Camera = camera;
-            FullAddress = GetFullUrlFromParts();
+            Guard.IsNotNull(camera);
+
+            FullAddress = GetFullUrlFromParts(camera);
             return FullAddress;
+        }
+
+        public void TakeSnapshot()
+        {
+            if (MediaPlayer.IsPlaying)
+            {
+                MediaPlayer.TakeSnapshot(0, $".\\{SnapshotImageFile}", 800, 600);
+            }
         }
     }
 }

@@ -1,14 +1,16 @@
 ﻿using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using LibVLCSharp.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
-    internal class DShowCameraDetect() : ICameraDetect
+    internal class DShowCameraDetect(bool displayAdvancedDShowDialog = false) : ICameraDetect
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -21,17 +23,15 @@ namespace CollimationCircles.Services
             { ControlType.Gamma, "Gamma" }
         };
 
-        public List<ICamera> GetCameras()
-        {            
-            List<ICamera> cameras = [];
+        public async Task<List<Camera>> GetCameras()
+        {
+            List<Camera> cameras = [];
 
             if (OperatingSystem.IsWindows())
             {
-                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera')"))
+                using (var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_PnPEntity WHERE (PNPClass = 'Image' OR PNPClass = 'Camera') AND DeviceID Like 'USB%'"))
                 {
                     var devices = searcher.Get().Cast<ManagementObject>().ToList();
-
-                    ILibVLCService lib = Ioc.Default.GetRequiredService<ILibVLCService>();
 
                     int camIndex = 0;
                     foreach (var device in devices)
@@ -40,6 +40,9 @@ namespace CollimationCircles.Services
                         {
                             string deviceName = (string)device.GetPropertyValue("Name");
                             string deviceId = (string)device.GetPropertyValue("DeviceID");
+                            string service = (string)device.GetPropertyValue("Service");
+
+                            logger.Debug($"DeviceName: '{deviceName}', DeviceId: '{deviceId}', Service: '{service}'");
 
                             Camera c = new()
                             {
@@ -49,7 +52,7 @@ namespace CollimationCircles.Services
                                 Index = camIndex++
                             };
 
-                            c.Controls = GetControls(c);
+                            c.Controls = await GetControls(c);
 
                             if (c.Controls.Count > 0)
                             {
@@ -64,13 +67,15 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(ICamera camera)
+        public Task<List<ICameraControl>> GetControls(Camera camera)
         {
+            Guard.IsNotNull(camera);
+
             List<ICameraControl> controls = [];
 
             CameraControl cameraControl;
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Contrast)
+            controls.Add(cameraControl = new CameraControl(ControlType.Contrast, camera)
             {
                 Default = 50,
                 Value = 50,
@@ -80,7 +85,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Brightness)
+            controls.Add(cameraControl = new CameraControl(ControlType.Brightness, camera)
             {
                 Default = 50,
                 Value = 50,
@@ -90,7 +95,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Hue)
+            controls.Add(cameraControl = new CameraControl(ControlType.Hue, camera)
             {
                 Default = 0,
                 Value = 0,
@@ -100,7 +105,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Saturation)
+            controls.Add(cameraControl = new CameraControl(ControlType.Saturation, camera)
             {
                 Default = 40,
                 Value = 40,
@@ -110,7 +115,7 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            controls.Add(cameraControl = new CameraControl(ControlType.Gamma)
+            controls.Add(cameraControl = new CameraControl(ControlType.Gamma, camera)
             {
                 Default = 8,
                 Value = 8,
@@ -120,11 +125,13 @@ namespace CollimationCircles.Services
             });
             logger.Info($"Control '{cameraControl.Name} min: {cameraControl.Min} max: {cameraControl.Max} step: {cameraControl.Step} default: {cameraControl.Default} value: {cameraControl.Value}' type: {cameraControl.ValueType} for '{camera.Name}' added");
 
-            return controls;
+            return Task.FromResult(controls);
         }
 
-        public void SetControl(ICamera camera, ControlType controlName, double value)
+        public void SetControl(Camera camera, ControlType controlName, double value)
         {
+            Guard.IsNotNull(camera);
+
             try
             {
                 ILibVLCService vlc = Ioc.Default.GetRequiredService<ILibVLCService>();
@@ -156,15 +163,23 @@ namespace CollimationCircles.Services
             return (newStart + ((value - originalStart) * scale));
         }
 
-        public List<string> GetCommandLineParameters(ICamera camera)
+        public List<string> GetCommandLineParameters(Camera camera, ICommandBuilder? builder)
         {
-            return [
+            Guard.IsNotNull(camera);
+
+            List<string> properties = [
                 $":dshow-vdev={camera.Name}"
                 , ":dshow-adev=none"
                 , ":live-caching=300"
-                , ":dshow-chroma=MJPG"
-                //, ":dshow-config"
+                , ":dshow-chroma=mjpg"
             ];
+
+            if (displayAdvancedDShowDialog)
+            {
+                properties.Add(":dshow-config");
+            }
+
+            return properties;
         }
     }
 }

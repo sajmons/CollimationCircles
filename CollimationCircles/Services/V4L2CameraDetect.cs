@@ -1,9 +1,11 @@
 ﻿using CollimationCircles.Models;
+using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
@@ -29,13 +31,13 @@ namespace CollimationCircles.Services
             { ControlType.Zoom_Absolute, "zoom_absolute" }
         };
 
-        public List<ICamera> GetCameras()
+        public async Task<List<Camera>> GetCameras()
         {
-            List<ICamera> cameras = [];
+            List<Camera> cameras = [];
 
-            var (errorCode, result, process) = AppService.ExecuteCommand(
+            var (errorCode, result) = await AppService.StartProcessAsync(
                 "v4l2-ctl",
-            ["--list-devices"]).GetAwaiter().GetResult();
+                ["--list-devices"]);
 
             logger.Info($"v4l2-ctl --list-devices result: {result}");
 
@@ -65,7 +67,7 @@ namespace CollimationCircles.Services
                             Path = cam
                         };
 
-                        c.Controls = GetControls(c);
+                        c.Controls = await GetControls(c);
 
                         if (c.Controls.Count > 0)
                         {
@@ -87,11 +89,13 @@ namespace CollimationCircles.Services
             return cameras;
         }
 
-        public List<ICameraControl> GetControls(ICamera camera)
+        public async Task<List<ICameraControl>> GetControls(Camera camera)
         {
-            var (errorCode, result, process) = AppService.ExecuteCommand(
+            Guard.IsNotNull(camera);
+
+            var (errorCode, result) = await AppService.StartProcessAsync(
                 "v4l2-ctl",
-                ["--list-ctrls", "--device", $"{camera.Path}"]).GetAwaiter().GetResult();
+                ["--list-ctrls", "--device", $"{camera.Path}"]);
 
             string pattern = @"(?<name>\w+)\s(?<hex>0x\w+)\s\((?<type>\w+)\)\s*:\s*(min=(?<min>-?\d+))?\s*(max=(?<max>-?\d+))?\s*(step=(?<step>-?\d+))?\s*(default=(?<default>-?\d+))?\s*(value=(?<value>-?\d+))?\s*(flags=(?<flags>\w+))?";
 
@@ -113,7 +117,7 @@ namespace CollimationCircles.Services
 
                 if (Enum.TryParse(name, out ControlType controlName))
                 {
-                    var cameraControl = new CameraControl(controlName)
+                    var cameraControl = new CameraControl(controlName, camera)
                     {
                         Min = min,
                         Max = max,
@@ -132,18 +136,24 @@ namespace CollimationCircles.Services
             return controls;
         }
 
-        public void SetControl(ICamera camera, ControlType controlType, double value)
+        public void SetControl(Camera camera, ControlType controlType, double value)
         {
-            AppService.ExecuteCommand("v4l2-ctl", [
+            Guard.IsNotNull(camera);
+
+            AppService.StartProcessAsync("v4l2-ctl", [
                 "--device",
                 camera.Path,
                 $"--set-ctrl={ControlMapping[controlType]}={value}"
-                ]);
+                ]).GetAwaiter().GetResult();
         }
 
-        public List<string> GetCommandLineParameters(ICamera camera)
+        public List<string> GetCommandLineParameters(Camera camera, ICommandBuilder? builder)
         {
-            return ["width=432", "height=240"];
+            Guard.IsNotNull(camera);
+
+            return [
+                "chroma=mjpg"
+            ];
         }
     }
 }

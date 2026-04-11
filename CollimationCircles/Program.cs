@@ -1,4 +1,6 @@
 ﻿using Avalonia;
+using Avalonia.Media.Imaging;
+using CollimationCircles.Services;
 using System;
 
 namespace CollimationCircles

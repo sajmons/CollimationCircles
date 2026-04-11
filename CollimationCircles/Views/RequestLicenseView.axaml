@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="650"
+        d:DesignHeight="290"
+        x:Class="CollimationCircles.Views.RequestLicenseView"
+        xmlns:controls="clr-namespace:CollimationCircles.Controls"
+        Title="{Binding Title}"
+        xmlns:vm="using:CollimationCircles.ViewModels"
+        x:DataType="vm:RequestLicenseViewModel"
+        Width="650" Height="290"
+        Icon="/Resources/Images/icon_256px.ico"
+        WindowStartupLocation="CenterScreen">
+  <StackPanel
+    Margin="20"
+    Spacing="10"
+    Orientation="Vertical">
+
+    <StackPanel
+      Spacing="10"
+      Orientation="Horizontal">
+      <TextBlock
+        VerticalAlignment="Center"
+        Text="{DynamicResource Text.LicenseType}"/>
+      <RadioButton
+        Content="{DynamicResource Text.StandardLicense}"
+        GroupName="LicenseType"
+        IsChecked="{ReflectionBinding IsStandardLicense}"/>
+      <RadioButton
+        IsChecked="{ReflectionBinding !IsStandardLicense}"
+        GroupName="LicenseType"
+        Content="{DynamicResource Text.TrialLicense}"/>
+    </StackPanel>
+
+    <TextBlock
+      Text="{DynamicResource Text.LicenseData}"/>
+    <SelectableTextBlock
+      TextWrapping="Wrap"
+      Text="{ReflectionBinding LicenseRequestText}"/>
+    <TextBlock
+      TextWrapping="Wrap"
+      Text="{DynamicResource Text.LicenseInstructions}"/>
+
+    <Button
+      Content="{DynamicResource Text.RequestLicense}"
+      Command="{ReflectionBinding Submit}"/>
+  </StackPanel>
+</Window>

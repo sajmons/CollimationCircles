@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using CollimationCircles.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Controls
 {
@@ -7,6 +9,10 @@ namespace CollimationCircles.Controls
         public AboutTabUserControl()
         {
             InitializeComponent();
+
+            var vm = Ioc.Default.GetRequiredService<AboutViewModel>();
+
+            DataContext = vm;
         }
     }
 }

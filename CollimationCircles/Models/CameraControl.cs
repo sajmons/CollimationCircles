@@ -4,11 +4,10 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Models
 {
-    public partial class CameraControl : ObservableObject, ICameraControl
+    public partial class CameraControl(ControlType controlName, Camera camera) : ObservableObject, ICameraControl
     {
-        private readonly ICameraControlService cameraControlService;
-        private readonly ILibVLCService libVLCService;
-        public ControlType Name { get; set; }
+        private readonly ICameraControlService cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
+        public ControlType Name { get; set; } = controlName;
         public int Min { get; set; }
         public int Max { get; set; }
         public double Step { get; set; } = 0.1;
@@ -19,16 +18,14 @@ namespace CollimationCircles.Models
         private int value;
         public string Flags { get; set; } = string.Empty;
 
-        public CameraControl(ControlType controlName)
-        {
-            cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
-            libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
-            Name = controlName;
-        }
+        private readonly Camera _camera = camera;
 
         partial void OnValueChanged(int oldValue, int newValue)
         {
-            cameraControlService.Set(Name, newValue, libVLCService.Camera);
+            if (_camera is not null)
+            {
+                cameraControlService.Set(Name, newValue, _camera);
+            }
         }
 
         public void SetDefault()

@@ -15,7 +15,7 @@ Param(
     [Parameter(Mandatory=$False)]
     [ValidateNotNullOrEmpty()]
     [Alias("f")]
-    [string]$Framework = "net8.0",
+    [string]$Framework = "net10.0",
 	# Output
     [Parameter(Mandatory=$False)]
     [ValidateNotNullOrEmpty()]
@@ -217,7 +217,7 @@ Function PublishOne
         Remove-Item –path $Output/$Runtime/icon.icns
     }
 
-    GrantExecutablePermissions $appName $Output $Runtime
+    # GrantExecutablePermissions $appName $Output $Runtime
 
     # To maintain backward compatibility for downloading new version GitHub release files must be ordered so that win-x64 is the first file.
     # That's why I aded number infront of file name to maintain correct order.
