@@ -1,7 +1,7 @@
 ﻿using Avalonia;
-using Avalonia.Media.Imaging;
 using CollimationCircles.Services;
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 namespace CollimationCircles
@@ -9,6 +9,9 @@ namespace CollimationCircles
     internal class Program
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private static bool IsLinuxArm64 =>
+            OperatingSystem.IsLinux() && RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
 
         // Initialization code. Don't use any Avalonia, third-party APIs or any
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -43,28 +46,18 @@ namespace CollimationCircles
         }
 
         /// <summary>
-        /// On Linux ARM64 (e.g. Raspberry Pi Bookworm), Avalonia's default Wayland/OpenGL
+        /// On Linux ARM64 (e.g. Raspberry Pi Bookworm), Avalonia's default OpenGL
         /// rendering can crash due to GPU driver incompatibilities.
-        /// Force X11 backend and software rendering to prevent native crashes.
+        /// Force software rendering via LIBGL to prevent native crashes.
         /// </summary>
         private static void ConfigureLinuxEnvironment()
         {
-            if (OperatingSystem.IsLinux() && RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
+            if (IsLinuxArm64)
             {
-                // Force X11 instead of Wayland to avoid compositor crashes
-                Environment.SetEnvironmentVariable("AVALONIA_SCREEN_SCALE_FACTORS", null);
-
                 if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("LIBGL_ALWAYS_SOFTWARE")))
                 {
                     Environment.SetEnvironmentVariable("LIBGL_ALWAYS_SOFTWARE", "1");
                     logger.Info("Set LIBGL_ALWAYS_SOFTWARE=1 for ARM64 Linux");
-                }
-
-                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("AVALONIA_RENDER_MODE")))
-                {
-                    // Prefer software rendering to avoid GPU driver crashes on Pi
-                    Environment.SetEnvironmentVariable("AVALONIA_RENDER_MODE", "software");
-                    logger.Info("Set AVALONIA_RENDER_MODE=software for ARM64 Linux");
                 }
 
                 logger.Info("Applied Linux ARM64 rendering workarounds");
@@ -74,9 +67,23 @@ namespace CollimationCircles
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
         {
-            return AppBuilder.Configure<App>()
+            var builder = AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToTrace();
+
+            // On Linux ARM64 (Raspberry Pi), force software rendering to avoid
+            // GPU driver segfaults with OpenGL on Bookworm.
+            if (IsLinuxArm64)
+            {
+                builder = builder.With(new X11PlatformOptions
+                {
+                    RenderingMode = [X11RenderingMode.Software]
+                });
+
+                logger.Info("Configured Avalonia X11 software rendering for ARM64 Linux");
+            }
+
+            return builder;
         }
     }
 }
