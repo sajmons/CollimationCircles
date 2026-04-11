@@ -157,13 +157,8 @@
   <system:String x:Key="Text.UnlicensedVersion">Nelicencirana različica</system:String>
   <system:String x:Key="Text.ShapeList">Oblike</system:String>
   <system:String x:Key="Text.ShapeProperties">Lastnosti oblike</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysisCam">Analiza zračnega diska zvezde iz kamere</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysisImage">Analiza zračnega diska zvezde iz slike</system:String>
-  <system:String x:Key="Text.CircleDetectionMethod">Metoda zaznavanja krogov</system:String>
-  <system:String x:Key="Text.CircleHoughTransform">Hough-ova transformacija (CHT)</system:String>
   <system:String x:Key="Text.ContourMinEnclosingCircle">Minimalen krog konture</system:String>
-  <system:String x:Key="Text.AiryDiscAnalysis">Analiza zračnih diskov zvezde</system:String>
-  <system:String x:Key="Text.AiryDiscAnalysisDebug">Prikaz vmesnih slik postopka</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysis">Analiza kolimacije</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Rezultat analize</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Pred uporabo te funkcije morate aktivirati video pretok.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Ni video pretoka</system:String>

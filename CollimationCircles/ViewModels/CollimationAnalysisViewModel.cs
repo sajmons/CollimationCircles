@@ -1,19 +1,19 @@
-﻿using Avalonia.Media.Imaging;
+using System;
+using Avalonia.Media.Imaging;
 using CollimationCircles.Messages;
 using CollimationCircles.Services;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.FileSystem;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using ImageMagick;
+using ImageMagick.Drawing;
+using OpenCvSharp;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
 using static CollimationCircles.Services.ImageAnalysisService;
+using CommunityToolkit.Diagnostics;
+using static CollimationCircles.Services.OpticalAxisService;
 
 namespace CollimationCircles.ViewModels
 {
@@ -22,37 +22,31 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly ILibVLCService libVLCService;
-
-        private string lastPath = ".\\";
-
-        private MagickImage lastImage = new();
+        private readonly OpticalAxisService opticalAxisService = new();
 
         [ObservableProperty]
         bool isPlaying = false;
 
         [ObservableProperty]
-        bool isDebug = false;
+        bool isLiveAnalysisActive = false;
 
         [ObservableProperty]
-        bool isImageLoaded = false;
+        bool isLiveRmseActive = false;
 
         [ObservableProperty]
-        double detectionThreshold = new DetectionParameters().VoteThresholdFraction;
+        bool isAnyLiveAnalysisActive = false;
 
-        bool loadedFromFile = false;
+        [ObservableProperty]
+        string liveResultText = string.Empty;
+
+        [ObservableProperty]
+        Bitmap? analysisPreview;
+
+        private CancellationTokenSource? liveAnalysisCts;
 
         public CollimationAnalysisViewModel(ILibVLCService libVLCService)
         {
             this.libVLCService = libVLCService;
-
-            ImageAnalysisService.FilterComplited += (s, e) =>
-            {
-                if (IsDebug)
-                {
-                    MagickImage image = new(e.ImageBytes);
-                    ShowResultDialog(e.FilterName, image);
-                }
-            };
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -68,159 +62,222 @@ namespace CollimationCircles.ViewModels
             });
         }
 
-        [RelayCommand]
-        private void TakeSnapshot()
+        partial void OnIsLiveAnalysisActiveChanged(bool value)
         {
-            Guard.IsNotNull(libVLCService);
+            HandleModeSwitch(value || IsLiveRmseActive);
+        }
 
-            if (!IsImageLoaded)
+        partial void OnIsLiveRmseActiveChanged(bool value)
+        {
+            HandleModeSwitch(value || IsLiveAnalysisActive);
+        }
+
+        private void HandleModeSwitch(bool anyActive)
+        {
+            IsAnyLiveAnalysisActive = anyActive;
+            if (anyActive)
             {
-                DialogService.ShowMessageBoxAsync(null,
-                    ResSvc.TryGetString("NoVideoStreamWarning"),
-                    ResSvc.TryGetString("NoVideoStreamMsgBoxTitle"),
-                    MessageBoxButton.Ok);
+                if (!IsPlaying)
+                {
+                    IsLiveAnalysisActive = false;
+                    IsLiveRmseActive = false;
+                    return;
+                }
+
+                if (liveAnalysisCts == null)
+                {
+                    liveAnalysisCts = new CancellationTokenSource();
+                    _ = Task.Run(() => LiveAnalysisLoop(liveAnalysisCts.Token));
+                }
             }
             else
             {
-                libVLCService.TakeSnapshot();
-
-                loadedFromFile = false;
-
-                lastImage = ReLoadImage();
-
-                ProcessAndAnalyze(lastImage);
+                liveAnalysisCts?.Cancel();
+                liveAnalysisCts = null;
             }
         }
 
-        [RelayCommand]
-        public async Task LoadImage()
+        private async Task LiveAnalysisLoop(CancellationToken token)
         {
-            var settings = new OpenFileDialogSettings
+            while (!token.IsCancellationRequested)
             {
-                SuggestedStartLocation = new DesktopDialogStorageFolder(new DirectoryInfo(lastPath)),
-                Title = ResSvc.TryGetString("OpenFile"),
-                Filters =
-                [
-                    new("JPEG", [".jpg",".jpeg"])
-                ]
-            };
+                try
+                {
+                    byte[]? data = await libVLCService.TakeSnapshotDataAsync();
+                    if (data != null)
+                    {
+                        using var image = new MagickImage(data);
+                        
+                        string description = string.Empty;
+                        MagickImage? resultImage = null;
 
-            var path = await DialogService.ShowOpenFileDialogAsync(null, settings);
+                        if (IsLiveAnalysisActive)
+                        {
+                            var advanced = RunAdvancedAnalysis(image);
+                            description += advanced.Description;
+                            resultImage = advanced.Image;
+                        }
 
-            if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
-            {
-                lastPath = $"{path?.Path?.LocalPath}";
+                        if (IsLiveRmseActive)
+                        {
+                            var rmse = RunRmseAnalysis(image);
+                            description += (string.IsNullOrEmpty(description) ? "" : "\n") + rmse.Description;
+                            resultImage ??= rmse.Image;
+                        }
 
-                loadedFromFile = true;
+                        if (resultImage != null)
+                        {
+                            using var stream = new MemoryStream();
+                            resultImage.Write(stream, MagickFormat.Png);
+                            stream.Position = 0;
+                            var bitmap = new Bitmap(stream);
 
-                lastImage = ReLoadImage();
+                            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                            {
+                                LiveResultText = description;
+                                AnalysisPreview = bitmap;
+                            });
+                        }
+                    }
+                }
+                catch (OperationCanceledException) { }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Error in Live Analysis Loop");
+                }
 
-                ProcessAndAnalyze(lastImage);
+                try { await Task.Delay(200, token); }
+                catch (OperationCanceledException) { break; }
             }
         }
 
-        private MagickImage ReLoadImage()
+        private static (string Description, Dictionary<string, double>? Wavefront, CircularFeature? Circle, MagickImage Image) RunAdvancedAnalysis(MagickImage image)
         {
-            MagickImage img;
+            using Mat frame = ConvertMagickToMat(image);
+            using Mat gray = new();
+            Cv2.CvtColor(frame, gray, ColorConversionCodes.BGR2GRAY);
 
-            if (loadedFromFile)
+            var edges = FindEdgePoints(gray);
+            var refinedEdges = OpticalAxisService.RefineEdgesSubpixel(gray, edges);
+            var circle = OpticalAxisService.FitCircleRobust(refinedEdges);
+            var wavefront = OpticalAxisService.AnalyzeStarWavefront(gray);
+
+            // Classic circles for visualization
+            Options classicOptions = new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
+            using var copy = new MagickImage(image);
+            ImageAnalysisService.ProcessImage(copy, classicOptions);
+            var classicCircles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
+
+            MagickImage drawImage = new(image);
+            
+            // Draw classic circles (Hough) in yellow
+            var drawables = new Drawables().StrokeColor(MagickColors.Yellow).StrokeWidth(1).FillColor(MagickColors.Transparent);
+            foreach (var c in classicCircles)
             {
-                img = ImageAnalysisService.LoadImage(lastPath);
-                IsImageLoaded = true;
+                drawables.Circle(c.X, c.Y, c.X + c.Radius, c.Y);
             }
-            else
+            
+            // Draw Robust Sub-pixel Circle in Cyan
+            if (circle != null)
             {
-                img = ImageAnalysisService.LoadImage($"{LibVLCService.SnapshotImageFile}");
-                IsImageLoaded = true;
+                drawables.StrokeColor(MagickColors.Cyan).StrokeWidth(2);
+                drawables.Circle(circle.Center.X, circle.Center.Y, circle.Center.X + circle.Radius, circle.Center.Y);
             }
 
-            return img;
+            // Draw Coma Vector in Lime
+            if (wavefront != null && circle != null)
+            {
+                DrawVector(drawImage, (int)wavefront["GeometricX"], (int)wavefront["GeometricY"], 
+                    (int)(wavefront["GeometricX"] + wavefront["ComaMagnitude"] * circle.Radius * 5.0 * Math.Cos(wavefront["ComaAngle"] * Math.PI / 180.0)),
+                    (int)(wavefront["GeometricY"] + wavefront["ComaMagnitude"] * circle.Radius * 5.0 * Math.Sin(wavefront["ComaAngle"] * Math.PI / 180.0)));
+            }
+
+            drawImage.Draw(drawables);
+
+            string desc = DescribeAdvancedResult(wavefront, circle);
+            return (desc, wavefront, circle, drawImage);
         }
 
-        private void ProcessAndAnalyze(MagickImage image)
+        private static (string Description, MagickImage Image) RunRmseAnalysis(MagickImage image)
         {
-            Options options = new()
-            {
-                DoNormalize = true,
-                DoGaussianBlur = true,
-                DoThreshold = true,
-                DoErode = true,
-                DoDilate = true,
-                DoEdge = true,
-                //DoCrop = true
-            };
+            Options options = new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
+            using var copy = new MagickImage(image);
+            ImageAnalysisService.ProcessImage(copy, options);
+            var circles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
+            
+            MagickImage drawnImage = new(image);
+            var analysis = ImageAnalysisService.AnalyzeResult(drawnImage, circles, options);
+            
+            string desc = $"--- MECHANICAL RMSE ---\n" +
+                         $"Circles: {analysis.CircleCount}\n" +
+                         $"RMSE: {analysis.CenterRMSE:F2}\n" +
+                         $"------------------------";
 
-            MagickImage original = new(image);
-
-            Stopwatch sw = new();
-            sw.Start();
-            logger.Info($"Start ProcessImage");
-            ImageAnalysisService.ProcessImage(image, options);
-            sw.Stop();
-            logger.Info($"ProcessImage time: {sw.Elapsed:mm\\:ss\\.ff}");
-
-            sw.Start();
-            logger.Info($"Start DetectCircles");
-            List<Circle> circles = ImageAnalysisService.DetectCircles(
-                image, 50, (int)image.Width / 2,
-                new ImageAnalysisService.DetectionParameters()
-                {                    
-                    VoteThresholdFraction = DetectionThreshold,
-                });
-            sw.Stop();
-            logger.Info($"DetectCircles time: {sw.Elapsed:mm\\:ss\\.ff}");
-
-            sw.Start();
-            logger.Info($"Start AnalyzeResult");
-            AnalysisResult result = ImageAnalysisService.AnalyzeResult(original, circles, options);
-            sw.Stop();
-            logger.Info($"AnalyzeResult time: {sw.Elapsed:mm\\:ss\\.ff}");
-
-            string windowTitle = ResSvc.TryGetString("StarAiryDiscAnalysisResult");
-            string resultText = DescribeResult(result);
-
-            if (circles.Count == 0)
-            {
-                resultText += "\n" + ResSvc.TryGetString("NoCirclesDetected")
-                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp")
-                    + " " + ResSvc.TryGetString("DetectionThresholdTip")
-                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp2");
-                logger.Warn(resultText);
-            }
-
-            if (circles.Count > 50)
-            {
-                resultText += "\n" + ResSvc.TryGetString("TooManyCirclesDetected")
-                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp")
-                    + " " + ResSvc.TryGetString("DetectionThresholdTip")
-                    + "\n" + ResSvc.TryGetString("DetectionThresholdHelp2");
-                logger.Warn(resultText);
-            }
-
-            logger.Info(resultText);
-
-            ShowResultDialog(windowTitle, original, resultText);
+            return (desc, drawnImage);
         }
 
-        private void ShowResultDialog(string title, MagickImage image, string resultText = "")
+        private static void DrawVector(MagickImage img, int x1, int y1, int x2, int y2)
         {
-            var dialogViewModel = DialogService.CreateViewModel<ImageViewModel>();
+            var drawables = new Drawables()
+                .StrokeColor(MagickColors.Lime)
+                .StrokeWidth(3)
+                .Line(x1, y1, x2, y2)
+                .FillColor(MagickColors.Lime)
+                .Circle(x1, y1, x1 + 4, y1); // Dot at geometric center
 
-            Stream stream = new MemoryStream(image.ToByteArray());
+            // Draw arrowhead
+            double angle = Math.Atan2(y2 - y1, x2 - x1);
+            double arrowSize = 15;
+            int ax1 = (int)(x2 - arrowSize * Math.Cos(angle - Math.PI / 6));
+            int ay1 = (int)(y2 - arrowSize * Math.Sin(angle - Math.PI / 6));
+            int ax2 = (int)(x2 - arrowSize * Math.Cos(angle + Math.PI / 6));
+            int ay2 = (int)(y2 - arrowSize * Math.Sin(angle + Math.PI / 6));
 
-            dialogViewModel.ImageToDisplay = Bitmap.DecodeToWidth(stream, (int)image.Width);
-            dialogViewModel.ImageDescription = resultText;
-            dialogViewModel.Title = title;
+            drawables.Line(x2, y2, ax1, ay1);
+            drawables.Line(x2, y2, ax2, ay2);
 
-            DialogService.Show(null, dialogViewModel);
+            img.Draw(drawables);
         }
 
-        private static string DescribeResult(AnalysisResult result)
+        private static Mat ConvertMagickToMat(MagickImage image)
         {
-            string message = $"Number of circles detected: {result.CircleCount}\n" +
-                $"Center RMSE: {result.CenterRMSE:F2}\n" +
-                $"Lower RMSE means better collimation.";
+            // Convert MagickImage to OpenCV Mat via Byte Array
+            byte[] pixels = image.ToByteArray(MagickFormat.Bgr);
+            Mat mat = new((int)image.Height, (int)image.Width, MatType.CV_8UC3);
+            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, mat.Data, pixels.Length);
+            return mat;
+        }
 
+        private static List<Point2d> FindEdgePoints(Mat gray)
+        {
+            Mat edges = new();
+            Cv2.Canny(gray, edges, 50, 150);
+            List<Point2d> points = [];
+            for (int y = 0; y < edges.Height; y++)
+            {
+                for (int x = 0; x < edges.Width; x++)
+                {
+                    if (edges.At<byte>(y, x) > 0) points.Add(new Point2d(x, y));
+                }
+            }
+            return points;
+        }
+
+        private static string DescribeAdvancedResult(Dictionary<string, double>? wavefront, OpticalAxisService.CircularFeature? circle)
+        {
+            Guard.IsNotNull(wavefront, nameof(wavefront));
+            Guard.IsNotNull(circle, nameof(circle));
+
+            string message = string.Empty;
+            if (circle != null)
+            {
+                message += $"Sub-pixel Circle: Center({circle.Center.X:F2}, {circle.Center.Y:F2}),\nRad: {circle.Radius:F2}\n";
+            }
+            if (wavefront != null)
+            {
+                message += $"Coma Magnitude: {wavefront["ComaMagnitude"]:F4}\n";
+                message += $"Coma Angle: {wavefront["ComaAngle"]:F1}°\n";                
+            }
             return message;
         }
     }

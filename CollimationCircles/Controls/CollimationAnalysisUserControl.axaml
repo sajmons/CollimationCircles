@@ -11,51 +11,83 @@
     Orientation="Vertical"
     Spacing="{DynamicResource ControlSpacing}">
 
-    <StackPanel
-      Orientation="Horizontal"
-      Spacing="{DynamicResource ControlSpacing}">
-      <Button
-          Theme="{DynamicResource ToolbarButton}"
-          Command="{Binding TakeSnapshotCommand}"
-          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisCam}">
+    <StackPanel Orientation="Horizontal" Spacing="{DynamicResource ControlSpacing}">
+      <ToggleButton
+          Theme="{DynamicResource ToolbarToggleButton}"
+          IsChecked="{Binding IsLiveAnalysisActive}"
+          HorizontalAlignment="Left"
+          IsEnabled="{Binding IsPlaying}"
+          ToolTip.Tip="Toggle Real-time Advanced Analysis Result Overlay">
         <PathIcon
           Width="{DynamicResource PathIconWidth}"
           Height="{DynamicResource PathIconHeight}"
           Foreground="{DynamicResource Color2}"
-          Data="{StaticResource IconData.Camera}" />
-      </Button>
-      <Button
-          Theme="{DynamicResource ToolbarButton}"
-          Command="{Binding LoadImageCommand}"
-          ToolTip.Tip="{DynamicResource Text.AiryDiskAnalysisImage}">
+          Data="{StaticResource IconData.Analyze}" />
+      </ToggleButton>
+
+      <ToggleButton
+          Theme="{DynamicResource ToolbarToggleButton}"
+          IsChecked="{Binding IsLiveRmseActive}"
+          HorizontalAlignment="Left"
+          IsEnabled="{Binding IsPlaying}"
+          ToolTip.Tip="Toggle Real-time Mechanical RMSE Analysis">
         <PathIcon
           Width="{DynamicResource PathIconWidth}"
           Height="{DynamicResource PathIconHeight}"
           Foreground="{DynamicResource Color2}"
-          Data="{StaticResource IconData.ImageAnalysis}" />
-      </Button>
+          Data="{StaticResource IconData.Shapes}" />
+      </ToggleButton>
     </StackPanel>
 
-    <StackPanel
-      Orientation="Vertical"
-      Spacing="{DynamicResource ControlSpacing}">
-      <CheckBox
-        Content="{DynamicResource Text.AiryDiscAnalysisDebug}"
-        IsChecked="{Binding IsDebug}"/>
-      <UniformGrid
-        Columns="2">
-        <TextBlock
-          VerticalAlignment="Bottom"
-          Text="{DynamicResource Text.DetectionThreshold}" />
-        <NumericUpDown
-          Increment="0.1"
-          Value="{ReflectionBinding DetectionThreshold}"
-          Minimum="0.1"
-          Maximum="2"
-          ToolTip.Tip="{DynamicResource Text.DetectionThresholdToolTip}"/>
-      </UniformGrid>
+    <Border IsVisible="{Binding IsAnyLiveAnalysisActive}"
+            Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+            BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}"
+            BorderThickness="2"
+            Padding="12"
+            CornerRadius="8"
+            Margin="0,8,0,8">
+      <StackPanel Spacing="6">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <Ellipse Width="8" Height="8" Fill="Red">
+            <Ellipse.Styles>
+              <Style Selector="Ellipse">
+                <Style.Animations>
+                  <Animation Duration="0:0:1" IterationCount="Infinite">
+                    <KeyFrame KeyTime="0:0:0">
+                      <Setter Property="Opacity" Value="1"/>
+                    </KeyFrame>
+                    <KeyFrame KeyTime="0:0:0.5">
+                      <Setter Property="Opacity" Value="0.2"/>
+                    </KeyFrame>
+                    <KeyFrame KeyTime="0:0:1">
+                      <Setter Property="Opacity" Value="1"/>
+                    </KeyFrame>
+                  </Animation>
+                </Style.Animations>
+              </Style>
+            </Ellipse.Styles>
+          </Ellipse>
+          <TextBlock Text="LIVE ANALYSIS" FontWeight="Bold" FontSize="10" VerticalAlignment="Center" LetterSpacing="1"/>
+        </StackPanel>
+        
+        <TextBlock Text="{Binding LiveResultText}" 
+                   FontFamily="Consolas,Courier New"
+                   FontSize="12"
+                   TextWrapping="Wrap"
+                   IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        
+        <Image Source="{Binding AnalysisPreview}" 
+               MaxWidth="250" 
+               Margin="0,4,0,0"
+               IsVisible="{Binding AnalysisPreview, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 
-    </StackPanel>
+        <TextBlock Text="Waiting for stream data..." 
+                   FontStyle="Italic"
+                   FontSize="12"
+                   Opacity="0.6"
+                   IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
+      </StackPanel>
+    </Border>
 
   </StackPanel>
 

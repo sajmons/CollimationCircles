@@ -46,6 +46,10 @@ namespace CollimationCircles.Services
 
                                 logger.Debug($"DeviceName: '{deviceName}', DeviceId: '{deviceId}', Service: '{service}'");
 
+                            string[] cameraKeywords= { "camera", "webcam", "obs", "manycam", "snap", "virtual", "video", "capture" };
+                            if (cameraKeywords.Any(k => (deviceName?.ToLower().Contains(k) ?? false) || (service?.ToLower().Contains(k) ?? false)))
+                            {
+                                // treat as camera
                                 Camera c = new()
                                 {
                                     Name = deviceName,
@@ -178,7 +182,9 @@ namespace CollimationCircles.Services
                 $":dshow-vdev={camera.Name}"
                 , ":dshow-adev=none"
                 , ":live-caching=300"
-                , ":dshow-chroma=mjpg"
+                , ":dshow-size=640x480"
+                , ":dshow-vfps=30"
+                , ":avformat-format=rgb24"
             ];
 
             if (displayAdvancedDShowDialog)

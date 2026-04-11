@@ -1,4 +1,4 @@
-﻿using CollimationCircles.Models;
+using CollimationCircles.Models;
 using LibVLCSharp.Shared;
 using System.Threading.Tasks;
 
@@ -9,7 +9,7 @@ namespace CollimationCircles.Services
         public string FullAddress { get; set; }
         public MediaPlayer MediaPlayer { get; }
         public Task Play(Camera camera, bool displayAdvancedDShowDialog);
-        public string DefaultAddress(Camera camera);
-        public void TakeSnapshot();
+        public string DefaultAddress(Camera camera);        
+        public Task<byte[]?> TakeSnapshotDataAsync();
     }
 }

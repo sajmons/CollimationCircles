@@ -157,13 +157,8 @@
   <system:String x:Key="Text.UnlicensedVersion">Nicht lizenzierte Version</system:String>
   <system:String x:Key="Text.ShapeList">Formen</system:String>
   <system:String x:Key="Text.ShapeProperties">Formeigenschaften</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysisCam">Star Airy Disk-Analyse von der Kamera</system:String>
-  <system:String x:Key="Text.AiryDiskAnalysisImage">Star Airy Disk-Analyse aus dem Bild</system:String>
-  <system:String x:Key="Text.CircleDetectionMethod">Kreiserkennungsmethode</system:String>
-  <system:String x:Key="Text.CircleHoughTransform">Kreis-Hough-Transformation (CHT)</system:String>
   <system:String x:Key="Text.ContourMinEnclosingCircle">Kontur minimaler umschließender Kreis</system:String>
-  <system:String x:Key="Text.AiryDiscAnalysis">Star Airy Disc-Analyse</system:String>
-  <system:String x:Key="Text.AiryDiscAnalysisDebug">Zwischenbilder anzeigen</system:String>
+  <system:String x:Key="Text.AiryDiscAnalysis">Kollimationsanalyse</system:String>
   <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analyseergebnis</system:String>
   <system:String x:Key="Text.NoVideoStreamWarning">Bitte starten Sie den Videostream, bevor Sie diese Funktion verwenden.</system:String>
   <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Kein Videostream</system:String>
