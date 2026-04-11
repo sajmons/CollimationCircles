@@ -90,7 +90,7 @@ namespace CollimationCircles.Services
             }
             catch (Exception ex)
             {
-                logger.Error(ex, ex.Message);
+                logger.Warn(ex.Message);
             }
 
             return license;
