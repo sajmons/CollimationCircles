@@ -1,0 +1,209 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'          # Triggered when you push a tag like v4.0.0
+  workflow_dispatch:    # Allow manual trigger from GitHub UI
+
+env:
+  PROJECT_PATH: CollimationCircles/CollimationCircles.csproj
+  FRAMEWORK: net9.0
+  APP_NAME: CollimationCircles
+  DOTNET_VERSION: '9.0.x'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - runtime: win-x64
+            os: windows-latest
+            index: 1
+          - runtime: win-arm64
+            os: windows-latest
+            index: 2
+          - runtime: linux-x64
+            os: ubuntu-latest
+            index: 3
+          - runtime: linux-arm64
+            os: ubuntu-latest
+            index: 4
+          - runtime: osx-x64
+            os: macos-latest
+            index: 5
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Extract version from csproj
+        id: version
+        shell: pwsh
+        run: |
+          [xml]$xml = Get-Content "${{ env.PROJECT_PATH }}"
+          $version = ($xml.Project.PropertyGroup.InformationalVersion | Where-Object { $_ }) | Select-Object -First 1
+          $version = $version.Trim()
+          Write-Host "Version: $version"
+          echo "APP_VERSION=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Restore dependencies
+        run: dotnet restore -r ${{ matrix.runtime }}
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          $publishArgs = @(
+            "publish"
+            "${{ env.PROJECT_PATH }}"
+            "-c", "Release"
+            "-f", "${{ env.FRAMEWORK }}"
+            "-r", "${{ matrix.runtime }}"
+            "-o", "./publish/${{ matrix.runtime }}"
+            "--self-contained", "true"
+            "/p:PublishSingleFile=true"
+            "/p:PublishReadyToRun=true"
+            "/p:DebugType=None"
+            "/p:DebugSymbols=false"
+          )
+
+          if ("${{ matrix.runtime }}" -eq "osx-x64") {
+            $publishArgs += "/p:UseAppHost=true"
+          }
+
+          $command = "dotnet " + ($publishArgs -join " ")
+          Write-Host $command -ForegroundColor Green
+          Invoke-Expression $command
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "dotnet publish failed with exit code $LASTEXITCODE"
+          }
+
+      - name: Create macOS .app bundle
+        if: matrix.runtime == 'osx-x64'
+        shell: pwsh
+        run: |
+          $appName = "${{ env.APP_NAME }}"
+          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
+          $bundle = "$appName.app"
+          $output = "./publish"
+          $runtime = "${{ matrix.runtime }}"
+
+          # Create bundle directory structure
+          New-Item -Path "$output/$bundle/Contents/MacOS" -ItemType Directory -Force
+          New-Item -Path "$output/$bundle/Contents/Resources" -ItemType Directory -Force
+
+          # Create Info.plist
+          $plistContent = @"
+          <?xml version="1.0" encoding="utf-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+            <dict>
+              <key>CFBundleIconFile</key>
+              <string>icon.icns</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.saimons.$appName</string>
+              <key>CFBundleName</key>
+              <string>$appName</string>
+              <key>CFBundleVersion</key>
+              <string>$appVersion</string>
+              <key>LSMinimumSystemVersion</key>
+              <string>11</string>
+              <key>CFBundleExecutable</key>
+              <string>$appName</string>
+              <key>CFBundleInfoDictionaryVersion</key>
+              <string>6.0</string>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+              <key>CFBundleShortVersionString</key>
+              <string>$appVersion</string>
+              <key>NSHighResolutionCapable</key>
+              <true/>
+            </dict>
+          </plist>
+          "@
+
+          $plistContent | Set-Content -Path "$output/$bundle/Contents/Info.plist" -Encoding UTF8
+
+          # Copy application files to Contents/MacOS
+          Copy-Item -Path "$output/$runtime/*" -Destination "$output/$bundle/Contents/MacOS" -Recurse
+
+          # Move icon to Contents/Resources
+          if (Test-Path "$output/$bundle/Contents/MacOS/icon.icns") {
+            Move-Item -Path "$output/$bundle/Contents/MacOS/icon.icns" -Destination "$output/$bundle/Contents/Resources/"
+          }
+
+          # Make executable
+          chmod +x "$output/$bundle/Contents/MacOS/$appName"
+
+      - name: Package (non-macOS)
+        if: matrix.runtime != 'osx-x64'
+        shell: pwsh
+        run: |
+          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
+          $runtime = "${{ matrix.runtime }}"
+          $output = "./publish"
+
+          # Remove icon.icns since it's only for macOS
+          $icnsPath = "$output/$runtime/icon.icns"
+          if (Test-Path $icnsPath) {
+            Remove-Item -Path $icnsPath
+          }
+
+          $zipName = "$output/${{ matrix.index }}-${{ env.APP_NAME }}-$appVersion-$runtime.zip"
+          Compress-Archive -Force "$output/$runtime/*" $zipName
+          Write-Host "Created: $zipName" -ForegroundColor Green
+
+      - name: Package (macOS)
+        if: matrix.runtime == 'osx-x64'
+        shell: pwsh
+        run: |
+          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
+          $runtime = "${{ matrix.runtime }}"
+          $output = "./publish"
+          $bundle = "${{ env.APP_NAME }}.app"
+
+          $zipName = "$output/${{ matrix.index }}-${{ env.APP_NAME }}-$appVersion-$runtime.zip"
+          Compress-Archive -Force "$output/$bundle" $zipName
+          Write-Host "Created: $zipName" -ForegroundColor Green
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-${{ matrix.runtime }}
+          path: ./publish/${{ matrix.index }}-*.zip
+          retention-days: 30
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: List artifacts
+        run: find ./artifacts -type f -name "*.zip" | sort
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          files: ./artifacts/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
