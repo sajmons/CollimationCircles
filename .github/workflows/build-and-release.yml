@@ -11,6 +11,7 @@ env:
   FRAMEWORK: net10.0
   APP_NAME: CollimationCircles
   DOTNET_VERSION: '10.0.x'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
