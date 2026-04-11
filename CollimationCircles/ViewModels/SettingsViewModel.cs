@@ -236,7 +236,7 @@ namespace CollimationCircles.ViewModels
             ];
 
             var osTheme = Application.Current?.PlatformSettings?.GetColorValues();
-            bool isDark = osTheme?.ThemeVariant is Avalonia.Platform.PlatformThemeVariant.Dark;
+            bool isDark = osTheme?.ThemeVariant == Avalonia.Platform.PlatformThemeVariant.Dark;
 
             ThemeList = new ObservableCollection<ThemeVariant>(themes);
             SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);

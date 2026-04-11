@@ -43,11 +43,15 @@ namespace CollimationCircles.Views
             PositionChanged += MainView_PositionChanged;
 
             // react to system theme changes
-            Application.Current!.PlatformSettings!.ColorValuesChanged += (sender, args) =>
+            var platformSettings = Application.Current?.PlatformSettings;
+            if (platformSettings is not null)
             {
-                bool isDark = args.ThemeVariant == Avalonia.Platform.PlatformThemeVariant.Dark;
-                vm.SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
-            };
+                platformSettings.ColorValuesChanged += (sender, args) =>
+                {
+                    bool isDark = args.ThemeVariant == Avalonia.Platform.PlatformThemeVariant.Dark;
+                    vm.SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
+                };
+            }
         }
 
         private void MainView_PositionChanged(object? sender, PixelPointEventArgs e)
