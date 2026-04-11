@@ -68,7 +68,7 @@ namespace CollimationCircles.Services
             }
             catch (Exception exc)
             {
-                logger.Error(ex, "Error while detecting cameras with ManagementObjectSearcher");
+                logger.Error(exc, "Error while detecting cameras with ManagementObjectSearcher");
             }
 
             return cameras;
