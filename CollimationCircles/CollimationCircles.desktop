@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Collimation Circles
+Comment=Telescope collimation helper application
+Exec=CollimationCircles
+Icon=CollimationCircles
+Categories=Science;Astronomy;Education;
+Terminal=false
+StartupWMClass=CollimationCircles
