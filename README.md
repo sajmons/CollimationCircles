@@ -48,29 +48,26 @@ sudo apt-get install -y v4l-utils
 Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
 https://github.com/sajmons/CollimationCircles/releases/
 
-Download latest release as ZIP file, extract it and run executable.
+Download the latest release, extract it and run the executable. Windows releases are packaged as ZIP files, while Linux and macOS releases are packaged as tar.gz files which preserve executable permissions.
 
 ## Instalation on MacOS
 1. Open terminal application and enter this command:
 ```cd /Applications```
 2. Download latest version from GitHub releases page https://github.com/sajmons/CollimationCircles/releases
-3. Type these command in your MacOS terminal application:
+3. Type this command in your MacOS terminal application:
 ```curl -LO <url address from github releases page>```
 For example:
-```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/4-CollimationCircles-3.1.0-osx-x64.zip```
-4. When the download finishes, you should see the new ZIP file
-5. Double click on it. Archiver utility will extract it for you and you should see CollimationCircles application
-6. Now run this command to make it executable:
-```chmod +x CollimationCircles.app/Contents/MacOS/*```
-7. Finally run this command or double click CollimationCircles app:
+```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/5-CollimationCircles-3.1.0-osx-x64.tar.gz```
+4. When the download finishes, extract the archive:
+```tar -xzf 5-CollimationCircles-3.1.0-osx-x64.tar.gz```
+5. You should now see the CollimationCircles.app bundle. Run it with:
 ```open CollimationCircles.app```
 
 ## Instalation on Linux
 1. Download latest version from GitHub releases page: https://github.com/sajmons/CollimationCircles/releases
-2. Extract downloaded ZIP file
-3. Run this command in your terminal window:
-```chmod +x CollimationCircles```
-4. Run application by double click on it or run this command:
+2. Extract the downloaded tar.gz file:
+```tar -xzf <downloaded-file>.tar.gz```
+3. Run the application by double clicking on it or run this command:
 ```./CollimationCircles```
 
 # How to use
