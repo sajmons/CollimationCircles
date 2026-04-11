@@ -60,9 +60,6 @@ jobs:
           Write-Host "Version: $version"
           echo "APP_VERSION=$version" >> $env:GITHUB_OUTPUT
 
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }}
-
       - name: Publish
         shell: pwsh
         run: |
