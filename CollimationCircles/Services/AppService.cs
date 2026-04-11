@@ -335,19 +335,27 @@ public class AppService
 
     public static string DeviceId()
     {
-        return new DeviceIdBuilder()
-        .AddMachineName()
-        .AddOsVersion()
-        .OnWindows(windows => windows
-            .AddMotherboardSerialNumber()
-            .AddSystemDriveSerialNumber())
-        .OnLinux(linux => linux
-            .AddMotherboardSerialNumber()
-            .AddSystemDriveSerialNumber())
-        .OnMac(mac => mac
-            .AddSystemDriveVolumeUUID()
-            .AddPlatformSerialNumber())
-        .ToString();
+        try
+        {
+            return new DeviceIdBuilder()
+            .AddMachineName()
+            .AddOsVersion()
+            .OnWindows(windows => windows
+                .AddMotherboardSerialNumber()
+                .AddSystemDriveSerialNumber())
+            .OnLinux(linux => linux
+                .AddMotherboardSerialNumber()
+                .AddSystemDriveSerialNumber())
+            .OnMac(mac => mac
+                .AddSystemDriveVolumeUUID()
+                .AddPlatformSerialNumber())
+            .ToString();
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, "Failed to generate DeviceId, falling back to machine name");
+            return Environment.MachineName;
+        }
     }
 
     public static void LogSystemInformation()

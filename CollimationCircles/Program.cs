@@ -15,8 +15,16 @@ namespace CollimationCircles
         [STAThread]
         public static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                logger.Fatal($"Unhandled exception: {e.ExceptionObject}");
+                NLog.LogManager.Shutdown();
+            };
+
             try
             {
+                AppService.LogSystemInformation();
+
                 BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args, Avalonia.Controls.ShutdownMode.OnMainWindowClose);
             }

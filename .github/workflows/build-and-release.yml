@@ -129,7 +129,7 @@ jobs:
           ln -sf "usr/share/icons/hicolor/256x256/apps/${APP_NAME}.png" "${APP_DIR}/${APP_NAME}.png"
 
           # Create AppRun script
-          printf '#!/bin/bash\nSELF=$(readlink -f "$0")\nHERE=${SELF%%/*}\nexport PATH="${HERE}/usr/bin:${PATH}"\nexec "${HERE}/usr/bin/CollimationCircles" "$@"\n' > "${APP_DIR}/AppRun"
+          printf '#!/bin/bash\nSELF=$(readlink -f "$0")\nHERE=$(dirname "$SELF")\nexport PATH="${HERE}/usr/bin:${PATH}"\nexec "${HERE}/usr/bin/CollimationCircles" "$@"\n' > "${APP_DIR}/AppRun"
           chmod +x "${APP_DIR}/AppRun"
 
           # Make the main binary executable
