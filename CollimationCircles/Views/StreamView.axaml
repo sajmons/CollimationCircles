@@ -6,6 +6,8 @@
         d:DesignWidth="320" 
         d:DesignHeight="240"
         xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
+        xmlns:vm="using:CollimationCircles.ViewModels"
+        x:DataType="vm:CollimationAnalysisViewModel"
         x:Class="CollimationCircles.Views.StreamView"
         Title="{DynamicResource Text.CameraStreamWindowTitle}"
         Width="640"
@@ -17,5 +19,11 @@
       x:Name="VideoViewer"
       HorizontalAlignment="Stretch"
       VerticalAlignment="Stretch" />
+
+    <Image Source="{Binding AnalysisPreview}"
+           IsHitTestVisible="False"
+           Stretch="UniformToFill"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Center" />
   </Grid>
 </Window>

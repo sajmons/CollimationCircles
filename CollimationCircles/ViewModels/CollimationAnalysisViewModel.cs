@@ -14,6 +14,10 @@ using System.Threading;
 using static CollimationCircles.Services.ImageAnalysisService;
 using CommunityToolkit.Diagnostics;
 using static CollimationCircles.Services.OpticalAxisService;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using System.Collections.ObjectModel;
+using System.Linq;
+using Avalonia.Media;
 
 namespace CollimationCircles.ViewModels
 {
@@ -22,7 +26,11 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly ILibVLCService libVLCService;
+        private readonly SettingsViewModel settingsViewModel;
         private readonly OpticalAxisService opticalAxisService = new();
+
+        [ObservableProperty]
+        private ObservableCollection<ScrewInstruction> screwInstructions = [];
 
         [ObservableProperty]
         bool isPlaying = false;
@@ -47,6 +55,7 @@ namespace CollimationCircles.ViewModels
         public CollimationAnalysisViewModel(ILibVLCService libVLCService)
         {
             this.libVLCService = libVLCService;
+            this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -109,21 +118,48 @@ namespace CollimationCircles.ViewModels
                         using var image = new MagickImage(data);
                         
                         string description = string.Empty;
-                        MagickImage? resultImage = null;
+                        MagickImage? advancedImage = null;
+                        MagickImage? rmseImage = null;
 
                         if (IsLiveAnalysisActive)
                         {
                             var advanced = RunAdvancedAnalysis(image);
                             description += advanced.Description;
-                            resultImage = advanced.Image;
+                            advancedImage = advanced.Image;
+
+                            // Calculate Screw Instructions
+                            var screwVM = settingsViewModel.Items.OfType<ScrewViewModel>().FirstOrDefault();
+                            if (screwVM != null && advanced.Wavefront != null)
+                            {
+                                var adjustments = OpticalAxisService.CalculateScrewAdjustments(
+                                    advanced.Wavefront["ComaMagnitude"],
+                                    advanced.Wavefront["ComaAngle"],
+                                    screwVM.RotationAngle,
+                                    screwVM.Count);
+
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+                                {
+                                    UpdateScrewInstructions(adjustments, screwVM);
+                                });
+                            }
+                            else
+                            {
+                                Avalonia.Threading.Dispatcher.UIThread.Post(() => ScrewInstructions.Clear());
+                            }
+                        }
+                        else
+                        {
+                            Avalonia.Threading.Dispatcher.UIThread.Post(() => ScrewInstructions.Clear());
                         }
 
                         if (IsLiveRmseActive)
                         {
                             var rmse = RunRmseAnalysis(image);
                             description += (string.IsNullOrEmpty(description) ? "" : "\n") + rmse.Description;
-                            resultImage ??= rmse.Image;
+                            rmseImage = rmse.Image;
                         }
+
+                        var resultImage = advancedImage ?? rmseImage;
 
                         if (resultImage != null)
                         {
@@ -138,9 +174,24 @@ namespace CollimationCircles.ViewModels
                                 AnalysisPreview = bitmap;
                             });
                         }
+                        else
+                        {
+                            Avalonia.Threading.Dispatcher.UIThread.Post(() => AnalysisPreview = null);
+                        }
+
+                        advancedImage?.Dispose();
+                        rmseImage?.Dispose();
                     }
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException) 
+                {
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+                    {
+                        LiveResultText = string.Empty;
+                        AnalysisPreview = null;
+                        ScrewInstructions.Clear();
+                    });
+                }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Error in Live Analysis Loop");
@@ -168,7 +219,7 @@ namespace CollimationCircles.ViewModels
             ImageAnalysisService.ProcessImage(copy, classicOptions);
             var classicCircles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
 
-            MagickImage drawImage = new(image);
+            MagickImage drawImage = new(MagickColors.Transparent, (uint)image.Width, (uint)image.Height);
             
             // Draw classic circles (Hough) in yellow
             var drawables = new Drawables().StrokeColor(MagickColors.Yellow).StrokeWidth(1).FillColor(MagickColors.Transparent);
@@ -205,7 +256,7 @@ namespace CollimationCircles.ViewModels
             ImageAnalysisService.ProcessImage(copy, options);
             var circles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
             
-            MagickImage drawnImage = new(image);
+            MagickImage drawnImage = new(MagickColors.Transparent, (uint)image.Width, (uint)image.Height);
             var analysis = ImageAnalysisService.AnalyzeResult(drawnImage, circles, options);
             
             string desc = $"--- MECHANICAL RMSE ---\n" +
@@ -280,5 +331,43 @@ namespace CollimationCircles.ViewModels
             }
             return message;
         }
+
+        private void UpdateScrewInstructions(List<ScrewAdjustment> adjustments, ScrewViewModel screwVM)
+        {
+            if (ScrewInstructions.Count != adjustments.Count)
+            {
+                ScrewInstructions.Clear();
+                foreach (var adj in adjustments)
+                {
+                    ScrewInstructions.Add(new ScrewInstruction { Id = adj.Id, Color = screwVM.ItemColor });
+                }
+            }
+
+            for (int i = 0; i < adjustments.Count; i++)
+            {
+                ScrewInstructions[i].Direction = adjustments[i].Direction;
+                ScrewInstructions[i].Turns = adjustments[i].Turns;
+            }
+        }
+    }
+
+    public partial class ScrewInstruction : ObservableObject
+    {
+        [ObservableProperty]
+        private int id;
+
+        [ObservableProperty]
+        private string direction = string.Empty;
+
+        [ObservableProperty]
+        private double turns;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Brush))]
+        private Color color;
+
+        public IBrush Brush => new SolidColorBrush(Color);
+
+        public string DisplayText => Direction == "Fixed" ? "Locked" : $"{Direction} {Turns:F2} turns";
     }
 }

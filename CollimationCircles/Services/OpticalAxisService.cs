@@ -16,6 +16,14 @@ namespace CollimationCircles.Services
             public double Confidence { get; set; }
         }
 
+        public struct ScrewAdjustment
+        {
+            public int Id { get; set; }
+            public string Direction { get; set; } // "CW", "CCW", "Fixed"
+            public double Magnitude { get; set; }
+            public double Turns { get; set; }
+        }
+
         public class CollimationResult
         {
             public required CircularFeature SecondaryMirror { get; set; }
@@ -221,6 +229,41 @@ namespace CollimationCircles.Services
                 { "GeometricX", disc.Center.X },
                 { "GeometricY", disc.Center.Y }
             };
+        }
+
+        public static List<ScrewAdjustment> CalculateScrewAdjustments(double comaMagnitude, double comaAngleDegrees, double rotationAngleDegrees, int count, double sensitivity = 2.0)
+        {
+            var adjustments = new List<ScrewAdjustment>();
+            if (comaMagnitude < 0.005) // Aligned threshold
+            {
+                for (int i = 1; i <= count; i++) 
+                    adjustments.Add(new ScrewAdjustment { Id = i, Direction = "Fixed", Magnitude = 0, Turns = 0 });
+                return adjustments;
+            }
+
+            double angleStep = 360.0 / count;
+
+            for (int i = 0; i < count; i++)
+            {
+                // Screw 0 starts at 90 + RotationAngle (down)
+                double screwAngleDeg = 90.0 + rotationAngleDegrees + (i * angleStep);
+                double screwAngleRad = screwAngleDeg * Math.PI / 180.0;
+                double comaAngleRad = comaAngleDegrees * Math.PI / 180.0;
+
+                // Project coma vector onto screw vector
+                double projection = comaMagnitude * Math.Cos(comaAngleRad - screwAngleRad);
+
+                string dir = projection > 0 ? "CW" : "CCW";
+                adjustments.Add(new ScrewAdjustment 
+                { 
+                    Id = i + 1, 
+                    Direction = dir, 
+                    Magnitude = Math.Abs(projection),
+                    Turns = Math.Abs(projection) * sensitivity // Heuristic turn amount
+                });
+            }
+
+            return adjustments;
         }
 
         private static List<Point2d> FindEdgePoints(Mat img)
