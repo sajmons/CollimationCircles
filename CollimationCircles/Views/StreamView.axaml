@@ -22,7 +22,7 @@
 
     <Image Source="{Binding AnalysisPreview}"
            IsHitTestVisible="False"
-           Stretch="UniformToFill"
+           Stretch="Uniform"
            HorizontalAlignment="Center"
            VerticalAlignment="Center" />
   </Grid>

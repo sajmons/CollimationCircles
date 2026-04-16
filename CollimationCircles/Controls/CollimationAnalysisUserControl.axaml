@@ -15,14 +15,12 @@
 
 
     <Border IsVisible="{Binding IsAnyLiveAnalysisActive}"
-            Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+            Background="Transparent"
             BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}"
-            BorderThickness="2"
-            
-            CornerRadius="8"
-            >
-      <StackPanel Spacing="6">
-        <StackPanel Orientation="Horizontal" Spacing="8">
+            BorderThickness="2"            
+            CornerRadius="8">
+      <StackPanel Spacing="6" Background="Transparent">
+        <StackPanel Orientation="Horizontal" Spacing="8" Background="Transparent">
           <Ellipse Width="8" Height="8" Fill="Red">
             <Ellipse.Styles>
               <Style Selector="Ellipse">
@@ -42,7 +40,7 @@
               </Style>
             </Ellipse.Styles>
           </Ellipse>
-          <TextBlock Text="LIVE ANALYSIS" FontWeight="Bold" FontSize="10" VerticalAlignment="Center" LetterSpacing="1"/>
+          <TextBlock Text="LIVE ANALYSIS" FontWeight="Bold" FontSize="10" VerticalAlignment="Center" LetterSpacing="1" Background="Transparent" />
         </StackPanel>
 
         <Image Source="{Binding AnalysisPreview}"
