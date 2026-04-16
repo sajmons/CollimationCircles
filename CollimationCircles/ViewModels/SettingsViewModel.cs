@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
 using CollimationCircles.Extensions;
@@ -151,6 +151,10 @@ namespace CollimationCircles.ViewModels
         [JsonProperty]
         [ObservableProperty]
         private bool profileManagerExpanded = true;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private bool liveAnalysisResultsExpanded = true;
 
         [JsonProperty]
         [ObservableProperty]
@@ -545,6 +549,7 @@ namespace CollimationCircles.ViewModels
                     GlobalPropertiesExpanded = vm.GlobalPropertiesExpanded;
                     ShapeListExpanded = vm.ShapeListExpanded;
                     ShapePropertiesExpanded = vm.ShapePropertiesExpanded;
+                    LiveAnalysisResultsExpanded = vm.LiveAnalysisResultsExpanded;
 
                     LastSelectedCamera = vm.LastSelectedCamera;
                     Profiles = vm.Profiles;

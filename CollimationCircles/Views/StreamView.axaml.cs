@@ -16,8 +16,8 @@ namespace CollimationCircles.Views
         public StreamView()
         {
             InitializeComponent();
-
             svm = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            DataContext = Ioc.Default.GetRequiredService<CollimationAnalysisViewModel>();
 
             videoViewer = this.Get<VideoView>("VideoViewer");
 

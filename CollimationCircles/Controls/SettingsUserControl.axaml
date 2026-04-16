@@ -50,7 +50,17 @@
               <StackPanel Orientation="Vertical">
                 <controls:ProfileManagerUserControl/>
               </StackPanel>
-            </Expander>            
+            </Expander>
+            <Expander
+              VerticalAlignment="Top"
+              HorizontalAlignment="Stretch"
+              Header="{DynamicResource Text.LiveAnalysisResults}"
+              IsExpanded="{Binding LiveAnalysisResultsExpanded}">
+              <StackPanel Orientation="Vertical">
+                <controls:LiveAnalysisResultsUserControl/>
+              </StackPanel>
+            </Expander>
+            
           </StackPanel>
         </ScrollViewer>
       </TabItem>
