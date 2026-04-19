@@ -1,8 +1,67 @@
-- name: Restore dependencies
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' 
+  workflow_dispatch:
+
+env:
+  PROJECT_PATH: CollimationCircles/CollimationCircles.csproj
+  FRAMEWORK: net10.0
+  APP_NAME: CollimationCircles
+  DOTNET_VERSION: '10.0.x'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: win-x64
+            os: windows-latest
+            index: 1
+          - runtime: win-arm64
+            os: windows-latest
+            index: 2
+          - runtime: linux-x64
+            os: ubuntu-latest
+            index: 3
+          - runtime: linux-arm64
+            os: ubuntu-latest
+            index: 4
+          - runtime: osx-x64
+            os: macos-latest
+            index: 5
+          - runtime: osx-arm64
+            os: macos-latest
+            index: 6
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Extract version from csproj
+        id: version
+        shell: pwsh
         run: |
-          dotnet restore ${{ env.PROJECT_PATH }} \
-            -r ${{ matrix.runtime }} \
-            /p:PublishReadyToRun=true
+          [xml]$xml = Get-Content "${{ env.PROJECT_PATH }}"
+          $v = ($xml.Project.PropertyGroup.InformationalVersion, $xml.Project.PropertyGroup.Version, $xml.Project.PropertyGroup.VersionPrefix | Where-Object { !([string]::IsNullOrWhiteSpace($_)) } | Select-Object -First 1)
+          if (!$v) { $v = "1.0.0" }
+          $v = $v.Trim()
+          echo "APP_VERSION=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:PublishReadyToRun=true
 
       - name: Publish
         shell: pwsh
@@ -13,7 +72,7 @@
             "-r", "${{ matrix.runtime }}",
             "-o", "./publish/${{ matrix.runtime }}",
             "--self-contained", "true",
-            "--no-restore", # We already restored with R2R=true above
+            "--no-restore",
             "/p:PublishSingleFile=true",
             "/p:PublishReadyToRun=true",
             "/p:PublishTrimmed=true",
@@ -22,10 +81,24 @@
             "/p:DebugSymbols=false"
           )
 
-          # Special flag for macOS to ensure the AppHost is generated
           if ("${{ matrix.runtime }}".StartsWith("osx-")) {
             $publishArgs += "/p:UseAppHost=true"
           }
 
-          # Execute
           dotnet @publishArgs
+
+      - name: Package (Linux)
+        if: startsWith(matrix.runtime, 'linux-')
+        shell: bash
+        run: |
+          output="./publish/${{ matrix.runtime }}"
+          chmod +x "${output}/${{ env.APP_NAME }}"
+          tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.tar.gz"
+          tar -czf "${tarName}" -C "${output}" .
+
+      - name: Package (Windows)
+        if: startsWith(matrix.runtime, 'win-')
+        shell: pwsh
+        run: |
+          $output = "./publish/${{ matrix.runtime }}"
+          $zipName = "./publish/${{ matrix
