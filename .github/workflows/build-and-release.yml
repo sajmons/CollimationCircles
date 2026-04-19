@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*' # Trigger on version tags like v1.0.0
+      - 'v*' 
   workflow_dispatch:
 
 env:
@@ -11,7 +11,6 @@ env:
   FRAMEWORK: net10.0
   APP_NAME: CollimationCircles
   DOTNET_VERSION: '10.0.x'
-  # Optimizes Node performance for modern GH Actions
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
 jobs:
@@ -55,10 +54,24 @@ jobs:
         shell: pwsh
         run: |
           [xml]$xml = Get-Content "${{ env.PROJECT_PATH }}"
-          $version = $xml.Project.PropertyGroup.InformationalVersion ?? $xml.Project.PropertyGroup.Version
-          $version = $version.Trim()
-          Write-Host "Detected Version: $version"
-          echo "APP_VERSION=$version" >> $env:GITHUB_OUTPUT
+          # Look for any version-related tags across all PropertyGroups
+          $versionTags = @(
+            $xml.Project.PropertyGroup.InformationalVersion
+            $xml.Project.PropertyGroup.Version
+            $xml.Project.PropertyGroup.VersionPrefix
+          )
+          
+          # Pick the first one that isn't empty
+          $v = ($versionTags | Where-Object { !([string]::IsNullOrWhiteSpace($_)) } | Select-Object -First 1)
+          
+          if (!$v) {
+            Write-Host "⚠️ No version found in csproj. Defaulting to 1.0.0" -ForegroundColor Yellow
+            $v = "1.0.0"
+          }
+          
+          $v = $v.Trim()
+          Write-Host "Final Version: $v" -ForegroundColor Green
+          echo "APP_VERSION=$v" >> $env:GITHUB_OUTPUT
 
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }}
@@ -98,7 +111,6 @@ jobs:
           
           tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.tar.gz"
           tar -czf "${tarName}" -C "${output}" .
-          echo "Created: ${tarName}"
 
       # --- WINDOWS PACKAGING ---
       - name: Package (Windows)
@@ -110,9 +122,8 @@ jobs:
           
           $zipName = "./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.zip"
           Compress-Archive -Force "$output/*" $zipName
-          Write-Host "Created: $zipName"
 
-      # --- MACOS PACKAGING (.app bundle) ---
+      # --- MACOS PACKAGING ---
       - name: Package (macOS)
         if: startsWith(matrix.runtime, 'osx-')
         shell: bash
@@ -124,7 +135,6 @@ jobs:
           mkdir -p "${contentPath}/MacOS"
           mkdir -p "${contentPath}/Resources"
 
-          # Create Info.plist
           cat > "${contentPath}/Info.plist" <<EOF
           <?xml version="1.0" encoding="utf-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -141,12 +151,10 @@ jobs:
           </plist>
           EOF
 
-          # Copy binary and resources
           cp -R "./publish/${runtime}/"* "${contentPath}/MacOS/"
           [ -f "${contentPath}/MacOS/icon.icns" ] && mv "${contentPath}/MacOS/icon.icns" "${contentPath}/Resources/"
           chmod +x "${contentPath}/MacOS/${{ env.APP_NAME }}"
           
-          # Final Tarball
           tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${runtime}.tar.gz"
           tar -czf "${tarName}" -C "./publish/${runtime}_bundle" "${bundle}"
 
