@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'version-*'
+      - 'v*' # Trigger on version tags like v1.0.0
   workflow_dispatch:
 
 env:
@@ -11,7 +11,8 @@ env:
   FRAMEWORK: net10.0
   APP_NAME: CollimationCircles
   DOTNET_VERSION: '10.0.x'
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  # Optimizes Node performance for modern GH Actions
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
 jobs:
   build:
@@ -22,32 +23,30 @@ jobs:
           - runtime: win-x64
             os: windows-latest
             index: 1
-            ready2run: true
           - runtime: win-arm64
             os: windows-latest
             index: 2
-            ready2run: false
           - runtime: linux-x64
             os: ubuntu-latest
             index: 3
-            ready2run: true
           - runtime: linux-arm64
             os: ubuntu-latest
             index: 4
-            ready2run: false
           - runtime: osx-x64
             os: macos-latest
             index: 5
-            ready2run: true
+          - runtime: osx-arm64
+            os: macos-latest
+            index: 6
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -56,166 +55,109 @@ jobs:
         shell: pwsh
         run: |
           [xml]$xml = Get-Content "${{ env.PROJECT_PATH }}"
-          $version = ($xml.Project.PropertyGroup.InformationalVersion | Where-Object { $_ }) | Select-Object -First 1
+          $version = $xml.Project.PropertyGroup.InformationalVersion ?? $xml.Project.PropertyGroup.Version
           $version = $version.Trim()
-          Write-Host "Version: $version"
+          Write-Host "Detected Version: $version"
           echo "APP_VERSION=$version" >> $env:GITHUB_OUTPUT
 
       - name: Restore dependencies
-        run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:PublishReadyToRun=${{ matrix.ready2run }}
+        run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }}
 
       - name: Publish
         shell: pwsh
         run: |
           $publishArgs = @(
-            "publish"
-            "${{ env.PROJECT_PATH }}"
-            "-c", "Release"
-            "-r", "${{ matrix.runtime }}"
-            "-o", "./publish/${{ matrix.runtime }}"
-            "--self-contained", "true"
-            "--no-restore"
-            "/p:PublishSingleFile=true"
-            "/p:PublishReadyToRun=${{ matrix.ready2run }}"
-            "/p:DebugType=None"
+            "publish", "${{ env.PROJECT_PATH }}",
+            "-c", "Release",
+            "-r", "${{ matrix.runtime }}",
+            "-o", "./publish/${{ matrix.runtime }}",
+            "--self-contained", "true",
+            "--no-restore",
+            "/p:PublishSingleFile=true",
+            "/p:PublishReadyToRun=true",
+            "/p:PublishTrimmed=true",
+            "/p:TrimMode=full",
+            "/p:DebugType=None",
             "/p:DebugSymbols=false"
           )
 
-          if ("${{ matrix.runtime }}" -eq "osx-x64") {
+          if ("${{ matrix.runtime }}".StartsWith("osx-")) {
             $publishArgs += "/p:UseAppHost=true"
           }
 
-          $command = "dotnet " + ($publishArgs -join " ")
-          Write-Host $command -ForegroundColor Green
-          Invoke-Expression $command
+          dotnet @publishArgs
 
-          if ($LASTEXITCODE -ne 0) {
-            throw "dotnet publish failed with exit code $LASTEXITCODE"
-          }
-
-      # ?? Linux: Package as tar.gz (preserves executable permissions) ????????
+      # --- LINUX PACKAGING ---
       - name: Package (Linux)
         if: startsWith(matrix.runtime, 'linux-')
         shell: bash
-        env:
-          APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
-          RUNTIME: ${{ matrix.runtime }}
         run: |
-          set -euo pipefail
-          output="./publish"
-
-          # Remove icon.icns since it's only for macOS
-          rm -f "${output}/${RUNTIME}/icon.icns"
-
-          # Make the main binary executable
-          chmod +x "${output}/${RUNTIME}/${APP_NAME}"
-
-          tarName="${output}/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.tar.gz"
-          tar -czf "${tarName}" -C "${output}/${RUNTIME}" .
+          output="./publish/${{ matrix.runtime }}"
+          rm -f "${output}/icon.icns"
+          chmod +x "${output}/${{ env.APP_NAME }}"
+          
+          tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.tar.gz"
+          tar -czf "${tarName}" -C "${output}" .
           echo "Created: ${tarName}"
 
-      # ?? macOS: Create .app bundle ???????????????????????????????????????
-      - name: Create macOS .app bundle
-        if: matrix.runtime == 'osx-x64'
-        shell: bash
-        env:
-          APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
-          RUNTIME: ${{ matrix.runtime }}
-        run: |
-          set -euo pipefail
-          bundle="${APP_NAME}.app"
-          output="./publish"
-
-          # Create bundle directory structure
-          mkdir -p "${output}/${bundle}/Contents/MacOS"
-          mkdir -p "${output}/${bundle}/Contents/Resources"
-
-          # Create Info.plist
-          cat > "${output}/${bundle}/Contents/Info.plist" <<EOF
-          <?xml version="1.0" encoding="utf-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-            <dict>
-              <key>CFBundleIconFile</key>
-              <string>icon.icns</string>
-              <key>CFBundleIdentifier</key>
-              <string>com.saimons.${APP_NAME}</string>
-              <key>CFBundleName</key>
-              <string>${APP_NAME}</string>
-              <key>CFBundleVersion</key>
-              <string>${APP_VERSION}</string>
-              <key>LSMinimumSystemVersion</key>
-              <string>11</string>
-              <key>CFBundleExecutable</key>
-              <string>${APP_NAME}</string>
-              <key>CFBundleInfoDictionaryVersion</key>
-              <string>6.0</string>
-              <key>CFBundlePackageType</key>
-              <string>APPL</string>
-              <key>CFBundleShortVersionString</key>
-              <string>${APP_VERSION}</string>
-              <key>NSHighResolutionCapable</key>
-              <true/>
-            </dict>
-          </plist>
-          EOF
-
-          # Copy application files to Contents/MacOS
-          cp -R "${output}/${RUNTIME}/"* "${output}/${bundle}/Contents/MacOS/"
-
-          # Move icon to Contents/Resources
-          if [ -f "${output}/${bundle}/Contents/MacOS/icon.icns" ]; then
-            mv "${output}/${bundle}/Contents/MacOS/icon.icns" "${output}/${bundle}/Contents/Resources/"
-          fi
-
-          # Make the main binary executable
-          chmod +x "${output}/${bundle}/Contents/MacOS/${APP_NAME}"
-
-      # ?? Windows: Package as ZIP ??????????????????????????????????????????
+      # --- WINDOWS PACKAGING ---
       - name: Package (Windows)
         if: startsWith(matrix.runtime, 'win-')
         shell: pwsh
         run: |
-          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
-          $runtime = "${{ matrix.runtime }}"
-          $output = "./publish"
+          $output = "./publish/${{ matrix.runtime }}"
+          if (Test-Path "$output/icon.icns") { Remove-Item "$output/icon.icns" }
+          
+          $zipName = "./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.zip"
+          Compress-Archive -Force "$output/*" $zipName
+          Write-Host "Created: $zipName"
 
-          # Remove icon.icns since it's only for macOS
-          $icnsPath = "$output/$runtime/icon.icns"
-          if (Test-Path $icnsPath) {
-            Remove-Item -Path $icnsPath
-          }
-
-          $zipName = "$output/${{ matrix.index }}-${{ env.APP_NAME }}-$appVersion-$runtime.zip"
-          Compress-Archive -Force "$output/$runtime/*" $zipName
-          Write-Host "Created: $zipName" -ForegroundColor Green
-
-      # ?? macOS: Package as tar.gz (preserves executable permissions) ????????
+      # --- MACOS PACKAGING (.app bundle) ---
       - name: Package (macOS)
-        if: matrix.runtime == 'osx-x64'
+        if: startsWith(matrix.runtime, 'osx-')
         shell: bash
-        env:
-          APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
-          RUNTIME: ${{ matrix.runtime }}
         run: |
-          set -euo pipefail
-          output="./publish"
-          bundle="${APP_NAME}.app"
+          runtime="${{ matrix.runtime }}"
+          bundle="${{ env.APP_NAME }}.app"
+          contentPath="./publish/${runtime}_bundle/${bundle}/Contents"
+          
+          mkdir -p "${contentPath}/MacOS"
+          mkdir -p "${contentPath}/Resources"
 
-          tarName="${output}/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.tar.gz"
-          tar -czf "${tarName}" -C "${output}" "${bundle}"
-          echo "Created: ${tarName}"
+          # Create Info.plist
+          cat > "${contentPath}/Info.plist" <<EOF
+          <?xml version="1.0" encoding="utf-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleIconFile</key><string>icon.icns</string>
+            <key>CFBundleIdentifier</key><string>com.saimons.${{ env.APP_NAME }}</string>
+            <key>CFBundleName</key><string>${{ env.APP_NAME }}</string>
+            <key>CFBundleVersion</key><string>${{ steps.version.outputs.APP_VERSION }}</string>
+            <key>CFBundleExecutable</key><string>${{ env.APP_NAME }}</string>
+            <key>CFBundlePackageType</key><string>APPL</string>
+            <key>LSMinimumSystemVersion</key><string>11.0</string>
+          </dict>
+          </plist>
+          EOF
 
-      # ?? Upload artifacts ????????????????????????????????????????????????
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v5
+          # Copy binary and resources
+          cp -R "./publish/${runtime}/"* "${contentPath}/MacOS/"
+          [ -f "${contentPath}/MacOS/icon.icns" ] && mv "${contentPath}/MacOS/icon.icns" "${contentPath}/Resources/"
+          chmod +x "${contentPath}/MacOS/${{ env.APP_NAME }}"
+          
+          # Final Tarball
+          tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${runtime}.tar.gz"
+          tar -czf "${tarName}" -C "./publish/${runtime}_bundle" "${bundle}"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_NAME }}-${{ matrix.runtime }}
           path: |
-            ./publish/${{ matrix.index }}-*.zip
-            ./publish/${{ matrix.index }}-*.tar.gz
-          compression-level: 0
-          retention-days: 30
+            ./publish/*.zip
+            ./publish/*.tar.gz
+          retention-days: 7
 
   release:
     needs: build
@@ -223,23 +165,17 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
-
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v5
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
         with:
           path: ./artifacts
           merge-multiple: true
 
-      - name: List artifacts
-        run: find ./artifacts -type f \( -name "*.zip" -o -name "*.tar.gz" \) | sort
-
-      - name: Create GitHub Release
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          draft: false
-          prerelease: false
           files: |
             ./artifacts/*.zip
             ./artifacts/*.tar.gz
