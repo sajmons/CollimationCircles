@@ -90,9 +90,9 @@ jobs:
         shell: bash
         run: |
           output="./publish/${{ matrix.runtime }}"
-          chmod +x "${output}/${{ env.APP_NAME }}"
+          chmod +x "$output/${{ env.APP_NAME }}"
           tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.tar.gz"
-          tar -czf "${tarName}" -C "${output}" .
+          tar -czf "$tarName" -C "$output" .
 
       - name: Package (Windows)
         if: startsWith(matrix.runtime, 'win-')
@@ -106,33 +106,35 @@ jobs:
         if: startsWith(matrix.runtime, 'osx-')
         shell: bash
         run: |
-          runtime="${{ matrix.runtime }}"
-          bundle="${{ env.APP_NAME }}.app"
-          contentPath="./publish/${runtime}_bundle/${bundle}/Contents"
-          mkdir -p "${contentPath}/MacOS"
-          mkdir -p "${contentPath}/Resources"
-
-          # Write Info.plist line-by-line to avoid ${{ parse errors in YAML
-          echo '<?xml version="1.0" encoding="utf-8"?>' > "${contentPath}/Info.plist"
-          echo '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">' >> "${contentPath}/Info.plist"
-          echo '<plist version="1.0">' >> "${contentPath}/Info.plist"
-          echo '<dict>' >> "${contentPath}/Info.plist"
-          echo "  <key>CFBundleIconFile</key><string>icon.icns</string>" >> "${contentPath}/Info.plist"
-          echo "  <key>CFBundleIdentifier</key><string>com.saimons.${{ env.APP_NAME }}</string>" >> "${contentPath}/Info.plist"
-          echo "  <key>CFBundleName</key><string>${{ env.APP_NAME }}</string>" >> "${contentPath}/Info.plist"
-          echo "  <key>CFBundleVersion</key><string>${{ steps.version.outputs.APP_VERSION }}</string>" >> "${contentPath}/Info.plist"
-          echo "  <key>CFBundleExecutable</key><string>${{ env.APP_NAME }}</string>" >> "${contentPath}/Info.plist"
-          echo "  <key>CFBundlePackageType</key><string>APPL</string>" >> "${contentPath}/Info.plist"
-          echo "  <key>LSMinimumSystemVersion</key><string>11.0</string>" >> "${contentPath}/Info.plist"
-          echo '</dict>' >> "${contentPath}/Info.plist"
-          echo '</plist>' >> "${contentPath}/Info.plist"
-
-          cp -R "./publish/${runtime}/"* "${contentPath}/MacOS/"
-          [ -f "${contentPath}/MacOS/icon.icns" ] && mv "${contentPath}/MacOS/icon.icns" "${contentPath}/Resources/"
-          chmod +x "${contentPath}/MacOS/${{ env.APP_NAME }}"
+          RUNTIME_ID="${{ matrix.runtime }}"
+          VERSION_VAL="${{ steps.version.outputs.APP_VERSION }}"
+          APP_VAL="${{ env.APP_NAME }}"
           
-          tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${runtime}.tar.gz"
-          tar -czf "${tarName}" -C "./publish/${runtime}_bundle" "${bundle}"
+          BUNDLE="$APP_VAL.app"
+          CONTENT_PATH="./publish/${RUNTIME_ID}_bundle/$BUNDLE/Contents"
+          
+          mkdir -p "$CONTENT_PATH/MacOS"
+          mkdir -p "$CONTENT_PATH/Resources"
+
+          # Use printf to avoid variable expansion issues with XML/Plist headers
+          printf '<?xml version="1.0" encoding="utf-8"?>\n' > "$CONTENT_PATH/Info.plist"
+          printf '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n' >> "$CONTENT_PATH/Info.plist"
+          printf '<plist version="1.0">\n<dict>\n' >> "$CONTENT_PATH/Info.plist"
+          printf '  <key>CFBundleIconFile</key><string>icon.icns</string>\n' >> "$CONTENT_PATH/Info.plist"
+          printf '  <key>CFBundleIdentifier</key><string>com.saimons.%s</string>\n' "$APP_VAL" >> "$CONTENT_PATH/Info.plist"
+          printf '  <key>CFBundleName</key><string>%s</string>\n' "$APP_VAL" >> "$CONTENT_PATH/Info.plist"
+          printf '  <key>CFBundleVersion</key><string>%s</string>\n' "$VERSION_VAL" >> "$CONTENT_PATH/Info.plist"
+          printf '  <key>CFBundleExecutable</key><string>%s</string>\n' "$APP_VAL" >> "$CONTENT_PATH/Info.plist"
+          printf '  <key>CFBundlePackageType</key><string>APPL</string>\n' >> "$CONTENT_PATH/Info.plist"
+          printf '  <key>LSMinimumSystemVersion</key><string>11.0</string>\n' >> "$CONTENT_PATH/Info.plist"
+          printf '</dict>\n</plist>\n' >> "$CONTENT_PATH/Info.plist"
+
+          cp -R "./publish/$RUNTIME_ID/"* "$CONTENT_PATH/MacOS/"
+          [ -f "$CONTENT_PATH/MacOS/icon.icns" ] && mv "$CONTENT_PATH/MacOS/icon.icns" "$CONTENT_PATH/Resources/"
+          chmod +x "$CONTENT_PATH/MacOS/$APP_VAL"
+          
+          TAR_NAME="./publish/${{ matrix.index }}-$APP_VAL-$VERSION_VAL-$RUNTIME_ID.tar.gz"
+          tar -czf "$TAR_NAME" -C "./publish/${RUNTIME_ID}_bundle" "$BUNDLE"
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
