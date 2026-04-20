@@ -46,28 +46,30 @@ namespace CollimationCircles.Services
 
                                 logger.Debug($"DeviceName: '{deviceName}', DeviceId: '{deviceId}', Service: '{service}'");
 
-                            string[] cameraKeywords= { "camera", "webcam", "obs", "manycam", "snap", "virtual", "video", "capture" };
-                            if (cameraKeywords.Any(k => (deviceName?.ToLower().Contains(k) ?? false) || (service?.ToLower().Contains(k) ?? false)))
-                            {
-                                // treat as camera
-                                Camera c = new()
+                                string[] cameraKeywords = { "camera", "webcam", "obs", "manycam", "snap", "virtual", "video", "capture" };
+                                if (cameraKeywords.Any(k => (deviceName?.ToLower().Contains(k) ?? false) || (service?.ToLower().Contains(k) ?? false)))
                                 {
-                                    Name = deviceName,
-                                    Path = deviceId,
-                                    APIType = APIType.Dshow,
-                                    Index = camIndex++
-                                };
+                                    // treat as camera
+                                    Camera c = new()
+                                    {
+                                        Name = deviceName,
+                                        Path = deviceId,
+                                        APIType = APIType.Dshow,
+                                        Index = camIndex++
+                                    };
 
-                                c.Controls = await GetControls(c);
+                                    c.Controls = await GetControls(c);
 
-                                if (c.Controls.Count > 0)
-                                {
-                                    cameras.Add(c);
-                                    logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                                    if (c.Controls.Count > 0)
+                                    {
+                                        cameras.Add(c);
+                                        logger.Info($"Adding camera: '{c.Name} {c.Path}'");
+                                    }
                                 }
                             }
                         }
-                    };
+                        ;
+                    }
                 }
             }
             catch (Exception exc)
