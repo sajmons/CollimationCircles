@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
 using CollimationCircles.Extensions;
 using CollimationCircles.Helper;
 using CollimationCircles.Messages;
@@ -190,6 +191,10 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool shapePropertiesExpanded = true;
 
+        [JsonProperty]
+        [ObservableProperty]
+        private bool compactThemeDensity = true;        
+
         protected override void Initialize()
         {
             base.Initialize();
@@ -244,6 +249,8 @@ namespace CollimationCircles.ViewModels
 
             ThemeList = new ObservableCollection<ThemeVariant>(themes);
             SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
+
+            CompactThemeDensity = Application.Current?.Styles[0] is FluentTheme { DensityStyle: DensityStyle.Compact };
 
             logger.Info("Initialized themes");
         }
@@ -550,6 +557,7 @@ namespace CollimationCircles.ViewModels
                     ShapeListExpanded = vm.ShapeListExpanded;
                     ShapePropertiesExpanded = vm.ShapePropertiesExpanded;
                     LiveAnalysisResultsExpanded = vm.LiveAnalysisResultsExpanded;
+                    CompactThemeDensity = vm.CompactThemeDensity;
 
                     LastSelectedCamera = vm.LastSelectedCamera;
                     Profiles = vm.Profiles;
@@ -605,6 +613,19 @@ namespace CollimationCircles.ViewModels
                 Application.Current.RequestedThemeVariant = newValue;
                 logger.Info($"Application theme changed to '{Application.Current.ActualThemeVariant}'");
             }
+        }
+
+        partial void OnCompactThemeDensityChanged(bool oldValue, bool newValue)
+        {
+            var fluentTheme = Application.Current?.Styles[0] as FluentTheme;
+
+            if (fluentTheme == null)
+                return;
+
+            if (newValue)
+                fluentTheme.DensityStyle = DensityStyle.Compact;
+            else
+                fluentTheme.DensityStyle = DensityStyle.Normal;
         }
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)

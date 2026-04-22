@@ -73,7 +73,7 @@ namespace CollimationCircles.ViewModels
 
         partial void OnIsLiveAnalysisActiveChanged(bool value)
         {
-            HandleModeSwitch(value || IsLiveRmseActive);
+            HandleModeSwitch(value || IsLiveRmseActive);            
         }
 
         partial void OnIsLiveRmseActiveChanged(bool value)
