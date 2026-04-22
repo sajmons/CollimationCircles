@@ -33,7 +33,7 @@ namespace CollimationCircles.ViewModels
         private ObservableCollection<ScrewInstruction> screwInstructions = [];
 
         [ObservableProperty]
-        bool isPlaying = false;
+        bool isStreaming = false;
 
         [ObservableProperty]
         bool isLiveAnalysisActive = false;
@@ -62,10 +62,10 @@ namespace CollimationCircles.ViewModels
                 switch (m.Value)
                 {
                     case CameraState.Stopped:
-                        IsPlaying = false;
+                        IsStreaming = false;
                         break;
                     case CameraState.Playing:
-                        IsPlaying = true;
+                        IsStreaming = true;
                         break;
                 }
             });
@@ -86,7 +86,7 @@ namespace CollimationCircles.ViewModels
             IsAnyLiveAnalysisActive = anyActive;
             if (anyActive)
             {
-                if (!IsPlaying)
+                if (!IsStreaming)
                 {
                     IsLiveAnalysisActive = false;
                     IsLiveRmseActive = false;

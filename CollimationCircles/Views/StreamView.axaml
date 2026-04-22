@@ -1,29 +1,21 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
-        mc:Ignorable="d"
-        d:DesignWidth="320" 
-        d:DesignHeight="240"
-        xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
-        xmlns:vm="using:CollimationCircles.ViewModels"
-        x:DataType="vm:CollimationAnalysisViewModel"
-        x:Class="CollimationCircles.Views.StreamView"
-        Title="{DynamicResource Text.CameraStreamWindowTitle}"
-        Width="640"
-        Height="480">
-  <Grid>
-    <vlc:VideoView      
-      RelativePanel.AlignHorizontalCenterWithPanel="True"
-      RelativePanel.AlignVerticalCenterWithPanel="True"
-      x:Name="VideoViewer"
-      HorizontalAlignment="Stretch"
-      VerticalAlignment="Stretch" />
-
-    <Image Source="{Binding AnalysisPreview}"
-           IsHitTestVisible="False"
-           Stretch="Uniform"
-           HorizontalAlignment="Center"
-           VerticalAlignment="Center" />
-  </Grid>
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:controls="clr-namespace:CollimationCircles.Controls"
+		mc:Ignorable="d"
+		d:DesignWidth="320"
+		d:DesignHeight="240"
+		xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
+		xmlns:vm="using:CollimationCircles.ViewModels"
+		x:DataType="vm:CollimationAnalysisViewModel"
+		x:Class="CollimationCircles.Views.StreamView"
+		Title="{DynamicResource Text.CameraStreamWindowTitle}"
+		Width="640"
+		Height="480">
+	<Grid>
+		<vlc:VideoView x:Name="VideoViewer">
+			<controls:CollimationAnalysisUserControl />
+		</vlc:VideoView>
+	</Grid>
 </Window>

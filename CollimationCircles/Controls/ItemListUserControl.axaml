@@ -263,7 +263,7 @@
                 Grid.Column="2"
                 TextWrapping="Wrap"
                 MaxLength="20"
-                Watermark="{DynamicResource Text.HelperName}"
+                PlaceholderText="{DynamicResource Text.HelperName}"
                 Text="{ReflectionBinding #list.SelectedItem.Label}" />
             </Grid>
 

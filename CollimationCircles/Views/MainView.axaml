@@ -27,9 +27,6 @@
       <RowDefinition Height="100" />
     </Grid.RowDefinitions>    
 
-    <controls:CollimationAnalysisUserControl
-        Grid.RowSpan="2" />
-
     <controls:SettingsUserControl
       Grid.Column="1"
       Grid.RowSpan="2"

@@ -1,59 +1,60 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="CollimationCircles.Controls.CollimationAnalysisUserControl"
-             xmlns:vm="using:CollimationCircles.ViewModels"
-             x:DataType="vm:CollimationAnalysisViewModel">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+			 x:Class="CollimationCircles.Controls.CollimationAnalysisUserControl"
+			 xmlns:vm="using:CollimationCircles.ViewModels"
+			 x:DataType="vm:CollimationAnalysisViewModel">
 
-  <StackPanel
-    Orientation="Vertical"
-    VerticalAlignment="Center"
-    HorizontalAlignment="Center"
-    Spacing="{DynamicResource ControlSpacing}">
+	<Grid
+	IsVisible="{Binding IsAnyLiveAnalysisActive}"
+	RowDefinitions="30,*,30"
+	ColumnDefinitions="*">
+		<StackPanel
+		Orientation="Horizontal"
+		Spacing="8"
+		Margin="8">
+			<Ellipse Width="8" Height="8" Fill="Red">
+				<Ellipse.Styles>
+					<Style Selector="Ellipse">
+						<Style.Animations>
+							<Animation Duration="0:0:1" IterationCount="Infinite">
+								<KeyFrame KeyTime="0:0:0">
+									<Setter Property="Opacity" Value="1"/>
+								</KeyFrame>
+								<KeyFrame KeyTime="0:0:0.5">
+									<Setter Property="Opacity" Value="0.2"/>
+								</KeyFrame>
+								<KeyFrame KeyTime="0:0:1">
+									<Setter Property="Opacity" Value="1"/>
+								</KeyFrame>
+							</Animation>
+						</Style.Animations>
+					</Style>
+				</Ellipse.Styles>
+			</Ellipse>
+			<TextBlock
+			Text="LIVE ANALYSIS"
+			FontWeight="Bold"
+			FontSize="10"
+			VerticalAlignment="Center"
+			LetterSpacing="1"
+			Background="Transparent" />
+		</StackPanel>
 
+		<Image
+		Grid.RowSpan="3"
+		Source="{Binding AnalysisPreview}"
+		IsVisible="{Binding AnalysisPreview, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 
-    <Border IsVisible="{Binding IsAnyLiveAnalysisActive}"
-            Background="Transparent"
-            BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}"
-            BorderThickness="2"            
-            CornerRadius="8">
-      <StackPanel Spacing="6" Background="Transparent">
-        <StackPanel Orientation="Horizontal" Spacing="8" Background="Transparent">
-          <Ellipse Width="8" Height="8" Fill="Red">
-            <Ellipse.Styles>
-              <Style Selector="Ellipse">
-                <Style.Animations>
-                  <Animation Duration="0:0:1" IterationCount="Infinite">
-                    <KeyFrame KeyTime="0:0:0">
-                      <Setter Property="Opacity" Value="1"/>
-                    </KeyFrame>
-                    <KeyFrame KeyTime="0:0:0.5">
-                      <Setter Property="Opacity" Value="0.2"/>
-                    </KeyFrame>
-                    <KeyFrame KeyTime="0:0:1">
-                      <Setter Property="Opacity" Value="1"/>
-                    </KeyFrame>
-                  </Animation>
-                </Style.Animations>
-              </Style>
-            </Ellipse.Styles>
-          </Ellipse>
-          <TextBlock Text="LIVE ANALYSIS" FontWeight="Bold" FontSize="10" VerticalAlignment="Center" LetterSpacing="1" Background="Transparent" />
-        </StackPanel>
-
-        <Image Source="{Binding AnalysisPreview}"
-               Margin="0,4,0,0"
-               IsVisible="{Binding AnalysisPreview, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-
-        <TextBlock Text="Waiting for stream data..."
-                   FontStyle="Italic"
-                   FontSize="12"
-                   Opacity="0.6"
-                   IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
-      </StackPanel>
-    </Border>
-
-  </StackPanel>
+		<TextBlock
+		Grid.Row="2"
+		Text="Waiting for stream data..."
+		FontStyle="Italic"
+		FontSize="12"
+		Opacity="0.6"
+		Padding="8"
+		IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
+	</Grid>
 </UserControl>

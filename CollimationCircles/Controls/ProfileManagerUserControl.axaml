@@ -22,7 +22,7 @@
                   ColumnDefinitions="*,Auto,Auto,Auto">
                   <TextBox
                     Text="{ReflectionBinding ProfileName}"
-                    Watermark="{DynamicResource Text.EnterProfileName}"/>
+                    PlaceholderText="{DynamicResource Text.EnterProfileName}"/>
                   <Border
                     Grid.Column="1"
                     Width="{DynamicResource ControlSpacing}"/>

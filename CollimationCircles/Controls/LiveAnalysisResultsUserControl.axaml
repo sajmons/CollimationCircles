@@ -7,34 +7,42 @@
 			 xmlns:vm="using:CollimationCircles.ViewModels"
 			 x:DataType="vm:CollimationAnalysisViewModel">
 
-	<StackPanel Orientation="Vertical">
-		<StackPanel Orientation="Horizontal" Spacing="{DynamicResource ControlSpacing}" Margin="0,0,0,8">
-			<ToggleButton
-			Theme="{DynamicResource ToolbarToggleButton}"
-			IsChecked="{Binding IsLiveAnalysisActive}"
-			HorizontalAlignment="Left"
-			IsEnabled="{Binding IsPlaying}"
-			ToolTip.Tip="Toggle Real-time Advanced Analysis Result Overlay">
-				<PathIcon
-				Width="{DynamicResource PathIconWidth}"
-				Height="{DynamicResource PathIconHeight}"
-				Foreground="{DynamicResource Color2}"
-				Data="{StaticResource IconData.Analyze}" />
-			</ToggleButton>
+	<StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
+		<Grid 
+			ColumnSpacing="{DynamicResource ControlSpacing}"
+			RowSpacing="{DynamicResource ControlSpacing}"
+			ColumnDefinitions="Auto,*"
+			RowDefinitions="Auto,Auto">
+			
+			<TextBlock				
+				Text="Defocused star analysis"
+				VerticalAlignment="Center"/>
+			<ToggleSwitch 
+				Grid.Column="1"
+				IsChecked="{Binding IsLiveAnalysisActive}"
+				IsEnabled="{Binding IsStreaming}"
+				ToolTip.Tip="Toggle Real-time Advanced Analysis Result Overlay">				
+			</ToggleSwitch>			
 
-			<ToggleButton
-			Theme="{DynamicResource ToolbarToggleButton}"
-			IsChecked="{Binding IsLiveRmseActive}"
-			HorizontalAlignment="Left"
-			IsEnabled="{Binding IsPlaying}"
-			ToolTip.Tip="Toggle Real-time Mechanical RMSE Analysis">
-				<PathIcon
-				Width="{DynamicResource PathIconWidth}"
-				Height="{DynamicResource PathIconHeight}"
-				Foreground="{DynamicResource Color2}"
-				Data="{StaticResource IconData.Shapes}" />
-			</ToggleButton>
-		</StackPanel>
+			<TextBlock 
+				Grid.Row="1"				
+				Text="Optical tube analysis"
+				VerticalAlignment="Center"/>
+			<ToggleSwitch
+				Grid.Row="1"
+				Grid.Column="1"
+				IsChecked="{Binding IsLiveRmseActive}"
+				IsEnabled="{Binding IsStreaming}"
+				HorizontalAlignment="Stretch"
+				ToolTip.Tip="Toggle Real-time Mechanical RMSE Analysis">				
+			</ToggleSwitch>			
+		</Grid>
+
+		<TextBlock
+			IsVisible="{Binding !IsStreaming}"
+			Text="To start live analysis, you must first start camera stream"
+			VerticalAlignment="Center"
+			TextWrapping="Wrap"/>
 
 		<Border IsVisible="{Binding IsAnyLiveAnalysisActive}"
 				Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
@@ -44,11 +52,12 @@
 				CornerRadius="8"
 				Margin="0,8,0,8">
 			<StackPanel Spacing="6">
-				<TextBlock Text="{Binding LiveResultText}"
-						   FontFamily="Consolas,Courier New"
-						   FontSize="12"
-						   TextWrapping="Wrap"
-						   IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+				<TextBlock 
+					Text="{Binding LiveResultText}"
+					FontFamily="Consolas,Courier New"
+					FontSize="12"
+					TextWrapping="Wrap"
+					IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
 				<ItemsControl ItemsSource="{Binding ScrewInstructions}" Margin="0,4">
 					<ItemsControl.ItemTemplate>
