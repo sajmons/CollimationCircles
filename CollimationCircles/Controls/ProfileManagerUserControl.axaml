@@ -8,7 +8,7 @@
              x:Class="CollimationCircles.Controls.ProfileManagerUserControl"
              x:DataType="vm:ProfileManagerViewModel">
   <StackPanel Spacing="{DynamicResource ControlSpacing}">
-    <Border Height="160">
+    <Border Height="160" BorderBrush="Red">
       <ScrollViewer>
         <ListBox
             SelectedItem="{ReflectionBinding SelectedProfile}"

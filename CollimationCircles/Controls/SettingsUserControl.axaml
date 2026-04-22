@@ -28,8 +28,8 @@
               Margin="{DynamicResource TabIconMargin}"
               Height="{DynamicResource PathIconHeight}"
               Foreground="{DynamicResource Color2}"
-              Data="{StaticResource IconData.Tools}"
-              ToolTip.Tip="{DynamicResource Text.Tools}" />
+              Data="{StaticResource IconData.Camera}"
+              ToolTip.Tip="{DynamicResource Text.Video}" />
         </TabItem.Header>
         <ScrollViewer>
           <StackPanel Spacing="{DynamicResource ControlSpacing}">
@@ -41,16 +41,7 @@
               <StackPanel Orientation="Vertical">
                 <controls:StreamUserControl/>
               </StackPanel>
-            </Expander>
-            <Expander
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Header="{DynamicResource Text.ProfileManagerTitle}"
-              IsExpanded="{Binding ProfileManagerExpanded}">
-              <StackPanel Orientation="Vertical">
-                <controls:ProfileManagerUserControl/>
-              </StackPanel>
-            </Expander>
+            </Expander>            
             <Expander
               VerticalAlignment="Top"
               HorizontalAlignment="Stretch"
@@ -59,8 +50,7 @@
               <StackPanel Orientation="Vertical">
                 <controls:LiveAnalysisResultsUserControl/>
               </StackPanel>
-            </Expander>
-            
+            </Expander>            
           </StackPanel>
         </ScrollViewer>
       </TabItem>
