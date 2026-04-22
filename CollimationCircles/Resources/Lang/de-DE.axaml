@@ -107,7 +107,7 @@
   <system:String x:Key="Text.OpenLogFileLocation">Speicherort der Anwendungsprotokolldatei anzeigen</system:String>
   <system:String x:Key="Text.AutoStartCameraStream">Starten Sie den Kamerastream nach Möglichkeit automatisch</system:String>
   <system:String x:Key="Text.AutoStartCameraStreamHelp">Funktioniert nur mit Libcamera und Linux. In anderen Fällen muss der Benutzer die URL-Adresse des Videostreams angeben.</system:String>  
-  <system:String x:Key="Text.Tools">Werkzeuge</system:String>
+  <system:String x:Key="Text.Video">Video</system:String>
   <system:String x:Key="Text.ShowAboutDialog">Über diese Anwendung</system:String>
   <system:String x:Key="Text.Close">Schließen</system:String>
   <system:String x:Key="Text.IncreaseInclination">Neigung erhöhen</system:String>
@@ -117,6 +117,7 @@
   <system:String x:Key="Text.CameraStreamTimeout">Zeitüberschreitung beim Warten auf den Videostream</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Starten oder stoppen Sie den Videostream der Kamera</system:String>
   <system:String x:Key="Text.CameraType">Kamera auswählen</system:String>
+  <system:String x:Key="Text.CameraSettings">Kameraeinstellungen</system:String>
   <system:String x:Key="Text.Brightness">Helligkeit</system:String>
   <system:String x:Key="Text.Contrast">Kontrast</system:String>
   <system:String x:Key="Text.Saturation">Sättigung</system:String>
@@ -155,20 +156,14 @@
   <system:String x:Key="Text.RemoveProfileDialogTitle">Profil entfernen</system:String>
   <system:String x:Key="Text.DisplayAdvancedDShowDialog">Erweiterte Einstellungen anzeigen</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Nicht lizenzierte Version</system:String>
-  <system:String x:Key="Text.ShapeList">Formen</system:String>
-  <system:String x:Key="Text.ShapeProperties">Formeigenschaften</system:String>
-  <system:String x:Key="Text.ContourMinEnclosingCircle">Kontur minimaler umschließender Kreis</system:String>
-  <system:String x:Key="Text.AiryDiscAnalysis">Kollimationsanalyse</system:String>
-  <system:String x:Key="Text.StarAiryDiscAnalysisResult">Analyseergebnis</system:String>
-  <system:String x:Key="Text.NoVideoStreamWarning">Bitte starten Sie den Videostream, bevor Sie diese Funktion verwenden.</system:String>
-  <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Kein Videostream</system:String>
-  <system:String x:Key="Text.CombinedDetectionMode">Beide</system:String>
   <system:String x:Key="Text.Apply">Verwenden</system:String>
-  <system:String x:Key="Text.DetectionThreshold">Kreisschwelle</system:String>
-  <system:String x:Key="Text.DetectionThresholdTip">Ein höherer Wert bedeutet, dass weniger Kreise erkannt werden (min.: 0.1, max.: 2.0).</system:String>
-  <system:String x:Key="Text.NoCirclesDetected">Keine Kreise erkannt</system:String>
-  <system:String x:Key="Text.TooManyCirclesDetected">Zu viele Kreise erkannt</system:String>
-  <system:String x:Key="Text.DetectionThresholdHelp">Versuchen Sie, den Schwellenwert zu ändern.</system:String>
-  <system:String x:Key="Text.DetectionThresholdHelp2">Das Bild sollte einen zentrierten, defokussierten Stern enthalten</system:String>
-  <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
+  <system:String x:Key="Text.LiveAnalysisResults">Live-Analyseergebnisse</system:String>
+  <system:String x:Key="Text.WaitingForStreamData">Warten auf Stream-Daten...</system:String> 
+  <system:String x:Key="Text.LiveAnalysis">LIVE-ANALYSE</system:String>
+  <system:String x:Key="Text.DefocusedStarAnalysis">Defokussierte Sternanalyse</system:String>    
+  <system:String x:Key="Text.TipDefocusedStarAnalysis">Echtzeit-Analyse defokussierter Sterne umschalten</system:String>  
+  <system:String x:Key="Text.OpticalTubeAnalysis">Optische Tubusanalyse</system:String>
+  <system:String x:Key="Text.TipOpticalTubeAnalysis">Echtzeit-Analyse des optischen Tubus umschalten</system:String>
+  <system:String x:Key="Text.LiveAnalysisTip">Um die Live-Analyse zu starten, müssen Sie zuerst den Kamera-Stream starten</system:String>
+  <system:String x:Key="Text.CompactThemeDensity">Kompakter Look</system:String>
 </ResourceDictionary>

@@ -107,7 +107,7 @@
   <system:String x:Key="Text.OpenLogFileLocation">Afficher l'emplacement du fichier journal de l'application</system:String>
   <system:String x:Key="Text.AutoStartCameraStream">Démarrez automatiquement le flux de la caméra si possible</system:String>
   <system:String x:Key="Text.AutoStartCameraStreamHelp">Fonctionne uniquement avec Libcamera et Linux. Dans les autres cas, l'utilisateur doit fournir l'adresse URL du flux vidéo.</system:String>
-  <system:String x:Key="Text.Tools">Outils</system:String>
+  <system:String x:Key="Text.Video">Vidéo</system:String>
   <system:String x:Key="Text.ShowAboutDialog">À propos de cette application</system:String>
   <system:String x:Key="Text.Close">Fermer</system:String>
   <system:String x:Key="Text.IncreaseInclination">Augmenter l'inclinaison</system:String>
@@ -117,6 +117,7 @@
   <system:String x:Key="Text.CameraStreamTimeout">Délai d'attente du flux vidéo</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Démarrer ou arrêter le flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.CameraType">Sélectionnez la caméra</system:String>
+  <system:String x:Key="Text.CameraSettings">Paramètres de la caméra</system:String>
   <system:String x:Key="Text.Brightness">Luminosité</system:String>
   <system:String x:Key="Text.Contrast">Contraste</system:String>
   <system:String x:Key="Text.Saturation">Saturation</system:String>
@@ -155,20 +156,14 @@
   <system:String x:Key="Text.RemoveProfileDialogTitle">Supprimer le profil</system:String>
   <system:String x:Key="Text.DisplayAdvancedDShowDialog">Afficher les paramètres avancés</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Version sans licence</system:String>
-  <system:String x:Key="Text.ShapeList">Formes</system:String>
-  <system:String x:Key="Text.ShapeProperties">Propriétés de forme</system:String>
-  <system:String x:Key="Text.ContourMinEnclosingCircle">Cercle englobant minimum de contour</system:String>
-  <system:String x:Key="Text.AiryDiscAnalysis">Analyse de collimation</system:String>
-  <system:String x:Key="Text.StarAiryDiscAnalysisResult">Résultat de l'analyse</system:String>
-  <system:String x:Key="Text.NoVideoStreamWarning">Veuillez démarrer le flux vidéo avant d'utiliser cette fonction.</system:String>
-  <system:String x:Key="Text.NoVideoStreamMsgBoxTitle">Pas de flux vidéo</system:String>
-  <system:String x:Key="Text.CombinedDetectionMode">Les deux</system:String>
   <system:String x:Key="Text.Apply">Utiliser</system:String>
-  <system:String x:Key="Text.DetectionThreshold">Seuil de cercle</system:String>
-  <system:String x:Key="Text.DetectionThresholdTip">Une valeur plus élevée signifie que moins de cercles seront détectés (min : 0.1, max : 2.0)</system:String>
-  <system:String x:Key="Text.NoCirclesDetected">Aucun cercle détecté</system:String>
-  <system:String x:Key="Text.TooManyCirclesDetected">Trop de cercles détectés</system:String>
-  <system:String x:Key="Text.DetectionThresholdHelp">Essayez de changer le seuil.</system:String>
-  <system:String x:Key="Text.DetectionThresholdHelp2">L'image doit contenir une étoile centrée et défocalisée</system:String>
-  <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
+  <system:String x:Key="Text.LiveAnalysisResults">Résultats de l'analyse en direct</system:String>
+  <system:String x:Key="Text.WaitingForStreamData">En attente des données du flux...</system:String> 
+  <system:String x:Key="Text.LiveAnalysis">ANALYSE EN DIRECT</system:String>
+  <system:String x:Key="Text.DefocusedStarAnalysis">Analyse d'étoile défocalisée</system:String>    
+  <system:String x:Key="Text.TipDefocusedStarAnalysis">Basculer l'analyse d'étoile défocalisée en temps réel</system:String>  
+  <system:String x:Key="Text.OpticalTubeAnalysis">Analyse du tube optique</system:String>
+  <system:String x:Key="Text.TipOpticalTubeAnalysis">Basculer l'analyse du tube optique en temps réel</system:String>
+  <system:String x:Key="Text.LiveAnalysisTip">Pour démarrer l'analyse en direct, vous devez d'abord lancer le flux de la caméra</system:String>
+  <system:String x:Key="Text.CompactThemeDensity">Aspect compact</system:String>
 </ResourceDictionary>

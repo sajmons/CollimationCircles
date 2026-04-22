@@ -11,22 +11,23 @@
 		<Grid 
 			ColumnSpacing="{DynamicResource ControlSpacing}"
 			RowSpacing="{DynamicResource ControlSpacing}"
-			ColumnDefinitions="Auto,*"
+			ColumnDefinitions="*,Auto"
 			RowDefinitions="Auto,Auto">
 			
 			<TextBlock				
-				Text="Defocused star analysis"
+				Text="{DynamicResource Text.DefocusedStarAnalysis}"
 				VerticalAlignment="Center"/>
-			<ToggleSwitch 
+			<ToggleSwitch
 				Grid.Column="1"
 				IsChecked="{Binding IsLiveAnalysisActive}"
 				IsEnabled="{Binding IsStreaming}"
-				ToolTip.Tip="Toggle Real-time Advanced Analysis Result Overlay">				
+				ToolTip.Tip="{DynamicResource Text.TipDefocusedStarAnalysis}"
+				OnContent="" OffContent="">
 			</ToggleSwitch>			
 
 			<TextBlock 
 				Grid.Row="1"				
-				Text="Optical tube analysis"
+				Text="{DynamicResource Text.OpticalTubeAnalysis}"
 				VerticalAlignment="Center"/>
 			<ToggleSwitch
 				Grid.Row="1"
@@ -34,13 +35,14 @@
 				IsChecked="{Binding IsLiveRmseActive}"
 				IsEnabled="{Binding IsStreaming}"
 				HorizontalAlignment="Stretch"
-				ToolTip.Tip="Toggle Real-time Mechanical RMSE Analysis">				
+				ToolTip.Tip="{DynamicResource Text.TipOpticalTubeAnalysis}"
+				OnContent="" OffContent="">
 			</ToggleSwitch>			
 		</Grid>
 
 		<TextBlock
 			IsVisible="{Binding !IsStreaming}"
-			Text="To start live analysis, you must first start camera stream"
+			Text="{DynamicResource Text.LiveAnalysisTip}"
 			VerticalAlignment="Center"
 			TextWrapping="Wrap"/>
 

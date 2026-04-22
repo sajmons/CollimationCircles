@@ -35,7 +35,7 @@
 				</Ellipse.Styles>
 			</Ellipse>
 			<TextBlock
-			Text="LIVE ANALYSIS"
+			Text="{DynamicResource Text.LiveAnalysis}"
 			FontWeight="Bold"
 			FontSize="10"
 			VerticalAlignment="Center"
@@ -50,7 +50,7 @@
 
 		<TextBlock
 		Grid.Row="2"
-		Text="Waiting for stream data..."
+		Text="{DynamicResource Text.WaitingForStreamData}"
 		FontStyle="Italic"
 		FontSize="12"
 		Opacity="0.6"
