@@ -1,23 +1,24 @@
-using System;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CollimationCircles.Messages;
 using CollimationCircles.Services;
+using CollimationCirclesFeatures;
+using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using ImageMagick;
 using ImageMagick.Drawing;
 using OpenCvSharp;
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using System.Threading;
-using static CollimationCircles.Services.ImageAnalysisService;
-using CommunityToolkit.Diagnostics;
-using static CollimationCircles.Services.OpticalAxisService;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-using Avalonia.Media;
+using System.Threading;
+using System.Threading.Tasks;
+using static CollimationCircles.Services.ImageAnalysisService;
+using static CollimationCircles.Services.OpticalAxisService;
 
 namespace CollimationCircles.ViewModels
 {
@@ -71,9 +72,12 @@ namespace CollimationCircles.ViewModels
             });
         }
 
-        partial void OnIsLiveAnalysisActiveChanged(bool value)
+        async partial void OnIsLiveAnalysisActiveChanged(bool value)
         {
-            HandleModeSwitch(value || IsLiveRmseActive);            
+            await CheckFeatureLicensed(FeatureList.LiveAnalysis, () =>
+            {
+                HandleModeSwitch(value || IsLiveRmseActive);
+            });
         }
 
         partial void OnIsLiveRmseActiveChanged(bool value)
@@ -116,7 +120,7 @@ namespace CollimationCircles.ViewModels
                     if (data != null)
                     {
                         using var image = new MagickImage(data);
-                        
+
                         string description = string.Empty;
                         MagickImage? advancedImage = null;
                         MagickImage? rmseImage = null;
@@ -184,9 +188,9 @@ namespace CollimationCircles.ViewModels
                         rmseImage?.Dispose();
                     }
                 }
-                catch (OperationCanceledException) 
+                catch (OperationCanceledException)
                 {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() => 
+                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     {
                         LiveResultText = string.Empty;
                         AnalysisPreview = null;
@@ -222,14 +226,14 @@ namespace CollimationCircles.ViewModels
 
             MagickImage drawImage = new(MagickColors.None, (uint)image.Width, (uint)image.Height);
             drawImage.Alpha(AlphaOption.Transparent);
-            
+
             // Draw classic circles (Hough) in yellow
             var drawables = new Drawables().StrokeColor(MagickColors.Yellow).StrokeWidth(1).FillColor(MagickColors.Transparent);
             foreach (var c in classicCircles)
             {
                 drawables.Circle(c.X, c.Y, c.X + c.Radius, c.Y);
             }
-            
+
             // Draw Robust Sub-pixel Circle in Cyan
             if (circle != null)
             {
@@ -240,7 +244,7 @@ namespace CollimationCircles.ViewModels
             // Draw Coma Vector in Lime
             if (wavefront != null && circle != null)
             {
-                DrawVector(drawImage, (int)wavefront["GeometricX"], (int)wavefront["GeometricY"], 
+                DrawVector(drawImage, (int)wavefront["GeometricX"], (int)wavefront["GeometricY"],
                     (int)(wavefront["GeometricX"] + wavefront["ComaMagnitude"] * circle.Radius * 5.0 * Math.Cos(wavefront["ComaAngle"] * Math.PI / 180.0)),
                     (int)(wavefront["GeometricY"] + wavefront["ComaMagnitude"] * circle.Radius * 5.0 * Math.Sin(wavefront["ComaAngle"] * Math.PI / 180.0)));
             }
@@ -257,11 +261,11 @@ namespace CollimationCircles.ViewModels
             using var copy = new MagickImage(image);
             ImageAnalysisService.ProcessImage(copy, options);
             var circles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
-            
+
             MagickImage drawnImage = new(MagickColors.None, (uint)image.Width, (uint)image.Height);
             drawnImage.Alpha(AlphaOption.Transparent);
             var analysis = ImageAnalysisService.AnalyzeResult(drawnImage, circles, options);
-            
+
             string desc = $"--- MECHANICAL RMSE ---\n" +
                          $"Circles: {analysis.CircleCount}\n" +
                          $"RMSE: {analysis.CenterRMSE:F2}\n" +
@@ -330,7 +334,7 @@ namespace CollimationCircles.ViewModels
             if (wavefront != null)
             {
                 message += $"Coma Magnitude: {wavefront["ComaMagnitude"]:F4}\n";
-                message += $"Coma Angle: {wavefront["ComaAngle"]:F1}°\n";                
+                message += $"Coma Angle: {wavefront["ComaAngle"]:F1}°\n";
             }
             return message;
         }
