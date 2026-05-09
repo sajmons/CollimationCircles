@@ -175,5 +175,12 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Zu viele Kreise erkannt</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Versuchen Sie, den Schwellenwert zu ändern.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Das Bild sollte einen zentrierten, defokussierten Stern enthalten</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityTitle">LibVLC-Kompatibilitätsfehler</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody1">Der Live-Videostream ist nicht verfügbar, weil native LibVLC-Bibliotheken auf dieser Plattform fehlen oder inkompatibel sind.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody2">Die Anwendung wird im eingeschränkten Modus fortgesetzt.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody3">Nicht verfügbare Funktionen: Live-Kamera-Videovorschau.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody4">Nicht verfügbare Funktionen: Stream Wiedergabe/Pause und Snapshot aus dem Live-Stream für die Analyse.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody5">Nicht-video Funktionen bleiben nutzbar (Overlay-Einrichtung, Profile und Bildanalyse aus Datei).</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody6">Installieren Sie arm64-kompatibles VLC/libVLC und starten Sie die Anwendung neu.</system:String>
   <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
 </ResourceDictionary>

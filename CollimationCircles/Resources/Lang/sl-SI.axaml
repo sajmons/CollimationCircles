@@ -175,5 +175,12 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Zaznanih je preveč krogov</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Poskusite spremeniti prag.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Slika mora vsebovati centrirano defokusirano zvezdo</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityTitle">Napaka združljivosti LibVLC</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody1">Video prenos v živo ni na voljo, ker manjkajo ali niso združljive izvorne knjižnice LibVLC za to platformo.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody2">Aplikacija se bo nadaljevala v omejenem načinu.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody3">Nedosegljive funkcije: predogled videa kamere v živo.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody4">Nedosegljive funkcije: predvajanje/pavza prenosa in zajem slike iz prenosa v živo za analizo.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody5">Funkcije brez videa še vedno delujejo (nastavitve prekrivanj, profili in analiza slike iz datoteke).</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody6">Namestite arm64 združljiv VLC/libVLC in znova zaženite aplikacijo.</system:String>
   <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
 </ResourceDictionary>

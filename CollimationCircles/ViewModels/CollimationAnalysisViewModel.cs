@@ -73,6 +73,12 @@ namespace CollimationCircles.ViewModels
         {
             Guard.IsNotNull(libVLCService);
 
+            if (!libVLCService.IsAvailable)
+            {
+                logger.Warn("Cannot take snapshot because LibVLC is not available.");
+                return;
+            }
+
             if (!IsImageLoaded)
             {
                 DialogService.ShowMessageBoxAsync(null,

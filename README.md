@@ -60,7 +60,11 @@ For example:
 ```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/5-CollimationCircles-3.1.0-osx-x64.tar.gz```
 4. When the download finishes, extract the archive:
 ```tar -xzf 5-CollimationCircles-3.1.0-osx-x64.tar.gz```
-5. You should now see the CollimationCircles.app bundle. Run it with:
+5. Remove the downloaded app quarantine attribute:
+```xattr -d com.apple.quarantine CollimationCircles.app/```
+6. Ensure the app bundle files are executable:
+```chmod -R +x CollimationCircles.app/```
+7. You should now see the CollimationCircles.app bundle. Run it with:
 ```open CollimationCircles.app```
 
 ## Instalation on Linux
@@ -168,7 +172,74 @@ dotnet --info
 ```
 
 ### macOS
-https://learn.microsoft.com/en-us/dotnet/core/install/macos
+Use Homebrew and install .NET 9 + VLC first.
+
+1. Install Homebrew (if needed):
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+2. Install required tools and runtime dependencies:
+```
+brew update
+brew install git dotnet@9 dotnet-runtime@9 vlc
+```
+3. Use the .NET 9 binary directly (no global PATH change):
+```
+DOTNET9=/opt/homebrew/opt/dotnet@9/libexec/dotnet
+```
+4. Verify installation:
+```
+$DOTNET9 --info
+$DOTNET9 --list-sdks
+$DOTNET9 --list-runtimes
+```
+
+For this project on Apple Silicon, these commands are recommended from repository root:
+
+```
+git clone https://github.com/sajmons/CollimationCircles.git
+cd CollimationCircles
+```
+
+Restore/build/run:
+```
+$DOTNET9 restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
+$DOTNET9 build ./CollimationCircles/CollimationCircles.csproj -f net9.0
+$DOTNET9 run --project ./CollimationCircles/CollimationCircles.csproj -f net9.0
+```
+
+Notes:
+- On macOS arm64, the app now bootstraps VLC environment variables automatically at startup.
+- VLC should be installed as an app bundle (for example in /Applications/VLC.app, or via Homebrew cask path).
+- If VLC/libVLC is missing or incompatible, the app starts in degraded mode and shows a compatibility message.
+
+Publish a local release build (self-contained):
+```
+$DOTNET9 publish ./CollimationCircles/CollimationCircles.csproj \
+  -c Release -f net9.0 -r osx-arm64 \
+  --self-contained true \
+  -p:PublishSingleFile=true \
+  -p:PublishReadyToRun=true \
+  -o ./artifacts/publish/osx-arm64
+```
+
+Run published binary:
+```
+./artifacts/publish/osx-arm64/CollimationCircles
+```
+
+Create a tar.gz package for distribution:
+```
+mkdir -p ./artifacts/release
+tar -czf ./artifacts/release/CollimationCircles-net9.0-osx-arm64.tar.gz -C ./artifacts/publish/osx-arm64 .
+```
+
+Optional quick check before publishing:
+```
+$DOTNET9 clean ./CollimationCircles/CollimationCircles.csproj
+$DOTNET9 restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
+$DOTNET9 build ./CollimationCircles/CollimationCircles.csproj -c Release -f net9.0
+```
 
 ## Build and publish on Windows
 

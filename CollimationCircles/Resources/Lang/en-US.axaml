@@ -175,5 +175,12 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Too many circles detected</system:String>  
   <system:String x:Key="Text.DetectionThresholdHelp">Try changing threshold.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Image should contain centered defocused star</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityTitle">LibVLC Compatibility Error</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody1">Live video stream is not available because LibVLC native libraries are missing or incompatible on this platform.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody2">The application will continue in degraded mode.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody3">Unavailable features: live camera video preview.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody4">Unavailable features: stream play/pause and snapshot from live stream for analysis.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody5">You can still use non-video features (overlay setup, profiles, and image analysis from file).</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody6">Install arm64-compatible VLC/libVLC and restart the app.</system:String>
   <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>  
 </ResourceDictionary>
