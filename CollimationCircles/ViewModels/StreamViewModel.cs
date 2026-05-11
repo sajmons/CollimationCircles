@@ -30,7 +30,7 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            get => !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
+            get => libVLCService.IsAvailable && !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
         }
 
         [ObservableProperty]
@@ -100,7 +100,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
             ControlsEnabled = false;
         }
 
@@ -109,7 +109,7 @@ namespace CollimationCircles.ViewModels
             Guard.IsNotNull(SelectedCamera);
 
             logger.Trace($"MediaPlayer playing");
-            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
             ControlsEnabled = IsPlaying;
         }
 
@@ -118,7 +118,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer closed");
 
             CloseWebCamStream();
-            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
             ControlsEnabled = false;
         }
 
@@ -126,6 +126,12 @@ namespace CollimationCircles.ViewModels
         private void PlayPause()
         {
             Guard.IsNotNull(SelectedCamera);
+
+            if (!libVLCService.IsAvailable)
+            {
+                logger.Warn("Play requested but LibVLC is not available.");
+                return;
+            }
 
             if (libVLCService.MediaPlayer != null)
             {

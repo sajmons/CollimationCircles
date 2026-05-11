@@ -11,8 +11,8 @@
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>4.0.0</Version>
-    <InformationalVersion>4.0.0</InformationalVersion>
+    <Version>4.0.1-macos</Version>
+    <InformationalVersion>4.0.1-macos</InformationalVersion>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>

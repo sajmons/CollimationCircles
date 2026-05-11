@@ -175,5 +175,12 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Trop de cercles détectés</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Essayez de changer le seuil.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">L'image doit contenir une étoile centrée et défocalisée</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityTitle">Erreur de compatibilité LibVLC</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody1">Le flux vidéo en direct n'est pas disponible car les bibliothèques natives LibVLC sont manquantes ou incompatibles sur cette plateforme.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody2">L'application continuera en mode dégradé.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody3">Fonctionnalités indisponibles : aperçu vidéo de la caméra en direct.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody4">Fonctionnalités indisponibles : lecture/pause du flux et capture instantanée depuis le flux en direct pour l'analyse.</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody5">Vous pouvez toujours utiliser les fonctionnalités sans vidéo (configuration des overlays, profils et analyse d'image depuis un fichier).</system:String>
+  <system:String x:Key="Text.LibVlcCompatibilityBody6">Installez VLC/libVLC compatible arm64 puis redémarrez l'application.</system:String>
   <system:String x:Key="Text.EnterOpenApiKey">Enter OpenApi Key here</system:String>
 </ResourceDictionary>

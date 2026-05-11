@@ -36,7 +36,10 @@ namespace CollimationCircles.Views
 
             if (videoViewer != null)
             {
-                videoViewer.MediaPlayer = mp;
+                if (mp is not null)
+                {
+                    videoViewer.MediaPlayer = mp;
+                }
 
                 UpdateWindowPosition();
             }
