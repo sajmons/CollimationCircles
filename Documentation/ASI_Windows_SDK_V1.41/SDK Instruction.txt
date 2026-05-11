@@ -1,0 +1,21 @@
+There are 2 demos under the demo directory.they all need OpenCV to complie and run.
+the OpenCV dlls is under the demo directory too.Please put the dlls to the directory where you want to run the demos.
+
+Head files:
+include/ASICamera2.h: the c head file support all ASI Cameras
+include/ASICameraDll2.cs: the c# file support to call from C#
+
+LIBRARY:
+lib/ASICamera2.lib
+
+EXCUTABLE PATHS:
+bin (the installer added this to the system PATH)
+
+Thanks Robin(http://www.sharpcap.co.uk) who provide the c# head file and add support in the SharpCap2.
+Thanks Torsten(http://firecapture.wonderplanets.de/) who add ASI SDK support in the FC2.3.
+thanks guys who are using and want to develop with the ASI cameras.
+
+Any bug feel free contact us: software@zwoptical.com
+
+
+

@@ -6,6 +6,7 @@
         LibCamera,
         Dshow,
         QTCapture,
+        Zwo,
         Remote
     }
 }

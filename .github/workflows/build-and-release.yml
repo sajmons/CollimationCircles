@@ -89,6 +89,31 @@ jobs:
           }
           dotnet @publishArgs
 
+      - name: Include ZWO ASI SDK native libraries
+        shell: pwsh
+        run: |
+          $output = "./publish/${{ matrix.runtime }}"
+          switch ("${{ matrix.runtime }}") {
+            'osx-arm64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/mac_arm64/libASICamera2.dylib*' $output
+            }
+            'osx-x64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/mac/libASICamera2.dylib*' $output
+            }
+            'linux-x64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/x64/libASICamera2.so*' $output
+            }
+            'linux-arm64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/armv8/libASICamera2.so*' $output
+            }
+            'win-x64' {
+              Copy-Item -Force './Documentation/ASI_Windows_SDK_V1.41/lib/x64/ASICamera2.dll' $output
+            }
+            'win-arm64' {
+              Write-Warning 'No ZWO ASI Windows arm64 binary is shipped in the SDK; skipping native library copy.'
+            }
+          }
+
       - name: Package (Linux)
         if: startsWith(matrix.runtime, 'linux-')
         shell: bash
@@ -129,6 +154,8 @@ jobs:
           printf '  <key>CFBundleExecutable</key><string>%s</string>\n' "$APP" >> "$CP/Info.plist"
           printf '  <key>CFBundlePackageType</key><string>APPL</string>\n' >> "$CP/Info.plist"
           printf '  <key>LSMinimumSystemVersion</key><string>11.0</string>\n' >> "$CP/Info.plist"
+          printf '  <key>NSCameraUsageDescription</key><string>CollimationCircles uses the camera to display the live collimation stream.</string>\n' >> "$CP/Info.plist"
+          printf '  <key>NSMicrophoneUsageDescription</key><string>CollimationCircles may access microphone audio when opening AVFoundation capture devices.</string>\n' >> "$CP/Info.plist"
           printf '</dict>\n</plist>\n' >> "$CP/Info.plist"
 
           cp -R "./publish/$RID/"* "$CP/MacOS/"
