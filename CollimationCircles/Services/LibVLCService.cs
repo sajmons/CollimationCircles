@@ -1,6 +1,7 @@
 ﻿using CollimationCircles.Helper.RpiCameraTools;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
+using Avalonia.Threading;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
@@ -54,10 +55,13 @@ namespace CollimationCircles.Services
 
                 if (MediaPlayer is not null)
                 {
-                    MediaPlayer.Opening += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Opening));
-                    MediaPlayer.Playing += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Playing));
-                    MediaPlayer.Paused += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Paused));
-                    MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
+                    MediaPlayer.Opening += (sender, e) => SendCameraStateOnUIThread(CameraState.Opening);
+                    MediaPlayer.Playing += (sender, e) => SendCameraStateOnUIThread(CameraState.Playing);
+                    MediaPlayer.Paused += (sender, e) => SendCameraStateOnUIThread(CameraState.Paused);
+                    MediaPlayer.Stopped += (sender, e) =>
+                    {
+                        SendCameraStateOnUIThread(CameraState.Stopped);
+                    };
                 }
 
                 IsAvailable = true;
@@ -95,10 +99,13 @@ namespace CollimationCircles.Services
                     EnableHardwareDecoding = true
                 };
 
-                MediaPlayer.Opening += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Opening));
-                MediaPlayer.Playing += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Playing));
-                MediaPlayer.Paused += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Paused));
-                MediaPlayer.Stopped += (sender, e) => WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
+                MediaPlayer.Opening += (sender, e) => SendCameraStateOnUIThread(CameraState.Opening);
+                MediaPlayer.Playing += (sender, e) => SendCameraStateOnUIThread(CameraState.Playing);
+                MediaPlayer.Paused += (sender, e) => SendCameraStateOnUIThread(CameraState.Paused);
+                MediaPlayer.Stopped += (sender, e) =>
+                {
+                    SendCameraStateOnUIThread(CameraState.Stopped);
+                };
 
                 IsAvailable = true;
             }
@@ -108,6 +115,20 @@ namespace CollimationCircles.Services
                 IsAvailable = false;
                 logger.Error(ex, "LibVLC disabled.");
             }
+        }
+
+        private static void SendCameraStateOnUIThread(CameraState state)
+        {
+            if (Dispatcher.UIThread.CheckAccess())
+            {
+                WeakReferenceMessenger.Default.Send(new CameraStateMessage(state));
+                return;
+            }
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                WeakReferenceMessenger.Default.Send(new CameraStateMessage(state));
+            });
         }
 
         private static bool TryInitializeMacArm64LibVlc(string[] libVLCOptions, out LibVLC? fallbackLibVlc, out MediaPlayer? fallbackMediaPlayer)

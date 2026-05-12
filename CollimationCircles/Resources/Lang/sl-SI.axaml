@@ -124,6 +124,9 @@
   <system:String x:Key="Text.Hue">Odtenek</system:String>
   <system:String x:Key="Text.Sharpness">Ostrina</system:String>
   <system:String x:Key="Text.Zoom">Povečava</system:String>
+  <system:String x:Key="Text.ZoomIn">Povečaj</system:String>
+  <system:String x:Key="Text.ZoomOut">Pomanjšaj</system:String>
+  <system:String x:Key="Text.ZoomReset">Ponastavi povečavo</system:String>
   <system:String x:Key="Text.Gain">Občutljivost</system:String>
   <system:String x:Key="Text.Focus">Fokus</system:String>
   <system:String x:Key="Text.Auto">Samodejno</system:String>
