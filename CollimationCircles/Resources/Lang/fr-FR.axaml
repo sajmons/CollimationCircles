@@ -124,6 +124,9 @@
   <system:String x:Key="Text.Hue">Teinte</system:String>
   <system:String x:Key="Text.Sharpness">Acuité</system:String>
   <system:String x:Key="Text.Zoom">Zoom</system:String>
+  <system:String x:Key="Text.ZoomIn">Zoomer</system:String>
+  <system:String x:Key="Text.ZoomOut">Dézoomer</system:String>
+  <system:String x:Key="Text.ZoomReset">Réinitialiser le zoom</system:String>
   <system:String x:Key="Text.Gain">Gagner</system:String>
   <system:String x:Key="Text.Focus">Se concentrer</system:String>
   <system:String x:Key="Text.Auto">Automatique</system:String>

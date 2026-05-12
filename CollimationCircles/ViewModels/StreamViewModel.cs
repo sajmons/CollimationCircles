@@ -34,6 +34,9 @@ namespace CollimationCircles.ViewModels
         }
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ZoomInCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ZoomOutCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ZoomResetCommand))]
         private bool isPlaying = false;
 
         private readonly SettingsViewModel settingsViewModel;
@@ -144,6 +147,29 @@ namespace CollimationCircles.ViewModels
                     libVLCService.MediaPlayer.Stop();
                 }
             }
+        }
+
+        public bool CanExecuteZoom
+        {
+            get => IsPlaying;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
+        private void ZoomIn()
+        {
+            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.In));
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
+        private void ZoomOut()
+        {
+            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.Out));
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
+        private void ZoomReset()
+        {
+            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.Reset));
         }
 
         private void ShowWebCamStream()
