@@ -7,7 +7,7 @@ This application was inspired by Mire De Collimation program written by Gilbert 
 
 Main purpose of this program is to help you with aligning optical elements of your telescope such as secondary mirror, primary mirror, focuser, etc.
 
-Collimation Circles is developed with .NET 8 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS (only in virtual machine), but it should work.
+Collimation Circles is developed with .NET 10 and AvaloniaUI Framework using MVVM architecture pattern. Program was tested on Windows 10 and 11, Ubuntu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm, and macOS arm64 (Apple Silicon).
 
 Feel free to report any issues. Suggestions and contributions are welcome!
 
@@ -45,32 +45,33 @@ sudo apt-get install -y v4l-utils
   - instalation instructions https://libcamera.org/getting-started.html
 
 # Prebuild binaries
-Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
+Here are prebuild binary files available for you to download (win-x64, linux-x64, linux-arm64, osx-x64 and osx-arm64).
 https://github.com/sajmons/CollimationCircles/releases/
 
-Download latest release as ZIP file, extract it and run executable.
+Download the latest release, extract it and run the executable. Windows releases are packaged as ZIP files, while Linux and macOS releases are packaged as tar.gz files which preserve executable permissions.
 
 ## Instalation on MacOS
 1. Open terminal application and enter this command:
 ```cd /Applications```
 2. Download latest version from GitHub releases page https://github.com/sajmons/CollimationCircles/releases
-3. Type these command in your MacOS terminal application:
+3. Type this command in your MacOS terminal application:
 ```curl -LO <url address from github releases page>```
 For example:
-```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/4-CollimationCircles-3.1.0-osx-x64.zip```
-4. When the download finishes, you should see the new ZIP file
-5. Double click on it. Archiver utility will extract it for you and you should see CollimationCircles application
-6. Now run this command to make it executable:
-```chmod +x CollimationCircles.app/Contents/MacOS/*```
-7. Finally run this command or double click CollimationCircles app:
+```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/5-CollimationCircles-3.1.0-osx-x64.tar.gz```
+4. When the download finishes, extract the archive:
+```tar -xzf 5-CollimationCircles-3.1.0-osx-x64.tar.gz```
+5. Remove the downloaded app quarantine attribute:
+```xattr -d com.apple.quarantine CollimationCircles.app/```
+6. Ensure the app bundle files are executable:
+```chmod -R +x CollimationCircles.app/```
+7. You should now see the CollimationCircles.app bundle. Run it with:
 ```open CollimationCircles.app```
 
 ## Instalation on Linux
 1. Download latest version from GitHub releases page: https://github.com/sajmons/CollimationCircles/releases
-2. Extract downloaded ZIP file
-3. Run this command in your terminal window:
-```chmod +x CollimationCircles```
-4. Run application by double click on it or run this command:
+2. Extract the downloaded tar.gz file:
+```tar -xzf <downloaded-file>.tar.gz```
+3. Run the application by double clicking on it or run this command:
 ```./CollimationCircles```
 
 # How to use
@@ -98,7 +99,7 @@ and then run the CollimationCircles program again. Main Window should now be tra
 Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
 
 # Running from GitHub source code (works on all platforms)
-After installing  Framework you type following terminal commands:
+After installing .NET Framework you type following terminal commands:
 ```
 sudo apt-get install git
 ```
@@ -109,7 +110,7 @@ git clone https://github.com/sajmons/CollimationCircles.git
 cd CollimationCircles/CollimationCircles
 ```
 ```
-dotnet run
+dotnet run -f net10.0
 ```
 
 # Building and publishing
@@ -120,17 +121,17 @@ To use this application, you must first install  Framework on your computer.
 ##  Framework Instalation
 
 ### Windows 10 and above
-https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
+https://learn.microsoft.com/en-us/dotnet/core/install/windows
 
 ```
-winget install Microsoft.DotNet.SDK.7
+winget install Microsoft.DotNet.SDK.10
 ```
 
 ### Ubuntu 22.04 and above
-https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
 
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
 ```
 
 ### Raspbian OS Bullseye x64
@@ -145,7 +146,7 @@ sudo dpkg -i packages-microsoft-prod.deb
 rm packages-microsoft-prod.deb
 ```
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
 ```
 
 ### Raspbian OS Bullseye ARM
@@ -157,7 +158,7 @@ wget https://dot/v1/dotnet-install.sh -O dotnet-install.sh
 sudo chmod +x ./dotnet-install.sh
 ```
 ```
-sudo ./dotnet-install.sh --channel 8.0 --install-dir /opt/dotnet/
+sudo ./dotnet-install.sh --channel 10.0 --install-dir /opt/dotnet/
 ```
 ```
 echo 'export DOTNET_ROOT=/opt/dotnet/' >> ~/.bashrc
@@ -171,7 +172,70 @@ dotnet --info
 ```
 
 ### macOS
-https://learn.microsoft.com/en-us/dotnet/core/install/macos
+Use Homebrew and install .NET 10 + VLC first.
+
+1. Install Homebrew (if needed):
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+2. Install required tools and runtime dependencies:
+```
+brew update
+brew install git dotnet vlc
+```
+3. Verify installation:
+```
+dotnet --info
+dotnet --list-sdks
+dotnet --list-runtimes
+```
+
+For this project on Apple Silicon, these commands are recommended from repository root:
+
+```
+git clone https://github.com/sajmons/CollimationCircles.git
+cd CollimationCircles
+```
+
+Restore/build/run:
+```
+dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
+dotnet build ./CollimationCircles/CollimationCircles.csproj -f net10.0
+dotnet run --project ./CollimationCircles/CollimationCircles.csproj -f net10.0
+```
+
+Notes:
+- On macOS arm64, the app bootstraps VLC environment variables automatically at startup.
+- VLC should be installed as an app bundle (e.g. `/Applications/VLC.app`, or via Homebrew cask).
+- If VLC/libVLC is missing or incompatible, the app starts in degraded mode and shows a compatibility message.
+
+Publish a local release build (self-contained):
+```
+dotnet publish ./CollimationCircles/CollimationCircles.csproj \
+  -c Release -f net10.0 -r osx-arm64 \
+  --self-contained true \
+  -p:PublishSingleFile=true \
+  -p:PublishReadyToRun=true \
+  -o ./artifacts/publish/osx-arm64
+```
+
+Run published binary:
+```
+./artifacts/publish/osx-arm64/CollimationCircles
+```
+
+Create a tar.gz package for distribution:
+```
+mkdir -p ./artifacts/release
+tar -czf ./artifacts/release/CollimationCircles-net10.0-osx-arm64.tar.gz -C ./artifacts/publish/osx-arm64 .
+```
+
+Optional quick check before publishing:
+```
+dotnet clean ./CollimationCircles/CollimationCircles.csproj
+dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
+dotnet build ./CollimationCircles/CollimationCircles.csproj -c Release -f net10.0
+```
 
 ## Build and publish on Windows
 
@@ -180,6 +244,6 @@ On windows I'm using these commands to make prebuild binaries.
 dotnet restore .\CollimationCircles.sln -r win-x64
 ```
 ```
-dotnet publish -c Release -f net8.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
+dotnet publish -c Release -f net10.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
 ```
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.

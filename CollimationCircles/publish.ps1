@@ -111,6 +111,9 @@ Function CreateInfoPlistFile
             $XmlObjectWriter.WriteElementString("key", "CFBundleShortVersionString")
             $XmlObjectWriter.WriteElementString("string", $AppVersion)
 
+            $XmlObjectWriter.WriteElementString("key", "NSCameraUsageDescription")
+            $XmlObjectWriter.WriteElementString("string", "CollimationCircles uses the camera to display the live collimation stream.")
+
             $XmlObjectWriter.WriteElementString("key", "NSHighResolutionCapable")
             $XmlObjectWriter.WriteElementString("true", "")        
  

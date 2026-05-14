@@ -153,7 +153,7 @@ namespace CollimationCircles.Services
                 {
                     ICameraControl? cameraControl = camera.Controls.FirstOrDefault(c => c.Name == controlName);
 
-                    if (cameraControl is not null)
+                    if (cameraControl is not null && vlc.MediaPlayer is not null)
                     {
                         float val = (float)ConvertRange(cameraControl.Min, cameraControl.Max, value);
 

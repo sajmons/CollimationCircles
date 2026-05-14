@@ -93,6 +93,39 @@
             </Style>
           </ToggleButton.Styles>
         </ToggleButton>        
+        <Button
+          Theme="{DynamicResource ToolbarButton}"
+          Command="{Binding ZoomInCommand}"
+          ToolTip.Tip="{DynamicResource Text.ZoomIn}"
+          IsEnabled="{Binding IsPlaying}">
+          <PathIcon
+            Width="{DynamicResource PathIconWidth}"
+            Height="{DynamicResource PathIconHeight}"
+            Foreground="{DynamicResource Color2}"
+            Data="{StaticResource IconData.ZoomIn}" />
+        </Button>
+        <Button
+          Theme="{DynamicResource ToolbarButton}"
+          Command="{Binding ZoomOutCommand}"
+          ToolTip.Tip="{DynamicResource Text.ZoomOut}"
+          IsEnabled="{Binding IsPlaying}">
+          <PathIcon
+            Width="{DynamicResource PathIconWidth}"
+            Height="{DynamicResource PathIconHeight}"
+            Foreground="{DynamicResource Color2}"
+            Data="{StaticResource IconData.ZoomOut}" />
+        </Button>
+        <Button
+          Theme="{DynamicResource ToolbarButton}"
+          Command="{Binding ZoomResetCommand}"
+          ToolTip.Tip="{DynamicResource Text.ZoomReset}"
+          IsEnabled="{Binding IsPlaying}">
+          <PathIcon
+            Width="{DynamicResource PathIconWidth}"
+            Height="{DynamicResource PathIconHeight}"
+            Foreground="{DynamicResource Color2}"
+            Data="{StaticResource IconData.Reset}" />
+        </Button>
       </StackPanel>
     </StackPanel>
     <CheckBox

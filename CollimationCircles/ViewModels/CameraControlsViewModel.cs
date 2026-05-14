@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using LibVLCSharp.Shared;
 
 namespace CollimationCircles.ViewModels
 {
@@ -12,6 +13,7 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly ILibVLCService libVLCService;
+        private readonly StreamViewModel streamViewModel;
 
         [ObservableProperty]
         private Camera camera;
@@ -19,20 +21,32 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         private bool isLibCamera;
 
+        [ObservableProperty]
+        private bool isPlaying;
+
         public CameraControlsViewModel()
         {
             this.libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
-            
-            Camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
+            this.streamViewModel = Ioc.Default.GetRequiredService<StreamViewModel>();
+
+
+            Camera = streamViewModel.SelectedCamera;
             IsLibCamera = Camera.APIType == APIType.LibCamera;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
-                Camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
+                Camera = streamViewModel.SelectedCamera;
                 IsLibCamera = Camera.APIType == APIType.LibCamera;
             });
 
             Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("CameraControls")}";
+
+            if (libVLCService.MediaPlayer is not null)
+            {
+                libVLCService.MediaPlayer.Playing += (sender, e) => IsPlaying = true;
+                libVLCService.MediaPlayer.Paused += (sender, e) => IsPlaying = false;
+                libVLCService.MediaPlayer.Stopped += (sender, e) => IsPlaying = false;
+            }
         }
 
         [RelayCommand]
@@ -45,6 +59,12 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void Apply()
         {
+            if (!libVLCService.IsAvailable)
+            {
+                logger.Warn("Cannot apply camera controls because LibVLC is not available.");
+                return;
+            }
+
             libVLCService.Play(Camera, false);
             logger.Info("Apply camera controls buton clicked");
         }

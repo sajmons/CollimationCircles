@@ -31,10 +31,13 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            get => !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
+            get => libVLCService.IsAvailable && !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
         }
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ZoomInCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ZoomOutCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ZoomResetCommand))]
         private bool isPlaying = false;
 
         private readonly SettingsViewModel settingsViewModel;
@@ -97,7 +100,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;            
         }
 
         private void MediaPlayer_Playing()
@@ -105,7 +108,7 @@ namespace CollimationCircles.ViewModels
             Guard.IsNotNull(SelectedCamera);
 
             logger.Trace($"MediaPlayer playing");
-            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
         }
 
         private void MediaPlayer_Closed()
@@ -113,13 +116,19 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer closed");
 
             CloseWebCamStream();
-            IsPlaying = libVLCService.MediaPlayer.IsPlaying;
+            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
         private void PlayPause()
         {
             Guard.IsNotNull(SelectedCamera);
+
+            if (!libVLCService.IsAvailable)
+            {
+                logger.Warn("Play requested but LibVLC is not available.");
+                return;
+            }
 
             if (libVLCService.MediaPlayer != null)
             {
@@ -132,6 +141,29 @@ namespace CollimationCircles.ViewModels
                     libVLCService.MediaPlayer.Stop();
                 }
             }
+        }
+
+        public bool CanExecuteZoom
+        {
+            get => IsPlaying;
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
+        private void ZoomIn()
+        {
+            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.In));
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
+        private void ZoomOut()
+        {
+            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.Out));
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
+        private void ZoomReset()
+        {
+            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.Reset));
         }
 
         private void ShowWebCamStream()

@@ -11,14 +11,14 @@
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>4.0.0</Version>
-    <InformationalVersion>4.0.0</InformationalVersion>
+    <Version>4.1.0</Version>
+    <InformationalVersion>4.1.0</InformationalVersion>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
-    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64;osx-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;win-arm64;linux-x64;linux-arm64;osx-x64;osx-arm64</RuntimeIdentifiers>
     <UseAppHost>true</UseAppHost>
     <CFBundleShortVersionString>$(Version)</CFBundleShortVersionString>
     <ApplicationIcon>Resources\Images\icon_256px.ico</ApplicationIcon>
@@ -55,6 +55,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="NLog" Version="6.1.2" />
     <PackageReference Include="Octokit" Version="14.0.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
     <PackageReference Include="Standard.Licensing" Version="1.2.2" />
     <PackageReference Include="System.Management" Version="10.0.7" />
     <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260330" />
@@ -63,11 +64,56 @@
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
     <PackageReference Include="Tmds.DBus.Protocol" Version="0.92.0" />
-
     <PackageReference Condition="$(RuntimeIdentifier.StartsWith('win')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
     <PackageReference Condition="$(RuntimeIdentifier.StartsWith('osx')) And '$(Configuration)' == 'Release'" Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />
     <PackageReference Condition="$([MSBuild]::IsOsPlatform('Windows')) And '$(Configuration)' == 'Debug'" Include="VideoLAN.LibVLC.Windows" Version="3.0.23.1" />
   </ItemGroup>
+
+  <!-- Copy ZWO ASI Camera SDK library to output directory for macOS arm64 -->
+  <Target Name="CopyZWOLibrariesMacArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-arm64' Or ('$(RuntimeIdentifier)' == '' And '$(NETCoreSdkRuntimeIdentifier)' == 'osx-arm64')">
+    <ItemGroup>
+      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\mac_arm64\libASICamera2.dylib*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Copy ZWO ASI Camera SDK library to output directory for macOS x64 -->
+  <Target Name="CopyZWOLibrariesMacX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-x64' Or ('$(RuntimeIdentifier)' == '' And '$(NETCoreSdkRuntimeIdentifier)' == 'osx-x64')">
+    <ItemGroup>
+      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\mac\libASICamera2.dylib*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Copy ZWO ASI Camera SDK library to output directory for Linux x64 -->
+  <Target Name="CopyZWOLibrariesLinuxX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'linux-x64' Or ('$(RuntimeIdentifier)' == '' And '$(NETCoreSdkRuntimeIdentifier)' == 'linux-x64')">
+    <ItemGroup>
+      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\x64\libASICamera2.so*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Copy ZWO ASI Camera SDK library to output directory for Linux arm64 -->
+  <Target Name="CopyZWOLibrariesLinuxArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'linux-arm64' Or ('$(RuntimeIdentifier)' == '' And '$(NETCoreSdkRuntimeIdentifier)' == 'linux-arm64')">
+    <ItemGroup>
+      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\armv8\libASICamera2.so*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Copy ZWO ASI Camera SDK library to output directory for Windows x64 -->
+  <Target Name="CopyZWOWindowsLibraries" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'win-x64' Or ('$(RuntimeIdentifier)' == '' And '$(NETCoreSdkRuntimeIdentifier)' == 'win-x64')">
+    <ItemGroup>
+      <ZWOWindowsLibraries Include="$(ProjectDir)..\Documentation\ASI_Windows_SDK_V1.41\lib\x64\ASICamera2.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ZWOWindowsLibraries)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied ZWO ASI Camera SDK Windows library to $(OutputPath)" Importance="high" />
+  </Target>
+
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <Content Include="libvlc\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

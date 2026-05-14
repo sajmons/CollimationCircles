@@ -27,22 +27,31 @@
   <StackPanel
     Orientation="Vertical"
     Spacing="20"
-    >
+    IsVisible="{Binding IsPlaying}">
     <ItemsControl ItemsSource="{Binding Camera.Controls}" >
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <Grid
             ColumnDefinitions="*,Auto"
-            RowDefinitions="20,22">
+            RowDefinitions="20,22,22">
             <TextBlock Text="{Binding Name}"/>
+            <CheckBox
+              Grid.Row="0"
+              Grid.Column="1"
+              IsVisible="{Binding AutoSupported}"
+              IsChecked="{Binding IsAuto}"
+              Content="Auto" />
             <Slider
-              Grid.RowSpan="2"
+              Grid.RowSpan="3"
               Grid.ColumnSpan="2"
               Value="{Binding Value}"
               Minimum="{Binding Min}"
-              Maximum="{Binding Max}" />
+              Maximum="{Binding Max}"
+              IsEnabled="{Binding !IsAuto}" />
             <TextBox
+              Grid.Row="1"
               Grid.Column="1"
+              IsEnabled="{Binding !IsAuto}"
               Text="{Binding Value}"/>
           </Grid>
         </DataTemplate>

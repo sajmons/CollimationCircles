@@ -20,6 +20,7 @@ public class AppService
 {
     private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
     private const string stateFile = "appstate.json";
+    private const string appStateDirectoryName = "CollimationCircles";
     private static readonly string owner = "sajmons";
     private static readonly string reponame = "CollimationCircles";
 
@@ -95,20 +96,62 @@ public class AppService
 
     public static T? LoadState<T>(string? fileName = null)
     {
-        logger.Info($"Loading application state from '{fileName ?? stateFile}'");
+        string resolvedPath = ResolveStatePath(fileName);
 
-        var jsonState = File.ReadAllText(fileName ?? stateFile);
+        logger.Info($"Loading application state from '{resolvedPath}'");
+
+        if (!File.Exists(resolvedPath))
+        {
+            logger.Warn($"Application state file not found: '{resolvedPath}'");
+            return default;
+        }
+
+        var jsonState = File.ReadAllText(resolvedPath);
 
         return Deserialize<T>(jsonState);
     }
 
     public static void SaveState<T>(T obj, string? fileName = null)
     {
-        var jsonState = Serialize<T>(obj);
+        try
+        {
+            string resolvedPath = ResolveStatePath(fileName);
+            string? directory = Path.GetDirectoryName(resolvedPath);
 
-        File.WriteAllText(fileName ?? stateFile, jsonState, System.Text.Encoding.UTF8);
+            if (!string.IsNullOrWhiteSpace(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
 
-        logger.Info($"Saving application state to '{fileName ?? stateFile}'");
+            var jsonState = Serialize<T>(obj);
+
+            File.WriteAllText(resolvedPath, jsonState, System.Text.Encoding.UTF8);
+
+            logger.Info($"Saving application state to '{resolvedPath}'");
+        }
+        catch (Exception exc)
+        {
+            logger.Error(exc, "Unable to save application state");
+        }
+    }
+
+    private static string ResolveStatePath(string? fileName)
+    {
+        if (!string.IsNullOrWhiteSpace(fileName))
+        {
+            return Path.IsPathRooted(fileName)
+                ? fileName
+                : Path.Combine(AppContext.BaseDirectory, fileName);
+        }
+
+        string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
+        if (!string.IsNullOrWhiteSpace(localAppData))
+        {
+            return Path.Combine(localAppData, appStateDirectoryName, stateFile);
+        }
+
+        return Path.Combine(AppContext.BaseDirectory, stateFile);
     }
 
     public static async Task<(bool, string, string)> DownloadUrl(string currentVersion)
@@ -335,19 +378,27 @@ public class AppService
 
     public static string DeviceId()
     {
-        return new DeviceIdBuilder()
-        .AddMachineName()
-        .AddOsVersion()
-        .OnWindows(windows => windows
-            .AddMotherboardSerialNumber()
-            .AddSystemDriveSerialNumber())
-        .OnLinux(linux => linux
-            .AddMotherboardSerialNumber()
-            .AddSystemDriveSerialNumber())
-        .OnMac(mac => mac
-            .AddSystemDriveVolumeUUID()
-            .AddPlatformSerialNumber())
-        .ToString();
+        try
+        {
+            return new DeviceIdBuilder()
+            .AddMachineName()
+            .AddOsVersion()
+            .OnWindows(windows => windows
+                .AddMotherboardSerialNumber()
+                .AddSystemDriveSerialNumber())
+            .OnLinux(linux => linux
+                .AddMotherboardSerialNumber()
+                .AddSystemDriveSerialNumber())
+            .OnMac(mac => mac
+                .AddSystemDriveVolumeUUID()
+                .AddPlatformSerialNumber())
+            .ToString();
+        }
+        catch (Exception ex)
+        {
+            logger.Error(ex, "Failed to generate DeviceId, falling back to machine name");
+            return Environment.MachineName;
+        }
     }
 
     public static void LogSystemInformation()

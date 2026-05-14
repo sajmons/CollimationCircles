@@ -3,7 +3,7 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'version-*' 
   workflow_dispatch:
 
 env:
@@ -11,7 +11,7 @@ env:
   FRAMEWORK: net10.0
   APP_NAME: CollimationCircles
   DOTNET_VERSION: '10.0.x'
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
 
 jobs:
   build:
@@ -22,32 +22,30 @@ jobs:
           - runtime: win-x64
             os: windows-latest
             index: 1
-            ready2run: true
           - runtime: win-arm64
             os: windows-latest
             index: 2
-            ready2run: false
           - runtime: linux-x64
             os: ubuntu-latest
             index: 3
-            ready2run: true
           - runtime: linux-arm64
             os: ubuntu-latest
             index: 4
-            ready2run: false
           - runtime: osx-x64
             os: macos-latest
             index: 5
-            ready2run: true
+          - runtime: osx-arm64
+            os: macos-latest
+            index: 6
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -55,205 +53,126 @@ jobs:
         id: version
         shell: pwsh
         run: |
-          [xml]$xml = Get-Content "${{ env.PROJECT_PATH }}"
-          $version = ($xml.Project.PropertyGroup.InformationalVersion | Where-Object { $_ }) | Select-Object -First 1
-          $version = $version.Trim()
-          Write-Host "Version: $version"
-          echo "APP_VERSION=$version" >> $env:GITHUB_OUTPUT
+          $content = Get-Content "${{ env.PROJECT_PATH }}" -Raw
+          # Regex matches <Version>, <VersionPrefix>, or <InformationalVersion>
+          if ($content -match '<(?:InformationalVersion|Version|VersionPrefix)>(.*?)<\/') {
+              $v = $Matches[1].Trim()
+          } else {
+              $v = "1.0.0"
+          }
+          Write-Host "Detected Version: $v"
+          echo "APP_VERSION=$v" >> $env:GITHUB_OUTPUT
 
       - name: Restore dependencies
-        run: dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:PublishReadyToRun=${{ matrix.ready2run }}
+        run: |
+          dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:PublishReadyToRun=true
 
       - name: Publish
         shell: pwsh
         run: |
           $publishArgs = @(
-            "publish"
-            "${{ env.PROJECT_PATH }}"
-            "-c", "Release"
-            "-r", "${{ matrix.runtime }}"
-            "-o", "./publish/${{ matrix.runtime }}"
-            "--self-contained", "true"
-            "--no-restore"
-            "/p:PublishSingleFile=true"
-            "/p:PublishReadyToRun=${{ matrix.ready2run }}"
-            "/p:DebugType=None"
+            "publish", "${{ env.PROJECT_PATH }}",
+            "-c", "Release",
+            "-r", "${{ matrix.runtime }}",
+            "-o", "./publish/${{ matrix.runtime }}",
+            "--self-contained", "true",
+            "--no-restore",
+            "/p:PublishSingleFile=true",
+            "/p:PublishReadyToRun=true",
+            "/p:PublishTrimmed=true",
+            "/p:TrimMode=full",
+            "/p:DebugType=None",
             "/p:DebugSymbols=false"
           )
-
-          if ("${{ matrix.runtime }}" -eq "osx-x64") {
+          if ("${{ matrix.runtime }}".StartsWith("osx-")) {
             $publishArgs += "/p:UseAppHost=true"
           }
+          dotnet @publishArgs
 
-          $command = "dotnet " + ($publishArgs -join " ")
-          Write-Host $command -ForegroundColor Green
-          Invoke-Expression $command
-
-          if ($LASTEXITCODE -ne 0) {
-            throw "dotnet publish failed with exit code $LASTEXITCODE"
-          }
-
-      # ?? Linux: Create AppImage ??????????????????????????????????????????
-      - name: Create AppImage
-        if: startsWith(matrix.runtime, 'linux-')
-        shell: bash
-        env:
-          APP_VERSION: ${{ steps.version.outputs.APP_VERSION }}
-          RUNTIME: ${{ matrix.runtime }}
-          ARCH_APPIMAGE: ${{ matrix.runtime == 'linux-x64' && 'x86_64' || 'aarch64' }}
-        run: |
-          set -euo pipefail
-
-          APP_DIR="./AppDir"
-
-          # Create AppDir structure
-          mkdir -p "${APP_DIR}/usr/bin"
-          mkdir -p "${APP_DIR}/usr/share/icons/hicolor/256x256/apps"
-          mkdir -p "${APP_DIR}/usr/share/applications"
-
-          # Copy published files into AppDir
-          cp -r ./publish/${RUNTIME}/* "${APP_DIR}/usr/bin/"
-
-          # Remove icon.icns (macOS only)
-          rm -f "${APP_DIR}/usr/bin/icon.icns"
-
-          # Copy PNG icon for AppImage
-          cp "CollimationCircles/Resources/Images/icon_256px.png" \
-             "${APP_DIR}/usr/share/icons/hicolor/256x256/apps/${APP_NAME}.png"
-
-          # Copy .desktop file
-          cp "CollimationCircles/${APP_NAME}.desktop" "${APP_DIR}/usr/share/applications/${APP_NAME}.desktop"
-
-          # Symlink .desktop and icon to AppDir root (required by AppImage spec)
-          ln -sf "usr/share/applications/${APP_NAME}.desktop" "${APP_DIR}/${APP_NAME}.desktop"
-          ln -sf "usr/share/icons/hicolor/256x256/apps/${APP_NAME}.png" "${APP_DIR}/${APP_NAME}.png"
-
-          # Create AppRun script
-          printf '#!/bin/bash\nSELF=$(readlink -f "$0")\nHERE=${SELF%%/*}\nexport PATH="${HERE}/usr/bin:${PATH}"\nexec "${HERE}/usr/bin/CollimationCircles" "$@"\n' > "${APP_DIR}/AppRun"
-          chmod +x "${APP_DIR}/AppRun"
-
-          # Make the main binary executable
-          chmod +x "${APP_DIR}/usr/bin/${APP_NAME}"
-
-          # Download appimagetool
-          APPIMAGETOOL="appimagetool-x86_64.AppImage"
-          curl -fsSL -o "${APPIMAGETOOL}" \
-            "https://github.com/AppImage/appimagetool/releases/download/continuous/${APPIMAGETOOL}"
-          chmod +x "${APPIMAGETOOL}"
-
-          # Build AppImage (--appimage-extract-and-run avoids FUSE requirement in CI)
-          ARCH="${ARCH_APPIMAGE}" ./${APPIMAGETOOL} --appimage-extract-and-run \
-            "${APP_DIR}" \
-            "./publish/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.AppImage"
-
-          echo "Created: ./publish/${{ matrix.index }}-${APP_NAME}-${APP_VERSION}-${RUNTIME}.AppImage"
-
-      # ?? macOS: Create .app bundle ???????????????????????????????????????
-      - name: Create macOS .app bundle
-        if: matrix.runtime == 'osx-x64'
+      - name: Include ZWO ASI SDK native libraries
         shell: pwsh
         run: |
-          $appName = "${{ env.APP_NAME }}"
-          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
-          $bundle = "$appName.app"
-          $output = "./publish"
-          $runtime = "${{ matrix.runtime }}"
-
-          # Create bundle directory structure
-          New-Item -Path "$output/$bundle/Contents/MacOS" -ItemType Directory -Force
-          New-Item -Path "$output/$bundle/Contents/Resources" -ItemType Directory -Force
-
-          # Create Info.plist
-          $plistContent = @"
-          <?xml version="1.0" encoding="utf-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-            <dict>
-              <key>CFBundleIconFile</key>
-              <string>icon.icns</string>
-              <key>CFBundleIdentifier</key>
-              <string>com.saimons.$appName</string>
-              <key>CFBundleName</key>
-              <string>$appName</string>
-              <key>CFBundleVersion</key>
-              <string>$appVersion</string>
-              <key>LSMinimumSystemVersion</key>
-              <string>11</string>
-              <key>CFBundleExecutable</key>
-              <string>$appName</string>
-              <key>CFBundleInfoDictionaryVersion</key>
-              <string>6.0</string>
-              <key>CFBundlePackageType</key>
-              <string>APPL</string>
-              <key>CFBundleShortVersionString</key>
-              <string>$appVersion</string>
-              <key>NSHighResolutionCapable</key>
-              <true/>
-            </dict>
-          </plist>
-          "@
-
-          $plistContent | Set-Content -Path "$output/$bundle/Contents/Info.plist" -Encoding UTF8
-
-          # Copy application files to Contents/MacOS
-          Copy-Item -Path "$output/$runtime/*" -Destination "$output/$bundle/Contents/MacOS" -Recurse
-
-          # Move icon to Contents/Resources
-          if (Test-Path "$output/$bundle/Contents/MacOS/icon.icns") {
-            Move-Item -Path "$output/$bundle/Contents/MacOS/icon.icns" -Destination "$output/$bundle/Contents/Resources/"
+          $output = "./publish/${{ matrix.runtime }}"
+          switch ("${{ matrix.runtime }}") {
+            'osx-arm64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/mac_arm64/libASICamera2.dylib*' $output
+            }
+            'osx-x64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/mac/libASICamera2.dylib*' $output
+            }
+            'linux-x64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/x64/libASICamera2.so*' $output
+            }
+            'linux-arm64' {
+              Copy-Item -Force './Documentation/ASI_linux_mac_SDK_V1.41/lib/armv8/libASICamera2.so*' $output
+            }
+            'win-x64' {
+              Copy-Item -Force './Documentation/ASI_Windows_SDK_V1.41/lib/x64/ASICamera2.dll' $output
+            }
+            'win-arm64' {
+              Write-Warning 'No ZWO ASI Windows arm64 binary is shipped in the SDK; skipping native library copy.'
+            }
           }
 
-          # Make executable
-          chmod +x "$output/$bundle/Contents/MacOS/$appName"
+      - name: Package (Linux)
+        if: startsWith(matrix.runtime, 'linux-')
+        shell: bash
+        run: |
+          output="./publish/${{ matrix.runtime }}"
+          chmod +x "$output/${{ env.APP_NAME }}"
+          tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.tar.gz"
+          tar -czf "$tarName" -C "$output" .
 
-      # ?? Windows / macOS: Package as ZIP ?????????????????????????????????
       - name: Package (Windows)
         if: startsWith(matrix.runtime, 'win-')
         shell: pwsh
         run: |
-          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
-          $runtime = "${{ matrix.runtime }}"
-          $output = "./publish"
-
-          # Remove icon.icns since it's only for macOS
-          $icnsPath = "$output/$runtime/icon.icns"
-          if (Test-Path $icnsPath) {
-            Remove-Item -Path $icnsPath
-          }
-
-          $zipName = "$output/${{ matrix.index }}-${{ env.APP_NAME }}-$appVersion-$runtime.zip"
-          Compress-Archive -Force "$output/$runtime/*" $zipName
-          Write-Host "Created: $zipName" -ForegroundColor Green
+          $output = "./publish/${{ matrix.runtime }}"
+          $zipName = "./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.zip"
+          Compress-Archive -Force "$output/*" $zipName
 
       - name: Package (macOS)
-        if: matrix.runtime == 'osx-x64'
-        shell: pwsh
+        if: startsWith(matrix.runtime, 'osx-')
+        shell: bash
         run: |
-          $appVersion = "${{ steps.version.outputs.APP_VERSION }}"
-          $runtime = "${{ matrix.runtime }}"
-          $output = "./publish"
-          $bundle = "${{ env.APP_NAME }}.app"
+          RID="${{ matrix.runtime }}"
+          VER="${{ steps.version.outputs.APP_VERSION }}"
+          APP="${{ env.APP_NAME }}"
+          BUNDLE="$APP.app"
+          CP="./publish/${RID}_bundle/$BUNDLE/Contents"
+          
+          mkdir -p "$CP/MacOS"
+          mkdir -p "$CP/Resources"
 
-          $zipName = "$output/${{ matrix.index }}-${{ env.APP_NAME }}-$appVersion-$runtime.zip"
-          Compress-Archive -Force "$output/$bundle" $zipName
-          Write-Host "Created: $zipName" -ForegroundColor Green
+          printf '<?xml version="1.0" encoding="utf-8"?>\n' > "$CP/Info.plist"
+          printf '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n' >> "$CP/Info.plist"
+          printf '<plist version="1.0">\n<dict>\n' >> "$CP/Info.plist"
+          printf '  <key>CFBundleIconFile</key><string>icon.icns</string>\n' >> "$CP/Info.plist"
+          printf '  <key>CFBundleIdentifier</key><string>com.saimons.%s</string>\n' "$APP" >> "$CP/Info.plist"
+          printf '  <key>CFBundleName</key><string>%s</string>\n' "$APP" >> "$CP/Info.plist"
+          printf '  <key>CFBundleVersion</key><string>%s</string>\n' "$VER" >> "$CP/Info.plist"
+          printf '  <key>CFBundleExecutable</key><string>%s</string>\n' "$APP" >> "$CP/Info.plist"
+          printf '  <key>CFBundlePackageType</key><string>APPL</string>\n' >> "$CP/Info.plist"
+          printf '  <key>LSMinimumSystemVersion</key><string>11.0</string>\n' >> "$CP/Info.plist"
+          printf '  <key>NSCameraUsageDescription</key><string>CollimationCircles uses the camera to display the live collimation stream.</string>\n' >> "$CP/Info.plist"
+          printf '  <key>NSMicrophoneUsageDescription</key><string>CollimationCircles may access microphone audio when opening AVFoundation capture devices.</string>\n' >> "$CP/Info.plist"
+          printf '</dict>\n</plist>\n' >> "$CP/Info.plist"
 
-      # ?? Upload artifacts ????????????????????????????????????????????????
-      - name: Upload build artifact (ZIP)
-        if: ${{ !startsWith(matrix.runtime, 'linux-') }}
-        uses: actions/upload-artifact@v5
+          cp -R "./publish/$RID/"* "$CP/MacOS/"
+          [ -f "$CP/MacOS/icon.icns" ] && mv "$CP/MacOS/icon.icns" "$CP/Resources/"
+          chmod +x "$CP/MacOS/$APP"
+          
+          TAR_NAME="./publish/${{ matrix.index }}-$APP-$VER-$RID.tar.gz"
+          tar -czf "$TAR_NAME" -C "./publish/${RID}_bundle" "$BUNDLE"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_NAME }}-${{ matrix.runtime }}
-          path: ./publish/${{ matrix.index }}-*.zip
-          retention-days: 30
-
-      - name: Upload build artifact (AppImage)
-        if: startsWith(matrix.runtime, 'linux-')
-        uses: actions/upload-artifact@v5
-        with:
-          name: ${{ env.APP_NAME }}-${{ matrix.runtime }}
-          path: ./publish/${{ matrix.index }}-*.AppImage
-          retention-days: 30
+          path: |
+            ./publish/*.zip
+            ./publish/*.tar.gz
+          retention-days: 7
 
   release:
     needs: build
@@ -261,25 +180,19 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
-
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v5
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
         with:
           path: ./artifacts
           merge-multiple: true
 
-      - name: List artifacts
-        run: find ./artifacts -type f \( -name "*.zip" -o -name "*.AppImage" \) | sort
-
-      - name: Create GitHub Release
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          draft: false
-          prerelease: false
           files: |
             ./artifacts/*.zip
-            ./artifacts/*.AppImage
+            ./artifacts/*.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

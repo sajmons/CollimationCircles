@@ -1,0 +1,4 @@
+Thanks Robin Glover(robin@sharpcap.co.uk)who provided the C# wrapper for ASI SDK2:
+
+ASICameraDll2.cs is a fairly simple wrapper around the C functions in the SDK DLL.
+

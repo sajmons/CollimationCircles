@@ -13,9 +13,14 @@ namespace CollimationCircles.Models
         public double Step { get; set; } = 0.1;
         public int Default { get; set; }
         public ControlValueType ValueType { get; set; }
+        public bool AutoSupported { get; set; }
 
         [ObservableProperty]
         private int value;
+
+        [ObservableProperty]
+        private bool isAuto;
+
         public string Flags { get; set; } = string.Empty;
 
         private readonly Camera _camera = camera;
@@ -25,6 +30,14 @@ namespace CollimationCircles.Models
             if (_camera is not null)
             {
                 cameraControlService.Set(Name, newValue, _camera);
+            }
+        }
+
+        partial void OnIsAutoChanged(bool oldValue, bool newValue)
+        {
+            if (_camera is not null && AutoSupported)
+            {
+                cameraControlService.SetAuto(Name, newValue, _camera);
             }
         }
 

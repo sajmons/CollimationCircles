@@ -14,12 +14,22 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
-            // set camera control for V4L2
-            if (camera.APIType is APIType.V4l2 || camera.APIType is APIType.QTCapture)
+            // set camera control for V4L2 (Linux cameras)
+            if (camera.APIType is APIType.V4l2)
             {
                 new V4L2CameraDetect().SetControl(camera, controlName, value);
             }
-            // set camera control for DirectShow
+            // set camera control for ZWO astro cameras (Windows/macOS)
+            else if (camera.APIType is APIType.Zwo)
+            {
+                new ZWOCameraDetect().SetControl(camera, controlName, value);
+            }
+            // set camera control for macOS system cameras
+            else if (camera.APIType is APIType.QTCapture)
+            {
+                new MacOSCameraDetect().SetControl(camera, controlName, value);
+            }
+            // set camera control for DirectShow (Windows)
             else if (camera.APIType is APIType.Dshow)
             {
                 new DShowCameraDetect().SetControl(camera, controlName, value);
@@ -28,6 +38,16 @@ namespace CollimationCircles.Services
             else if (camera.APIType is APIType.LibCamera)
             {
                 new RasPiCameraDetect().SetControl(camera, controlName, value);
+            }
+        }
+
+        public void SetAuto(ControlType controlName, bool isAuto, Camera camera)
+        {
+            Guard.IsNotNull(camera);
+
+            if (camera.APIType is APIType.Zwo)
+            {
+                new ZWOCameraDetect().SetControlAuto(camera, controlName, isAuto);
             }
         }
 
@@ -40,6 +60,17 @@ namespace CollimationCircles.Services
                 var dshowCameras = await new DShowCameraDetect().GetCameras();
                 cameras.AddRange(dshowCameras);
             }
+            else if (OperatingSystem.IsMacOS())
+            {
+                var macosCameras = await new MacOSCameraDetect().GetCameras();
+                cameras.AddRange(macosCameras);
+
+                var raspiCameras = await new RasPiCameraDetect().GetCameras();
+                cameras.AddRange(raspiCameras);
+
+                var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
+                cameras.AddRange(v4l2Cameras);
+            }
             else
             {
                 var raspiCameras = await new RasPiCameraDetect().GetCameras();
@@ -48,6 +79,9 @@ namespace CollimationCircles.Services
                 var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
                 cameras.AddRange(v4l2Cameras);
             }
+
+            var zwoCameras = await new ZWOCameraDetect().GetCameras();
+            cameras.AddRange(zwoCameras);
 
             cameras.Add(new Camera() { APIType = APIType.Remote });
 
