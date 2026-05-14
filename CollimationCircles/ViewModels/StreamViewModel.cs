@@ -4,6 +4,7 @@ using CollimationCircles.Models;
 using CollimationCircles.Services;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
@@ -57,17 +58,13 @@ namespace CollimationCircles.ViewModels
         private Camera selectedCamera = new();
 
         [ObservableProperty]
-        private bool controlsEnabled = false;
-
-        [ObservableProperty]
         bool displayAdvancedDShowDialog = false;
 
-        public StreamViewModel(ILibVLCService libVLCService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
+        public StreamViewModel()
         {
-            this.libVLCService = libVLCService;
-            this.settingsViewModel = settingsViewModel;
-            this.cameraControlService = cameraControlService;
-
+            this.libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
+            this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            this.cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
             FullAddress = this.libVLCService.FullAddress;
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
@@ -101,7 +98,6 @@ namespace CollimationCircles.ViewModels
 
             ShowWebCamStream();
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
-            ControlsEnabled = false;
         }
 
         private void MediaPlayer_Playing()
@@ -110,7 +106,6 @@ namespace CollimationCircles.ViewModels
 
             logger.Trace($"MediaPlayer playing");
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
-            ControlsEnabled = IsPlaying;
         }
 
         private void MediaPlayer_Closed()
@@ -119,7 +114,6 @@ namespace CollimationCircles.ViewModels
 
             CloseWebCamStream();
             IsPlaying = libVLCService.MediaPlayer.IsPlaying;
-            ControlsEnabled = false;
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
@@ -168,38 +162,18 @@ namespace CollimationCircles.ViewModels
         partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)
         {
             settingsViewModel.PinVideoWindowToMainWindow = newValue;
-        }
-
-        [RelayCommand]
-        private void CameraSettings()
-        {
-            if (SettingsDialogViewModel is null)
-            {
-                SettingsDialogViewModel = DialogService.CreateViewModel<CameraControlsViewModel>();
-
-                if (SettingsDialogViewModel is not null)
-                {
-                    DialogService.Show(null, SettingsDialogViewModel);
-                    logger.Info("Opened camera controls dialog");
-                }
-            }
-            else
-            {
-                DialogService.Close(SettingsDialogViewModel);
-                DialogService.Show(null, SettingsDialogViewModel);
-            }
-        }
+        }        
 
         [RelayCommand]
         private async Task CameraRefresh()
         {
             CameraList = new ObservableCollection<Camera>(await cameraControlService.GetCameraList());
             SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
-        }
+        }        
 
         public void OnClosed()
         {
-            SettingsDialogViewModel = null;
+            //SettingsDialogViewModel = null;
         }
 
         partial void OnSelectedCameraChanged(Camera? oldValue, Camera newValue)
@@ -223,6 +197,7 @@ namespace CollimationCircles.ViewModels
         private void Default()
         {
             SelectedCamera?.SetDefaultControls();
+            logger.Info("Default camera controls command ececuted");
         }
     }
 }

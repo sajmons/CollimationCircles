@@ -40,6 +40,7 @@
                 IsExpanded="{Binding CameraVideoStreamExpanded}">
               <StackPanel Orientation="Vertical">
                 <controls:StreamUserControl/>
+                <controls:DynamicCameraControlsUserControl />
               </StackPanel>
             </Expander>            
             <Expander

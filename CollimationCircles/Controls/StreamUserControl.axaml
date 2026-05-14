@@ -92,19 +92,7 @@
               <Setter Property="IsVisible" Value="False"/>
             </Style>
           </ToggleButton.Styles>
-        </ToggleButton>
-        <Button
-            Theme="{DynamicResource ToolbarButton}"
-            Command="{Binding CameraSettingsCommand}"
-            ToolTip.Tip="{DynamicResource Text.CameraSettings}"
-            Grid.Column="2"
-            IsEnabled="{Binding ControlsEnabled}">
-          <PathIcon
-            Width="{DynamicResource PathIconWidth}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.Settings}" />
-        </Button>        
+        </ToggleButton>        
       </StackPanel>
     </StackPanel>
     <CheckBox

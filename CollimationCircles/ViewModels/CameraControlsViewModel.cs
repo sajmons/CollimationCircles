@@ -14,24 +14,22 @@ namespace CollimationCircles.ViewModels
         private readonly ILibVLCService libVLCService;
 
         [ObservableProperty]
-        private bool isOpened = true;
-
-        [ObservableProperty]
         private Camera camera;
 
         [ObservableProperty]
         private bool isLibCamera;
 
-        public CameraControlsViewModel(ILibVLCService libVLCService)
+        public CameraControlsViewModel()
         {
-            this.libVLCService = libVLCService;
-            camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
-
+            this.libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
+            
+            Camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
             IsLibCamera = Camera.APIType == APIType.LibCamera;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
-                IsOpened = m.Value != CameraState.Stopped;
+                Camera = Ioc.Default.GetRequiredService<StreamViewModel>().SelectedCamera;
+                IsLibCamera = Camera.APIType == APIType.LibCamera;
             });
 
             Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("CameraControls")}";
@@ -49,6 +47,6 @@ namespace CollimationCircles.ViewModels
         {
             libVLCService.Play(Camera, false);
             logger.Info("Apply camera controls buton clicked");
-        }        
+        }
     }
 }

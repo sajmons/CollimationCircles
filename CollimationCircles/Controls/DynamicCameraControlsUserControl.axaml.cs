@@ -1,4 +1,6 @@
 using Avalonia.Controls;
+using CollimationCircles.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Controls
 {
@@ -6,7 +8,9 @@ namespace CollimationCircles.Controls
     {
         public DynamicCameraControlsUserControl()
         {
-            InitializeComponent();
+            InitializeComponent();            
+
+            DataContext = Ioc.Default.GetRequiredService<CameraControlsViewModel>();
         }
     }
 }
