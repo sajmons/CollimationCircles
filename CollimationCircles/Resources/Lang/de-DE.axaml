@@ -124,6 +124,9 @@
   <system:String x:Key="Text.Hue">Farbton</system:String>
   <system:String x:Key="Text.Sharpness">Schärfe</system:String>
   <system:String x:Key="Text.Zoom">Zoomen</system:String>
+  <system:String x:Key="Text.ZoomIn">Hineinzoomen</system:String>
+  <system:String x:Key="Text.ZoomOut">Herauszoomen</system:String>
+  <system:String x:Key="Text.ZoomReset">Zoom zurücksetzen</system:String>
   <system:String x:Key="Text.Gain">Gewinnen</system:String>
   <system:String x:Key="Text.Focus">Fokus</system:String>
   <system:String x:Key="Text.Auto">Automatisch</system:String>
