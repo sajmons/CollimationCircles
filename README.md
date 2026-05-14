@@ -7,7 +7,7 @@ This application was inspired by Mire De Collimation program written by Gilbert 
 
 Main purpose of this program is to help you with aligning optical elements of your telescope such as secondary mirror, primary mirror, focuser, etc.
 
-Collimation Circles is developed with .NET 8 and AvaloniaUI Framework using MVVM architecture patern. Program was tested on Windows 10 and 11, Ununtu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm. I'm not able to test it on macOS (only in virtual machine), but it should work.
+Collimation Circles is developed with .NET 10 and AvaloniaUI Framework using MVVM architecture pattern. Program was tested on Windows 10 and 11, Ubuntu Linux 22.04.1 LTS (Wayland), Raspberry PI OS Bullseye and Bookworm, and macOS arm64 (Apple Silicon).
 
 Feel free to report any issues. Suggestions and contributions are welcome!
 
@@ -45,7 +45,7 @@ sudo apt-get install -y v4l-utils
   - instalation instructions https://libcamera.org/getting-started.html
 
 # Prebuild binaries
-Here are prebuild binary files avaliable for you to download (win-x64, linux-x64, linux-arm64 and macos-x64).
+Here are prebuild binary files available for you to download (win-x64, linux-x64, linux-arm64, osx-x64 and osx-arm64).
 https://github.com/sajmons/CollimationCircles/releases/
 
 Download the latest release, extract it and run the executable. Windows releases are packaged as ZIP files, while Linux and macOS releases are packaged as tar.gz files which preserve executable permissions.
@@ -99,7 +99,7 @@ and then run the CollimationCircles program again. Main Window should now be tra
 Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
 
 # Running from GitHub source code (works on all platforms)
-After installing  Framework you type following terminal commands:
+After installing .NET Framework you type following terminal commands:
 ```
 sudo apt-get install git
 ```
@@ -110,7 +110,7 @@ git clone https://github.com/sajmons/CollimationCircles.git
 cd CollimationCircles/CollimationCircles
 ```
 ```
-dotnet run
+dotnet run -f net10.0
 ```
 
 # Building and publishing
@@ -121,17 +121,17 @@ To use this application, you must first install  Framework on your computer.
 ##  Framework Instalation
 
 ### Windows 10 and above
-https://learn.microsoft.com/en-us/dotnet/core/install/windows?tabs=net70
+https://learn.microsoft.com/en-us/dotnet/core/install/windows
 
 ```
-winget install Microsoft.DotNet.SDK.7
+winget install Microsoft.DotNet.SDK.10
 ```
 
 ### Ubuntu 22.04 and above
-https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu-2204
+https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
 
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
 ```
 
 ### Raspbian OS Bullseye x64
@@ -146,7 +146,7 @@ sudo dpkg -i packages-microsoft-prod.deb
 rm packages-microsoft-prod.deb
 ```
 ```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-8.0
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
 ```
 
 ### Raspbian OS Bullseye ARM
@@ -158,7 +158,7 @@ wget https://dot/v1/dotnet-install.sh -O dotnet-install.sh
 sudo chmod +x ./dotnet-install.sh
 ```
 ```
-sudo ./dotnet-install.sh --channel 8.0 --install-dir /opt/dotnet/
+sudo ./dotnet-install.sh --channel 10.0 --install-dir /opt/dotnet/
 ```
 ```
 echo 'export DOTNET_ROOT=/opt/dotnet/' >> ~/.bashrc
@@ -172,7 +172,7 @@ dotnet --info
 ```
 
 ### macOS
-Use Homebrew and install .NET 9 + VLC first.
+Use Homebrew and install .NET 10 + VLC first.
 
 1. Install Homebrew (if needed):
 ```
@@ -181,17 +181,13 @@ Use Homebrew and install .NET 9 + VLC first.
 2. Install required tools and runtime dependencies:
 ```
 brew update
-brew install git dotnet@9 dotnet-runtime@9 vlc
+brew install git dotnet vlc
 ```
-3. Use the .NET 9 binary directly (no global PATH change):
+3. Verify installation:
 ```
-DOTNET9=/opt/homebrew/opt/dotnet@9/libexec/dotnet
-```
-4. Verify installation:
-```
-$DOTNET9 --info
-$DOTNET9 --list-sdks
-$DOTNET9 --list-runtimes
+dotnet --info
+dotnet --list-sdks
+dotnet --list-runtimes
 ```
 
 For this project on Apple Silicon, these commands are recommended from repository root:
@@ -203,20 +199,20 @@ cd CollimationCircles
 
 Restore/build/run:
 ```
-$DOTNET9 restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
-$DOTNET9 build ./CollimationCircles/CollimationCircles.csproj -f net9.0
-$DOTNET9 run --project ./CollimationCircles/CollimationCircles.csproj -f net9.0
+dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
+dotnet build ./CollimationCircles/CollimationCircles.csproj -f net10.0
+dotnet run --project ./CollimationCircles/CollimationCircles.csproj -f net10.0
 ```
 
 Notes:
-- On macOS arm64, the app now bootstraps VLC environment variables automatically at startup.
-- VLC should be installed as an app bundle (for example in /Applications/VLC.app, or via Homebrew cask path).
+- On macOS arm64, the app bootstraps VLC environment variables automatically at startup.
+- VLC should be installed as an app bundle (e.g. `/Applications/VLC.app`, or via Homebrew cask).
 - If VLC/libVLC is missing or incompatible, the app starts in degraded mode and shows a compatibility message.
 
 Publish a local release build (self-contained):
 ```
-$DOTNET9 publish ./CollimationCircles/CollimationCircles.csproj \
-  -c Release -f net9.0 -r osx-arm64 \
+dotnet publish ./CollimationCircles/CollimationCircles.csproj \
+  -c Release -f net10.0 -r osx-arm64 \
   --self-contained true \
   -p:PublishSingleFile=true \
   -p:PublishReadyToRun=true \
@@ -231,14 +227,14 @@ Run published binary:
 Create a tar.gz package for distribution:
 ```
 mkdir -p ./artifacts/release
-tar -czf ./artifacts/release/CollimationCircles-net9.0-osx-arm64.tar.gz -C ./artifacts/publish/osx-arm64 .
+tar -czf ./artifacts/release/CollimationCircles-net10.0-osx-arm64.tar.gz -C ./artifacts/publish/osx-arm64 .
 ```
 
 Optional quick check before publishing:
 ```
-$DOTNET9 clean ./CollimationCircles/CollimationCircles.csproj
-$DOTNET9 restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
-$DOTNET9 build ./CollimationCircles/CollimationCircles.csproj -c Release -f net9.0
+dotnet clean ./CollimationCircles/CollimationCircles.csproj
+dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
+dotnet build ./CollimationCircles/CollimationCircles.csproj -c Release -f net10.0
 ```
 
 ## Build and publish on Windows
@@ -248,6 +244,6 @@ On windows I'm using these commands to make prebuild binaries.
 dotnet restore .\CollimationCircles.sln -r win-x64
 ```
 ```
-dotnet publish -c Release -f net8.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
+dotnet publish -c Release -f net10.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
 ```
 For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.
