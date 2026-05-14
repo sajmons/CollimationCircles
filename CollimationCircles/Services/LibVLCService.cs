@@ -27,6 +27,7 @@ namespace CollimationCircles.Services
         private static readonly List<nint> NativeLibraryHandles = [];
 
         private readonly LibVLC? libVLC;
+        private ZWOLiveStreamService? _zwoStream;
 
         private string protocol = string.Empty;
         private string address = string.Empty;
@@ -61,6 +62,7 @@ namespace CollimationCircles.Services
                     MediaPlayer.Stopped += (sender, e) =>
                     {
                         SendCameraStateOnUIThread(CameraState.Stopped);
+                        StopZwoStream();
                     };
                 }
 
@@ -105,6 +107,7 @@ namespace CollimationCircles.Services
                 MediaPlayer.Stopped += (sender, e) =>
                 {
                     SendCameraStateOnUIThread(CameraState.Stopped);
+                    StopZwoStream();
                 };
 
                 IsAvailable = true;
@@ -344,6 +347,24 @@ namespace CollimationCircles.Services
                 return;
             }
 
+            if (camera.APIType == APIType.Zwo)
+            {
+                // Start the MJPEG capture service for the ZWO camera and let
+                // LibVLC play the resulting local HTTP stream.
+                StopZwoStream();
+                _zwoStream = new ZWOLiveStreamService();
+                bool started = await _zwoStream.StartAsync(camera);
+
+                if (!started)
+                {
+                    logger.Error($"Failed to start ZWO live stream for camera '{camera.Name}'");
+                    _zwoStream = null;
+                    return;
+                }
+
+                FullAddress = $"http://localhost:{_zwoStream.Port}/";
+            }
+
             List<string> parametersList = [];
             ICommandBuilder? commandBuilder = null;
 
@@ -414,7 +435,7 @@ namespace CollimationCircles.Services
             }
             else if (camera.APIType == APIType.QTCapture)
             {
-                protocol = "qtcapture";
+                protocol = "avcapture";
                 address = camera.Path;
             }
             else if (camera.APIType == APIType.V4l2)
@@ -427,6 +448,14 @@ namespace CollimationCircles.Services
                 protocol = "tcp/h264";
                 address = "localhost";
                 port = rpiPort;
+            }
+            else if (camera.APIType == APIType.Zwo)
+            {
+                // Placeholder shown in the UI before the stream starts;
+                // the real port is assigned in Play() once the stream is live.
+                protocol = "http";
+                address = "localhost";
+                port = "8091";
             }
 
             string newRemoteAddress = address;
@@ -455,6 +484,16 @@ namespace CollimationCircles.Services
             if (MediaPlayer?.IsPlaying == true)
             {
                 MediaPlayer.TakeSnapshot(0, $".\\{SnapshotImageFile}", 800, 600);
+            }
+        }
+
+        private void StopZwoStream()
+        {
+            if (_zwoStream is not null)
+            {
+                _zwoStream.Stop();
+                _zwoStream.Dispose();
+                _zwoStream = null;
             }
         }
     }
