@@ -484,6 +484,8 @@ namespace CollimationCircles.Services
 
         public async Task<byte[]?> TakeSnapshotDataAsync()
         {
+            Guard.IsNotNull(MediaPlayer);
+
             if (!MediaPlayer.IsPlaying) return null;
 
             string tempFile = Path.Combine(Path.GetTempPath(), $"live_collimation_{Guid.NewGuid()}.jpg");
