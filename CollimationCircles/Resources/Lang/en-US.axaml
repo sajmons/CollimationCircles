@@ -149,11 +149,14 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">This license has expired at {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Valid until:</system:String>
   <system:String x:Key="Text.RequestLicense">Request licence</system:String>
+  <system:String x:Key="Text.SendLicenseData2Author">Send license request to author</system:String>
+  <system:String x:Key="Text.BuyLicense">Buy licence on Patreon</system:String>
+  <system:String x:Key="Text.BuyLicenseInstructions">First buy license on Patreon, then send licence request to author</system:String>
   <system:String x:Key="Text.LicenseData">Licence data:</system:String>
   <system:String x:Key="Text.LicenseType">Licence type:</system:String>
   <system:String x:Key="Text.StandardLicense">Standard</system:String>
   <system:String x:Key="Text.TrialLicense">Trial</system:String>
-  <system:String x:Key="Text.LicenseInstructions">Licence data wil be stored in clipborad. Paste this information into the web form that will open in your web browser.</system:String>
+  <system:String x:Key="Text.LicenseInstructions">Copy selected text and paste it to web form that will open in browser window.</system:String>
   <system:String x:Key="Text.PayPalTransactionId">PayPal transaction ID:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Do you want to remove profile '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Remove profile</system:String>

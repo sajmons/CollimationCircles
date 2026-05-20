@@ -50,17 +50,26 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void Submit()
         {
-            if (IsStandardLicense)
-                AppService.OpenUrl(AppService.PatreonShop);
-            else
-                AppService.OpenUrl(AppService.RequestLicensePage);
+            AppService.OpenUrl(AppService.RequestLicensePage);            
 
             if (dialog != null)
             {
                 ClipboardService.SetText(LicenseRequestText);
-                DialogService.Close(dialog);
-                logger.Info($"Request licence dialog closed");
-                logger.Info($"License data submited: {LicenseRequestText}");
+                logger.Info($"Request licence send");
+                logger.Info($"License data requested: {LicenseRequestText}");
+            }
+        }
+
+        [RelayCommand]
+        internal void BuyLicense()
+        {
+            AppService.OpenUrl(AppService.PatreonShop);
+
+            if (dialog != null)
+            {
+                ClipboardService.SetText(LicenseRequestText);
+                logger.Info($"Buy licence requested");
+                logger.Info($"License data requested: {LicenseRequestText}");
             }
         }
 

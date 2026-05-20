@@ -149,11 +149,14 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">Ta licenca je potekla {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Velja do:</system:String>
   <system:String x:Key="Text.RequestLicense">Zahtevaj licenco</system:String>
+  <system:String x:Key="Text.SendLicenseData2Author">Pošlji zahtevo za licenco avtorju</system:String>
+  <system:String x:Key="Text.BuyLicense">Kupite licenco na Patreonu</system:String>
+  <system:String x:Key="Text.BuyLicenseInstructions">Najprej kupite licenco na Patreonu, nato pa pošljite zahtevo za licenco avtorju</system:String>
   <system:String x:Key="Text.LicenseData">Podatki licence:</system:String>
   <system:String x:Key="Text.LicenseType">Tip licence:</system:String>
   <system:String x:Key="Text.StandardLicense">Standarden</system:String>
   <system:String x:Key="Text.TrialLicense">Začasna</system:String>
-  <system:String x:Key="Text.LicenseInstructions">Podatki o licenci bodo shranjeni v odložišče. Prilepite te podatke v spletni obrazec, ki se bo odprl v vašem spletnem brskalniku.</system:String>
+  <system:String x:Key="Text.LicenseInstructions">Kopirajte izbrano besedilo in ga prilepite v spletni obrazec, ki se bo odprl v oknu brskalnika.</system:String>
   <system:String x:Key="Text.PayPalTransactionId">ID PayPal transakcije:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Želite odstraniti profil '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Odstrani profil</system:String>

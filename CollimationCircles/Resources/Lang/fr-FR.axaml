@@ -149,11 +149,14 @@
   <system:String x:Key="Text.ExpiredLicenseMessage">Cette licence a expiré à {0}</system:String>
   <system:String x:Key="Text.ValidUntil">Valable jusqu'au:</system:String>
   <system:String x:Key="Text.RequestLicense">Demander une licence</system:String>
+  <system:String x:Key="Text.SendLicenseData2Author">Envoyer la demande de licence à l'auteur</system:String>
+  <system:String x:Key="Text.BuyLicense">Achetez une licence sur Patreon</system:String>
+  <system:String x:Key="Text.BuyLicenseInstructions">Achetez d'abord une licence sur Patreon, puis envoyez une demande de licence à l'auteur.</system:String>
   <system:String x:Key="Text.LicenseData">Données de licence:</system:String>
   <system:String x:Key="Text.LicenseType">Type de licence:</system:String>
   <system:String x:Key="Text.StandardLicense">Standard</system:String>
   <system:String x:Key="Text.TrialLicense">Temporaire</system:String>
-  <system:String x:Key="Text.LicenseInstructions">Les données de licence seront stockées dans Clipborad. Collez ces informations dans un formulaire Web qui s'ouvrira dans votre navigateur Web.</system:String>
+  <system:String x:Key="Text.LicenseInstructions">Copiez le texte sélectionné et collez-le dans le formulaire web qui s'ouvrira dans la fenêtre du navigateur.</system:String>
   <system:String x:Key="Text.PayPalTransactionId">Identifiant de transaction PayPal:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Voulez-vous supprimer le profil '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Supprimer le profil</system:String>
