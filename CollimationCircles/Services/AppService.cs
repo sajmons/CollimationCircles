@@ -11,7 +11,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -407,5 +406,40 @@ public class AppService
         logger.Info($"OS Version: {RuntimeInformation.OSDescription}");
         logger.Info($"OS Architecture: {RuntimeInformation.OSArchitecture}");
         logger.Info($"Device ID: {DeviceId()}");
+    }    
+
+    public static string GetStorageDirectory()
+    {
+        string baseDirectory;
+
+        if (OperatingSystem.IsMacOS())
+        {
+            // Apple standard directory for application data
+            baseDirectory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                "Library",
+                "Application Support"
+            );
+        }
+        else if (OperatingSystem.IsLinux())
+        {
+            // Linux XDG standard config directory (~/.config)
+            baseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        }
+        else
+        {
+            // Windows standard (%APPDATA%)
+            baseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        }
+
+        string fullPath = Path.Combine(baseDirectory, appStateDirectoryName);
+
+        // Ensure the directory exists before returning it to avoid IO exceptions
+        if (!Directory.Exists(fullPath))
+        {
+            Directory.CreateDirectory(fullPath);
+        }
+
+        return fullPath;
     }
 }

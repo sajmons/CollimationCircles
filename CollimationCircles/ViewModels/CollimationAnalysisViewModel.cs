@@ -74,10 +74,10 @@ namespace CollimationCircles.ViewModels
 
         async partial void OnIsLiveAnalysisActiveChanged(bool value)
         {
-            await CheckFeatureLicensed(FeatureList.LiveAnalysis, () =>
-            {
+            //await CheckFeatureLicensed(FeatureList.LiveAnalysis, () =>
+            //{
                 HandleModeSwitch(value || IsLiveRmseActive);
-            });
+            //});
         }
 
         partial void OnIsLiveRmseActiveChanged(bool value)

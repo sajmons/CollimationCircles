@@ -23,14 +23,14 @@
       <TextBlock>Pass phrase:</TextBlock>
       <TextBox
         Text="{ReflectionBinding PassPhrase}"
-        Watermark="Enter pass phrase here"/>
+        PlaceholderText="Enter pass phrase here"/>
       <TextBlock>Private Key:</TextBlock>
       <TextBox
         Text="{ReflectionBinding PrivateKey}"
-        Watermark="Private key will appear here"/>
+        PlaceholderText="Private key will appear here"/>
       <TextBlock>Public Key:</TextBlock>
       <TextBox
-        Watermark="Public key will appear here"
+        PlaceholderText="Public key will appear here"
         Text="{ReflectionBinding PublicKey}" />
     </StackPanel>
     <Button
@@ -40,18 +40,18 @@
     <TextBlock>Client ID:</TextBlock>
     <TextBox
       Text="{ReflectionBinding ClientId}"
-      Watermark="Enter client ID here (GUID received from client)"/>
+      PlaceholderText="Enter client ID here (GUID received from client)"/>
 
     <TextBlock>Product:</TextBlock>
     <UniformGrid Columns="2">
       <TextBox
         Margin="0 0 5 0"
         Text="{ReflectionBinding Product}"
-        Watermark="Enter product name here (e.g., Best Product)"/>
+        PlaceholderText="Enter product name here (e.g., Best Product)"/>
       <TextBox
         Margin="5 0 0 0"
         Text="{ReflectionBinding MajorProductVersion}"
-        Watermark="Enter major product version here (e.g., 4)"/>
+        PlaceholderText="Enter major product version here (e.g., 4)"/>
     </UniformGrid>
 
     <TextBlock>Customer:</TextBlock>
@@ -59,11 +59,11 @@
       <TextBox
         Margin="0 0 5 0"
         Text="{ReflectionBinding LicensedTo}"
-        Watermark="Enter user first and last name (e.g., John Doe)"/>
+        PlaceholderText="Enter user first and last name (e.g., John Doe)"/>
       <TextBox
         Margin="5 0 0 0"
         Text="{ReflectionBinding LicensedToEmail}"
-        Watermark="Enter user email (e.g., john.doe@gmail.com)"/>
+        PlaceholderText="Enter user email (e.g., john.doe@gmail.com)"/>
     </UniformGrid>
 
     <StackPanel Orientation="Horizontal">
