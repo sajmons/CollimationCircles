@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CollimationCirclesFeatures\CollimationCirclesFeatures.csproj" />
+    <ProjectReference Include="..\DxWebCam\DxWebCam.csproj" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Update="Controls\CollimationAnalysisUserControl.axaml">
@@ -143,9 +144,6 @@
     </Compile>
     <Compile Update="Views\RequestLicenseView.axaml.cs">
       <DependentUpon>RequestLicenseView.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\CameraControlsView.axaml.cs">
-      <DependentUpon>CameraControlsView.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\ImageView.axaml.cs">
       <DependentUpon>ImageView.axaml</DependentUpon>
