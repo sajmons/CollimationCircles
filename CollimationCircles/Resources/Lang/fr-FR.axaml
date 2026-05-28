@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Câles primaires</system:String>
   <system:String x:Key="Text.PrimaryOuter">Extérieur primaire</system:String>
   <system:String x:Key="Text.PrimaryScrew">Vis primaire</system:String>
-  <system:String x:Key="Text.Properties">Formes</system:String>
+  <system:String x:Key="Text.Layers">Calques</system:String>
   <system:String x:Key="Text.Radius">Rayon</system:String>
   <system:String x:Key="Text.RemoveItem">Retirer de la liste</system:String>
   <system:String x:Key="Text.ResetItems">Réinitialiser aux valeurs par défaut</system:String>
@@ -185,4 +185,5 @@
   <system:String x:Key="Text.TipOpticalTubeAnalysis">Basculer l'analyse du tube optique en temps réel</system:String>
   <system:String x:Key="Text.LiveAnalysisTip">Pour démarrer l'analyse en direct, vous devez d'abord lancer le flux de la caméra</system:String>
   <system:String x:Key="Text.CompactThemeDensity">Aspect compact</system:String>
+  <system:String x:Key="Text.Collimation">Collimation</system:String>
 </ResourceDictionary>

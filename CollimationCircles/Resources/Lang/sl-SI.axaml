@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Sponka primernega</system:String>
   <system:String x:Key="Text.PrimaryOuter">Zunanji rob prim.</system:String>
   <system:String x:Key="Text.PrimaryScrew">Vijak primarnega</system:String>
-  <system:String x:Key="Text.Properties">Vzorci</system:String>
+  <system:String x:Key="Text.Layers">Plasti</system:String>
   <system:String x:Key="Text.Radius">Premer</system:String>
   <system:String x:Key="Text.RemoveItem">Odstrani iz seznama</system:String>
   <system:String x:Key="Text.ResetItems">Ponastavi seznam na privzete vrednosti</system:String>
@@ -185,4 +185,5 @@
   <system:String x:Key="Text.TipOpticalTubeAnalysis">Preklop analize optične cevi v realnem času</system:String>
   <system:String x:Key="Text.LiveAnalysisTip">Za začetek analize v živo morate najprej zagnati pretok kamere</system:String>
   <system:String x:Key="Text.CompactThemeDensity">Kompakten izgled</system:String>
+  <system:String x:Key="Text.Collimation">Collimation</system:String>
 </ResourceDictionary>

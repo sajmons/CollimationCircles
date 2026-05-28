@@ -48,7 +48,7 @@
   <system:String x:Key="Text.PrimaryClip">Primäres Clip</system:String>
   <system:String x:Key="Text.PrimaryOuter">Primäres Äußeres</system:String>
   <system:String x:Key="Text.PrimaryScrew">Primäres Schraube</system:String>
-  <system:String x:Key="Text.Properties">Formen</system:String>
+  <system:String x:Key="Text.Layers">Schichten</system:String>
   <system:String x:Key="Text.Radius">Radius</system:String>
   <system:String x:Key="Text.RemoveItem">Aus Liste entfernen</system:String>
   <system:String x:Key="Text.ResetItems">Auf Standardwerte zurücksetzen</system:String>
@@ -185,4 +185,5 @@
   <system:String x:Key="Text.TipOpticalTubeAnalysis">Echtzeit-Analyse des optischen Tubus umschalten</system:String>
   <system:String x:Key="Text.LiveAnalysisTip">Um die Live-Analyse zu starten, müssen Sie zuerst den Kamera-Stream starten</system:String>
   <system:String x:Key="Text.CompactThemeDensity">Kompakter Look</system:String>
+  <system:String x:Key="Text.Collimation">Collimation</system:String>
 </ResourceDictionary>
