@@ -26,6 +26,11 @@ namespace CollimationCircles
         [STAThread]
         public static void Main(string[] args)
         {
+            // Disable the NLog console target when stdout is not connected to a terminal.
+            // Without this, the pipe buffer (~64 KB) fills from verbose logging and every
+            // subsequent log call blocks indefinitely, making the window appear frozen.
+            ConfigureLogging();
+
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
             {
                 logger.Fatal($"Unhandled exception: {e.ExceptionObject}");
@@ -227,6 +232,36 @@ namespace CollimationCircles
             }
 
             return string.Join(separator, parts);
+        }
+
+        /// <summary>
+        /// Disables the NLog console (stdout) log target when the process stdout is not
+        /// connected to a terminal. Writing to a redirected stdout whose reader has stopped
+        /// draining will block once the pipe buffer is full, freezing the entire process.
+        /// </summary>
+        private static void ConfigureLogging()
+        {
+            if (!Console.IsOutputRedirected)
+            {
+                return;
+            }
+
+            var config = NLog.LogManager.Configuration;
+            if (config is null)
+            {
+                return;
+            }
+
+            foreach (var rule in config.LoggingRules)
+            {
+                var toRemove = rule.Targets.Where(t => t.Name == "logconsole").ToList();
+                foreach (var t in toRemove)
+                {
+                    rule.Targets.Remove(t);
+                }
+            }
+
+            NLog.LogManager.ReconfigExistingLoggers();
         }
 
         /// <summary>

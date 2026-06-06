@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Octokit;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -287,9 +288,22 @@ public class AppService
 
         using var process = new Process { StartInfo = startInfo };
 
-        if (!process.Start())
+        try
         {
-            logger.Warn($"Failed to start command '{fileName} {argStr}'");
+            if (!process.Start())
+            {
+                logger.Warn($"Failed to start command '{fileName} {argStr}'");
+                return (-1, string.Empty);
+            }
+        }
+        catch (Win32Exception ex) when (ex.NativeErrorCode == 2) // ENOENT / ERROR_FILE_NOT_FOUND
+        {
+            logger.Warn($"Command not found: '{fileName}'. Ensure it is installed and on the PATH.");
+            return (-1, string.Empty);
+        }
+        catch (Win32Exception ex)
+        {
+            logger.Error(ex, $"OS error starting command '{fileName} {argStr}'");
             return (-1, string.Empty);
         }
 
