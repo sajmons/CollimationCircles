@@ -27,7 +27,7 @@ namespace CollimationCircles.Models
 
         partial void OnValueChanged(int oldValue, int newValue)
         {
-            if (_camera is not null)
+            if (_camera is not null && _camera.IsPlaying)
             {
                 cameraControlService.Set(Name, newValue, _camera);
             }

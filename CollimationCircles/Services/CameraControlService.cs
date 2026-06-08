@@ -13,6 +13,7 @@ namespace CollimationCircles.Services
         public void Set(ControlType controlName, double value, Camera camera)
         {
             Guard.IsNotNull(camera);
+            Guard.IsTrue(camera.IsPlaying);
 
             // set camera control for V4L2 (Linux cameras)
             if (camera.APIType is APIType.V4l2)

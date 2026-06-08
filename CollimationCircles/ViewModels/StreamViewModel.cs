@@ -100,7 +100,11 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;            
+            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
+            if (SelectedCamera is not null)
+            {
+                SelectedCamera.IsPlaying = IsPlaying;
+            }
         }
 
         private void MediaPlayer_Playing()
@@ -109,6 +113,7 @@ namespace CollimationCircles.ViewModels
 
             logger.Trace($"MediaPlayer playing");
             IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
+            SelectedCamera.IsPlaying = IsPlaying;
         }
 
         private void MediaPlayer_Closed()
@@ -117,6 +122,10 @@ namespace CollimationCircles.ViewModels
 
             CloseWebCamStream();
             IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
+            if (SelectedCamera is not null)
+            {
+                SelectedCamera.IsPlaying = IsPlaying;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
@@ -194,7 +203,15 @@ namespace CollimationCircles.ViewModels
         partial void OnPinVideoWindowToMainWindowChanged(bool oldValue, bool newValue)
         {
             settingsViewModel.PinVideoWindowToMainWindow = newValue;
-        }        
+        }
+
+        partial void OnIsPlayingChanged(bool oldValue, bool newValue)
+        {
+            if (SelectedCamera is not null)
+            {
+                SelectedCamera.IsPlaying = newValue;
+            }
+        }
 
         [RelayCommand]
         private async Task CameraRefresh()
@@ -215,6 +232,7 @@ namespace CollimationCircles.ViewModels
                 FullAddress = libVLCService.DefaultAddress(newValue);
                 RemoteConnection = SelectedCamera?.APIType == APIType.Remote;
                 this.settingsViewModel.LastSelectedCamera = newValue.Name;
+                newValue.IsPlaying = IsPlaying;
                 logger.Info($"Selected camera changed to '{newValue.Name}'");
             }
         }
