@@ -26,7 +26,7 @@ namespace CollimationCircles.Services
         ];
         private static readonly List<nint> NativeLibraryHandles = [];
 
-        private readonly LibVLC? libVLC;
+        private LibVLC? libVLC;
         private ZWOLiveStreamService? _zwoStream;
 
         private string protocol = string.Empty;
@@ -37,23 +37,51 @@ namespace CollimationCircles.Services
 
         public const string SnapshotImageFile = "snapshot.jpg";
 
-        public bool IsAvailable { get; }
+        public bool IsAvailable { get; private set; }
         public string FullAddress { get; set; } = string.Empty;
-        public MediaPlayer? MediaPlayer { get; }
+        public MediaPlayer? MediaPlayer { get; private set; }
+
+        private bool _initialized;
 
         public LibVLCService()
         {
-            // https://wiki.videolan.org/VLC_command-line_help/
+            // Initialization is deferred to first use (see EnsureInitialized) so that a
+            // crash inside the native libvlc library (e.g. on Linux ARM64) does not take
+            // down the whole application at startup.
+        }
 
+        /// <summary>
+        /// Lazily creates the LibVLC + MediaPlayer instances on first use.
+        /// Returns false if LibVLC could not be initialised (missing/incompatible native
+        /// libraries, native crash guard, etc.).  All public methods that need LibVLC
+        /// must call this first.
+        /// </summary>
+        private bool EnsureInitialized()
+        {
+            if (_initialized)
+            {
+                return IsAvailable;
+            }
+
+            _initialized = true;
+
+            // https://wiki.videolan.org/VLC_command-line_help/
+            //
+            // NOTE: --verbose=3 was previously used but it triggers a native crash
+            // (SIGSEGV inside vsnprintf) on Linux ARM64 with VLC 3.0.x from Debian
+            // trixie.  The verbose logging code path corrupts memory when formatting
+            // the very long ./configure banner string on that platform.  We keep
+            // verbosity at 0 (default) and rely on the managed Log callback below for
+            // the messages we actually care about.
             string[] libVLCOptions = [
-                "--verbose=3",
+                // "--verbose=3",
                 "--no-snapshot-preview",
                 "--no-osd",
                 "--no-video-title-show",
                 "--avcodec-hw=none", // Disables hardware video decoding flags that crash some ARM64 drivers
                 "--no-media-library",
                 "--no-stats"
-            ];            
+            ];
 
             if (TryInitializeMacArm64LibVlc(libVLCOptions, out LibVLC? arm64LibVlc, out MediaPlayer? arm64MediaPlayer))
             {
@@ -74,7 +102,7 @@ namespace CollimationCircles.Services
 
                 IsAvailable = true;
                 logger.Info("LibVLC initialized from macOS arm64 fallback path.");
-                return;
+                return true;
             }
 
             try
@@ -117,12 +145,15 @@ namespace CollimationCircles.Services
                 };
 
                 IsAvailable = true;
+                logger.Info("LibVLC initialized.");
+                return true;
             }
             catch (Exception ex)
             {
                 logger.Warn(ex, "Default LibVLC loading failed.");
                 IsAvailable = false;
                 logger.Error(ex, "LibVLC disabled.");
+                return false;
             }
         }
 
@@ -347,7 +378,7 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
-            if (!IsAvailable || libVLC is null || MediaPlayer is null)
+            if (!EnsureInitialized() || libVLC is null || MediaPlayer is null)
             {
                 logger.Warn("Ignoring Play request because LibVLC is not available on this platform/runtime.");
                 return;
