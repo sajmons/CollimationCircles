@@ -47,13 +47,15 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void Apply()
         {
+            // Play() lazily initialises LibVLC and returns early if unavailable.
+            libVLCService.Play(Camera, false);
+
             if (!libVLCService.IsAvailable)
             {
                 logger.Warn("Cannot apply camera controls because LibVLC is not available.");
                 return;
             }
 
-            libVLCService.Play(Camera, false);
             logger.Info("Apply camera controls buton clicked");
         }        
     }
