@@ -1,8 +1,6 @@
 using CollimationCircles.Models;
 using NLog;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.PixelFormats;
+using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -290,10 +288,12 @@ namespace CollimationCircles.Services
 
         private static byte[] EncodeGrayscaleToJpeg(byte[] rawY8, int width, int height)
         {
-            using var image = Image.LoadPixelData<L8>(rawY8, width, height);
-            using var ms = new MemoryStream();
-            image.Save(ms, new JpegEncoder { Quality = 80 });
-            return ms.ToArray();
+            using var image = new MagickImage(rawY8, new PixelReadSettings((uint)width, (uint)height, StorageType.Char, PixelMapping.RGB));
+            image.ColorSpace = ColorSpace.Gray;
+            image.Format = MagickFormat.Jpeg;
+            image.Quality = 80;
+
+            return image.ToByteArray();
         }
 
         // ------------------------------------------------------------------ //
