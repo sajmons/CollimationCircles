@@ -49,8 +49,11 @@ namespace CollimationCircles.Services
                 "--verbose=3",
                 "--no-snapshot-preview",
                 "--no-osd",
-                "--no-video-title-show"
-            ];
+                "--no-video-title-show",
+                "--avcodec-hw=none", // Disables hardware video decoding flags that crash some ARM64 drivers
+                "--no-media-library",
+                "--no-stats"
+            ];            
 
             if (TryInitializeMacArm64LibVlc(libVLCOptions, out LibVLC? arm64LibVlc, out MediaPlayer? arm64MediaPlayer))
             {
