@@ -73,6 +73,9 @@ namespace CollimationCircles.ViewModels
         {
             Guard.IsNotNull(libVLCService);
 
+            // Trigger lazy LibVLC initialisation by checking IsAvailable after a
+            // no-op Play attempt is not appropriate here; instead we just check
+            // whether the MediaPlayer exists (it is created during EnsureInitialized).
             if (!libVLCService.IsAvailable)
             {
                 logger.Warn("Cannot take snapshot because LibVLC is not available.");

@@ -31,6 +31,12 @@ namespace CollimationCircles
             // subsequent log call blocks indefinitely, making the window appear frozen.
             ConfigureLogging();
 
+            // Install native signal handlers on Linux so that a SIGSEGV / SIGABRT /
+            // SIGFPE originating from a native library (libvlc, libASICamera2, etc.)
+            // is logged with a backtrace instead of dying silently.  .NET's
+            // AppDomain.UnhandledException does NOT fire for native crashes.
+            InstallLinuxCrashHandler();
+
             AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
             {
                 logger.Fatal($"Unhandled exception: {e.ExceptionObject}");
@@ -55,6 +61,31 @@ namespace CollimationCircles
             finally
             {
                 NLog.LogManager.Shutdown();
+            }
+        }
+
+        /// <summary>
+        /// On Linux, installs POSIX signal handlers for SIGSEGV, SIGABRT, SIGFPE and
+        /// SIGBUS.  When a native crash occurs the handler writes a backtrace to the
+        /// NLog file and stderr before re-raising the signal to produce a core dump.
+        /// This is essential because .NET's managed exception handler cannot intercept
+        /// crashes that originate inside native code (e.g. libvlc, libASICamera2).
+        /// </summary>
+        private static void InstallLinuxCrashHandler()
+        {
+            if (!OperatingSystem.IsLinux())
+            {
+                return;
+            }
+
+            try
+            {
+                NativeCrashHandler.Install();
+                logger.Info("Installed native Linux crash handler (SIGSEGV/SIGABRT/SIGFPE/SIGBUS).");
+            }
+            catch (Exception ex)
+            {
+                logger.Warn(ex, "Failed to install native Linux crash handler.");
             }
         }
 

@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -30,7 +31,10 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            get => libVLCService.IsAvailable && !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
+            // Note: we intentionally do NOT check libVLCService.IsAvailable here.
+            // LibVLC is initialised lazily on first Play attempt; checking IsAvailable
+            // before that would always be false and grey-out the Play button forever.
+            get => !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
         }
 
         [ObservableProperty]
@@ -130,13 +134,10 @@ namespace CollimationCircles.ViewModels
         {
             Guard.IsNotNull(SelectedCamera);
 
-            if (!libVLCService.IsAvailable)
-            {
-                logger.Warn("Play requested but LibVLC is not available.");
-                return;
-            }
-
-            if (libVLCService.MediaPlayer != null)
+            // Play() will lazily initialise LibVLC and return early if it is not
+            // available.  We fall through to the compatibility message below when
+            // IsAvailable is still false after the call.
+            if (libVLCService.MediaPlayer != null && libVLCService.IsAvailable)
             {
                 if (!libVLCService.MediaPlayer.IsPlaying)
                 {
@@ -146,7 +147,37 @@ namespace CollimationCircles.ViewModels
                 {
                     libVLCService.MediaPlayer.Stop();
                 }
+
+                return;
             }
+
+            // First attempt: try to start the stream (this triggers lazy init).
+            if (!libVLCService.IsAvailable)
+            {
+                libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
+            }
+
+            if (!libVLCService.IsAvailable)
+            {
+                logger.Warn("Play requested but LibVLC is not available.");
+                _ = ShowLibVlcCompatibilityMessageAsync();
+            }
+        }
+
+        private async Task ShowLibVlcCompatibilityMessageAsync()
+        {
+            string message =
+                ResSvc.TryGetString("LibVlcCompatibilityBody1") + "\n\n" +
+                ResSvc.TryGetString("LibVlcCompatibilityBody2") + "\n" +
+                ResSvc.TryGetString("LibVlcCompatibilityBody3") + "\n" +
+                ResSvc.TryGetString("LibVlcCompatibilityBody4") + "\n" +
+                ResSvc.TryGetString("LibVlcCompatibilityBody5") + "\n" +
+                ResSvc.TryGetString("LibVlcCompatibilityBody6");
+
+            await DialogService.ShowMessageBoxAsync(null,
+                message,
+                ResSvc.TryGetString("LibVlcCompatibilityTitle"),
+                MessageBoxButton.Ok);
         }
 
         public bool CanExecuteZoom
