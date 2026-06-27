@@ -13,7 +13,7 @@
 		Title="{DynamicResource Text.CameraStreamWindowTitle}"
 		Width="640"
 		Height="480">
-	<Grid>
+	<Grid ClipToBounds="True">
 		<vlc:VideoView x:Name="VideoViewer">
 			<controls:CollimationAnalysisUserControl />
 		</vlc:VideoView>
