@@ -288,7 +288,9 @@ namespace CollimationCircles.Services
 
         private static byte[] EncodeGrayscaleToJpeg(byte[] rawY8, int width, int height)
         {
-            using var image = new MagickImage(rawY8, new PixelReadSettings((uint)width, (uint)height, StorageType.Char, PixelMapping.RGB));
+            // ZWO delivers Y8 data: one byte per pixel. Read it as a single
+            // channel ("R") instead of RGB (which would expect 3 bytes/pixel).
+            using var image = new MagickImage(rawY8, new PixelReadSettings((uint)width, (uint)height, StorageType.Char, "R"));
             image.ColorSpace = ColorSpace.Gray;
             image.Format = MagickFormat.Jpeg;
             image.Quality = 80;
