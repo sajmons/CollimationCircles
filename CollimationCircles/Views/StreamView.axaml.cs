@@ -18,13 +18,18 @@ namespace CollimationCircles.Views
         private const double MaxZoom = 4.0;
         private const double ZoomStep = 0.2;
 
-        private readonly VideoView videoViewer;
+        private readonly VideoView? videoViewer;
+        private readonly Grid? frameGrid;
+        private readonly FrameRenderer? frameRenderer;
         private readonly SettingsViewModel svm;
         private double currentZoom = 1.0;
         private int sourceVideoWidth;
         private int sourceVideoHeight;
         private bool sourceDimensionsCaptured = false;
         private bool vlcCropCleared = false;
+
+        private IZwoFrameSource? _zwoFrameSource;
+        private bool _usingZwoDirect;
 
         public StreamView()
         {
@@ -33,10 +38,11 @@ namespace CollimationCircles.Views
             svm = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             videoViewer = this.Get<VideoView>("VideoViewer");
+            frameGrid = this.Get<Grid>("FrameGrid");
+            frameRenderer = this.Get<FrameRenderer>("FrameRenderer");
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                // FIXME: here is probably some room for optimization
                 UpdateWindowPosition();
             });
 
@@ -52,15 +58,49 @@ namespace CollimationCircles.Views
         private void StreamView_Closed(object? sender, EventArgs e)
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
+
+            if (_zwoFrameSource is not null)
+            {
+                _zwoFrameSource.FrameReady -= OnZwoFrameReady;
+                _zwoFrameSource = null;
+            }
+
+            if (frameGrid is not null)
+                frameGrid.SizeChanged -= OnFrameGridSizeChanged;
         }
 
         private void WebCamStreamWindow_Opened(object? sender, System.EventArgs e)
         {
-            var mp = Ioc.Default.GetRequiredService<ILibVLCService>().MediaPlayer;
+            _zwoFrameSource = Ioc.Default.GetRequiredService<IZwoFrameSource>();
+            _usingZwoDirect = _zwoFrameSource.IsStreaming;
 
-            if (videoViewer != null)
+            if (_usingZwoDirect)
             {
-                if (mp is not null)
+                // ZWO direct-rendering path: show FrameRenderer, hide VideoView.
+                if (videoViewer is not null) videoViewer.IsVisible = false;
+                if (frameGrid is not null) frameGrid.IsVisible = true;
+
+                sourceVideoWidth = _zwoFrameSource.FrameWidth;
+                sourceVideoHeight = _zwoFrameSource.FrameHeight;
+                sourceDimensionsCaptured = sourceVideoWidth > 0 && sourceVideoHeight > 0;
+
+                _zwoFrameSource.FrameReady += OnZwoFrameReady;
+
+                if (frameGrid is not null)
+                    frameGrid.SizeChanged += OnFrameGridSizeChanged;
+
+                currentZoom = 1.0;
+                UpdateWindowPosition();
+            }
+            else
+            {
+                // LibVLC path: show VideoView, hide FrameRenderer.
+                if (videoViewer is not null) videoViewer.IsVisible = true;
+                if (frameGrid is not null) frameGrid.IsVisible = false;
+
+                var mp = Ioc.Default.GetRequiredService<ILibVLCService>().MediaPlayer;
+
+                if (videoViewer != null && mp is not null)
                 {
                     videoViewer.MediaPlayer = mp;
 
@@ -99,6 +139,16 @@ namespace CollimationCircles.Views
             }
         }
 
+        private void OnFrameGridSizeChanged(object? sender, SizeChangedEventArgs e)
+        {
+            frameRenderer?.InvalidateVisual();
+        }
+
+        private void OnZwoFrameReady(byte[] frame, int width, int height)
+        {
+            frameRenderer?.SetJpegFrame(frame);
+        }
+
         private void ApplyZoom(ImageZoomAction action)
         {
             double prevZoom = currentZoom;
@@ -123,8 +173,14 @@ namespace CollimationCircles.Views
 
         private void UpdateImageTransform()
         {
-            var mp = videoViewer.MediaPlayer;
+            if (_usingZwoDirect)
+            {
+                if (frameRenderer is not null)
+                    frameRenderer.Zoom = currentZoom;
+                return;
+            }
 
+            var mp = videoViewer?.MediaPlayer;
             if (mp is null)
             {
                 logger.Warn("UpdateImageTransform: MediaPlayer is null, skipping.");
@@ -143,10 +199,13 @@ namespace CollimationCircles.Views
                 }
 
                 // Reset VideoView to fill the window
-                videoViewer.Width = double.NaN;
-                videoViewer.Height = double.NaN;
-                videoViewer.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
-                videoViewer.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
+                if (videoViewer is not null)
+                {
+                    videoViewer.Width = double.NaN;
+                    videoViewer.Height = double.NaN;
+                    videoViewer.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
+                    videoViewer.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
+                }
 
                 logger.Info($"UpdateImageTransform: zoom<=1, reset VideoView to stretch (zoom={currentZoom:F2}).");
                 return;
@@ -196,10 +255,13 @@ namespace CollimationCircles.Views
             double scaledWidth = viewWidth * currentZoom;
             double scaledHeight = viewHeight * currentZoom;
 
-            videoViewer.Width = scaledWidth;
-            videoViewer.Height = scaledHeight;
-            videoViewer.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-            videoViewer.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+            if (videoViewer is not null)
+            {
+                videoViewer.Width = scaledWidth;
+                videoViewer.Height = scaledHeight;
+                videoViewer.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
+                videoViewer.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
+            }
 
             // Compute equivalent center crop for logging.
             if (sourceVideoWidth > 0 && sourceVideoHeight > 0)
@@ -234,14 +296,10 @@ namespace CollimationCircles.Views
             uint rawHeight = 0;
 
             if (!mediaPlayer.Size(0, ref rawWidth, ref rawHeight))
-            {
                 return false;
-            }
 
             if (rawWidth == 0 || rawHeight == 0)
-            {
                 return false;
-            }
 
             width = (int)rawWidth;
             height = (int)rawHeight;
