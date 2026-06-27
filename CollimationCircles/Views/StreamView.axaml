@@ -10,7 +10,7 @@
         Title="{DynamicResource Text.CameraStreamWindowTitle}"
         Width="640"
         Height="480">
-  <Grid>
+  <Grid ClipToBounds="True">
     <vlc:VideoView      
       RelativePanel.AlignHorizontalCenterWithPanel="True"
       RelativePanel.AlignVerticalCenterWithPanel="True"
