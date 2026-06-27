@@ -64,27 +64,28 @@
   <!-- Cross-platform packages -->
   <ItemGroup>
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.10.0" />
-    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260602" />
-    <PackageReference Include="OpenCvSharp4.Extensions" Version="4.13.0.20260602" />
+    <PackageReference Include="OpenCvSharp4" Version="4.13.0.20260627" />
+    <PackageReference Include="OpenCvSharp4.Extensions" Version="4.13.0.20260627" />
   </ItemGroup>
 
   <!-- Windows platform packages (win-x64, win-arm64) -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'win-x64' Or '$(RuntimeIdentifier)' == 'win-arm64' Or '$(RuntimeIdentifier)' == ''">
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.23.1" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260602" Condition="'$(RuntimeIdentifier)' != 'win-arm64'" />
-    <PackageReference Include="OpenCvSharp4.runtime.win-arm64" Version="4.13.0.20260528" Condition="'$(RuntimeIdentifier)' == 'win-arm64'" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' != 'win-arm64'" />
+    <PackageReference Include="OpenCvSharp4.runtime.win-arm64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'win-arm64'" />
   </ItemGroup>
 
   <!-- Linux platform packages (linux-x64, linux-arm64) -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'linux-x64' Or '$(RuntimeIdentifier)' == 'linux-arm64'">
-    <PackageReference Include="OpenCvSharp4.official.runtime.linux-x64" Version="4.13.0.20260528" Condition="'$(RuntimeIdentifier)' == 'linux-x64'" />
-    <PackageReference Include="OpenCvSharp4.runtime.linux-arm64" Version="4.13.0.20260528" Condition="'$(RuntimeIdentifier)' == 'linux-arm64'" />
+    <PackageReference Include="OpenCvSharp4.official.runtime.linux-x64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'linux-x64'" />
+    <PackageReference Include="OpenCvSharp4.runtime.linux-arm64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'linux-arm64'" />
   </ItemGroup>
 
   <!-- macOS platform packages (osx-x64, osx-arm64) -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64' Or '$(RuntimeIdentifier)' == 'osx-arm64'">
     <PackageReference Include="VideoLAN.LibVLC.Mac" Version="3.1.3.1" />
-    <PackageReference Include="OpenCvSharp4.runtime.osx" Version="4.13.0.20260528" />
+    <PackageReference Include="OpenCvSharp4.runtime.osx.x64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'osx-x64'" />
+    <PackageReference Include="OpenCvSharp4.runtime.osx.arm64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'osx-arm64'" />
   </ItemGroup>
 
   <!-- ZWO ASI Camera SDK Libraries -->
