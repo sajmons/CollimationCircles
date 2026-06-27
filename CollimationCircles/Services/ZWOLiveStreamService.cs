@@ -18,8 +18,10 @@ namespace CollimationCircles.Services
 {
     /// <summary>
     /// Captures frames from a ZWO ASI camera using the ASI SDK and serves them
-    /// as an MJPEG stream over a local HTTP listener.  LibVLC then plays the
-    /// resulting http://localhost:{Port}/ URL.
+    /// as JPEG frames.  When <see cref="EnableDirectRendering"/> is true, frames
+    /// are delivered via <see cref="FrameReady"/> for direct rendering by
+    /// <c>FrameRenderer</c>.  Otherwise, frames are served as an MJPEG stream
+    /// over a local HTTP listener for LibVLC playback.
     /// </summary>
     internal sealed class ZWOLiveStreamService : IDisposable
     {
@@ -44,8 +46,31 @@ namespace CollimationCircles.Services
 
         private bool _disposed;
         private bool _running;
+        private bool _isColorCamera;
+        private ZWOASICameraInterop.ASI_IMG_TYPE _imgType;
 
         public int Port { get; private set; }
+
+        /// <summary>Width of the captured ROI in pixels.</summary>
+        public int FrameWidth => _width;
+
+        /// <summary>Height of the captured ROI in pixels.</summary>
+        public int FrameHeight => _height;
+
+        /// <summary>
+        /// When true, the MJPEG HTTP server is skipped and frames are delivered
+        /// exclusively via <see cref="FrameReady"/>.  This avoids the LibVLC
+        /// middleman and lets the caller render directly to an Avalonia Image.
+        /// </summary>
+        public bool EnableDirectRendering { get; set; }
+
+        /// <summary>
+        /// Fired on the capture thread for every new frame when
+        /// <see cref="EnableDirectRendering"/> is true.  The byte array contains
+        /// JPEG-encoded image data of size
+        /// <see cref="FrameWidth"/> × <see cref="FrameHeight"/>.
+        /// </summary>
+        public event Action<byte[], int, int>? FrameReady;
 
         // ------------------------------------------------------------------ //
         //  Public static helpers                                               //
@@ -78,9 +103,12 @@ namespace CollimationCircles.Services
             var info = new ZWOASICameraInterop.ASI_CAMERA_INFO();
             ZWOASICameraInterop.ASIGetCameraProperty(ref info, camera.Index);
 
-            // Cap at 1280×960 for a responsive preview; must be multiples of 8
-            _width  = (Math.Min((int)info.MaxWidth,  1280) / 8) * 8;
-            _height = (Math.Min((int)info.MaxHeight,  960) / 8) * 8;
+            logger.Info($"ZWO camera info: MaxWidth={info.MaxWidth}, MaxHeight={info.MaxHeight}, IsColorCam={info.IsColorCam}, BitDepth={info.BitDepth}, PixelSize={info.PixelSize}");
+
+            // Use the camera's full native resolution (no ROI cropping).
+            // The display layer handles scaling/zoom.  Must be multiples of 8.
+            _width  = ((int)info.MaxWidth  / 8) * 8;
+            _height = ((int)info.MaxHeight / 8) * 8;
 
             if (_width <= 0 || _height <= 0)
             {
@@ -89,7 +117,7 @@ namespace CollimationCircles.Services
                 _height = 480;
             }
 
-            logger.Info($"ZWO stream: opening camera {_cameraId}, ROI {_width}×{_height}");
+            logger.Info($"ZWO stream: opening camera {_cameraId}, full resolution {_width}×{_height}");
 
             // Open and initialise the camera
             int r = ZWOASICameraInterop.ASIOpenCamera(_cameraId);
@@ -108,15 +136,31 @@ namespace CollimationCircles.Services
             // - Exposure: auto mode.
             ApplyStartupControls(camera);
 
-            // Y8 = 8-bit luminance (grayscale) — works on all ASI cameras
-            r = ZWOASICameraInterop.ASISetROIFormat(_cameraId, _width, _height, 1,
-                ZWOASICameraInterop.ASI_IMG_TYPE.ASI_IMG_Y8);
+            // RGB24 = 3 bytes/pixel (R,G,B interleaved). The ZWO SDK does the
+            // Bayer demosaicing on-chip/on-host and returns ready-to-display RGB.
+            // For mono cameras, fall back to Y8 (grayscale, 1 byte/pixel).
+            var imgType = info.IsColorCam != 0
+                ? ZWOASICameraInterop.ASI_IMG_TYPE.ASI_IMG_RGB24
+                : ZWOASICameraInterop.ASI_IMG_TYPE.ASI_IMG_Y8;
+
+            r = ZWOASICameraInterop.ASISetROIFormat(_cameraId, _width, _height, 1, imgType);
             if (r != 0)
             {
-                logger.Error($"ASISetROIFormat failed ({r})");
-                ZWOASICameraInterop.ASICloseCamera(_cameraId);
-                return false;
+                logger.Error($"ASISetROIFormat failed ({r}) with {imgType}, trying Y8");
+                // Fallback to Y8 (grayscale) which works on all cameras.
+                imgType = ZWOASICameraInterop.ASI_IMG_TYPE.ASI_IMG_Y8;
+                r = ZWOASICameraInterop.ASISetROIFormat(_cameraId, _width, _height, 1, imgType);
+                if (r != 0)
+                {
+                    logger.Error($"ASISetROIFormat failed ({r}) with Y8 fallback");
+                    ZWOASICameraInterop.ASICloseCamera(_cameraId);
+                    return false;
+                }
             }
+
+            _isColorCamera = imgType == ZWOASICameraInterop.ASI_IMG_TYPE.ASI_IMG_RGB24;
+            _imgType = imgType;
+            logger.Info($"ZWO using image format: {imgType}, color={_isColorCamera}");
 
             r = ZWOASICameraInterop.ASIStartVideoCapture(_cameraId);
             if (r != 0)
@@ -126,15 +170,18 @@ namespace CollimationCircles.Services
                 return false;
             }
 
-            // Bind an HTTP listener on a free local port
-            Port = FindFreePort();
-            _listener = new HttpListener();
-            _listener.Prefixes.Add($"http://localhost:{Port}/");
-            _listener.Start();
-
             _cts = new CancellationTokenSource();
             _captureTask = Task.Run(() => CaptureLoop(_cts.Token));
-            _serverTask  = Task.Run(() => ServerLoop(_cts.Token));
+
+            if (!EnableDirectRendering)
+            {
+                // Bind an HTTP listener on a free local port (LibVLC path)
+                Port = FindFreePort();
+                _listener = new HttpListener();
+                _listener.Prefixes.Add($"http://localhost:{Port}/");
+                _listener.Start();
+                _serverTask = Task.Run(() => ServerLoop(_cts.Token));
+            }
 
             lock (_activeStreamsLock)
             {
@@ -143,7 +190,10 @@ namespace CollimationCircles.Services
 
             _running = true;
 
-            logger.Info($"ZWO MJPEG stream running at http://localhost:{Port}/  (camera {_cameraId})");
+            if (EnableDirectRendering)
+                logger.Info($"ZWO direct-render stream running (camera {_cameraId}, {_width}×{_height})");
+            else
+                logger.Info($"ZWO MJPEG stream running at http://localhost:{Port}/  (camera {_cameraId})");
             return await Task.FromResult(true);
         }
 
@@ -250,7 +300,9 @@ namespace CollimationCircles.Services
 
         private void CaptureLoop(CancellationToken ct)
         {
-            int bufferSize = _width * _height; // Y8 = 1 byte per pixel
+            // RGB24 = 3 bytes/pixel, Y8 = 1 byte/pixel
+            int bytesPerPixel = _isColorCamera ? 3 : 1;
+            int bufferSize = _width * _height * bytesPerPixel;
             IntPtr nativeBuffer = Marshal.AllocHGlobal(bufferSize);
 
             try
@@ -270,11 +322,20 @@ namespace CollimationCircles.Services
                     byte[] raw = new byte[bufferSize];
                     Marshal.Copy(nativeBuffer, raw, 0, bufferSize);
 
-                    byte[] jpeg = EncodeGrayscaleToJpeg(raw, _width, _height);
+                    byte[] jpeg = _isColorCamera
+                        ? EncodeColorToJpeg(raw, _width, _height)
+                        : EncodeGrayscaleToJpeg(raw, _width, _height);
 
-                    lock (_frameLock)
+                    if (EnableDirectRendering)
                     {
-                        _latestJpeg = jpeg;
+                        FrameReady?.Invoke(jpeg, _width, _height);
+                    }
+                    else
+                    {
+                        lock (_frameLock)
+                        {
+                            _latestJpeg = jpeg;
+                        }
                     }
                 }
             }
@@ -291,6 +352,19 @@ namespace CollimationCircles.Services
         private static byte[] EncodeGrayscaleToJpeg(byte[] rawY8, int width, int height)
         {
             using var image = Image.LoadPixelData<L8>(rawY8, width, height);
+            using var ms = new MemoryStream();
+            image.Save(ms, new JpegEncoder { Quality = 80 });
+            return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Encodes RGB24 raw data (3 bytes/pixel, R-G-B interleaved) to JPEG.
+        /// The ZWO SDK returns RGB24 in BGR order, so we use Bgr24 pixel format.
+        /// </summary>
+        private static byte[] EncodeColorToJpeg(byte[] rawRGB24, int width, int height)
+        {
+            // ZWO SDK RGB24 is actually BGR (Blue, Green, Red) interleaved.
+            using var image = Image.LoadPixelData<Bgr24>(rawRGB24, width, height);
             using var ms = new MemoryStream();
             image.Save(ms, new JpegEncoder { Quality = 80 });
             return ms.ToArray();
