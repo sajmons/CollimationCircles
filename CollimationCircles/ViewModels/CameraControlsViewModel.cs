@@ -37,16 +37,15 @@ namespace CollimationCircles.ViewModels
             {
                 Camera = streamViewModel.SelectedCamera;
                 IsLibCamera = Camera.APIType == APIType.LibCamera;
+
+                // Drive IsPlaying from the camera state message. The MediaPlayer is
+                // lazily initialised (null at construction time), so subscribing to its
+                // events directly in the constructor never works. The messenger is the
+                // same source StreamViewModel uses to track play state.
+                IsPlaying = m.Value == CameraState.Playing;
             });
 
             Title = $"{ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("CameraControls")}";
-
-            if (libVLCService.MediaPlayer is not null)
-            {
-                libVLCService.MediaPlayer.Playing += (sender, e) => IsPlaying = true;
-                libVLCService.MediaPlayer.Paused += (sender, e) => IsPlaying = false;
-                libVLCService.MediaPlayer.Stopped += (sender, e) => IsPlaying = false;
-            }
         }
 
         [RelayCommand]
