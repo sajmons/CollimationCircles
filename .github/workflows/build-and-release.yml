@@ -1,17 +1,19 @@
 name: Build and Release
 
 on:
-  push:
-    tags:
-      - 'version-*' 
   workflow_dispatch:
+  push:
+    branches: ["*"]
+    tags: ["version-*"]
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 env:
   PROJECT_PATH: CollimationCircles/CollimationCircles.csproj
   FRAMEWORK: net10.0
   APP_NAME: CollimationCircles
-  DOTNET_VERSION: '10.0.x'
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true 
+  DOTNET_VERSION: "10.0.x"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build:
@@ -140,7 +142,7 @@ jobs:
           APP="${{ env.APP_NAME }}"
           BUNDLE="$APP.app"
           CP="./publish/${RID}_bundle/$BUNDLE/Contents"
-          
+
           mkdir -p "$CP/MacOS"
           mkdir -p "$CP/Resources"
 
@@ -161,7 +163,7 @@ jobs:
           cp -R "./publish/$RID/"* "$CP/MacOS/"
           [ -f "$CP/MacOS/icon.icns" ] && mv "$CP/MacOS/icon.icns" "$CP/Resources/"
           chmod +x "$CP/MacOS/$APP"
-          
+
           TAR_NAME="./publish/${{ matrix.index }}-$APP-$VER-$RID.tar.gz"
           tar -czf "$TAR_NAME" -C "./publish/${RID}_bundle" "$BUNDLE"
 
