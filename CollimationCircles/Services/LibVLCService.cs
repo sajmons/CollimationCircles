@@ -3,6 +3,7 @@ using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using Avalonia.Threading;
 using CommunityToolkit.Diagnostics;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using LibVLCSharp.Shared;
 using Octokit;
@@ -378,28 +379,36 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
+            if (camera.APIType == APIType.Zwo)
+            {
+                // ZWO cameras bypass LibVLC entirely — frames are rendered directly
+                // by FrameRenderer via IZwoFrameSource.
+                var zwoFrameSource = Ioc.Default.GetRequiredService<IZwoFrameSource>();
+
+                StopZwoStream();
+                zwoFrameSource.Stop();
+
+                bool started = await zwoFrameSource.StartAsync(camera);
+
+                if (!started)
+                {
+                    logger.Error($"Failed to start ZWO direct stream for camera '{camera.Name}'");
+                    SendCameraStateOnUIThread(CameraState.Stopped);
+                    return;
+                }
+
+                FullAddress = $"zwo-direct://{camera.Path}";
+                logger.Info($"ZWO direct stream started for camera '{camera.Name}' ({zwoFrameSource.FrameWidth}×{zwoFrameSource.FrameHeight})");
+
+                SendCameraStateOnUIThread(CameraState.Opening);
+                SendCameraStateOnUIThread(CameraState.Playing);
+                return;
+            }
+
             if (!EnsureInitialized() || libVLC is null || MediaPlayer is null)
             {
                 logger.Warn("Ignoring Play request because LibVLC is not available on this platform/runtime.");
                 return;
-            }
-
-            if (camera.APIType == APIType.Zwo)
-            {
-                // Start the MJPEG capture service for the ZWO camera and let
-                // LibVLC play the resulting local HTTP stream.
-                StopZwoStream();
-                _zwoStream = new ZWOLiveStreamService();
-                bool started = await _zwoStream.StartAsync(camera);
-
-                if (!started)
-                {
-                    logger.Error($"Failed to start ZWO live stream for camera '{camera.Name}'");
-                    _zwoStream = null;
-                    return;
-                }
-
-                FullAddress = $"http://localhost:{_zwoStream.Port}/";
             }
 
             List<string> parametersList = [];
@@ -554,6 +563,15 @@ namespace CollimationCircles.Services
                 _zwoStream.Stop();
                 _zwoStream.Dispose();
                 _zwoStream = null;
+            }
+
+            try
+            {
+                Ioc.Default.GetRequiredService<IZwoFrameSource>().Stop();
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex, "Error stopping ZwoFrameSource");
             }
         }
     }

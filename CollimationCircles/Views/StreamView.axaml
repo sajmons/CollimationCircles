@@ -8,14 +8,27 @@
 		d:DesignHeight="240"
 		xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
 		xmlns:vm="using:CollimationCircles.ViewModels"
+		xmlns:local="clr-namespace:CollimationCircles.Views"
 		x:DataType="vm:CollimationAnalysisViewModel"
 		x:Class="CollimationCircles.Views.StreamView"
 		Title="{DynamicResource Text.CameraStreamWindowTitle}"
 		Width="640"
 		Height="480">
-	<Grid>
-		<vlc:VideoView x:Name="VideoViewer">
+	<Grid x:Name="RootGrid"
+		  HorizontalAlignment="Stretch"
+		  VerticalAlignment="Stretch">
+		<vlc:VideoView x:Name="VideoViewer"
+					   HorizontalAlignment="Stretch"
+					   VerticalAlignment="Stretch"
+					   IsVisible="False">
 			<controls:CollimationAnalysisUserControl />
 		</vlc:VideoView>
+		<Grid x:Name="FrameGrid"
+			  HorizontalAlignment="Stretch"
+			  VerticalAlignment="Stretch"
+			  Background="Black"
+			  IsVisible="False">
+			<local:FrameRenderer x:Name="FrameRenderer" />
+		</Grid>
 	</Grid>
 </Window>

@@ -104,7 +104,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
+            IsPlaying = SelectedCamera?.APIType == APIType.Zwo || libVLCService.MediaPlayer?.IsPlaying == true;
             if (SelectedCamera is not null)
             {
                 SelectedCamera.IsPlaying = IsPlaying;
@@ -116,7 +116,7 @@ namespace CollimationCircles.ViewModels
             Guard.IsNotNull(SelectedCamera);
 
             logger.Trace($"MediaPlayer playing");
-            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
+            IsPlaying = SelectedCamera.APIType == APIType.Zwo || libVLCService.MediaPlayer?.IsPlaying == true;
             SelectedCamera.IsPlaying = IsPlaying;
         }
 
@@ -136,6 +136,24 @@ namespace CollimationCircles.ViewModels
         private void PlayPause()
         {
             Guard.IsNotNull(SelectedCamera);
+
+            // ZWO cameras use a direct-rendering path that bypasses LibVLC entirely.
+            if (SelectedCamera.APIType == APIType.Zwo)
+            {
+                var zwoFrameSource = Ioc.Default.GetRequiredService<IZwoFrameSource>();
+
+                if (zwoFrameSource.IsStreaming)
+                {
+                    zwoFrameSource.Stop();
+                    MediaPlayer_Closed();
+                }
+                else
+                {
+                    libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
+                }
+
+                return;
+            }
 
             // Play() will lazily initialise LibVLC and return early if it is not
             // available.  We fall through to the compatibility message below when

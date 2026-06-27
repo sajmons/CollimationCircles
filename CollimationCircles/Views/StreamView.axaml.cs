@@ -16,12 +16,17 @@ namespace CollimationCircles.Views
         private const double MaxZoom = 4.0;
         private const double ZoomStep = 0.2;
 
-        private readonly VideoView videoViewer;
+        private readonly VideoView? videoViewer;
+        private readonly Grid? frameGrid;
+        private readonly FrameRenderer? frameRenderer;
         private readonly SettingsViewModel svm;
         private double currentZoom = 1.0;
         private int sourceVideoWidth;
         private int sourceVideoHeight;
         private bool sourceDimensionsCaptured = false;
+
+        private IZwoFrameSource? _zwoFrameSource;
+        private bool _usingZwoDirect;
 
         public StreamView()
         {
@@ -30,10 +35,11 @@ namespace CollimationCircles.Views
             DataContext = Ioc.Default.GetRequiredService<CollimationAnalysisViewModel>();
 
             videoViewer = this.Get<VideoView>("VideoViewer");
+            frameGrid = this.Get<Grid>("FrameGrid");
+            frameRenderer = this.Get<FrameRenderer>("FrameRenderer");
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
-                // FIXME: here is probably some room for optimization
                 UpdateWindowPosition();
             });
 
@@ -49,29 +55,65 @@ namespace CollimationCircles.Views
         private void StreamView_Closed(object? sender, EventArgs e)
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
+
+            if (_zwoFrameSource is not null)
+            {
+                _zwoFrameSource.FrameReady -= OnZwoFrameReady;
+                _zwoFrameSource = null;
+            }
+
+            if (frameGrid is not null)
+                frameGrid.SizeChanged -= OnFrameGridSizeChanged;
         }
 
         private void WebCamStreamWindow_Opened(object? sender, System.EventArgs e)
         {
-            var mp = Ioc.Default.GetRequiredService<ILibVLCService>().MediaPlayer;
+            _zwoFrameSource = Ioc.Default.GetRequiredService<IZwoFrameSource>();
+            _usingZwoDirect = _zwoFrameSource.IsStreaming;
 
-            if (videoViewer != null)
+            if (_usingZwoDirect)
             {
-                if (mp is not null)
+                // ZWO direct-rendering path: show FrameRenderer, hide VideoView.
+                if (videoViewer is not null) videoViewer.IsVisible = false;
+                if (frameGrid is not null) frameGrid.IsVisible = true;
+
+                sourceVideoWidth = _zwoFrameSource.FrameWidth;
+                sourceVideoHeight = _zwoFrameSource.FrameHeight;
+                sourceDimensionsCaptured = sourceVideoWidth > 0 && sourceVideoHeight > 0;
+
+                _zwoFrameSource.FrameReady += OnZwoFrameReady;
+
+                if (frameGrid is not null)
+                    frameGrid.SizeChanged += OnFrameGridSizeChanged;
+
+                currentZoom = 1.0;
+                UpdateWindowPosition();
+            }
+            else
+            {
+                // LibVLC path: show VideoView, hide FrameRenderer.
+                if (videoViewer is not null) videoViewer.IsVisible = true;
+                if (frameGrid is not null) frameGrid.IsVisible = false;
+
+                var mp = Ioc.Default.GetRequiredService<ILibVLCService>().MediaPlayer;
+
+                if (videoViewer != null && mp is not null)
                 {
                     videoViewer.MediaPlayer = mp;
-                    
-                    // Capture source dimensions once when stream starts playing
+
                     mp.Playing += (s, ev) =>
                     {
-                        if (!sourceDimensionsCaptured)
+                        if (!sourceDimensionsCaptured && TryGetVideoSize(mp, out int w, out int h))
                         {
-                            if (TryGetVideoSize(mp, out int w, out int h))
-                            {
-                                sourceVideoWidth = w;
-                                sourceVideoHeight = h;
-                                sourceDimensionsCaptured = true;
-                            }
+                            sourceVideoWidth = w;
+                            sourceVideoHeight = h;
+                            sourceDimensionsCaptured = true;
+                        }
+
+                        if (currentZoom <= 1.0)
+                        {
+                            mp.CropGeometry = string.Empty;
+                            mp.Scale = 0;
                         }
                     };
                 }
@@ -83,6 +125,16 @@ namespace CollimationCircles.Views
                 UpdateImageTransform();
                 UpdateWindowPosition();
             }
+        }
+
+        private void OnFrameGridSizeChanged(object? sender, SizeChangedEventArgs e)
+        {
+            frameRenderer?.InvalidateVisual();
+        }
+
+        private void OnZwoFrameReady(byte[] frame, int width, int height)
+        {
+            frameRenderer?.SetJpegFrame(frame);
         }
 
         private void ApplyZoom(ImageZoomAction action)
@@ -105,14 +157,17 @@ namespace CollimationCircles.Views
 
         private void UpdateImageTransform()
         {
-            var mp = videoViewer.MediaPlayer;
-
-            if (mp is null)
+            if (_usingZwoDirect)
             {
+                if (frameRenderer is not null)
+                    frameRenderer.Zoom = currentZoom;
                 return;
             }
 
-            // Use LibVLC crop geometry because native video surfaces may ignore Avalonia RenderTransform.
+            var mp = videoViewer?.MediaPlayer;
+            if (mp is null)
+                return;
+
             if (currentZoom <= 1.0)
             {
                 mp.CropGeometry = string.Empty;
@@ -120,39 +175,30 @@ namespace CollimationCircles.Views
                 return;
             }
 
-            // Try to capture source dimensions on first zoom if not yet captured
             if (!sourceDimensionsCaptured && (sourceVideoWidth <= 0 || sourceVideoHeight <= 0))
             {
                 TryGetVideoSize(mp, out sourceVideoWidth, out sourceVideoHeight);
-                sourceDimensionsCaptured = true;  // Mark as attempted even if TryGetVideoSize fails
+                sourceDimensionsCaptured = true;
             }
 
-            // If we still don't have source dimensions, can't apply zoom
             if (sourceVideoWidth <= 0 || sourceVideoHeight <= 0)
-            {
                 return;
-            }
 
-            int sourceWidth = sourceVideoWidth;
-            int sourceHeight = sourceVideoHeight;
+            int cropWidth = Math.Clamp((int)Math.Round(sourceVideoWidth / currentZoom), 1, sourceVideoWidth);
+            int cropHeight = Math.Clamp((int)Math.Round(sourceVideoHeight / currentZoom), 1, sourceVideoHeight);
 
-            int cropWidth = Math.Clamp((int)Math.Round(sourceWidth / currentZoom), 1, sourceWidth);
-            int cropHeight = Math.Clamp((int)Math.Round(sourceHeight / currentZoom), 1, sourceHeight);
-
-            double centerX = sourceWidth / 2.0;
-            double centerY = sourceHeight / 2.0;
-
+            double centerX = sourceVideoWidth / 2.0;
+            double centerY = sourceVideoHeight / 2.0;
             double halfCropWidth = cropWidth / 2.0;
             double halfCropHeight = cropHeight / 2.0;
 
-            centerX = Math.Clamp(centerX, halfCropWidth, sourceWidth - halfCropWidth);
-            centerY = Math.Clamp(centerY, halfCropHeight, sourceHeight - halfCropHeight);
+            centerX = Math.Clamp(centerX, halfCropWidth, sourceVideoWidth - halfCropWidth);
+            centerY = Math.Clamp(centerY, halfCropHeight, sourceVideoHeight - halfCropHeight);
 
-            int cropX = Math.Clamp((int)Math.Round(centerX - halfCropWidth), 0, sourceWidth - cropWidth);
-            int cropY = Math.Clamp((int)Math.Round(centerY - halfCropHeight), 0, sourceHeight - cropHeight);
+            int cropX = Math.Clamp((int)Math.Round(centerX - halfCropWidth), 0, sourceVideoWidth - cropWidth);
+            int cropY = Math.Clamp((int)Math.Round(centerY - halfCropHeight), 0, sourceVideoHeight - cropHeight);
 
-            string crop = $"{cropWidth}x{cropHeight}+{cropX}+{cropY}";
-            mp.CropGeometry = crop;
+            mp.CropGeometry = $"{cropWidth}x{cropHeight}+{cropX}+{cropY}";
             mp.Scale = 0;
         }
 
@@ -170,14 +216,10 @@ namespace CollimationCircles.Views
             uint rawHeight = 0;
 
             if (!mediaPlayer.Size(0, ref rawWidth, ref rawHeight))
-            {
                 return false;
-            }
 
             if (rawWidth == 0 || rawHeight == 0)
-            {
                 return false;
-            }
 
             width = (int)rawWidth;
             height = (int)rawHeight;
