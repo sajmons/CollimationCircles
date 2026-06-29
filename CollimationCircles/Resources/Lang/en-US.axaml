@@ -193,4 +193,5 @@
   <system:String x:Key="Text.GlobalProperties">Global properties</system:String>  
   <system:String x:Key="Text.CompactThemeDensity">Compact Theme</system:String>
   <system:String x:Key="Text.Collimation">Collimation</system:String>
+  <system:String x:Key="Text.ExperimentalFeature">Experimental feature!</system:String>    
 </ResourceDictionary>

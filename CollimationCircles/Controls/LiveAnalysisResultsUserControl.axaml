@@ -76,5 +76,9 @@
 				</ItemsControl>
 			</StackPanel>
 		</Border>
+		<TextBlock
+			Foreground="IndianRed"
+			FontWeight="SemiBold"
+			Text="{DynamicResource Text.ExperimentalFeature}"/>
 	</StackPanel>
 </UserControl>

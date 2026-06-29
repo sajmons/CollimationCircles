@@ -179,4 +179,5 @@
   <system:String x:Key="Text.LiveAnalysisTip">Za začetek analize v živo morate najprej zagnati pretok kamere</system:String>
   <system:String x:Key="Text.CompactThemeDensity">Kompakten izgled</system:String>
   <system:String x:Key="Text.Collimation">Collimation</system:String>
+  <system:String x:Key="Text.ExperimentalFeature">Eksperimentalna funkcija!</system:String>    
 </ResourceDictionary>

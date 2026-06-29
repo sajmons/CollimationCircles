@@ -179,4 +179,5 @@
   <system:String x:Key="Text.LiveAnalysisTip">Pour démarrer l'analyse en direct, vous devez d'abord lancer le flux de la caméra</system:String>
   <system:String x:Key="Text.CompactThemeDensity">Aspect compact</system:String>
   <system:String x:Key="Text.Collimation">Collimation</system:String>
+  <system:String x:Key="Text.ExperimentalFeature">Fonctionnalité expérimentale!</system:String>    
 </ResourceDictionary>

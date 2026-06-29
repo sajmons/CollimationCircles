@@ -179,4 +179,5 @@
   <system:String x:Key="Text.LiveAnalysisTip">Um die Live-Analyse zu starten, müssen Sie zuerst den Kamera-Stream starten</system:String>
   <system:String x:Key="Text.CompactThemeDensity">Kompakter Look</system:String>
   <system:String x:Key="Text.Collimation">Collimation</system:String>
+  <system:String x:Key="Text.ExperimentalFeature">Experimentelle Funktion!</system:String>    
 </ResourceDictionary>
