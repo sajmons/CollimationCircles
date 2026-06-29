@@ -63,7 +63,7 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         internal void BuyLicense()
         {
-            AppService.OpenUrl(AppService.PatreonShop);
+            AppService.OpenUrl(AppService.LicenseUrl);
 
             if (dialog != null)
             {
