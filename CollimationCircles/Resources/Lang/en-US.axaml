@@ -112,8 +112,7 @@
   <system:String x:Key="Text.Close">Close</system:String>
   <system:String x:Key="Text.IncreaseInclination">Increase inclination</system:String>
   <system:String x:Key="Text.DecreaseInclination">Decrease inclination</system:String>
-  <system:String x:Key="Text.PayPalDonation">With this donation you will support me to continue developing of Collimation Circles application. Thank you!</system:String>
-  <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
+  <system:String x:Key="Text.Donation">Donation</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Video stream wait time timeout</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Start or stop camera video stream</system:String>
   <system:String x:Key="Text.CameraType">Select camera</system:String>

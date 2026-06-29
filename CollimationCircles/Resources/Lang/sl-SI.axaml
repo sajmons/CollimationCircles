@@ -112,8 +112,7 @@
   <system:String x:Key="Text.Close">Zapri</system:String>
   <system:String x:Key="Text.IncreaseInclination">Povečaj naklon</system:String>
   <system:String x:Key="Text.DecreaseInclination">Zmanjšaj naklon</system:String>
-  <system:String x:Key="Text.PayPalDonation">S to donacijo me boste podprli pri nadaljnjem razvoju aplikacije Collimation Circles. Hvala vam!</system:String>
-  <system:String x:Key="Text.PayPalDonate">PayPal Donate</system:String>
+  <system:String x:Key="Text.Donation">Donacija</system:String>
   <system:String x:Key="Text.CameraStreamTimeout">Čas čakanja na video tok</system:String>
   <system:String x:Key="Text.PlayStopCameraVideoStream">Začne ali ustavi video tok kamere</system:String>
   <system:String x:Key="Text.CameraType">Izberite kamero</system:String>
