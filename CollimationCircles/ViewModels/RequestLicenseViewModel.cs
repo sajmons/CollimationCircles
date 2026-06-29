@@ -11,24 +11,16 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private INotifyPropertyChanged? dialog;
+        private INotifyPropertyChanged? dialog;        
 
         [ObservableProperty]
-        private bool isStandardLicense = true;
-
-        [ObservableProperty]
-        private bool isTrialLicense = false;
-
-        [ObservableProperty]
-        private string licenseRequestText = string.Empty;
-
-        private string licenseDuration = "Unlimited";
+        private string licenseRequestText = string.Empty;        
 
         public RequestLicenseViewModel()
         {
             Title = $"{ResSvc.TryGetString("RequestLicense")} - {ResSvc.TryGetString("CollimationCircles")} - {ResSvc.TryGetString("Version")} {AppService.GetAppVersionTitle()}";
 
-            LicenseRequestText = GetLicenceText();
+            LicenseRequestText = ClientId;
         }
 
         [RelayCommand]
@@ -45,20 +37,7 @@ namespace CollimationCircles.ViewModels
 
             DialogService.Show(parent, dialog);
             logger.Info("Request licence dialog opened");
-        }
-
-        [RelayCommand]
-        internal void Submit()
-        {
-            AppService.OpenUrl(AppService.RequestLicensePage);            
-
-            if (dialog != null)
-            {
-                ClipboardService.SetText(LicenseRequestText);
-                logger.Info($"Request licence send");
-                logger.Info($"License data requested: {LicenseRequestText}");
-            }
-        }
+        }        
 
         [RelayCommand]
         internal void BuyLicense()
@@ -71,27 +50,6 @@ namespace CollimationCircles.ViewModels
                 logger.Info($"Buy licence requested");
                 logger.Info($"License data requested: {LicenseRequestText}");
             }
-        }
-
-        partial void OnIsStandardLicenseChanged(bool value)
-        {
-            IsStandardLicense = value;
-            IsTrialLicense = !IsStandardLicense;
-
-            licenseDuration = IsStandardLicense ? "Unlimited" : "30 days"; // Set duration based on license type
-
-            LicenseRequestText = GetLicenceText();
-        }
-
-        private string GetLicenceText()
-        {
-            // licence information
-            string licenseType = IsStandardLicense ? "Standard" : "Trial";
-
-            return $"ClientId: {ClientId}" +
-                $"\nProduct: {Product} {ProductMajorVersion}" +
-                $"\nLicense Type: {licenseType}" +
-                $"\nDuration: {licenseDuration}";
-        }
+        }        
     }
 }

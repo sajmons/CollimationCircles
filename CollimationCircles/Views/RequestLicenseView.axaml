@@ -2,62 +2,36 @@
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-		mc:Ignorable="d" d:DesignWidth="650"
-		d:DesignHeight="290"
+		mc:Ignorable="d" d:DesignWidth="550"
+		d:DesignHeight="170"
 		x:Class="CollimationCircles.Views.RequestLicenseView"
 		xmlns:controls="clr-namespace:CollimationCircles.Controls"
 		Title="{Binding Title}"
 		xmlns:vm="using:CollimationCircles.ViewModels"
 		x:DataType="vm:RequestLicenseViewModel"
-		Width="650" Height="290"
+		Width="550" Height="170"
 		Icon="/Resources/Images/icon_256px.ico"
 		WindowStartupLocation="CenterScreen">
 	<StackPanel
 	Margin="20"
 	Spacing="10"
 	Orientation="Vertical">
-
-		<StackPanel
-		Spacing="10"
-		Orientation="Horizontal">
-			<TextBlock
-			VerticalAlignment="Center"
-			Text="{DynamicResource Text.LicenseType}"/>
-			<RadioButton
-			Content="{DynamicResource Text.StandardLicense}"
-			GroupName="LicenseType"
-			IsChecked="{ReflectionBinding IsStandardLicense}"/>
-			<RadioButton
-			IsChecked="{ReflectionBinding !IsStandardLicense}"
-			GroupName="LicenseType"
-			Content="{DynamicResource Text.TrialLicense}"/>
-		</StackPanel>
-
 		<TextBlock
 		Text="{DynamicResource Text.LicenseData}"/>
 		<SelectableTextBlock
 		TextWrapping="Wrap"
 		SelectionStart="0"
 		SelectionEnd="{ReflectionBinding LicenseRequestText.Length}"
-		Text="{ReflectionBinding LicenseRequestText}"/>
+		Text="{ReflectionBinding LicenseRequestText}"/>		
 		<TextBlock
 		TextWrapping="Wrap"
-		IsVisible="{ReflectionBinding !IsStandardLicense}"
-		Text="{DynamicResource Text.LicenseInstructions}"/>
-		<TextBlock
-		TextWrapping="Wrap"
-		IsVisible="{ReflectionBinding IsStandardLicense}"
+		FontWeight="Bold"
+		Foreground="IndianRed"
 		Text="{DynamicResource Text.BuyLicenseInstructions}"/>
-
-
 		<StackPanel Orientation="Horizontal" Spacing="{DynamicResource ControlSpacing}">
 			<Button
-			IsVisible="{ReflectionBinding IsStandardLicense}"
 			Content="{DynamicResource Text.BuyLicense}"
-			Command="{ReflectionBinding BuyLicense}"/>
-			<Button
-			Content="{DynamicResource Text.SendLicenseData2Author}"
-			Command="{ReflectionBinding Submit}"/>
+			Command="{ReflectionBinding BuyLicense}"/>			
 		</StackPanel>
 	</StackPanel>
 </Window>

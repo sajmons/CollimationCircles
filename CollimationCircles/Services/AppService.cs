@@ -34,7 +34,6 @@ public class AppService
     public const string PatreonWebPage = "https://www.patreon.com/SaimonsAstronomy";
     public const string LangDir = "CollimationCircles/Resources/Lang";
     public const string ProductName = "Collimation Circles";
-    public const string RequestLicensePage = $"{BasePage}/software/request-license";
     public const string LicenseUrl = $"https://saimons.gumroad.com/l/ubife";
 
     public static string GetAppMajorVersion()
