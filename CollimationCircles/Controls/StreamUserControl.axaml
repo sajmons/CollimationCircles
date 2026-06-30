@@ -92,24 +92,12 @@
               <Setter Property="IsVisible" Value="False"/>
             </Style>
           </ToggleButton.Styles>
-        </ToggleButton>
-        <Button
-            Theme="{DynamicResource ToolbarButton}"
-            Command="{Binding CameraSettingsCommand}"
-            ToolTip.Tip="{DynamicResource Text.CameraSettings}"
-            Grid.Column="2"
-            IsEnabled="{Binding ControlsEnabled}">
-          <PathIcon
-            Width="{DynamicResource PathIconWidth}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.Settings}" />
-        </Button>        
+        </ToggleButton>        
         <Button
           Theme="{DynamicResource ToolbarButton}"
           Command="{Binding ZoomInCommand}"
           ToolTip.Tip="{DynamicResource Text.ZoomIn}"
-          IsEnabled="{Binding ControlsEnabled}">
+          IsEnabled="{Binding IsPlaying}">
           <PathIcon
             Width="{DynamicResource PathIconWidth}"
             Height="{DynamicResource PathIconHeight}"
@@ -120,7 +108,7 @@
           Theme="{DynamicResource ToolbarButton}"
           Command="{Binding ZoomOutCommand}"
           ToolTip.Tip="{DynamicResource Text.ZoomOut}"
-          IsEnabled="{Binding ControlsEnabled}">
+          IsEnabled="{Binding IsPlaying}">
           <PathIcon
             Width="{DynamicResource PathIconWidth}"
             Height="{DynamicResource PathIconHeight}"
@@ -131,7 +119,7 @@
           Theme="{DynamicResource ToolbarButton}"
           Command="{Binding ZoomResetCommand}"
           ToolTip.Tip="{DynamicResource Text.ZoomReset}"
-          IsEnabled="{Binding ControlsEnabled}">
+          IsEnabled="{Binding IsPlaying}">
           <PathIcon
             Width="{DynamicResource PathIconWidth}"
             Height="{DynamicResource PathIconHeight}"

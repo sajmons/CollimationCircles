@@ -78,7 +78,6 @@ namespace CollimationCircles.ViewModels
         public void Translate(string targetLanguage)
         {
             ResSvc.Translate(targetLanguage);
-            Initialize();
         }
 
         public void InCaseOfValidLicense(Action callback)
@@ -145,7 +144,11 @@ namespace CollimationCircles.ViewModels
 
                 string dialogMessage = $"{message}\n{upgrade}";
 
+                AlwaysOnTop = false;
+
                 var dialogResult = await DialogService.ShowMessageBoxAsync(null, dialogMessage, title, MessageBoxButton.YesNo);
+
+                AlwaysOnTop = true;
 
                 if (dialogResult == true)
                 {
@@ -153,7 +156,7 @@ namespace CollimationCircles.ViewModels
                     var rlVm = Ioc.Default.GetRequiredService<RequestLicenseViewModel>();
 
                     rlVm.RequestLicense();
-                }
+                }                
             }
         }
 

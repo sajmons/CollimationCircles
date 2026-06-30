@@ -21,13 +21,11 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand]
-        internal void PayPalDonate()
+        internal void Donate()
         {
-            string text = ResSvc.TryGetString("PayPalDonation");
+            string text = ResSvc.TryGetString("Donation");
 
-            string encodedText = HttpUtility.UrlEncode(text);
-
-            string url = $"https://www.paypal.com/donate/?business=DBUQU9W2LNS2G&no_recurring=0&item_name={encodedText}&currency_code=EUR";
+            string url = $"https://saimons.gumroad.com/l/kilfjp";
 
             AppService.OpenUrl(url);
         }

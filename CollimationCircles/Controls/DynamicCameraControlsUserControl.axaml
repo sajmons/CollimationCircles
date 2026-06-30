@@ -27,7 +27,7 @@
   <StackPanel
     Orientation="Vertical"
     Spacing="20"
-    IsEnabled="{Binding IsOpened}">
+    IsVisible="{Binding IsPlaying}">
     <ItemsControl ItemsSource="{Binding Camera.Controls}" >
       <ItemsControl.ItemTemplate>
         <DataTemplate>

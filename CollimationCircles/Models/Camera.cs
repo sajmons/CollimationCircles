@@ -14,6 +14,9 @@ namespace CollimationCircles.Models
         [ObservableProperty]
         public List<ICameraControl> controls = [];
 
+        [ObservableProperty]
+        private bool isPlaying = false;
+
         public Camera()
         {
             if (OperatingSystem.IsWindows())

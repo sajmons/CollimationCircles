@@ -51,8 +51,8 @@ namespace CollimationCircles.Views
             double renderScale = 1.0;
             try
             {
-                if (VisualRoot is Avalonia.Rendering.IRenderRoot rr)
-                    renderScale = rr.RenderScaling;
+                if (VisualRoot is Avalonia.Controls.TopLevel tl)
+                    renderScale = tl.RenderScaling;
             }
             catch { }
 

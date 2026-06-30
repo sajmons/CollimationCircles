@@ -4,6 +4,7 @@
     {
         public const string ProfileManager = "Profile Manager";
         public const string MaxHelperItemsCount = "Max helper items count";
+        public const string LiveAnalysis = "Live Analysis";
 
         public FeatureList()
         {
@@ -11,6 +12,9 @@
             //    new Feature { Name = ProfileManager },
             //    new Feature { Name = MaxHelperItemsCount, Numeric = 5 }
             //]);
+            AddRange([
+                new Feature { Name = LiveAnalysis }
+            ]);
         }
 
         public Dictionary<string, string> ToDictionary()

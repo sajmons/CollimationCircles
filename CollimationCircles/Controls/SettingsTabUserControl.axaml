@@ -55,6 +55,9 @@
       </Grid>
 
       <CheckBox
+        Content="{DynamicResource Text.CompactThemeDensity}"
+        IsChecked="{Binding CompactThemeDensity}" />
+      <CheckBox
         Content="{DynamicResource Text.CheckForNewVersion}"
         IsChecked="{Binding CheckForNewVersionOnStartup}" />
       <CheckBox
@@ -68,7 +71,7 @@
         IsChecked="{Binding ShowApplicationLog}" />
       <CheckBox
         Content="{DynamicResource Text.ShowKeyboardShortcuts}"
-        IsChecked="{Binding ShowKeyboardShortcuts}" />
+        IsChecked="{Binding ShowKeyboardShortcuts}" />      
 
     </StackPanel>
   </Border>

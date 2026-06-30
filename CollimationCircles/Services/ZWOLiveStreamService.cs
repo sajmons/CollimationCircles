@@ -1,8 +1,6 @@
 using CollimationCircles.Models;
 using NLog;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.PixelFormats;
+using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -351,23 +349,27 @@ namespace CollimationCircles.Services
 
         private static byte[] EncodeGrayscaleToJpeg(byte[] rawY8, int width, int height)
         {
-            using var image = Image.LoadPixelData<L8>(rawY8, width, height);
-            using var ms = new MemoryStream();
-            image.Save(ms, new JpegEncoder { Quality = 80 });
-            return ms.ToArray();
+            // ZWO delivers Y8 data: one byte per pixel. Read it as a single
+            // channel ("R") instead of RGB (which would expect 3 bytes/pixel).
+            using var image = new MagickImage(rawY8, new PixelReadSettings((uint)width, (uint)height, StorageType.Char, "R"));
+            image.ColorSpace = ColorSpace.Gray;
+            image.Format = MagickFormat.Jpeg;
+            image.Quality = 80;
+
+            return image.ToByteArray();
         }
 
         /// <summary>
-        /// Encodes RGB24 raw data (3 bytes/pixel, R-G-B interleaved) to JPEG.
-        /// The ZWO SDK returns RGB24 in BGR order, so we use Bgr24 pixel format.
+        /// Encodes RGB24 raw data (3 bytes/pixel, B-G-R interleaved) to JPEG.
+        /// The ZWO SDK returns RGB24 in BGR order.
         /// </summary>
         private static byte[] EncodeColorToJpeg(byte[] rawRGB24, int width, int height)
         {
-            // ZWO SDK RGB24 is actually BGR (Blue, Green, Red) interleaved.
-            using var image = Image.LoadPixelData<Bgr24>(rawRGB24, width, height);
-            using var ms = new MemoryStream();
-            image.Save(ms, new JpegEncoder { Quality = 80 });
-            return ms.ToArray();
+            // ZWO SDK RGB24 is BGR interleaved — read as RGB with 3 char channels.
+            using var image = new MagickImage(rawRGB24, new PixelReadSettings((uint)width, (uint)height, StorageType.Char, "RGB"));
+            image.Format = MagickFormat.Jpeg;
+            image.Quality = 80;
+            return image.ToByteArray();
         }
 
         // ------------------------------------------------------------------ //

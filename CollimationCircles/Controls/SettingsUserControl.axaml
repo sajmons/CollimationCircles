@@ -17,19 +17,19 @@
             Margin="{DynamicResource TabIconMargin}"
             Height="{DynamicResource PathIconHeight}"
             Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.Shapes}"
-            ToolTip.Tip="{DynamicResource Text.Properties}" />
+            Data="{StaticResource IconData.Layers}"
+            ToolTip.Tip="{DynamicResource Text.Layers}" />
         </TabItem.Header>
         <controls:ItemListUserControl/>
-      </TabItem>
+      </TabItem>      
       <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>
           <PathIcon
               Margin="{DynamicResource TabIconMargin}"
               Height="{DynamicResource PathIconHeight}"
               Foreground="{DynamicResource Color2}"
-              Data="{StaticResource IconData.Tools}"
-              ToolTip.Tip="{DynamicResource Text.Tools}" />
+              Data="{StaticResource IconData.Camera}"
+              ToolTip.Tip="{DynamicResource Text.Video}" />
         </TabItem.Header>
         <ScrollViewer>
           <StackPanel Spacing="{DynamicResource ControlSpacing}">
@@ -40,29 +40,30 @@
                 IsExpanded="{Binding CameraVideoStreamExpanded}">
               <StackPanel Orientation="Vertical">
                 <controls:StreamUserControl/>
+                <controls:DynamicCameraControlsUserControl />
               </StackPanel>
-            </Expander>
-            <Expander
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Header="{DynamicResource Text.ProfileManagerTitle}"
-              IsExpanded="{Binding ProfileManagerExpanded}">
-              <StackPanel Orientation="Vertical">
-                <controls:ProfileManagerUserControl/>
-              </StackPanel>
-            </Expander>
-            <Expander
-              VerticalAlignment="Top"
-              HorizontalAlignment="Stretch"
-              Header="{DynamicResource Text.AiryDiscAnalysis}"
-              IsExpanded="{Binding CameraVideoStreamExpanded}"
-              IsVisible="{Binding IsDebug}">
-              <StackPanel Orientation="Vertical">
-                <controls:CollimationAnalysisUserControl/>
-              </StackPanel>
-            </Expander>
+            </Expander>            
           </StackPanel>
         </ScrollViewer>
+      </TabItem>
+      <TabItem Margin="-5 0 -5 0">
+        <TabItem.Header>
+          <PathIcon
+            Margin="{DynamicResource TabIconMargin}"
+            Height="{DynamicResource PathIconHeight}"
+            Foreground="{DynamicResource Color2}"
+            Data="{StaticResource IconData.Collimation}"
+            ToolTip.Tip="{DynamicResource Text.Collimation}" />
+        </TabItem.Header>
+        <Expander
+            VerticalAlignment="Top"
+            HorizontalAlignment="Stretch"
+            Header="{DynamicResource Text.LiveAnalysisResults}"
+            IsExpanded="{Binding LiveAnalysisResultsExpanded}">
+            <StackPanel Orientation="Vertical">
+            <controls:LiveAnalysisResultsUserControl/>
+            </StackPanel>
+        </Expander>
       </TabItem>
       <TabItem Margin="-5 0 -5 0">
         <TabItem.Header>

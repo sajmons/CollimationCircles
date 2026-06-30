@@ -1,4 +1,4 @@
-﻿using CollimationCircles.Helper.RpiCameraTools;
+using CollimationCircles.Helper.RpiCameraTools;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using Avalonia.Threading;
@@ -74,7 +74,15 @@ namespace CollimationCircles.Services
             // the very long ./configure banner string on that platform.  We keep
             // verbosity at 0 (default) and rely on the managed Log callback below for
             // the messages we actually care about.
-            string[] libVLCOptions = [];
+            string[] libVLCOptions = [
+                // "--verbose=3",
+                "--no-snapshot-preview",
+                "--no-osd",
+                "--no-video-title-show",
+                "--avcodec-hw=none", // Disables hardware video decoding flags that crash some ARM64 drivers
+                "--no-media-library",
+                "--no-stats"
+            ];
 
             if (TryInitializeMacArm64LibVlc(libVLCOptions, out LibVLC? arm64LibVlc, out MediaPlayer? arm64MediaPlayer))
             {
@@ -515,14 +523,37 @@ namespace CollimationCircles.Services
 
             FullAddress = GetFullUrlFromParts(camera);
             return FullAddress;
-        }
+        }        
 
-        public void TakeSnapshot()
+        public async Task<byte[]?> TakeSnapshotDataAsync()
         {
-            if (MediaPlayer?.IsPlaying == true)
+            Guard.IsNotNull(MediaPlayer);
+
+            if (!MediaPlayer.IsPlaying) return null;
+
+            string tempFile = Path.Combine(Path.GetTempPath(), $"live_collimation_{Guid.NewGuid()}.jpg");
+            try
             {
-                MediaPlayer.TakeSnapshot(0, $".\\{SnapshotImageFile}", 800, 600);
+                if (MediaPlayer.TakeSnapshot(0, tempFile, 0, 0))
+                {
+                    // Wait a moment for file to be written (LibVLC snapshot is async internally)
+                    for (int i = 0; i < 5; i++)
+                    {
+                        if (File.Exists(tempFile))
+                        {
+                            byte[] data = await File.ReadAllBytesAsync(tempFile);
+                            File.Delete(tempFile);
+                            return data;
+                        }
+                        await Task.Delay(50);
+                    }
+                }
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to capture live snapshot data");
+            }
+            return null;
         }
 
         private void StopZwoStream()

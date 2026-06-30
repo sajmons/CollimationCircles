@@ -51,8 +51,8 @@
             <Button
               Width="110"
               HorizontalContentAlignment="Center"
-              Command="{Binding PayPalDonateCommand}"
-              Content="{DynamicResource Text.PayPalDonate}"/>
+              Command="{Binding DonateCommand}"
+              Content="{DynamicResource Text.Donation}"/>
 
             <Button
               Width="110"

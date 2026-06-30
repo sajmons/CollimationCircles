@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
@@ -65,17 +65,13 @@ namespace CollimationCircles.ViewModels
         private Camera selectedCamera = new();
 
         [ObservableProperty]
-        private bool controlsEnabled = false;
-
-        [ObservableProperty]
         bool displayAdvancedDShowDialog = false;
 
-        public StreamViewModel(ILibVLCService libVLCService, ICameraControlService cameraControlService, SettingsViewModel settingsViewModel)
+        public StreamViewModel()
         {
-            this.libVLCService = libVLCService;
-            this.settingsViewModel = settingsViewModel;
-            this.cameraControlService = cameraControlService;
-
+            this.libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
+            this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            this.cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
             FullAddress = this.libVLCService.FullAddress;
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
@@ -109,7 +105,10 @@ namespace CollimationCircles.ViewModels
 
             ShowWebCamStream();
             IsPlaying = SelectedCamera?.APIType == APIType.Zwo || libVLCService.MediaPlayer?.IsPlaying == true;
-            ControlsEnabled = false;
+            if (SelectedCamera is not null)
+            {
+                SelectedCamera.IsPlaying = IsPlaying;
+            }
         }
 
         private void MediaPlayer_Playing()
@@ -118,7 +117,7 @@ namespace CollimationCircles.ViewModels
 
             logger.Trace($"MediaPlayer playing");
             IsPlaying = SelectedCamera.APIType == APIType.Zwo || libVLCService.MediaPlayer?.IsPlaying == true;
-            ControlsEnabled = IsPlaying;
+            SelectedCamera.IsPlaying = IsPlaying;
         }
 
         private void MediaPlayer_Closed()
@@ -127,7 +126,10 @@ namespace CollimationCircles.ViewModels
 
             CloseWebCamStream();
             IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
-            ControlsEnabled = false;
+            if (SelectedCamera is not null)
+            {
+                SelectedCamera.IsPlaying = IsPlaying;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
@@ -252,23 +254,11 @@ namespace CollimationCircles.ViewModels
             settingsViewModel.PinVideoWindowToMainWindow = newValue;
         }
 
-        [RelayCommand]
-        private void CameraSettings()
+        partial void OnIsPlayingChanged(bool oldValue, bool newValue)
         {
-            if (SettingsDialogViewModel is null)
+            if (SelectedCamera is not null)
             {
-                SettingsDialogViewModel = DialogService.CreateViewModel<CameraControlsViewModel>();
-
-                if (SettingsDialogViewModel is not null)
-                {
-                    DialogService.Show(null, SettingsDialogViewModel);
-                    logger.Info("Opened camera controls dialog");
-                }
-            }
-            else
-            {
-                DialogService.Close(SettingsDialogViewModel);
-                DialogService.Show(null, SettingsDialogViewModel);
+                SelectedCamera.IsPlaying = newValue;
             }
         }
 
@@ -277,11 +267,11 @@ namespace CollimationCircles.ViewModels
         {
             CameraList = new ObservableCollection<Camera>(await cameraControlService.GetCameraList());
             SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
-        }
+        }        
 
         public void OnClosed()
         {
-            SettingsDialogViewModel = null;
+            //SettingsDialogViewModel = null;
         }
 
         partial void OnSelectedCameraChanged(Camera? oldValue, Camera newValue)
@@ -291,6 +281,7 @@ namespace CollimationCircles.ViewModels
                 FullAddress = libVLCService.DefaultAddress(newValue);
                 RemoteConnection = SelectedCamera?.APIType == APIType.Remote;
                 this.settingsViewModel.LastSelectedCamera = newValue.Name;
+                newValue.IsPlaying = IsPlaying;
                 logger.Info($"Selected camera changed to '{newValue.Name}'");
             }
         }
@@ -305,6 +296,7 @@ namespace CollimationCircles.ViewModels
         private void Default()
         {
             SelectedCamera?.SetDefaultControls();
+            logger.Info("Default camera controls command ececuted");
         }
     }
 }

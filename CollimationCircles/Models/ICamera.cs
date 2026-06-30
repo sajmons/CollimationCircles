@@ -9,6 +9,7 @@ namespace CollimationCircles.Models
         public APIType APIType { get; set; }
         public string Path { get; set; }
         public List<ICameraControl> Controls { get; set; }
+        public bool IsPlaying { get; set; }
         public void SetDefaultControls();
     }
 }
