@@ -180,4 +180,5 @@
   <system:String x:Key="Text.CompactThemeDensity">Aspect compact</system:String>
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Fonctionnalité expérimentale!</system:String>    
+  <system:String x:Key="Text.CheckForUpdate">Vérifier les mises à jour</system:String>
 </ResourceDictionary>

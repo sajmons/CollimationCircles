@@ -8,72 +8,79 @@
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
 
-  <Border
-    Background="{DynamicResource ExpanderContentBackground}"
-    BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
-    BorderBrush="{DynamicResource ExpanderContentBorderBrush}"
-    CornerRadius="{DynamicResource ControlCornerRadius}"
-    Padding="{DynamicResource ExpanderContentPadding}">
-    <StackPanel
-      Orientation="Vertical">
+    <Border
+        Background="{DynamicResource ExpanderContentBackground}"
+        BorderThickness="{DynamicResource ExpanderHeaderBorderThickness}"
+        BorderBrush="{DynamicResource ExpanderContentBorderBrush}"
+        CornerRadius="{DynamicResource ControlCornerRadius}"
+        Padding="{DynamicResource ExpanderContentPadding}">
+        <Grid RowDefinitions="*,Auto">
+            <StackPanel
+                Orientation="Vertical">
 
-      <Grid
-        ColumnDefinitions="*,95"
-        RowDefinitions="40,40">
-        <TextBlock
-          TextWrapping="WrapWithOverflow"
-          Text="{DynamicResource Text.UserInterfaceLanguage}"
-          VerticalAlignment="Center"/>
-        <ComboBox
-          Grid.Column="1"
-          HorizontalAlignment="Stretch"
-          ItemsSource="{Binding LanguageList}"
-          SelectedItem="{Binding SelectedLanguage}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding Key}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-        <TextBlock
-          Grid.Row="1"
-          TextWrapping="WrapWithOverflow"
-          Text="{DynamicResource Text.UserInterfaceTheme}"
-          VerticalAlignment="Center"/>
-        <ComboBox
-          Grid.Row="1"
-          Grid.Column="1"
-          HorizontalAlignment="Stretch"
-          ItemsSource="{Binding ThemeList}"
-          SelectedItem="{Binding SelectedTheme}">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding}" />
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </Grid>
+                <Grid
+                    ColumnDefinitions="*,95"
+                    RowDefinitions="40,40">
+                    <TextBlock
+                        TextWrapping="WrapWithOverflow"
+                        Text="{DynamicResource Text.UserInterfaceLanguage}"
+                        VerticalAlignment="Center"/>
+                    <ComboBox
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding LanguageList}"
+                        SelectedItem="{Binding SelectedLanguage}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Key}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock
+                        Grid.Row="1"
+                        TextWrapping="WrapWithOverflow"
+                        Text="{DynamicResource Text.UserInterfaceTheme}"
+                        VerticalAlignment="Center"/>
+                    <ComboBox
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        HorizontalAlignment="Stretch"
+                        ItemsSource="{Binding ThemeList}"
+                        SelectedItem="{Binding SelectedTheme}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
 
-      <CheckBox
-        Content="{DynamicResource Text.CompactThemeDensity}"
-        IsChecked="{Binding CompactThemeDensity}" />
-      <CheckBox
-        Content="{DynamicResource Text.CheckForNewVersion}"
-        IsChecked="{Binding CheckForNewVersionOnStartup}" />
-      <CheckBox
-        Content="{DynamicResource Text.StayOnTop}"
-        IsChecked="{Binding AlwaysOnTop}" />
-      <CheckBox
-        Content="{DynamicResource Text.ShowMarkAtSelectedItem}"
-        IsChecked="{Binding ShowMarkAtSelectedItem}" />
-      <CheckBox
-        Content="{DynamicResource Text.ShowApplicationLog}"
-        IsChecked="{Binding ShowApplicationLog}" />
-      <CheckBox
-        Content="{DynamicResource Text.ShowKeyboardShortcuts}"
-        IsChecked="{Binding ShowKeyboardShortcuts}" />      
-
-    </StackPanel>
-  </Border>
+                <CheckBox
+                    Content="{DynamicResource Text.CompactThemeDensity}"
+                    IsChecked="{Binding CompactThemeDensity}" />
+                <CheckBox
+                    Content="{DynamicResource Text.CheckForNewVersion}"
+                    IsChecked="{Binding CheckForNewVersionOnStartup}" />
+                <CheckBox
+                    Content="{DynamicResource Text.StayOnTop}"
+                    IsChecked="{Binding AlwaysOnTop}" />
+                <CheckBox
+                    Content="{DynamicResource Text.ShowMarkAtSelectedItem}"
+                    IsChecked="{Binding ShowMarkAtSelectedItem}" />
+                <CheckBox
+                    Content="{DynamicResource Text.ShowApplicationLog}"
+                    IsChecked="{Binding ShowApplicationLog}" />
+                <CheckBox
+                    Content="{DynamicResource Text.ShowKeyboardShortcuts}"
+                    IsChecked="{Binding ShowKeyboardShortcuts}" />
+            </StackPanel>
+            <Button
+                Content="{DynamicResource Text.CheckForUpdate}"
+                Command="{Binding CheckForUpdateCommand}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                VerticalAlignment="Bottom"/>
+        </Grid>
+    </Border>
 
 </UserControl>

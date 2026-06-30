@@ -180,4 +180,5 @@
   <system:String x:Key="Text.CompactThemeDensity">Kompakten izgled</system:String>
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Eksperimentalna funkcija!</system:String>    
+  <system:String x:Key="Text.CheckForUpdate">Preveri za nadgradnjo</system:String>
 </ResourceDictionary>

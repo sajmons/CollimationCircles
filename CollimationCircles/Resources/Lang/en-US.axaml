@@ -194,4 +194,5 @@
   <system:String x:Key="Text.CompactThemeDensity">Compact Theme</system:String>
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Experimental feature!</system:String>    
+  <system:String x:Key="Text.CheckForUpdate">Check for Update</system:String>
 </ResourceDictionary>
