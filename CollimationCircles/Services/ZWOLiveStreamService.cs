@@ -372,19 +372,6 @@ namespace CollimationCircles.Services
             return image.ToByteArray();
         }
 
-        /// <summary>
-        /// Encodes RGB24 raw data (3 bytes/pixel, R-G-B interleaved) to JPEG.
-        /// The ZWO SDK returns RGB24 in BGR order, so we use Bgr24 pixel format.
-        /// </summary>
-        private static byte[] EncodeColorToJpeg(byte[] rawRGB24, int width, int height)
-        {
-            // ZWO SDK RGB24 is actually BGR (Blue, Green, Red) interleaved.
-            using var image = Image.LoadPixelData<Bgr24>(rawRGB24, width, height);
-            using var ms = new MemoryStream();
-            image.Save(ms, new JpegEncoder { Quality = 80 });
-            return ms.ToArray();
-        }
-
         // ------------------------------------------------------------------ //
         //  MJPEG HTTP server                                                  //
         // ------------------------------------------------------------------ //
