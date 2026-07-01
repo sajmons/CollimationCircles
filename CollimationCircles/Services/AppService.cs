@@ -224,7 +224,7 @@ public class AppService
         if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
         {
             using Process fileOpener = new();
-            fileOpener.StartInfo.FileName = "explorer";
+            fileOpener.StartInfo.FileName = "open";
             fileOpener.StartInfo.Arguments = "-R " + path;
             fileOpener.Start();
             await fileOpener.WaitForExitAsync();
