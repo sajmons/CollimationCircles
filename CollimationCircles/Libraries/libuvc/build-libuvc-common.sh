@@ -93,11 +93,20 @@ elif [ "$PLATFORM" = "linux" ]; then
   OUTPUT_FILE="libuvc.so"
 
 elif [ "$PLATFORM" = "win" ]; then
-  # Resolve vcpkg toolchain
   if [ -z "$VCPKG_ROOT" ]; then
     echo "ERROR: VCPKG_ROOT is not set"; exit 1
   fi
-  TOOLCHAIN="$(cygpath -m "$VCPKG_ROOT")/scripts/buildsystems/vcpkg.cmake"
+
+  # Convert Windows backslash path to forward slashes for bash/cmake
+  TOOLCHAIN="$(echo "$VCPKG_ROOT" | sed 's|\\|/|g')/scripts/buildsystems/vcpkg.cmake"
+  echo "Using vcpkg toolchain: $TOOLCHAIN"
+
+  # CMake -A flag requires uppercase for ARM64
+  case "$ARCH" in
+    x64)   CMAKE_PLATFORM="x64" ;;
+    arm64) CMAKE_PLATFORM="ARM64" ;;
+    *)     CMAKE_PLATFORM="$ARCH" ;;
+  esac
 
   cmake .. \
     -DBUILD_SHARED_LIBS=ON \
@@ -106,7 +115,8 @@ elif [ "$PLATFORM" = "win" ]; then
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
     -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
     -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET:-x64-windows}" \
-    -A "${ARCH}"
+    -A "$CMAKE_PLATFORM"
+
   cmake --build . --config Release
 
   OUTPUT_FILE="Release/libuvc.dll"
