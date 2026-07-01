@@ -1,0 +1,22 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CollimationCircles
+Date: Mon, 1 Jul 2026
+Subject: [PATCH 2/2] macOS: try claim_interface even when detach fails with ERROR_ACCESS
+
+On macOS without com.apple.vm.device-access entitlement, libusb_detach_kernel_driver
+returns ERROR_ACCESS. But if the caller already detached the kernel driver via
+IOKit SetConfiguration(0), libusb_claim_interface still succeeds.
+
+--- a/src/device.c
++++ b/src/device.c
+@@ -985,7 +985,8 @@ uvc_error_t uvc_claim_if(uvc_device_handle_t *devh, int idx) {
+     UVC_DEBUG("claiming interface %d", idx);
+     if (!( ret = libusb_claim_interface(devh->usb_devh, idx))) {
+       devh->claimed |= ( 1 << idx );
+     }
+-  } else {
++  } else if (ret != LIBUSB_ERROR_ACCESS) {
++    /* On macOS, ERROR_ACCESS from detach is expected without entitlements — try claiming anyway */
+     UVC_DEBUG("not claiming interface %d: unable to detach kernel driver (%s)",
+               idx, uvc_strerror(ret));
+   }
