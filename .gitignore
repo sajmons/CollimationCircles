@@ -1,8 +1,4 @@
-﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
-################################################################################
-
-/.vs
+﻿/.vs
 /artifacts
 /FocusMaskTestImages
 /appstate.json
@@ -20,3 +16,5 @@
 /DxWebCam/obj
 /DxWebCam/bin/Debug/net10.0
 /DxWebCam/bin/Release/net10.0
+/CollimationCircles/bin
+/CollimationCircles/obj

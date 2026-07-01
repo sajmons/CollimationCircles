@@ -91,7 +91,7 @@
   <!-- ZWO ASI Camera SDK Libraries -->
   <Target Name="CopyZWOLibrariesMacArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
     <ItemGroup>
-      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\mac_arm64\libASICamera2.dylib*" />
+      <ZWOLibraries Include="Libraries\ASI_linux_mac_SDK_V1.41\lib\mac_arm64\libASICamera2.dylib*" />
     </ItemGroup>
     <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
     <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
@@ -99,7 +99,7 @@
 
   <Target Name="CopyZWOLibrariesMacX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
     <ItemGroup>
-      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\mac\libASICamera2.dylib*" />
+      <ZWOLibraries Include="Libraries\ASI_linux_mac_SDK_V1.41\lib\mac\libASICamera2.dylib*" />
     </ItemGroup>
     <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
     <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
@@ -107,7 +107,7 @@
 
   <Target Name="CopyZWOLibrariesLinuxX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
     <ItemGroup>
-      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\x64\libASICamera2.so*" />
+      <ZWOLibraries Include="Libraries\ASI_linux_mac_SDK_V1.41\lib\x64\libASICamera2.so*" />
     </ItemGroup>
     <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
     <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
@@ -115,7 +115,7 @@
 
   <Target Name="CopyZWOLibrariesLinuxArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
     <ItemGroup>
-      <ZWOLibraries Include="$(ProjectDir)..\Documentation\ASI_linux_mac_SDK_V1.41\lib\armv8\libASICamera2.so*" />
+      <ZWOLibraries Include="Libraries\ASI_linux_mac_SDK_V1.41\lib\armv8\libASICamera2.so*" />
     </ItemGroup>
     <Copy SourceFiles="@(ZWOLibraries)" DestinationFolder="$(OutputPath)" />
     <Message Text="Copied ZWO ASI Camera SDK libraries to $(OutputPath)" Importance="high" />
@@ -123,14 +123,14 @@
 
   <Target Name="CopyZWOWindowsLibraries" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
     <ItemGroup>
-      <ZWOWindowsLibraries Include="$(ProjectDir)..\Documentation\ASI_Windows_SDK_V1.41\lib\x64\ASICamera2.dll" />
+      <ZWOWindowsLibraries Include="Libraries\ASI_Windows_SDK_V1.41\lib\x64\ASICamera2.dll" />
     </ItemGroup>
     <Copy SourceFiles="@(ZWOWindowsLibraries)" DestinationFolder="$(OutputPath)" />
     <Message Text="Copied ZWO ASI Camera SDK Windows library to $(OutputPath)" Importance="high" />
   </Target>
 
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-    <Content Include="libvlc\**\*.*">
+    <Content Include="Libraries\libvlc\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
