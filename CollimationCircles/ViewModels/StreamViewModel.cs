@@ -80,6 +80,23 @@ namespace CollimationCircles.ViewModels
             {
                 CameraList = [.. await cameraControlService.GetCameraList()];
                 SelectedCamera = CameraList?.Where(c => c.Name == settingsViewModel.LastSelectedCamera)?.FirstOrDefault() ?? CameraList?.FirstOrDefault() ?? new();
+
+                if (!string.IsNullOrWhiteSpace(StartupOptions.AutoConnectCameraName) && CameraList.Count > 0)
+                {
+                    string targetCameraName = StartupOptions.AutoConnectCameraName!;
+                    Camera? cliCamera = CameraList.FirstOrDefault(c => string.Equals(c.Name, targetCameraName, StringComparison.OrdinalIgnoreCase));
+
+                    if (cliCamera is not null)
+                    {
+                        SelectedCamera = cliCamera;
+                        logger.Info($"Startup option --camera matched '{SelectedCamera.Name}'. Starting stream automatically.");
+                        await StartSelectedCameraAsync();
+                    }
+                    else
+                    {
+                        logger.Warn($"Startup option --camera='{targetCameraName}' did not match any discovered camera.");
+                    }
+                }
             });
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
@@ -133,7 +150,12 @@ namespace CollimationCircles.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
-        private void PlayPause()
+        private async Task PlayPause()
+        {
+            await StartSelectedCameraAsync();
+        }
+
+        private async Task StartSelectedCameraAsync()
         {
             Guard.IsNotNull(SelectedCamera);
 
@@ -149,7 +171,7 @@ namespace CollimationCircles.ViewModels
                 }
                 else
                 {
-                    libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
+                    await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
                 }
 
                 return;
@@ -162,7 +184,7 @@ namespace CollimationCircles.ViewModels
             {
                 if (!libVLCService.MediaPlayer.IsPlaying)
                 {
-                    libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
+                    await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
                 }
                 else
                 {
@@ -175,7 +197,7 @@ namespace CollimationCircles.ViewModels
             // First attempt: try to start the stream (this triggers lazy init).
             if (!libVLCService.IsAvailable)
             {
-                libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
+                await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
             }
 
             if (!libVLCService.IsAvailable)

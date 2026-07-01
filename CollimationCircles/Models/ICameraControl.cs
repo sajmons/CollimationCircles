@@ -9,6 +9,7 @@
         public int Default { get; set; }
         public int Value { get; set; }
         public bool AutoSupported { get; set; }
+        public bool IsModeOnly { get; set; }
         public bool IsAuto { get; set; }
         public string Flags { get; set; }
         public void SetDefault();

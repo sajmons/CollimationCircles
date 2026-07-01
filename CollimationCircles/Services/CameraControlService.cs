@@ -15,6 +15,8 @@ namespace CollimationCircles.Services
             Guard.IsNotNull(camera);
             Guard.IsTrue(camera.IsPlaying);
 
+            logger.Info($"Setting update requested: camera='{camera.Name}', api={camera.APIType}, control={controlName}, value={value}");
+
             // set camera control for V4L2 (Linux cameras)
             if (camera.APIType is APIType.V4l2)
             {
@@ -46,9 +48,15 @@ namespace CollimationCircles.Services
         {
             Guard.IsNotNull(camera);
 
+            logger.Info($"Auto-setting update requested: camera='{camera.Name}', api={camera.APIType}, control={controlName}, isAuto={isAuto}");
+
             if (camera.APIType is APIType.Zwo)
             {
                 new ZWOCameraDetect().SetControlAuto(camera, controlName, isAuto);
+            }
+            else if (camera.APIType is APIType.QTCapture)
+            {
+                new MacOSCameraDetect().SetControlAuto(camera, controlName, isAuto);
             }
         }
 

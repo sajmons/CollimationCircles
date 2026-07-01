@@ -26,6 +26,8 @@ namespace CollimationCircles
         [STAThread]
         public static void Main(string[] args)
         {
+            StartupOptions.Initialize(args);
+
             // Disable the NLog console target when stdout is not connected to a terminal.
             // Without this, the pipe buffer (~64 KB) fills from verbose logging and every
             // subsequent log call blocks indefinitely, making the window appear frozen.
