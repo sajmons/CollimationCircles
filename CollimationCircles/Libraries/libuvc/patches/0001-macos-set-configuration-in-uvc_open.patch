@@ -1,0 +1,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: CollimationCircles
+Date: Mon, 1 Jul 2026
+Subject: [PATCH 1/2] macOS: add libusb_set_configuration in uvc_open
+
+After IOKit SetConfiguration(0) detaches the kernel driver, the device is
+unconfigured (config 0). Re-activate the configuration through libusb so
+interfaces become claimable. This does NOT go through IOKit, so the kernel
+driver does NOT re-attach.
+
+--- a/src/device.c
++++ b/src/device.c
+@@ -329,6 +329,17 @@ uvc_error_t uvc_open(
+     return ret;
+   }
+ 
++  /* macOS: after IOKit SetConfiguration(0) detached the kernel driver,
++   * the device is unconfigured (config 0). Re-activate the configuration
++   * through libusb so interfaces become claimable. */
++  #ifdef __APPLE__
++  {
++    int cfg_ret = libusb_set_configuration(usb_devh, 1);
++    UVC_DEBUG("libusb_set_configuration(1) = %d", cfg_ret);
++    if (cfg_ret != LIBUSB_SUCCESS && cfg_ret != LIBUSB_ERROR_BUSY) {
++      UVC_DEBUG("libusb_set_configuration failed: %d", cfg_ret);
++    }
++  }
++  #endif
++
+   ret = uvc_open_internal(dev, usb_devh, devh);
+   UVC_EXIT(ret);
+   return ret;

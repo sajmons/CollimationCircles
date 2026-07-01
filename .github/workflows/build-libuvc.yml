@@ -1,0 +1,122 @@
+name: Build libuvc
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────
+  # macOS — arm64 + x64
+  # ─────────────────────────────────────────────────────────────────────
+  macos:
+    name: macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-26 # Apple Silicon
+          - arch: x64
+            runner: macos-26-intel # Intel
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install prerequisites
+        run: brew install libusb cmake
+
+      - name: Build libuvc
+        run: |
+          cd CollimationCircles/Libraries/libuvc
+          ./macos/${{ matrix.arch }}/build.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libuvc-macos-${{ matrix.arch }}
+          path: CollimationCircles/Libraries/libuvc/macos/${{ matrix.arch }}/libuvc.dylib
+          if-no-files-found: error
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Linux — x64 + arm64
+  # ─────────────────────────────────────────────────────────────────────
+  linux:
+    name: Linux ${{ matrix.arch }}
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            cross_compile: false
+          - arch: arm64
+            cross_compile: true
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libusb-1.0-0-dev cmake
+          if [ "${{ matrix.cross_compile }}" = "true" ]; then
+            sudo apt-get install -y gcc-aarch64-linux-gnu
+          fi
+
+      - name: Build libuvc
+        run: |
+          cd CollimationCircles/Libraries/libuvc
+          if [ "${{ matrix.cross_compile }}" = "true" ]; then
+            export CMAKE_EXTRA="-DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc"
+          fi
+          ./linux/${{ matrix.arch }}/build.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libuvc-linux-${{ matrix.arch }}
+          path: CollimationCircles/Libraries/libuvc/linux/${{ matrix.arch }}/libuvc.so
+          if-no-files-found: error
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Windows — x64 + arm64
+  # ─────────────────────────────────────────────────────────────────────
+  windows:
+    name: Windows ${{ matrix.arch }}
+    runs-on: windows-2022
+    strategy:
+      matrix:
+        include:
+          - arch: x64
+            vcpkg_triplet: x64-windows
+          - arch: arm64
+            vcpkg_triplet: arm64-windows
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install libusb via vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: "f74232618095492286d04be2810e0a4e0b8163cb"
+          runVcpkgFormat: "install"
+          vcpkgJsonManifest: |
+            {
+              "name": "collimation-circles-libuvc-build",
+              "version": "1.0.0",
+              "dependencies": ["libusb"]
+            }
+          vcpkgTriplet: ${{ matrix.vcpkg_triplet }}
+
+      - name: Build libuvc
+        shell: pwsh
+        run: |
+          $env:VCPKG_ROOT = $env:VCPKG_INSTALLATION_ROOT
+          cd CollimationCircles/Libraries/libuvc
+          bash ./win/${{ matrix.arch }}/build.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libuvc-win-${{ matrix.arch }}
+          path: CollimationCircles/Libraries/libuvc/win/${{ matrix.arch }}/libuvc.dll
+          if-no-files-found: error
