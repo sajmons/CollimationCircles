@@ -85,35 +85,46 @@ jobs:
   # ─────────────────────────────────────────────────────────────────────
   windows:
     name: Windows ${{ matrix.arch }}
-    runs-on: windows-2022
+    runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - arch: x64
             vcpkg_triplet: x64-windows
+            runner: windows-2025
           - arch: arm64
             vcpkg_triplet: arm64-windows
+            runner: windows-11-arm
     steps:
       - uses: actions/checkout@v7
 
+      - name: Write vcpkg manifest
+        shell: pwsh
+        run: |
+          @'
+          {
+            "name": "collimation-circles-libuvc-build",
+            "version-string": "1.0.0",
+            "dependencies": [ "libusb" ]
+          }
+          '@ | Set-Content -Path vcpkg.json
+
       - name: Install libusb via vcpkg
         uses: lukka/run-vcpkg@v11
+        env:
+          VCPKG_DEFAULT_TRIPLET: ${{ matrix.vcpkg_triplet }}
         with:
-          vcpkgGitCommitId: "f74232618095492286d04be2810e0a4e0b8163cb"
-          runVcpkgFormat: "install"
-          vcpkgJsonManifest: |
-            {
-              "name": "collimation-circles-libuvc-build",
-              "version": "1.0.0",
-              "dependencies": ["libusb"]
-            }
-          vcpkgTriplet: ${{ matrix.vcpkg_triplet }}
+          vcpkgGitCommitId: f74232618095492286d04be2810e0a4e0b8163cb
+          runVcpkgInstall: true
+          vcpkgJsonGlob: "**/vcpkg.json"
 
       - name: Build libuvc
         shell: pwsh
+        env:
+          VCPKG_DEFAULT_TRIPLET: ${{ matrix.vcpkg_triplet }}
+          VCPKG_ROOT: ${{ env.VCPKG_INSTALLATION_ROOT }}
         run: |
-          $env:VCPKG_ROOT = $env:VCPKG_INSTALLATION_ROOT
           cd CollimationCircles/Libraries/libuvc
           bash ./win/${{ matrix.arch }}/build.sh
 
