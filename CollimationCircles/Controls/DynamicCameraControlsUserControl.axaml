@@ -26,9 +26,15 @@
   </UserControl.Styles>
   <StackPanel
     Orientation="Vertical"
-    Spacing="20"
-    IsVisible="{Binding IsPlaying}">
-    <ItemsControl ItemsSource="{Binding Camera.Controls}" >
+    Spacing="20">
+    <TextBlock
+      IsVisible="{Binding !HasCameraControls}"
+      Text="No adjustable camera settings are exposed for this camera on macOS AVFoundation."
+      TextWrapping="Wrap" />
+
+    <ItemsControl
+      IsVisible="{Binding HasCameraControls}"
+      ItemsSource="{Binding Camera.Controls}" >
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <Grid
@@ -44,6 +50,7 @@
             <Slider
               Grid.RowSpan="3"
               Grid.ColumnSpan="2"
+              IsVisible="{Binding !IsModeOnly}"
               Value="{Binding Value}"
               Minimum="{Binding Min}"
               Maximum="{Binding Max}"
@@ -51,8 +58,16 @@
             <TextBox
               Grid.Row="1"
               Grid.Column="1"
+              IsVisible="{Binding !IsModeOnly}"
               IsEnabled="{Binding !IsAuto}"
               Text="{Binding Value}"/>
+            <TextBlock
+              Grid.Row="1"
+              Grid.Column="0"
+              Grid.ColumnSpan="2"
+              IsVisible="{Binding IsModeOnly}"
+              Opacity="0.8"
+              Text="Mode control: use Auto toggle (Auto vs Locked)." />
           </Grid>
         </DataTemplate>
       </ItemsControl.ItemTemplate>

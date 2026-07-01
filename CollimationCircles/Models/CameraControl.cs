@@ -14,6 +14,7 @@ namespace CollimationCircles.Models
         public int Default { get; set; }
         public ControlValueType ValueType { get; set; }
         public bool AutoSupported { get; set; }
+        public bool IsModeOnly { get; set; }
 
         [ObservableProperty]
         private int value;
