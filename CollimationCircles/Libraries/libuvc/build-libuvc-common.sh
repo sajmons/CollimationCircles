@@ -27,6 +27,7 @@ fi
 echo "=== Building libuvc: ${PLATFORM}/${ARCH} ==="
 echo "Build dir: $BUILD_DIR"
 
+# Clone libuvc
 git clone --depth 1 https://github.com/libuvc/libuvc.git "$BUILD_DIR/libuvc"
 cd "$BUILD_DIR/libuvc"
 
@@ -53,8 +54,10 @@ fi
 mkdir -p build && cd build
 
 if [ "$PLATFORM" = "macos" ]; then
+  # macOS: build as dylib, fix install names, code-sign
   LIBUSB_PATH=$(pkg-config --variable=libdir libusb-1.0 2>/dev/null || echo "/opt/homebrew/opt/libusb/lib")
   EXTRA_CMAKE=""
+  # On x64, prefer Intel Homebrew
   if [ "$ARCH" = "x64" ] && [ -d "/usr/local/lib" ]; then
     LIBUSB_PATH="/usr/local/lib"
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
@@ -70,19 +73,21 @@ if [ "$PLATFORM" = "macos" ]; then
     $EXTRA_CMAKE
   make -j$(sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
+  # Fix install names
   install_name_tool -id @rpath/libuvc.dylib libuvc.dylib
+  # Try both the Cellar path and the opt symlink path
   install_name_tool -change "${LIBUSB_PATH}/libusb-1.0.0.dylib" @loader_path/libusb-1.0.0.dylib libuvc.dylib 2>/dev/null || true
   install_name_tool -change "/opt/homebrew/opt/libusb/lib/libusb-1.0.0.dylib" @loader_path/libusb-1.0.0.dylib libuvc.dylib 2>/dev/null || true
 
   OUTPUT_FILE="libuvc.dylib"
 
 elif [ "$PLATFORM" = "linux" ]; then
+  # Linux: build as .so
   cmake .. \
     -DBUILD_SHARED_LIBS=ON \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
-    ${CMAKE_EXTRA:-}
+    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON
   make -j$(nproc 2>/dev/null || echo 4)
 
   OUTPUT_FILE="libuvc.so"
