@@ -102,9 +102,15 @@ jobs:
           switch ("${{ matrix.runtime }}") {
             'osx-arm64' {
               Copy-Item -Force './CollimationCircles/Libraries/ASI_linux_mac_SDK_V1.41/lib/mac_arm64/libASICamera2.dylib*' $output
+              # Copy libusb + libuvc for UVC camera control and streaming on macOS
+              Copy-Item -Force './CollimationCircles/Libraries/libusb/macos/arm64/libusb-1.0.0.dylib' $output
+              Copy-Item -Force './CollimationCircles/Libraries/libuvc/macos/arm64/libuvc.dylib' $output
             }
             'osx-x64' {
               Copy-Item -Force './CollimationCircles/Libraries/ASI_linux_mac_SDK_V1.41/lib/mac/libASICamera2.dylib*' $output
+              # Copy libusb + libuvc for UVC camera control and streaming on macOS
+              Copy-Item -Force './CollimationCircles/Libraries/libusb/macos/x64/libusb-1.0.0.dylib' $output
+              Copy-Item -Force './CollimationCircles/Libraries/libuvc/macos/x64/libuvc.dylib' $output
             }
             'linux-x64' {
               Copy-Item -Force './CollimationCircles/Libraries/ASI_linux_mac_SDK_V1.41/lib/x64/libASICamera2.so*' $output
