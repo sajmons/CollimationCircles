@@ -26,7 +26,8 @@
   </UserControl.Styles>
   <StackPanel
     Orientation="Vertical"
-    Spacing="20">
+    Spacing="20"
+    IsVisible="{Binding IsPlaying}">
     <TextBlock
       IsVisible="{Binding !HasCameraControls}"
       Text="No adjustable camera settings are exposed for this camera on macOS AVFoundation."
