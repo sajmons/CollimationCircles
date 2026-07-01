@@ -10,7 +10,7 @@ driver does NOT re-attach.
 
 --- a/src/device.c
 +++ b/src/device.c
-@@ -329,6 +329,17 @@ uvc_error_t uvc_open(
+@@ -329,6 +329,19 @@ uvc_error_t uvc_open(
      return ret;
    }
  
