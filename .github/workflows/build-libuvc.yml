@@ -20,7 +20,7 @@ jobs:
         include:
           - arch: arm64
             runner: macos-26 # Apple Silicon
-          - arch: x86_64
+          - arch: x64
             runner: macos-26-intel # Intel
     steps:
       - uses: actions/checkout@v7
