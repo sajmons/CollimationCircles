@@ -5,4 +5,4 @@
 #   arch -x86_64 /usr/local/bin/brew install libusb
 set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-exec "$SCRIPT_DIR/../build-libuvc-common.sh" macos x64 "$SCRIPT_DIR"
+exec "$SCRIPT_DIR/../../build-libuvc-common.sh" macos x64 "$SCRIPT_DIR"
