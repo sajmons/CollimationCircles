@@ -25,60 +25,18 @@ echo "Build dir: $BUILD_DIR"
 git clone --depth 1 https://github.com/libuvc/libuvc.git "$BUILD_DIR/libuvc"
 cd "$BUILD_DIR/libuvc"
 
-# Apply patches (Python-based, reliable across platforms)
+# Apply patches
 if [ "$APPLY_PATCHES" != "--no-patches" ]; then
-  python3 -c "
-import sys
-
-with open('src/device.c', 'r') as f:
-    content = f.read()
-
-# Patch 1 (macOS only): add libusb_set_configuration in uvc_open
-if '$PLATFORM' == 'macos':
-    old1 = '''  ret = uvc_open_internal(dev, usb_devh, devh);
-  UVC_EXIT(ret);
-  return ret;
-}
-
-static uvc_error_t uvc_open_internal('''
-    new1 = '''  /* macOS: after IOKit SetConfiguration(0) detached the kernel driver,
-   * the device is unconfigured (config 0). Re-activate the configuration
-   * through libusb so interfaces become claimable. */
-  #ifdef __APPLE__
-  {
-    int cfg_ret = libusb_set_configuration(usb_devh, 1);
-    UVC_DEBUG(\"libusb_set_configuration(1) = %d\", cfg_ret);
-    if (cfg_ret != LIBUSB_SUCCESS && cfg_ret != LIBUSB_ERROR_BUSY) {
-      UVC_DEBUG(\"libusb_set_configuration failed: %d\", cfg_ret);
-    }
-  }
-  #endif
-
-  ret = uvc_open_internal(dev, usb_devh, devh);
-  UVC_EXIT(ret);
-  return ret;
-}
-
-static uvc_error_t uvc_open_internal('''
-    if old1 not in content:
-        print('ERROR: Could not find uvc_open anchor text for patch 1', file=sys.stderr)
-        sys.exit(1)
-    content = content.replace(old1, new1, 1)
-    print('Patch 1 applied: uvc_open libusb_set_configuration')
-
-# Patch 2 (macOS only): try claim_interface even when detach fails with ERROR_ACCESS
-if '$PLATFORM' == 'macos':
-    old2 = '  if (ret == UVC_SUCCESS || ret == LIBUSB_ERROR_NOT_FOUND || ret == LIBUSB_ERROR_NOT_SUPPORTED) {'
-    new2 = '  if (ret == UVC_SUCCESS || ret == LIBUSB_ERROR_NOT_FOUND || ret == LIBUSB_ERROR_NOT_SUPPORTED\n      || ret == LIBUSB_ERROR_ACCESS) {'
-    if old2 not in content:
-        print('ERROR: Could not find uvc_claim_if anchor text for patch 2', file=sys.stderr)
-        sys.exit(1)
-    content = content.replace(old2, new2, 1)
-    print('Patch 2 applied: uvc_claim_if ERROR_ACCESS handling')
-
-with open('src/device.c', 'w') as f:
-    f.write(content)
-"
+  for patch_file in "$SCRIPT_DIR"/patches/*.patch; do
+    patch_name="$(basename "$patch_file")"
+    # macOS patches only apply on macOS
+    if echo "$patch_name" | grep -q "macos" && [ "$PLATFORM" != "macos" ]; then
+      echo "Skipping macOS-only patch: $patch_name"
+      continue
+    fi
+    echo "Applying patch: $patch_name"
+    git apply "$patch_file" || { echo "ERROR: Failed to apply $patch_name"; exit 1; }
+  done
 fi
 
 # Build
@@ -91,9 +49,6 @@ if [ "$PLATFORM" = "macos" ]; then
   if [ "$ARCH" = "x64" ] && [ -d "/usr/local/lib" ]; then
     LIBUSB_PATH="/usr/local/lib"
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
-    EXTRA_CMAKE="-DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0 -DLIBUSB_LIBRARY=/usr/local/lib/libusb-1.0.0.dylib"
-  else
-    EXTRA_CMAKE=""
   fi
 
   cmake .. \
@@ -102,7 +57,7 @@ if [ "$PLATFORM" = "macos" ]; then
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
     -DCMAKE_OSX_ARCHITECTURES="${ARCH}" \
-    $EXTRA_CMAKE
+    ${ARCH:+$([ "$ARCH" = "x64" ] && echo "-DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0 -DLIBUSB_LIBRARY=/usr/local/lib/libusb-1.0.0.dylib")}
   make -j$(sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
   # Fix install names

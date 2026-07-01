@@ -20,7 +20,7 @@ jobs:
         include:
           - arch: arm64
             runner: macos-26 # Apple Silicon
-          - arch: x64
+          - arch: x86_64
             runner: macos-26-intel # Intel
     steps:
       - uses: actions/checkout@v7
@@ -47,6 +47,7 @@ jobs:
     name: Linux ${{ matrix.arch }}
     runs-on: ubuntu-22.04
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: x64
@@ -86,6 +87,7 @@ jobs:
     name: Windows ${{ matrix.arch }}
     runs-on: windows-2022
     strategy:
+      fail-fast: false
       matrix:
         include:
           - arch: x64
