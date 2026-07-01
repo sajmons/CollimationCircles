@@ -1,0 +1,33 @@
+name: Build libusb
+
+on:
+  workflow_dispatch:
+
+jobs:
+  macos:
+    name: macOS ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - arch: arm64
+            runner: macos-26 # Apple Silicon
+          - arch: x64
+            runner: macos-26-intel # Intel
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install prerequisites
+        run: brew install libusb
+
+      - name: Build/extract libusb
+        run: |
+          cd CollimationCircles/Libraries/libusb
+          ./build-libusb.sh ${{ matrix.arch }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libusb-macos-${{ matrix.arch }}
+          path: CollimationCircles/Libraries/libusb/macos/${{ matrix.arch }}/libusb-1.0.0.dylib
+          if-no-files-found: error
