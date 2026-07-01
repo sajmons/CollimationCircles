@@ -3,7 +3,7 @@ name: Build and Release
 on:
   workflow_dispatch:
   push:
-    branches: ["*"]
+    branches: ["main", "release/3.x", "release/4.x"]
     tags: ["version-*"]
   pull_request:
     types: [opened, synchronize, reopened]
