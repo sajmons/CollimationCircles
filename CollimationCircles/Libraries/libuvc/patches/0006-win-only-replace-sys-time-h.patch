@@ -1,0 +1,26 @@
+# Windows only — applied when PLATFORM=win
+#
+# libuvc.h includes <sys/time.h>, which is a POSIX header not available on
+# Windows. This patch wraps it with #ifdef _WIN32 to use <winsock2.h> and
+# <time.h> instead (which provide the equivalent timeval/time_t types).
+#
+# Required because: MSVC does not have sys/time.h — the build fails with
+# error C1083: Cannot open include file: 'sys/time.h'.
+
+diff --git a/include/libuvc/libuvc.h b/include/libuvc/libuvc.h
+index d387150..452f4cf 100644
+--- a/include/libuvc/libuvc.h
++++ b/include/libuvc/libuvc.h
+@@ -7,7 +7,12 @@ extern "C" {
+ 
+ #include <stdio.h> // FILE
+ #include <stdint.h>
++#ifdef _WIN32
++#include <winsock2.h>
++#include <time.h>
++#else
+ #include <sys/time.h>
++#endif
+ #include <libuvc/libuvc_config.h>
+ 
+ struct libusb_context;
