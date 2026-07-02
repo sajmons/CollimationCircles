@@ -79,7 +79,26 @@ namespace CollimationCircles.ViewModels
             Dispatcher.UIThread.Post(async () =>
             {
                 CameraList = [.. await cameraControlService.GetCameraList()];
-                SelectedCamera = CameraList?.Where(c => c.Name == settingsViewModel.LastSelectedCamera)?.FirstOrDefault() ?? CameraList?.FirstOrDefault() ?? new();
+                SelectedCamera = CameraList.Where(c => c.Name == settingsViewModel.LastSelectedCamera).FirstOrDefault()
+                    ?? CameraList.FirstOrDefault()
+                    ?? new();
+
+                if (StartupOptions.AutoConnectCameraVidPid is { } targetVidPid && CameraList.Count > 0)
+                {
+                    Camera? vidPidCamera = CameraList.FirstOrDefault(c =>
+                        c.VendorId == targetVidPid.VendorId &&
+                        c.ProductId == targetVidPid.ProductId);
+
+                    if (vidPidCamera is not null)
+                    {
+                        SelectedCamera = vidPidCamera;
+                        logger.Info($"Startup option --camera-vidpid matched '{SelectedCamera.Name}' (VID={targetVidPid.VendorId} PID={targetVidPid.ProductId}). Starting stream automatically.");
+                        await StartSelectedCameraAsync();
+                        return;
+                    }
+
+                    logger.Warn($"Startup option --camera-vidpid='{targetVidPid.VendorId}:{targetVidPid.ProductId}' did not match any discovered camera.");
+                }
 
                 if (!string.IsNullOrWhiteSpace(StartupOptions.AutoConnectCameraName) && CameraList.Count > 0)
                 {
@@ -121,7 +140,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            IsPlaying = SelectedCamera?.APIType == APIType.Zwo || libVLCService.MediaPlayer?.IsPlaying == true;
+            IsPlaying = SelectedCamera?.APIType is APIType.Zwo or APIType.Uvc || libVLCService.MediaPlayer?.IsPlaying == true;
             if (SelectedCamera is not null)
             {
                 SelectedCamera.IsPlaying = IsPlaying;
@@ -133,7 +152,7 @@ namespace CollimationCircles.ViewModels
             Guard.IsNotNull(SelectedCamera);
 
             logger.Trace($"MediaPlayer playing");
-            IsPlaying = SelectedCamera.APIType == APIType.Zwo || libVLCService.MediaPlayer?.IsPlaying == true;
+            IsPlaying = SelectedCamera.APIType is APIType.Zwo or APIType.Uvc || libVLCService.MediaPlayer?.IsPlaying == true;
             SelectedCamera.IsPlaying = IsPlaying;
         }
 
@@ -159,6 +178,8 @@ namespace CollimationCircles.ViewModels
         {
             Guard.IsNotNull(SelectedCamera);
 
+            logger.Info($"PlayPause clicked: camera='{SelectedCamera.Name}', APIType={SelectedCamera.APIType}, FullAddress='{FullAddress}'");
+
             // ZWO cameras use a direct-rendering path that bypasses LibVLC entirely.
             if (SelectedCamera.APIType == APIType.Zwo)
             {
@@ -172,6 +193,31 @@ namespace CollimationCircles.ViewModels
                 else
                 {
                     await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
+                }
+
+                return;
+            }
+
+            // UVC cameras on macOS use a direct-rendering path that bypasses LibVLC entirely.
+            if (SelectedCamera.APIType == APIType.Uvc)
+            {
+                var uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
+
+                if (uvcFrameSource.IsStreaming)
+                {
+                    uvcFrameSource.Stop();
+                    MediaPlayer_Closed();
+                }
+                else
+                {
+                    try
+                    {
+                        await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex, $"Error starting UVC stream for '{SelectedCamera.Name}'");
+                    }
                 }
 
                 return;

@@ -129,6 +129,46 @@
     <Message Text="Copied ZWO ASI Camera SDK Windows library to $(OutputPath)" Importance="high" />
   </Target>
 
+  <!-- macOS: Copy libusb dylib for UVC camera control -->
+  <Target Name="CopyLibUsbMacArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
+    <ItemGroup>
+      <LibUsbFiles Include="Libraries\libusb\macos\arm64\libusb-1.0.0.dylib" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUsbFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libusb-1.0.0.dylib to $(OutputPath)" Importance="high" />
+  </Target>
+  <Target Name="CopyLibUsbMacX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+    <ItemGroup>
+      <LibUsbFiles Include="Libraries\libusb\macos\x64\libusb-1.0.0.dylib" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUsbFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libusb-1.0.0.dylib to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- macOS: Copy libuvc dylib for UVC camera control + streaming -->
+  <Target Name="CopyLibUvcMacArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-arm64'">
+    <ItemGroup>
+      <LibUvcFiles Include="Libraries\libuvc\macos\arm64\libuvc.dylib" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUvcFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libuvc.dylib to $(OutputPath)" Importance="high" />
+  </Target>
+  <Target Name="CopyLibUvcMacX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'osx-x64'">
+    <ItemGroup>
+      <LibUvcFiles Include="Libraries\libuvc\macos\x64\libuvc.dylib" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUvcFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libuvc.dylib to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- macOS: Ad-hoc code-sign the copied dylibs so the app doesn't get SIGKILL'd
+       by the kernel (macOS requires a valid signature for loaded dylibs). -->
+  <Target Name="CodesignDylibsMac" AfterTargets="CopyLibUvcMac" Condition="'$(RuntimeIdentifier)' == 'osx-arm64' Or '$(RuntimeIdentifier)' == 'osx-x64'">
+    <Exec Command="codesign --force --sign - &quot;$(OutputPath)libusb-1.0.0.dylib&quot;" />
+    <Exec Command="codesign --force --sign - &quot;$(OutputPath)libuvc.dylib&quot;" />
+    <Message Text="Ad-hoc signed libusb and libuvc dylibs" Importance="high" />
+  </Target>
+
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <Content Include="Libraries\libvlc\**\*.*">
       <Link>libvlc\%(RecursiveDir)%(Filename)%(Extension)</Link>
