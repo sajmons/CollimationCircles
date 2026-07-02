@@ -1,0 +1,36 @@
+# Remove Check for dwMaxPayloadTransferSize _uvc_stream_params_negotiated
+#
+# See https://github.com/libuvc/libuvc/pull/292
+#
+# I have four webcams (Logitech C270, C992, MX Brio, and Razer KIYO PRO ULTRA 4), 
+# and I've encountered an issue where the required dwMaxPayloadTransferSize and 
+# actual dwMaxPayloadTransferSize values differ for the MX Brio and KIYO.
+# I believe this issue is specific to high-performance webcams that use USB 3.0 or higher.
+# Removing the check for this discrepancy should help resolve the problem.
+
+From 2dc815ec7e4ce3e308350a625b1c16c328736906 Mon Sep 17 00:00:00 2001
+From: "soonwon.jang@medit.com" <soonwon.jang@medit.com>
+Date: Thu, 13 Feb 2025 14:31:11 +0900
+Subject: [PATCH] Remove Check for dwMaxPayloadTransferSize in
+ _uvc_stream_params_negotiated Function
+
+I have four webcams (Logitech C270, C992, MX Brio, and Razer KIYO PRO ULTRA 4), and I've encountered an issue where the required dwMaxPayloadTransferSize and actual dwMaxPayloadTransferSize values differ for the MX Brio and KIYO. I believe this issue is specific to high-performance webcams that use USB 3.0 or higher. Removing the check for this discrepancy should help resolve the problem.
+---
+ src/stream.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/stream.c b/src/stream.c
+index 89dac693..347155c1 100644
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -596,8 +596,7 @@ static int _uvc_stream_params_negotiated(
+   uvc_stream_ctrl_t *required,
+   uvc_stream_ctrl_t *actual) {
+     return required->bFormatIndex == actual->bFormatIndex &&
+-    required->bFrameIndex == actual->bFrameIndex &&
+-    required->dwMaxPayloadTransferSize >= actual->dwMaxPayloadTransferSize;
++    required->bFrameIndex == actual->bFrameIndex;
+ }
+ 
+ /** @internal
+ 

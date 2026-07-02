@@ -1,0 +1,34 @@
+# Handle camera fails to set dwMaxPayloadTransferSize on UVC_GET_MAX
+#
+# See https://github.com/libuvc/libuvc/pull/277
+#
+# Added handling for camera failing to set dwMaxPayloadTransferSize (set to 0) on UVC_GET_MAX
+
+From 759c57e0a5bcd3409e40fbd5af5c1c800a96b55f Mon Sep 17 00:00:00 2001
+From: Noah Dorfman <dorfman@emphotonics.com>
+Date: Mon, 25 Mar 2024 13:34:30 -0400
+Subject: [PATCH] Added handling for camera failing to set
+ dwMaxPayloadTransferSize on UVC_GET_MAX
+
+---
+ src/stream.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/stream.c b/src/stream.c
+index 89dac693..04d836d8 100644
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -278,6 +278,13 @@ uvc_error_t uvc_query_stream_ctrl(
+         ctrl->dwMaxVideoFrameSize = frame->dwMaxVideoFrameBufferSize;
+       }
+     }
++    if (ctrl->dwMaxPayloadTransferSize == 0) {
++      uvc_frame_desc_t *frame = uvc_find_frame_desc(devh, ctrl->bFormatIndex, ctrl->bFrameIndex);
++
++      if (frame) {
++        ctrl->dwMaxPayloadTransferSize = frame->dwMaxBitRate;
++      }
++    }
+   }
+ 
+   return UVC_SUCCESS;
