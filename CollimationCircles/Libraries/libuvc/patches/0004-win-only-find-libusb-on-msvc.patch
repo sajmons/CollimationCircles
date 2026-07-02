@@ -1,3 +1,18 @@
+# Windows only — applied when PLATFORM=win
+#
+# libuvc's cmake/FindLibUSB.cmake has 'if (MSVC OR MINGW) return() endif()'
+# at the top — it immediately exits on Windows without creating the
+# LibUSB::LibUSB CMake target. This means CMake cannot find libusb even when
+# it is installed via vcpkg, because the find module never runs the search logic.
+#
+# This patch replaces the early return with manual find_path/find_library calls
+# that search for libusb.h and usb-1.0.lib using the LIBUSB_INCLUDE_DIR and
+# LIBUSB_LIBRARY variables passed via cmake -D flags. If found, it creates the
+# LibUSB::LibUSB imported target properly.
+#
+# Required because: without this patch, 'target_link_libraries(uvc PRIVATE
+# LibUSB::LibUSB)' fails with 'target LibUSB::LibUSB not found' on Windows.
+
 diff --git a/cmake/FindLibUSB.cmake b/cmake/FindLibUSB.cmake
 index 43f3201..0ab62fa 100644
 --- a/cmake/FindLibUSB.cmake

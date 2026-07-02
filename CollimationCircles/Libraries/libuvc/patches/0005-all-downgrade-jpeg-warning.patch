@@ -1,3 +1,13 @@
+# All platforms — applied on macOS, Linux, and Windows
+#
+# We intentionally build libuvc without JPEG support (-DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON)
+# because the camera sends raw MJPEG bytes that are decoded in C# by FrameRenderer.
+# Enabling JPEG would add a dependency on libjpeg/libjpeg-turbo that would need
+# to be bundled separately.
+#
+# The original code emits a CMake WARNING which is misleading — it looks like an
+# error. This patch downgrades it to STATUS (informational message).
+
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index fbaffc9..076e544 100644
 --- a/CMakeLists.txt

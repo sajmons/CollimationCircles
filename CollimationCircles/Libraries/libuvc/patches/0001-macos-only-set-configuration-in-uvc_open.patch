@@ -1,3 +1,17 @@
+# macOS only — applied when PLATFORM=macos
+#
+# After IOKit SetConfiguration(0) detaches the kernel UVC driver, the device is
+# unconfigured (config 0). libusb_claim_interface fails because there are no
+# active interfaces. This patch adds libusb_set_configuration(handle, 1) inside
+# uvc_open, right after libusb_open and before uvc_open_internal (which calls
+# uvc_claim_if). This re-activates the USB configuration through libusb (not
+# IOKit), so the kernel driver does NOT re-attach, and the interfaces become
+# claimable.
+#
+# Required because: macOS kernel UVC driver claims camera interfaces exclusively.
+# IOKit SetConfiguration(0) detaches it, but the device must be re-configured
+# via libusb before interfaces can be claimed.
+
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: CollimationCircles
 Date: Mon, 1 Jul 2026

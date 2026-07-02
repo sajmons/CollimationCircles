@@ -1,3 +1,20 @@
+# macOS only — applied when PLATFORM=macos
+#
+# libuvc's uvc_claim_if calls libusb_detach_kernel_driver before
+# libusb_claim_interface. On macOS without the com.apple.vm.device-access
+# entitlement, libusb_detach_kernel_driver returns LIBUSB_ERROR_ACCESS (-3).
+# The original code skips libusb_claim_interface entirely when detach fails,
+# so the interface is never claimed — uvc_open fails with ERROR_ACCESS.
+#
+# This patch adds LIBUSB_ERROR_ACCESS to the list of acceptable return codes,
+# so libusb_claim_interface is still attempted. This works because IOKit
+# SetConfiguration(0) already detached the kernel driver — the interface is
+# free, and libusb_claim_interface succeeds even though detach "failed".
+#
+# Required because: macOS does not grant com.apple.vm.device-access entitlement
+# to non-VM apps (see libusb issue #1014). Without this patch, UVC cameras
+# cannot be opened without sudo.
+
 From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
 From: CollimationCircles
 Date: Mon, 1 Jul 2026

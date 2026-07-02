@@ -1,3 +1,9 @@
+# All platforms — applied on macOS, Linux, and Windows
+#
+# libuvc's CMakeLists.txt declares cmake_minimum_required(VERSION 3.1), which
+# is no longer supported by CMake 4+. This patch updates the minimum to 3.5,
+# matching the workaround we already pass via -DCMAKE_POLICY_VERSION_MINIMUM=3.5.
+# Upstream fix by Alper Ak.
 From 34d564bf82af3363b7353fa87fd7f03255a7d812 Mon Sep 17 00:00:00 2001
 From: Alper Ak <alperyasinak1@gmail.com>
 Date: Wed, 9 Jul 2025 12:46:28 +0300
