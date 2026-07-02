@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fbaffc9..076e544 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -48,7 +48,7 @@ if(JPEG_FOUND)
+   set(LIBUVC_HAS_JPEG TRUE)
+   list(APPEND SOURCES src/frame-mjpeg.c)
+ else()
+-  message(WARNING "JPEG not found. libuvc will not support JPEG decoding.")
++  message(STATUS "JPEG not found (intentionally disabled). libuvc will not support JPEG decoding.")
+ endif()
+ 
+ if(UNIX AND NOT APPLE)

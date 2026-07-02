@@ -32,21 +32,29 @@ git clone --depth 1 https://github.com/libuvc/libuvc.git "$BUILD_DIR/libuvc"
 cd "$BUILD_DIR/libuvc"
 
 # Apply patches from patches/ directory
+# Patch filenames use a prefix to indicate which platforms they apply to:
+#   0001-macos-only-*  → applied only on macOS
+#   0004-win-only-*    → applied only on Windows
+#   0005-all-*         → applied on all platforms
 if [ "$APPLY_PATCHES" != "--no-patches" ]; then
   PATCH_DIR="$SCRIPT_DIR/patches"
   if [ -d "$PATCH_DIR" ]; then
     for patch_file in $(find "$PATCH_DIR" -name '*.patch' | sort); do
       patch_name="$(basename "$patch_file")"
-      # Skip patches explicitly tagged macos-only on other platforms
+      # Determine target platform from filename
       if echo "$patch_name" | grep -q "macos-only" && [ "$PLATFORM" != "macos" ]; then
         echo "Skipping macOS-only patch: $patch_name"
+        continue
+      fi
+      if echo "$patch_name" | grep -q "win-only" && [ "$PLATFORM" != "win" ]; then
+        echo "Skipping Windows-only patch: $patch_name"
         continue
       fi
       echo "Applying patch: $patch_name"
       git apply "$patch_file" || { echo "ERROR: Failed to apply $patch_name"; exit 1; }
     done
   else
-    echo "No patches directory found at: $PATCH_DIR"
+    echo "WARNING: No patches directory found at: $PATCH_DIR"
   fi
 fi
 
@@ -98,8 +106,16 @@ elif [ "$PLATFORM" = "win" ]; then
   fi
 
   # Convert Windows backslash path to forward slashes for bash/cmake
-  TOOLCHAIN="$(echo "$VCPKG_ROOT" | sed 's|\\|/|g')/scripts/buildsystems/vcpkg.cmake"
+  VCPKG_ROOT_FWD="$(echo "$VCPKG_ROOT" | sed 's|\\|/|g')"
+  TOOLCHAIN="$VCPKG_ROOT_FWD/scripts/buildsystems/vcpkg.cmake"
   echo "Using vcpkg toolchain: $TOOLCHAIN"
+
+  TRIPLET="${VCPKG_DEFAULT_TRIPLET:-x64-windows}"
+  echo "Using vcpkg triplet: $TRIPLET"
+
+  # vcpkg installs headers and libs under installed/<triplet>/
+  VCPKG_INSTALLED="$VCPKG_ROOT_FWD/installed/$TRIPLET"
+  echo "vcpkg installed dir: $VCPKG_INSTALLED"
 
   # CMake -A flag requires uppercase for ARM64
   case "$ARCH" in
@@ -108,18 +124,32 @@ elif [ "$PLATFORM" = "win" ]; then
     *)     CMAKE_PLATFORM="$ARCH" ;;
   esac
 
+  # Use Visual Studio generator with vcpkg toolchain
+  # Pass libusb locations explicitly since FindLibUSB.cmake uses pkg-config
+  # which may not be available on Windows
   cmake .. \
+    -G "Visual Studio 17 2022" \
+    -A "$CMAKE_PLATFORM" \
     -DBUILD_SHARED_LIBS=ON \
-    -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
     -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
-    -DVCPKG_TARGET_TRIPLET="${VCPKG_DEFAULT_TRIPLET:-x64-windows}" \
-    -A "$CMAKE_PLATFORM"
+    -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
+    -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
+    -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
 
   cmake --build . --config Release
 
-  OUTPUT_FILE="Release/libuvc.dll"
+  # MSVC puts the DLL in Release/ subdirectory
+  if [ -f "Release/libuvc.dll" ]; then
+    OUTPUT_FILE="Release/libuvc.dll"
+  elif [ -f "libuvc.dll" ]; then
+    OUTPUT_FILE="libuvc.dll"
+  else
+    echo "ERROR: libuvc.dll not found after build"
+    find . -name "libuvc.dll" -o -name "libuvc.lib" 2>/dev/null
+    exit 1
+  fi
 
 else
   echo "ERROR: Unknown platform: $PLATFORM"; exit 1

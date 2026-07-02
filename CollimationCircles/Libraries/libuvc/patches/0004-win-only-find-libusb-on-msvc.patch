@@ -1,0 +1,30 @@
+diff --git a/cmake/FindLibUSB.cmake b/cmake/FindLibUSB.cmake
+index 43f3201..0ab62fa 100644
+--- a/cmake/FindLibUSB.cmake
++++ b/cmake/FindLibUSB.cmake
+@@ -10,7 +10,24 @@ target LibUSB::LibUSB
+ # TODO Append parts for Version compasion and REQUIRED support
+ 
+ if (MSVC OR MINGW)
+-    return()
++    # On Windows, find libusb manually (pkg-config not available)
++    find_path(LibUSB_INCLUDE_DIRS NAMES libusb.h PATHS ${LIBUSB_INCLUDE_DIR} PATH_SUFFIXES libusb-1.0)
++    find_library(LibUSB_LIBRARY NAMES usb-1.0 libusb PATHS ${LIBUSB_LIBRARY})
++    if (LibUSB_INCLUDE_DIRS AND LibUSB_LIBRARY)
++        set(LibUSB_FOUND TRUE)
++        if (NOT TARGET LibUSB::LibUSB)
++            add_library(LibUSB::LibUSB UNKNOWN IMPORTED)
++            set_target_properties(LibUSB::LibUSB PROPERTIES
++                INTERFACE_INCLUDE_DIRECTORIES ${LibUSB_INCLUDE_DIRS}
++                IMPORTED_LOCATION ${LibUSB_LIBRARY}
++            )
++        endif()
++        message(STATUS "libusb-1.0 found manually on Windows")
++        return()
++    else()
++        message(WARNING "libusb-1.0 not found on Windows. Set LIBUSB_INCLUDE_DIR and LIBUSB_LIBRARY")
++        return()
++    endif()
+ endif()
+ 
+ if (NOT TARGET LibUSB::LibUSB)
