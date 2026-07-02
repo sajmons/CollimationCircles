@@ -162,10 +162,16 @@ elif [ "$PLATFORM" = "win" ]; then
 
   cmake --build . --config Release
 
-  # MSVC puts the DLL in Release/ subdirectory
+  # MSVC outputs uvc.dll in Release/. Normalize to libuvc.dll for artifacts.
   if [ -f "Release/libuvc.dll" ]; then
     OUTPUT_FILE="Release/libuvc.dll"
+  elif [ -f "Release/uvc.dll" ]; then
+    cp "Release/uvc.dll" "Release/libuvc.dll"
+    OUTPUT_FILE="Release/libuvc.dll"
   elif [ -f "libuvc.dll" ]; then
+    OUTPUT_FILE="libuvc.dll"
+  elif [ -f "uvc.dll" ]; then
+    cp "uvc.dll" "libuvc.dll"
     OUTPUT_FILE="libuvc.dll"
   else
     echo "ERROR: libuvc.dll not found after build"

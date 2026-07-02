@@ -1,0 +1,27 @@
+# Windows only — applied when PLATFORM=win
+#
+# libuvc's example target includes POSIX-only headers (e.g. unistd.h) and fails
+# on MSVC/Windows even when the library itself builds successfully.
+#
+# Force Windows CI to build only the shared library target by disabling
+# BUILD_EXAMPLE and BUILD_TEST and setting CMAKE_BUILD_TARGET=Shared.
+#
+# Required because: we need stable libuvc.dll artifacts on Windows, while
+# example/test portability fixes are still incomplete upstream.
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -22,6 +22,13 @@
+ endif()
+ 
+ option(BUILD_EXAMPLE "Build example program" ON)
++
++# Windows CI: build only shared lib to avoid POSIX-only example/test sources
++if(WIN32)
++  set(BUILD_EXAMPLE OFF CACHE BOOL "" FORCE)
++  set(BUILD_TEST OFF CACHE BOOL "" FORCE)
++  set(CMAKE_BUILD_TARGET "Shared" CACHE STRING "" FORCE)
++endif()
+ option(BUILD_TEST "Build test program" OFF)
+ option(ENABLE_UVC_DEBUGGING "Enable UVC debugging" OFF)
+ 
