@@ -4,25 +4,23 @@
 # On Windows, the pthreads section is skipped entirely, but libuvc_internal.h
 # still #includes <pthread.h> — causing error C1083: Cannot open include file.
 #
-# This patch adds a WIN32 branch that runs find_package(Threads REQUIRED) and
-# sets the `threads` variable, so CMake links against pthreads (installed via
-# vcpkg: `vcpkg install pthreads`).
+# vcpkg's pthreads package provides the PThreads4W CMake target (not Threads).
+# Usage from vcpkg: find_package(PThreads4W REQUIRED) + PThreads4W::PThreads4W.
+# This target provides both the include directories and the link library.
 #
 # Required because: libuvc uses pthreads for its streaming thread. Without this
 # patch, the build fails with missing pthread.h on Windows.
 
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -51,7 +51,12 @@
+@@ -51,7 +51,10 @@
    message(STATUS "JPEG not found (intentionally disabled). libuvc will not support JPEG decoding.")
  endif()
  
 -if(UNIX AND NOT APPLE)
 +if(WIN32)
-+  set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
-+  set(THREADS_PREFER_PTHREAD_FLAG TRUE)
-+  find_package(Threads REQUIRED)
-+  set(threads Threads::Threads)
++  find_package(PThreads4W REQUIRED)
++  set(threads PThreads4W::PThreads4W)
 +elseif(UNIX AND NOT APPLE)
    set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
    set(THREADS_PREFER_PTHREAD_FLAG TRUE)
