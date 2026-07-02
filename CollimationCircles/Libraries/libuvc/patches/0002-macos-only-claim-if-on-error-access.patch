@@ -9,14 +9,12 @@ IOKit SetConfiguration(0), libusb_claim_interface still succeeds.
 
 --- a/src/device.c
 +++ b/src/device.c
-@@ -985,7 +985,8 @@ uvc_error_t uvc_claim_if(uvc_device_handle_t *devh, int idx) {
+@@ -985,7 +985,7 @@ uvc_error_t uvc_claim_if(uvc_device_handle_t *devh, int idx) {
+    * it found a kernel driver for this interface. */
+   ret = libusb_detach_kernel_driver(devh->usb_devh, idx);
+ 
+-  if (ret == UVC_SUCCESS || ret == LIBUSB_ERROR_NOT_FOUND || ret == LIBUSB_ERROR_NOT_SUPPORTED) {
++  if (ret == UVC_SUCCESS || ret == LIBUSB_ERROR_NOT_FOUND || ret == LIBUSB_ERROR_NOT_SUPPORTED || ret == LIBUSB_ERROR_ACCESS) {
      UVC_DEBUG("claiming interface %d", idx);
      if (!( ret = libusb_claim_interface(devh->usb_devh, idx))) {
        devh->claimed |= ( 1 << idx );
-     }
--  } else {
-+  } else if (ret != LIBUSB_ERROR_ACCESS) {
-+    /* On macOS, ERROR_ACCESS from detach is expected without entitlements — try claiming anyway */
-     UVC_DEBUG("not claiming interface %d: unable to detach kernel driver (%s)",
-               idx, uvc_strerror(ret));
-   }
