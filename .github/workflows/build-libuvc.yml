@@ -99,7 +99,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install libusb via vcpkg
+      - name: Install libusb and pthreads via vcpkg
         shell: pwsh
         run: |
           # GitHub Windows runners have vcpkg pre-installed at C:\vcpkg
@@ -107,8 +107,8 @@ jobs:
           if (-not (Test-Path $vcpkg)) {
             $vcpkg = "& vcpkg"  # fallback to PATH
           }
-          Write-Host "Installing libusb for ${{ matrix.vcpkg_triplet }}..."
-          & $vcpkg install libusb:${{ matrix.vcpkg_triplet }}
+          Write-Host "Installing libusb and pthreads for ${{ matrix.vcpkg_triplet }}..."
+          & $vcpkg install libusb:${{ matrix.vcpkg_triplet }} pthreads:${{ matrix.vcpkg_triplet }}
           # Set VCPKG_ROOT for the build script
           echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
           echo "VCPKG_DEFAULT_TRIPLET=${{ matrix.vcpkg_triplet }}" >> $env:GITHUB_ENV
