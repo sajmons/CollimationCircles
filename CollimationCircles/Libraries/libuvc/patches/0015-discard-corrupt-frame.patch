@@ -1,0 +1,53 @@
+# discard corrupt frame in previously unhandled error case
+#
+# See https://github.com/libuvc/libuvc/pull/212
+#
+# _uvc_stream_callback() in stream.c has this strange-looking code that detects an error but does not handle it, other than by discarding the data:
+
+From 3a4da5b6c5e25a0da16cb16c8e1cd80af89b20e8 Mon Sep 17 00:00:00 2001
+From: r00t <r00t@constancy.org>
+Date: Wed, 9 Mar 2022 06:43:42 +0100
+Subject: [PATCH] discard corrupt frame in previously unhandled error case
+
+---
+ include/libuvc/libuvc_internal.h | 2 ++
+ src/stream.c                     | 5 ++++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/include/libuvc/libuvc_internal.h b/include/libuvc/libuvc_internal.h
+index bdf42db2..44853af0 100644
+--- a/include/libuvc/libuvc_internal.h
++++ b/include/libuvc/libuvc_internal.h
+@@ -266,6 +266,8 @@ struct uvc_stream_handle {
+   /* raw metadata buffer if available */
+   uint8_t *meta_outbuf, *meta_holdbuf;
+   size_t meta_got_bytes, meta_hold_bytes;
++
++  uint8_t frame_had_errors;
+ };
+ 
+ /** Handle on an open UVC device
+diff --git a/src/stream.c b/src/stream.c
+index f1be781b..d4698161 100644
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -671,7 +671,9 @@ void _uvc_swap_buffers(uvc_stream_handle_t *strmh) {
+   strmh->meta_outbuf = tmp_buf;
+   strmh->meta_hold_bytes = strmh->meta_got_bytes;
+ 
+-  pthread_cond_broadcast(&strmh->cb_cond);
++  if (!strmh->frame_had_errors)
++    pthread_cond_broadcast(&strmh->cb_cond);
++  strmh->frame_had_errors=0;
+   pthread_mutex_unlock(&strmh->cb_mutex);
+ 
+   strmh->seq++;
+@@ -819,6 +821,7 @@ void LIBUSB_CALL _uvc_stream_callback(struct libusb_transfer *transfer) {
+ 
+         if (pkt->status != 0) {
+           UVC_DEBUG("bad packet (isochronous transfer); status: %d", pkt->status);
++          strmh->frame_had_errors=1;
+           continue;
+         }
+ 
+        pktbuf = libusb_get_iso_packet_buffer_simple(transfer, packet_id);

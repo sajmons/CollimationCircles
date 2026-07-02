@@ -1,0 +1,25 @@
+# Fix the memory leak of uvc_stream_close
+#
+# See https://github.com/libuvc/libuvc/pull/295
+#
+# If the device contains metadata, calling uvc_stream_close does not release the metadata memory.
+
+From ca65b0b08e3907b8fd82a581a6ae3e51b2cbd0a8 Mon Sep 17 00:00:00 2001
+From: bajinsi <bajinsi@orbbec.com>
+Date: Fri, 11 Jul 2025 23:10:59 +0800
+Subject: [PATCH] Fix the memory leak of uvc_stream_close
+
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -1548,6 +1548,9 @@ void uvc_stream_close(uvc_stream_handle_t *strmh) {
+   if (strmh->frame.data)
+     free(strmh->frame.data);
+ 
++  if (strmh->frame.metadata)
++    free(strmh->frame.metadata);
++
+   free(strmh->outbuf);
+   free(strmh->holdbuf);
+ 
+  free(strmh->meta_outbuf);
+  free(strmh->meta_holdbuf);
