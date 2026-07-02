@@ -116,6 +116,8 @@ elif [ "$PLATFORM" = "win" ]; then
   # vcpkg installs headers and libs under installed/<triplet>/
   VCPKG_INSTALLED="$VCPKG_ROOT_FWD/installed/$TRIPLET"
   echo "vcpkg installed dir: $VCPKG_INSTALLED"
+  ls -la "$VCPKG_INSTALLED/include/libusb-1.0/" 2>/dev/null || echo "WARNING: libusb headers not found at expected path"
+  ls -la "$VCPKG_INSTALLED/lib/libusb-1.0.lib" 2>/dev/null || echo "WARNING: libusb lib not found at expected path"
 
   # CMake -A flag requires uppercase for ARM64
   case "$ARCH" in
@@ -125,18 +127,38 @@ elif [ "$PLATFORM" = "win" ]; then
   esac
 
   # Use Visual Studio generator with vcpkg toolchain
-  # Pass libusb locations explicitly since FindLibUSB.cmake uses pkg-config
-  # which may not be available on Windows
-  cmake .. \
-    -G "Visual Studio 17 2022" \
-    -A "$CMAKE_PLATFORM" \
-    -DBUILD_SHARED_LIBS=ON \
-    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
-    -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
-    -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
-    -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
-    -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
+  # Auto-detect the VS version available on the runner
+  VS_GENERATOR=""
+  if cmake --help 2>/dev/null | grep -q "Visual Studio 18 2026"; then
+    VS_GENERATOR="Visual Studio 18 2026"
+  elif cmake --help 2>/dev/null | grep -q "Visual Studio 17 2022"; then
+    VS_GENERATOR="Visual Studio 17 2022"
+  else
+    echo "WARNING: No Visual Studio generator found, using default"
+    VS_GENERATOR=""
+  fi
+
+  if [ -n "$VS_GENERATOR" ]; then
+    cmake .. \
+      -G "$VS_GENERATOR" \
+      -A "$CMAKE_PLATFORM" \
+      -DBUILD_SHARED_LIBS=ON \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+      -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
+      -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
+      -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
+      -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
+      -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
+  else
+    cmake .. \
+      -DBUILD_SHARED_LIBS=ON \
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+      -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
+      -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
+      -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
+      -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
+      -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
+  fi
 
   cmake --build . --config Release
 
@@ -147,7 +169,7 @@ elif [ "$PLATFORM" = "win" ]; then
     OUTPUT_FILE="libuvc.dll"
   else
     echo "ERROR: libuvc.dll not found after build"
-    find . -name "libuvc.dll" -o -name "libuvc.lib" 2>/dev/null
+    find . \( -name "libuvc.dll" -o -name "libuvc.lib" \) 2>/dev/null
     exit 1
   fi
 
