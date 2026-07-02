@@ -39,7 +39,7 @@ cd "$BUILD_DIR/libuvc"
 if [ "$APPLY_PATCHES" != "--no-patches" ]; then
   PATCH_DIR="$SCRIPT_DIR/patches"
   if [ -d "$PATCH_DIR" ]; then
-    for patch_file in $(find "$PATCH_DIR" -name '*.patch' | sort); do
+    for patch_file in $(find "$PATCH_DIR" -maxdepth 1 -name '*.patch' | sort); do
       patch_name="$(basename "$patch_file")"
       # Determine target platform from filename
       if echo "$patch_name" | grep -q "macos-only" && [ "$PLATFORM" != "macos" ]; then
