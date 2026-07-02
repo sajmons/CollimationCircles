@@ -1,0 +1,34 @@
+--- a/src/stream.c
++++ b/src/stream.c
+@@ -659,7 +659,15 @@
+ 
+   pthread_mutex_lock(&strmh->cb_mutex);
+ 
++#if defined(_WIN32)
++  {
++    FILETIME _ft; GetSystemTimeAsFileTime(&_ft);
++    strmh->capture_time_finished.tv_sec = ((ULARGE_INTEGER*)&_ft)->QuadPart / 10000000ULL - 11644473600ULL;
++    strmh->capture_time_finished.tv_nsec = (long)(((ULARGE_INTEGER*)&_ft)->QuadPart % 10000000ULL) * 100;
++  }
++#else
+   (void)clock_gettime(CLOCK_MONOTONIC, &strmh->capture_time_finished);
++#endif
+ 
+   /* swap the buffers */
+   tmp_buf = strmh->holdbuf;
+@@ -1422,7 +1430,14 @@
+       ts.tv_sec = 0;
+       ts.tv_nsec = 0;
+ 
+-#if _POSIX_TIMERS > 0
++#if defined(_WIN32)
++      {
++        FILETIME _ft; GetSystemTimeAsFileTime(&_ft);
++        ULARGE_INTEGER _uli = *(ULARGE_INTEGER*)&_ft;
++        ts.tv_sec = (long)(_uli.QuadPart / 10000000ULL - 11644473600ULL);
++        ts.tv_nsec = (long)((_uli.QuadPart % 10000000ULL) * 100);
++      }
++#elif _POSIX_TIMERS > 0
+       clock_gettime(CLOCK_REALTIME, &ts);
+ #else
+       struct timeval tv;
