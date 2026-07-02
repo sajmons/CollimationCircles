@@ -111,6 +111,7 @@ jobs:
           '@ | Set-Content -Path vcpkg.json
 
       - name: Install libusb via vcpkg
+        id: vcpkg
         uses: lukka/run-vcpkg@v11
         env:
           VCPKG_DEFAULT_TRIPLET: ${{ matrix.vcpkg_triplet }}
@@ -123,8 +124,9 @@ jobs:
         shell: pwsh
         env:
           VCPKG_DEFAULT_TRIPLET: ${{ matrix.vcpkg_triplet }}
-          VCPKG_ROOT: ${{ env.VCPKG_INSTALLATION_ROOT }}
         run: |
+          $env:VCPKG_ROOT = "${{ steps.vcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}"
+          Write-Host "VCPKG_ROOT is: $env:VCPKG_ROOT"
           cd CollimationCircles/Libraries/libuvc
           bash ./win/${{ matrix.arch }}/build.sh
 
