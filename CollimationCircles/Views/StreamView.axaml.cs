@@ -29,7 +29,9 @@ namespace CollimationCircles.Views
         private bool vlcCropCleared = false;
 
         private IZwoFrameSource? _zwoFrameSource;
+        private IUvcFrameSource? _uvcFrameSource;
         private bool _usingZwoDirect;
+        private bool _usingUvcDirect;
 
         public StreamView()
         {
@@ -65,6 +67,12 @@ namespace CollimationCircles.Views
                 _zwoFrameSource = null;
             }
 
+            if (_uvcFrameSource is not null)
+            {
+                _uvcFrameSource.FrameReady -= OnUvcFrameReady;
+                _uvcFrameSource = null;
+            }
+
             if (frameGrid is not null)
                 frameGrid.SizeChanged -= OnFrameGridSizeChanged;
         }
@@ -72,19 +80,30 @@ namespace CollimationCircles.Views
         private void WebCamStreamWindow_Opened(object? sender, System.EventArgs e)
         {
             _zwoFrameSource = Ioc.Default.GetRequiredService<IZwoFrameSource>();
+            _uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
             _usingZwoDirect = _zwoFrameSource.IsStreaming;
+            _usingUvcDirect = _uvcFrameSource.IsStreaming;
 
-            if (_usingZwoDirect)
+            if (_usingZwoDirect || _usingUvcDirect)
             {
-                // ZWO direct-rendering path: show FrameRenderer, hide VideoView.
+                // Direct-rendering path: show FrameRenderer, hide VideoView.
                 if (videoViewer is not null) videoViewer.IsVisible = false;
                 if (frameGrid is not null) frameGrid.IsVisible = true;
 
-                sourceVideoWidth = _zwoFrameSource.FrameWidth;
-                sourceVideoHeight = _zwoFrameSource.FrameHeight;
-                sourceDimensionsCaptured = sourceVideoWidth > 0 && sourceVideoHeight > 0;
-
-                _zwoFrameSource.FrameReady += OnZwoFrameReady;
+                if (_usingZwoDirect)
+                {
+                    sourceVideoWidth = _zwoFrameSource.FrameWidth;
+                    sourceVideoHeight = _zwoFrameSource.FrameHeight;
+                    sourceDimensionsCaptured = sourceVideoWidth > 0 && sourceVideoHeight > 0;
+                    _zwoFrameSource.FrameReady += OnZwoFrameReady;
+                }
+                else if (_usingUvcDirect)
+                {
+                    sourceVideoWidth = _uvcFrameSource.FrameWidth;
+                    sourceVideoHeight = _uvcFrameSource.FrameHeight;
+                    sourceDimensionsCaptured = sourceVideoWidth > 0 && sourceVideoHeight > 0;
+                    _uvcFrameSource.FrameReady += OnUvcFrameReady;
+                }
 
                 if (frameGrid is not null)
                     frameGrid.SizeChanged += OnFrameGridSizeChanged;
@@ -146,7 +165,29 @@ namespace CollimationCircles.Views
 
         private void OnZwoFrameReady(byte[] frame, int width, int height)
         {
-            frameRenderer?.SetJpegFrame(frame);
+            // Same rendering logic for both ZWO and UVC frames
+            OnDirectFrameReady(frame, width, height);
+        }
+
+        private void OnUvcFrameReady(byte[] frame, int width, int height)
+        {
+            OnDirectFrameReady(frame, width, height);
+        }
+
+        private void OnDirectFrameReady(byte[] frame, int width, int height)
+        {
+            if (!sourceDimensionsCaptured && width > 0 && height > 0)
+            {
+                sourceVideoWidth = width;
+                sourceVideoHeight = height;
+                sourceDimensionsCaptured = true;
+                logger.Info($"Captured source video dimensions from direct frame: {width}x{height}");
+            }
+
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                frameRenderer?.SetJpegFrame(frame);
+            });
         }
 
         private void ApplyZoom(ImageZoomAction action)
@@ -173,7 +214,7 @@ namespace CollimationCircles.Views
 
         private void UpdateImageTransform()
         {
-            if (_usingZwoDirect)
+            if (_usingZwoDirect || _usingUvcDirect)
             {
                 if (frameRenderer is not null)
                     frameRenderer.Zoom = currentZoom;

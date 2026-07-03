@@ -10,6 +10,8 @@ namespace CollimationCircles.Models
         public string Name { get; set; } = string.Empty;
         public APIType APIType { get; set; }
         public string Path { get; set; } = string.Empty;
+        public int VendorId { get; set; }
+        public int ProductId { get; set; }
 
         [ObservableProperty]
         public List<ICameraControl> controls = [];

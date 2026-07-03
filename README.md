@@ -44,6 +44,26 @@ sudo apt-get install -y v4l-utils
 - libcamera-vid for detecting Raspberry Pi Cameras. It should already be installed on Raspberry Pi OS by default.
   - instalation instructions https://libcamera.org/getting-started.html
 
+## macOS camera control
+
+On macOS, UVC camera control (brightness, contrast, gain, exposure, sharpness, etc.) and streaming use [libuvc](https://github.com/libuvc/libuvc) (built from source with macOS-specific patches) on top of [libusb](https://github.com/libusb/libusb). This bypasses the macOS kernel UVC driver and gives the same level of control as `v4l2-ctl` on Linux and DirectShow on Windows.
+
+Cameras that are not UVC-compliant (e.g. FaceTime HD, OBS Virtual Camera, iPhone Continuity Camera) fall back to VLC's `avcapture` input via AVFoundation, with controls (exposure, focus, white balance) discovered through AVFoundation Swift scripts.
+
+The `libusb-1.0.0.dylib` and `libuvc.dylib` are bundled with the app — end users do **not** need to install them. Developers building from source on macOS need:
+
+```
+brew install libusb cmake
+```
+
+Both dylibs are copied to the build output by MSBuild targets and included in the `.app` bundle by the publish scripts.
+
+On macOS, this command can be run to list the available cameras:
+
+```
+system_profiler SPCameraDataType -json
+```
+
 # Prebuild binaries
 Here are prebuild binary files available for you to download (win-x64, linux-x64, linux-arm64, osx-x64 and osx-arm64).
 https://github.com/sajmons/CollimationCircles/releases/
@@ -199,9 +219,9 @@ cd CollimationCircles
 
 Restore/build/run:
 ```
-dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
-dotnet build ./CollimationCircles/CollimationCircles.csproj -f net10.0
-dotnet run --project ./CollimationCircles/CollimationCircles.csproj -f net10.0
+dotnet restore ./CollimationCircles/CollimationCircles.csproj -c Debug -r osx-arm64
+dotnet build CollimationCircles/CollimationCircles.csproj -c Debug -r osx-arm64
+dotnet run --project CollimationCircles/CollimationCircles.csproj -c Debug -r osx-arm64
 ```
 
 Notes:

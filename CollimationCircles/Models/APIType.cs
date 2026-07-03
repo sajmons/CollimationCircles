@@ -7,6 +7,7 @@
         Dshow,
         QTCapture,
         Zwo,
+        Uvc,
         Remote
     }
 }

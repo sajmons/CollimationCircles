@@ -1,10 +1,13 @@
 using CollimationCircles.Models;
 using CommunityToolkit.Diagnostics;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
@@ -12,6 +15,13 @@ namespace CollimationCircles.Services
     internal class MacOSCameraDetect : ICameraDetect
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        public Dictionary<ControlType, object> ControlMapping => new()
+        {
+            { ControlType.ExposureTime, "ExposureTime" },
+            { ControlType.FocusAbsolute, "FocusAbsolute" },
+            { ControlType.WhiteBalance, "WhiteBalance" }
+        };
 
         private sealed class AvFoundationControlDto
         {
@@ -30,13 +40,6 @@ namespace CollimationCircles.Services
             public List<AvFoundationControlDto> Controls { get; set; } = [];
         }
 
-        public Dictionary<ControlType, object> ControlMapping => new()
-        {
-            { ControlType.ExposureTime, "ExposureTime" },
-            { ControlType.FocusAbsolute, "FocusAbsolute" },
-            { ControlType.WhiteBalance, "WhiteBalance" }
-        };
-
         public async Task<List<Camera>> GetCameras()
         {
             List<Camera> cameras = [];
@@ -46,7 +49,9 @@ namespace CollimationCircles.Services
                 return cameras;
             }
 
+            // First, try to get cameras from system_profiler (built-in cameras)
             await DetectSystemProfilerCameras(cameras);
+
             return cameras;
         }
 
@@ -101,20 +106,95 @@ namespace CollimationCircles.Services
             {
                 string? name = TryGetString(cameraElement, "_name");
                 string? uniqueId = TryGetString(cameraElement, "spcamera_unique-id");
+                string? modelId = TryGetString(cameraElement, "spcamera_model-id");
 
                 if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(uniqueId))
-                {
                     continue;
+
+                // Parse vendor/product IDs from model-id string like:
+                // "UVC Camera VendorID_60324 ProductID_4867"
+                int vendorId = 0;
+                int productId = 0;
+
+                if (!string.IsNullOrWhiteSpace(modelId))
+                {
+                    _ = TryExtractVidPid(modelId, out vendorId, out productId);
                 }
+
+                // Use Uvc APIType for cameras with vendor/product IDs (real UVC cameras)
+                // Fall back to QTCapture for built-in/virtual cameras without UVC IDs
+                APIType apiType = (vendorId > 0 && productId > 0) ? APIType.Uvc : APIType.QTCapture;
 
                 yield return new Camera
                 {
                     Index = index++,
-                    APIType = APIType.QTCapture,
+                    APIType = apiType,
                     Name = name,
-                    Path = uniqueId.Trim()
+                    Path = uniqueId.Trim(),
+                    VendorId = vendorId,
+                    ProductId = productId
                 };
             }
+        }
+
+        private static bool TryExtractVidPid(string source, out int vendorId, out int productId)
+        {
+            vendorId = 0;
+            productId = 0;
+
+            if (string.IsNullOrWhiteSpace(source))
+            {
+                return false;
+            }
+
+            // Accept several common forms returned by macOS tools, for example:
+            // VendorID_60324 ProductID_4867
+            // Vendor ID: 0xeb94 Product ID: 0x1303
+            // VID=60324 PID=4867
+            var vidMatch = Regex.Match(
+                source,
+                @"(?:Vendor\s*ID|VendorID|VID)\s*[_:=-]?\s*(0x[0-9A-Fa-f]+|\d+)",
+                RegexOptions.IgnoreCase);
+            var pidMatch = Regex.Match(
+                source,
+                @"(?:Product\s*ID|ProductID|PID)\s*[_:=-]?\s*(0x[0-9A-Fa-f]+|\d+)",
+                RegexOptions.IgnoreCase);
+
+            if (!vidMatch.Success || !pidMatch.Success)
+            {
+                return false;
+            }
+
+            if (!TryParseDeviceId(vidMatch.Groups[1].Value, out vendorId))
+            {
+                return false;
+            }
+
+            if (!TryParseDeviceId(pidMatch.Groups[1].Value, out productId))
+            {
+                return false;
+            }
+
+            return vendorId > 0 && productId > 0;
+        }
+
+        private static bool TryParseDeviceId(string value, out int id)
+        {
+            id = 0;
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return false;
+            }
+
+            value = value.Trim();
+
+            if (value.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
+            {
+                return int.TryParse(value[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out id);
+            }
+
+            return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out id);
         }
 
         private static string? TryGetString(JsonElement element, string propertyName)
@@ -128,12 +208,140 @@ namespace CollimationCircles.Services
             return propertyElement.GetString();
         }
 
+        private async Task DetectUSBCameras(List<Camera> cameras)
+        {
+            try
+            {
+                // Try two methods: ioreg and system_profiler
+                
+                // Method 1: Try ioreg (more detailed but may require more parsing)
+                await TryDetectViaIoreg(cameras);
+                
+                // Method 2: Try system_profiler SPUSBDataType (more reliable)
+                await TryDetectViaSystemProfilerUSB(cameras);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error while detecting USB cameras");
+            }
+        }
+
+        private async Task TryDetectViaIoreg(List<Camera> cameras)
+        {
+            try
+            {
+                var (errorCode, result) = await AppService.StartProcessAsync(
+                    "ioreg",
+                    ["-p", "IOUSB"]);
+
+                if (errorCode == 0)
+                {
+                    logger.Debug("ioreg output available, parsing for astro cameras");
+                    
+                    // Look for ASI cameras (ZWO)
+                    string asiPattern = @"ASI\s*([0-9]+[A-Z]*)";
+                    var matches = Regex.Matches(result, asiPattern, RegexOptions.IgnoreCase);
+
+                    int cameraIndex = 1;
+                    foreach (Match match in matches.Cast<Match>())
+                    {
+                        string name = $"ASI {match.Groups[1].Value}";
+                        
+                        if (!cameras.Any(c => c.Name == name))
+                        {
+                            Camera camera = new()
+                            {
+                                Index = cameras.Count,
+                                APIType = APIType.QTCapture,
+                                Name = name,
+                                Path = cameraIndex.ToString()
+                            };
+
+                            camera.Controls = await GetControls(camera);
+                            cameras.Add(camera);
+                            cameraIndex++;
+                            logger.Info($"Added camera via ioreg: '{camera.Name}'");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Debug($"ioreg detection failed (non-critical): {ex.Message}");
+            }
+        }
+
+        private async Task TryDetectViaSystemProfilerUSB(List<Camera> cameras)
+        {
+            try
+            {
+                var (errorCode, result) = await AppService.StartProcessAsync(
+                    "system_profiler",
+                    ["SPUSBDataType"]);
+
+                if (errorCode == 0)
+                {
+                    logger.Debug("SPUSBDataType output available, parsing for astro cameras");
+                    
+                    // Look for common astro camera product names
+                    string[] patterns = new[]
+                    {
+                        @"Product:\s+(.+?ASI.+?)(?=\n|$)",  // ZWO ASI cameras
+                        @"Product:\s+(.+?SV.+?)(?=\n|$)",   // SVBONY cameras
+                        @"Product:\s+(.+?QHY.+?)(?=\n|$)",  // QHY cameras
+                        @"Product:\s+(.+?TouCam.+?)(?=\n|$)" // Philips TouCam
+                    };
+
+                    int cameraIndex = 1;
+                    foreach (string pattern in patterns)
+                    {
+                        var matches = Regex.Matches(result, pattern, RegexOptions.IgnoreCase);
+                        
+                        foreach (Match match in matches.Cast<Match>())
+                        {
+                            string name = match.Groups[1].Value.Trim();
+                            
+                            if (!string.IsNullOrWhiteSpace(name) && !cameras.Any(c => c.Name == name))
+                            {
+                                Camera camera = new()
+                                {
+                                    Index = cameras.Count,
+                                    APIType = APIType.QTCapture,
+                                    Name = name,
+                                    Path = cameraIndex.ToString()
+                                };
+
+                                camera.Controls = await GetControls(camera);
+                                cameras.Add(camera);
+                                cameraIndex++;
+                                logger.Info($"Added USB camera via SPUSBDataType: '{camera.Name}'");
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Debug($"SPUSBDataType detection failed (non-critical): {ex.Message}");
+            }
+        }
+
         public async Task<List<ICameraControl>> GetControls(Camera camera)
         {
             Guard.IsNotNull(camera);
 
             List<ICameraControl> controls = [];
 
+            // For UVC cameras with vendor/product IDs, controls are enumerated at
+            // stream start by UvcFrameSource.EnumerateControls (via libuvc).
+            // Return empty list here — placeholders will be replaced on Play.
+            if (camera.APIType is APIType.Uvc && camera.VendorId > 0 && camera.ProductId > 0)
+            {
+                logger.Info($"UVC camera '{camera.Name}' (VID={camera.VendorId} PID={camera.ProductId}) — controls will be enumerated on stream start");
+                return controls;
+            }
+
+            // QTCapture cameras: discover controls via AVFoundation (Swift script)
             if (!OperatingSystem.IsMacOS() || camera.APIType is not APIType.QTCapture)
             {
                 return controls;
@@ -167,7 +375,8 @@ func clamp(_ value: Double, _ minValue: Double, _ maxValue: Double) -> Double {
 let deviceId = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : """"
 let cameraName = CommandLine.arguments.count > 2 ? CommandLine.arguments[2] : """"
 
-let devices = AVCaptureDevice.devices(for: .video)
+let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .external], mediaType: .video, position: .unspecified)
+let devices = session.devices
 let device = devices.first { $0.uniqueID == deviceId }
     ?? devices.first { $0.localizedName == cameraName }
 
@@ -291,6 +500,32 @@ print(String(data: data, encoding: .utf8)!)
 
         public void SetControl(Camera camera, ControlType controlType, double value)
         {
+            // For UVC cameras, control setting is handled via UvcFrameSource
+            // which has the device open during streaming.
+            if (camera.APIType is APIType.Uvc)
+            {
+                try
+                {
+                    logger.Info($"macOS UVC set request: camera='{camera.Name}', control={controlType}, value={value}");
+                    var uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
+                    bool ok = uvcFrameSource.SetControl(controlType.ToString(), (long)value);
+                    if (!ok)
+                    {
+                        logger.Warn($"Failed to set UVC control {controlType}={value} on '{camera.Name}'");
+                    }
+                    else
+                    {
+                        logger.Info($"macOS UVC set request completed: camera='{camera.Name}', control={controlType}, value={value}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, $"Error setting UVC control {controlType} on '{camera.Name}'");
+                }
+                return;
+            }
+
+            // QTCapture: AVFoundation mode-only controls (numeric set is not supported)
             if (!OperatingSystem.IsMacOS() || camera.APIType is not APIType.QTCapture)
             {
                 return;
@@ -317,6 +552,49 @@ print(String(data: data, encoding: .utf8)!)
 
         public void SetControlAuto(Camera camera, ControlType controlType, bool isAuto)
         {
+            // UVC cameras: route to UvcFrameSource (libuvc)
+            if (camera.APIType is APIType.Uvc)
+            {
+                try
+                {
+                    logger.Info($"macOS UVC auto set request: camera='{camera.Name}', control={controlType}, isAuto={isAuto}");
+                    var uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
+
+                    string autoName = controlType switch
+                    {
+                        ControlType.ExposureTime => "AutoExposure",
+                        ControlType.FocusAbsolute => "AutoFocus",
+                        ControlType.WhiteBalance => "AutoWhiteBalance",
+                        ControlType.Hue => "HueAuto",
+                        ControlType.Contrast => "ContrastAuto",
+                        _ => string.Empty
+                    };
+
+                    if (!string.IsNullOrEmpty(autoName))
+                    {
+                        bool ok = uvcFrameSource.SetAutoControl(autoName, isAuto);
+                        if (!ok)
+                        {
+                            logger.Warn($"Failed to set UVC auto control {controlType}={isAuto} on '{camera.Name}'");
+                        }
+                        else
+                        {
+                            logger.Info($"macOS UVC auto set request completed: camera='{camera.Name}', control={controlType}, isAuto={isAuto}");
+                        }
+                    }
+                    else
+                    {
+                        logger.Warn($"No UVC auto-control mapping for {controlType} on '{camera.Name}'");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, $"Error setting UVC auto control {controlType} on '{camera.Name}'");
+                }
+                return;
+            }
+
+            // QTCapture: set auto mode via AVFoundation Swift script
             if (!OperatingSystem.IsMacOS() || camera.APIType is not APIType.QTCapture)
             {
                 return;
@@ -347,7 +625,8 @@ let cameraName = CommandLine.arguments.count > 2 ? CommandLine.arguments[2] : ""
 let control = CommandLine.arguments.count > 3 ? CommandLine.arguments[3] : """"
 let autoEnabled = CommandLine.arguments.count > 4 ? (CommandLine.arguments[4] == ""1"") : false
 
-let devices = AVCaptureDevice.devices(for: .video)
+let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .external], mediaType: .video, position: .unspecified)
+let devices = session.devices
 guard let device = devices.first(where: { $0.uniqueID == deviceId })
     ?? devices.first(where: { $0.localizedName == cameraName }) else {
     print(""device-not-found"")

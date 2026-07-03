@@ -73,6 +73,7 @@ public partial class App : Application
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ILibVLCService, LibVLCService>()
             .AddSingleton<IZwoFrameSource, ZwoFrameSource>()
+            .AddSingleton<IUvcFrameSource, UvcFrameSource>()
             .AddTransient<ImageViewModel>()
             .BuildServiceProvider());
     }

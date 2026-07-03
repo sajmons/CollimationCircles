@@ -405,6 +405,30 @@ namespace CollimationCircles.Services
                 return;
             }
 
+            if (camera.APIType == APIType.Uvc)
+            {
+                // UVC cameras on macOS bypass LibVLC entirely — frames are rendered
+                // directly by FrameRenderer via IUvcFrameSource (IOKit + libusb).
+                logger.Info($"Starting UVC direct stream for camera '{camera.Name}' (VID={camera.VendorId} PID={camera.ProductId})");
+                var uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
+
+                bool started = await uvcFrameSource.StartAsync(camera);
+
+                if (!started)
+                {
+                    logger.Error($"Failed to start UVC direct stream for camera '{camera.Name}'");
+                    SendCameraStateOnUIThread(CameraState.Stopped);
+                    return;
+                }
+
+                FullAddress = $"uvc-direct://{camera.VendorId}:{camera.ProductId}";
+                logger.Info($"UVC direct stream started for camera '{camera.Name}' ({uvcFrameSource.FrameWidth}×{uvcFrameSource.FrameHeight})");
+
+                SendCameraStateOnUIThread(CameraState.Opening);
+                SendCameraStateOnUIThread(CameraState.Playing);
+                return;
+            }
+
             if (!EnsureInitialized() || libVLC is null || MediaPlayer is null)
             {
                 logger.Warn("Ignoring Play request because LibVLC is not available on this platform/runtime.");
@@ -502,6 +526,12 @@ namespace CollimationCircles.Services
                 protocol = "http";
                 address = "localhost";
                 port = "8091";
+            }
+            else if (camera.APIType == APIType.Uvc)
+            {
+                // UVC cameras use direct rendering, not a URL-based stream.
+                protocol = "uvc-direct";
+                address = $"{camera.VendorId}:{camera.ProductId}";
             }
 
             string newRemoteAddress = address;

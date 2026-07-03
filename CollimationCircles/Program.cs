@@ -47,6 +47,15 @@ namespace CollimationCircles
 
             try
             {
+                if (StartupOptions.RecoverUvcVidPid is { } recoverVidPid)
+                {
+                    bool recovered = UvcFrameSource.TryRecoverUvcDevice(recoverVidPid.VendorId, recoverVidPid.ProductId);
+                    logger.Info(recovered
+                        ? $"UVC recovery mode completed for {recoverVidPid.VendorId}:{recoverVidPid.ProductId}."
+                        : $"UVC recovery mode failed for {recoverVidPid.VendorId}:{recoverVidPid.ProductId}.");
+                    return;
+                }
+
                 BootstrapMacArm64VlcEnvironment(args);
                 ConfigureLinuxEnvironment();
 
