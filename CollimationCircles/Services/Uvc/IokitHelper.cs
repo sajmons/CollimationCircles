@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Uvc
 {
     /// <summary>
     /// Minimal IOKit P/Invoke helper for detaching the macOS kernel UVC driver.

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Zwo
 {
     /// <summary>
     /// Detects and manages ZWO ASI cameras using the native SDK

@@ -2,7 +2,7 @@ using CollimationCircles.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Zwo
 {
     /// <summary>
     /// Adapter that wraps <see cref="ZWOLiveStreamService"/> in direct-rendering

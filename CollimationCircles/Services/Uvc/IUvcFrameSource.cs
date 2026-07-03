@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Uvc
 {
     /// <summary>
     /// Provides direct frame delivery from a UVC camera via libusb, bypassing LibVLC.

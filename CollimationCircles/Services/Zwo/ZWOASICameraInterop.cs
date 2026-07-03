@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Zwo
 {
     /// <summary>
     /// P/Invoke wrapper for ZWO ASI Camera SDK (libASICamera2)

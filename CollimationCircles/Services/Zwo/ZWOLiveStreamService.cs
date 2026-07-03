@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Zwo
 {
     /// <summary>
     /// Captures frames from a ZWO ASI camera using the ASI SDK and serves them

@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Uvc
 {
     /// <summary>
     /// P/Invoke bindings for libuvc (https://github.com/libuvc/libuvc).
