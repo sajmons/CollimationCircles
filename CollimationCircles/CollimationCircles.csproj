@@ -169,6 +169,54 @@
     <Message Text="Ad-hoc signed libusb and libuvc dylibs" Importance="high" />
   </Target>
 
+  <!-- Linux: Copy libuvc shared library for UVC camera control + streaming via libuvc -->
+  <Target Name="CopyLibUvcLinuxX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'linux-x64'">
+    <ItemGroup>
+      <LibUvcFiles Include="Libraries\libuvc\linux\x64\libuvc.so" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUvcFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libuvc.so (linux-x64) to $(OutputPath)" Importance="high" />
+  </Target>
+  <Target Name="CopyLibUvcLinuxArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'linux-arm64'">
+    <ItemGroup>
+      <LibUvcFiles Include="Libraries\libuvc\linux\arm64\libuvc.so" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUvcFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libuvc.so (linux-arm64) to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Windows: Copy libusb-1.0.dll for UVC camera control via libuvc -->
+  <Target Name="CopyLibUsbWinX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <ItemGroup>
+      <LibUsbFiles Include="Libraries\libusb\win\x64\libusb-1.0.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUsbFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libusb-1.0.dll (win-x64) to $(OutputPath)" Importance="high" />
+  </Target>
+  <Target Name="CopyLibUsbWinArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
+    <ItemGroup>
+      <LibUsbFiles Include="Libraries\libusb\win\arm64\libusb-1.0.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUsbFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libusb-1.0.dll (win-arm64) to $(OutputPath)" Importance="high" />
+  </Target>
+
+  <!-- Windows: Copy libuvc.dll for UVC camera control + streaming via libuvc -->
+  <Target Name="CopyLibUvcWinX64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <ItemGroup>
+      <LibUvcFiles Include="Libraries\libuvc\win\x64\libuvc.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUvcFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libuvc.dll (win-x64) to $(OutputPath)" Importance="high" />
+  </Target>
+  <Target Name="CopyLibUvcWinArm64" AfterTargets="Build" Condition="'$(RuntimeIdentifier)' == 'win-arm64'">
+    <ItemGroup>
+      <LibUvcFiles Include="Libraries\libuvc\win\arm64\libuvc.dll" />
+    </ItemGroup>
+    <Copy SourceFiles="@(LibUvcFiles)" DestinationFolder="$(OutputPath)" />
+    <Message Text="Copied libuvc.dll (win-arm64) to $(OutputPath)" Importance="high" />
+  </Target>
+
   <ItemGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <Content Include="Libraries\libvlc\**\*.*">
       <Link>libvlc\%(RecursiveDir)%(Filename)%(Extension)</Link>
