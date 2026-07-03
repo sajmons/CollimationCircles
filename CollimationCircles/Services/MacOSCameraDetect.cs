@@ -1,4 +1,5 @@
 using CollimationCircles.Models;
+using CollimationCircles.Services.Uvc;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using System;

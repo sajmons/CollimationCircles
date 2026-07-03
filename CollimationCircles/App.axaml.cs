@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CollimationCircles.Services;
+using CollimationCircles.Services.Uvc;
+using CollimationCircles.Services.Zwo;
 using CollimationCircles.ViewModels;
 using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;

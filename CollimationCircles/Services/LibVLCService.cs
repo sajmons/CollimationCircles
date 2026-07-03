@@ -1,6 +1,8 @@
 using CollimationCircles.Helper.RpiCameraTools;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
+using CollimationCircles.Services.Uvc;
+using CollimationCircles.Services.Zwo;
 using Avalonia.Threading;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;

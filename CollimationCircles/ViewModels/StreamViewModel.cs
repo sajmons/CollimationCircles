@@ -2,6 +2,8 @@ using Avalonia.Threading;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CollimationCircles.Services.Uvc;
+using CollimationCircles.Services.Zwo;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;

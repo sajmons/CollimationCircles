@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using CollimationCircles.Services;
+using CollimationCircles.Services.Uvc;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

@@ -2,7 +2,7 @@ using CollimationCircles.Models;
 using System;
 using System.Threading.Tasks;
 
-namespace CollimationCircles.Services
+namespace CollimationCircles.Services.Zwo
 {
     /// <summary>
     /// Provides direct frame delivery from a ZWO ASI camera, bypassing LibVLC.
