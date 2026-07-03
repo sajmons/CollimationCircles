@@ -36,3 +36,34 @@ jobs:
           name: libusb-macos-${{ matrix.arch }}
           path: CollimationCircles/Libraries/libusb/macos/${{ matrix.arch }}/libusb-1.0.0.dylib
           if-no-files-found: error
+
+  # ─────────────────────────────────────────────────────────────────────
+  # Windows — x64 + arm64
+  # ─────────────────────────────────────────────────────────────────────
+  windows:
+    name: Windows ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            vcpkg_triplet: x64-windows
+            runner: windows-2025-vs2026
+          - arch: arm64
+            vcpkg_triplet: arm64-windows
+            runner: windows-11-vs2026-arm
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build libusb-1.0.dll
+        shell: pwsh
+        run: |
+          bash ./CollimationCircles/Libraries/libusb/win/${{ matrix.arch }}/build.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: libusb-win-${{ matrix.arch }}
+          path: CollimationCircles/Libraries/libusb/win/${{ matrix.arch }}/libusb-1.0.dll
+          if-no-files-found: error
