@@ -1,7 +1,5 @@
 using CollimationCircles.Models;
-using CollimationCircles.Services.Uvc;
 using CommunityToolkit.Diagnostics;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -122,9 +120,10 @@ namespace CollimationCircles.Services
                     _ = TryExtractVidPid(modelId, out vendorId, out productId);
                 }
 
-                // Use Uvc APIType for cameras with vendor/product IDs (real UVC cameras)
-                // Fall back to QTCapture for built-in/virtual cameras without UVC IDs
-                APIType apiType = (vendorId > 0 && productId > 0) ? APIType.Uvc : APIType.QTCapture;
+                // Use QTCapture for all system_profiler cameras.
+                // UVC cameras (with vendor/product IDs) are now detected by
+                // UvcCameraDetectMac in Services/Uvc/.
+                APIType apiType = APIType.QTCapture;
 
                 yield return new Camera
                 {
@@ -333,15 +332,6 @@ namespace CollimationCircles.Services
 
             List<ICameraControl> controls = [];
 
-            // For UVC cameras with vendor/product IDs, controls are enumerated at
-            // stream start by UvcFrameSource.EnumerateControls (via libuvc).
-            // Return empty list here — placeholders will be replaced on Play.
-            if (camera.APIType is APIType.Uvc && camera.VendorId > 0 && camera.ProductId > 0)
-            {
-                logger.Info($"UVC camera '{camera.Name}' (VID={camera.VendorId} PID={camera.ProductId}) — controls will be enumerated on stream start");
-                return controls;
-            }
-
             // QTCapture cameras: discover controls via AVFoundation (Swift script)
             if (!OperatingSystem.IsMacOS() || camera.APIType is not APIType.QTCapture)
             {
@@ -501,31 +491,6 @@ print(String(data: data, encoding: .utf8)!)
 
         public void SetControl(Camera camera, ControlType controlType, double value)
         {
-            // For UVC cameras, control setting is handled via UvcFrameSource
-            // which has the device open during streaming.
-            if (camera.APIType is APIType.Uvc)
-            {
-                try
-                {
-                    logger.Info($"macOS UVC set request: camera='{camera.Name}', control={controlType}, value={value}");
-                    var uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
-                    bool ok = uvcFrameSource.SetControl(controlType.ToString(), (long)value);
-                    if (!ok)
-                    {
-                        logger.Warn($"Failed to set UVC control {controlType}={value} on '{camera.Name}'");
-                    }
-                    else
-                    {
-                        logger.Info($"macOS UVC set request completed: camera='{camera.Name}', control={controlType}, value={value}");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, $"Error setting UVC control {controlType} on '{camera.Name}'");
-                }
-                return;
-            }
-
             // QTCapture: AVFoundation mode-only controls (numeric set is not supported)
             if (!OperatingSystem.IsMacOS() || camera.APIType is not APIType.QTCapture)
             {
@@ -553,48 +518,6 @@ print(String(data: data, encoding: .utf8)!)
 
         public void SetControlAuto(Camera camera, ControlType controlType, bool isAuto)
         {
-            // UVC cameras: route to UvcFrameSource (libuvc)
-            if (camera.APIType is APIType.Uvc)
-            {
-                try
-                {
-                    logger.Info($"macOS UVC auto set request: camera='{camera.Name}', control={controlType}, isAuto={isAuto}");
-                    var uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
-
-                    string autoName = controlType switch
-                    {
-                        ControlType.ExposureTime => "AutoExposure",
-                        ControlType.FocusAbsolute => "AutoFocus",
-                        ControlType.WhiteBalance => "AutoWhiteBalance",
-                        ControlType.Hue => "HueAuto",
-                        ControlType.Contrast => "ContrastAuto",
-                        _ => string.Empty
-                    };
-
-                    if (!string.IsNullOrEmpty(autoName))
-                    {
-                        bool ok = uvcFrameSource.SetAutoControl(autoName, isAuto);
-                        if (!ok)
-                        {
-                            logger.Warn($"Failed to set UVC auto control {controlType}={isAuto} on '{camera.Name}'");
-                        }
-                        else
-                        {
-                            logger.Info($"macOS UVC auto set request completed: camera='{camera.Name}', control={controlType}, isAuto={isAuto}");
-                        }
-                    }
-                    else
-                    {
-                        logger.Warn($"No UVC auto-control mapping for {controlType} on '{camera.Name}'");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, $"Error setting UVC auto control {controlType} on '{camera.Name}'");
-                }
-                return;
-            }
-
             // QTCapture: set auto mode via AVFoundation Swift script
             if (!OperatingSystem.IsMacOS() || camera.APIType is not APIType.QTCapture)
             {
