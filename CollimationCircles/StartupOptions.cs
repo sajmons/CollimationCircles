@@ -34,11 +34,19 @@ namespace CollimationCircles
         /// </summary>
         public static (int VendorId, int ProductId)? RecoverUvcVidPid { get; private set; }
 
+        /// <summary>
+        /// Debug mode for UVC camera detection.
+        /// Command: --debug-uvc
+        /// Will run camera detection and exit without launching the UI.
+        /// </summary>
+        public static bool DebugUvc { get; private set; }
+
         public static void Initialize(string[] args)
         {
             AutoConnectCameraName = null;
             AutoConnectCameraVidPid = null;
             RecoverUvcVidPid = null;
+            DebugUvc = false;
 
             if (args is null || args.Length == 0)
             {
@@ -48,6 +56,13 @@ namespace CollimationCircles
             for (int i = 0; i < args.Length; i++)
             {
                 string arg = args[i];
+
+                // --debug-uvc
+                if (string.Equals(arg, "--debug-uvc", StringComparison.OrdinalIgnoreCase))
+                {
+                    DebugUvc = true;
+                    continue;
+                }
 
                 // --camera <name>
                 if (string.Equals(arg, "--camera", StringComparison.OrdinalIgnoreCase))

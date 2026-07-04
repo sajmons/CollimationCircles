@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace CollimationCircles
 {
@@ -48,6 +49,12 @@ namespace CollimationCircles
 
             try
             {
+                if (StartupOptions.DebugUvc)
+                {
+                    RunUvcDebug().Wait();
+                    return;
+                }
+
                 if (StartupOptions.RecoverUvcVidPid is { } recoverVidPid)
                 {
                     bool recovered = UvcFrameSource.TryRecoverUvcDevice(recoverVidPid.VendorId, recoverVidPid.ProductId);
@@ -98,6 +105,47 @@ namespace CollimationCircles
             catch (Exception ex)
             {
                 logger.Warn(ex, "Failed to install native Linux crash handler.");
+            }
+        }
+
+        private static async Task RunUvcDebug()
+        {
+            logger.Info("=== UVC Camera Detection Debug Mode ===");
+            logger.Info($"Operating System: Windows");
+
+            try
+            {
+                logger.Info("Initiating UVC camera detection...");
+                var detector = new UvcCameraDetectWindows();
+                var cameras = await detector.GetCameras();
+
+                logger.Info($"\n========================================");
+                logger.Info($"DETECTION COMPLETE");
+                logger.Info($"Total UVC cameras found: {cameras.Count}");
+                logger.Info($"========================================");
+
+                if (cameras.Count > 0)
+                {
+                    logger.Info("Cameras detected:");
+                    foreach (var camera in cameras)
+                    {
+                        logger.Info($"\n  Camera {camera.Index}:");
+                        logger.Info($"    Name: {camera.Name}");
+                        logger.Info($"    VendorID: 0x{camera.VendorId:X4}");
+                        logger.Info($"    ProductID: 0x{camera.ProductId:X4}");
+                        logger.Info($"    Path: {camera.Path}");
+                        logger.Info($"    APIType: {camera.APIType}");
+                    }
+                }
+                else
+                {
+                    logger.Warn("No UVC cameras were detected.");
+                    logger.Info("Check the debug output above for details on why devices were filtered.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Fatal(ex, "Error during UVC camera detection");
             }
         }
 

@@ -66,6 +66,8 @@ namespace CollimationCircles.Services.Uvc
 
         private void DetectUvcCameras(List<Camera> cameras)
         {
+            logger.Debug("Starting UVC camera detection...");
+
             // Enumerate all USB devices
             IntPtr devInfoSet = SetupDiGetClassDevs(
                 IntPtr.Zero,
@@ -82,30 +84,54 @@ namespace CollimationCircles.Services.Uvc
             try
             {
                 int index = 0;
+                int totalDevicesEnumerated = 0;
                 var spi = new SP_DEVINFO_DATA();
                 spi.cbSize = Marshal.SizeOf(spi);
 
                 for (int memberIndex = 0; SetupDiEnumDeviceInfo(devInfoSet, memberIndex, ref spi); memberIndex++)
                 {
+                    totalDevicesEnumerated++;
                     try
                     {
+                        logger.Debug($"[Device {memberIndex}] Processing USB device...");
+
                         string? compatibleIds = GetDeviceStringProperty(devInfoSet, ref spi, SPDRP_COMPATIBLEIDS);
+                        logger.Debug($"[Device {memberIndex}] Compatible IDs: {(string.IsNullOrEmpty(compatibleIds) ? "<empty>" : compatibleIds)}");
+
                         if (string.IsNullOrEmpty(compatibleIds))
+                        {
+                            logger.Debug($"[Device {memberIndex}] Skipped: No compatible IDs");
                             continue;
+                        }
 
                         // Check if this USB device matches the Video Class (UVC)
                         if (!IsUvcDevice(compatibleIds))
+                        {
+                            logger.Debug($"[Device {memberIndex}] Skipped: Not a UVC device");
                             continue;
+                        }
+
+                        logger.Debug($"[Device {memberIndex}] Recognized as UVC device");
 
                         // Get VID/PID from hardware ID
                         string? hardwareId = GetDeviceStringProperty(devInfoSet, ref spi, SPDRP_HARDWAREID);
+                        logger.Debug($"[Device {memberIndex}] Hardware ID: {(string.IsNullOrEmpty(hardwareId) ? "<empty>" : hardwareId)}");
+
                         if (string.IsNullOrEmpty(hardwareId))
+                        {
+                            logger.Debug($"[Device {memberIndex}] Skipped: No hardware ID");
                             continue;
+                        }
 
                         int vendorId = 0;
                         int productId = 0;
                         if (!TryExtractVidPid(hardwareId, out vendorId, out productId))
+                        {
+                            logger.Debug($"[Device {memberIndex}] Skipped: Could not extract VID/PID from '{hardwareId}'");
                             continue;
+                        }
+
+                        logger.Debug($"[Device {memberIndex}] Extracted VID: {vendorId:X4}, PID: {productId:X4}");
 
                         // Get the device name
                         string? deviceName = GetDeviceStringProperty(devInfoSet, ref spi, SPDRP_FRIENDLYNAME);
@@ -119,13 +145,20 @@ namespace CollimationCircles.Services.Uvc
                             deviceName = $"UVC Camera ({vendorId:X4}:{productId:X4})";
                         }
 
+                        logger.Debug($"[Device {memberIndex}] Device Name: {deviceName}");
+
                         // Get the device instance ID for the path
                         string? instanceId = GetDeviceInstanceId(devInfoSet, ref spi);
                         string path = instanceId ?? $"\\\\?\\usb#vid_{vendorId:X4}&pid_{productId:X4}";
 
+                        logger.Debug($"[Device {memberIndex}] Instance ID: {(instanceId ?? "<generated>")}");
+
                         // Avoid exact duplicates (same VID/PID)
                         if (cameras.Any(c => c.VendorId == vendorId && c.ProductId == productId))
+                        {
+                            logger.Debug($"[Device {memberIndex}] Skipped: Duplicate VID/PID already in list");
                             continue;
+                        }
 
                         Camera camera = new()
                         {
@@ -139,7 +172,7 @@ namespace CollimationCircles.Services.Uvc
 
                         camera.Controls = [];
                         cameras.Add(camera);
-                        logger.Info($"Added Windows UVC camera: '{camera.Name}' (VID={vendorId} PID={productId})");
+                        logger.Info($"[Device {memberIndex}] Added Windows UVC camera: '{camera.Name}' (VID={vendorId:X4} PID={productId:X4})");
                     }
                     catch (Exception ex)
                     {
@@ -147,7 +180,7 @@ namespace CollimationCircles.Services.Uvc
                     }
                 }
 
-                logger.Info($"Detected {cameras.Count} UVC camera(s) on Windows");
+                logger.Info($"USB device enumeration complete: {totalDevicesEnumerated} devices processed, {cameras.Count} UVC camera(s) detected");
             }
             finally
             {
@@ -158,14 +191,34 @@ namespace CollimationCircles.Services.Uvc
         private static bool IsUvcDevice(string compatibleIds)
         {
             // Check for USB Video Class identifiers in the compatible IDs
-            // Format examples:
-            //   USB\Class_0E
+            // Format examples from Windows device enumeration:
+            //   USB\COMPAT_VID_046d&Class_0e&SubClass_01&Prot_00
+            //   USB\COMPAT_VID_046d&Class_0e&SubClass_02&Prot_00
+            //   USB\Class_0E (legacy format, less common)
             //   USB\Class_0E&SubClass_01
-            //   USB\Class_0E&SubClass_02
             string[] ids = compatibleIds.Split('\0', StringSplitOptions.RemoveEmptyEntries);
-            return ids.Any(id =>
+
+            logger.Debug($"Checking {ids.Length} compatible ID entries:");
+            foreach (var id in ids)
+            {
+                // Check for:
+                // 1. USB\Class_0E (original code's expectation)
+                // 2. USB\...&Class_0e&... (Windows device instance format with COMPAT_VID prefix)
+                bool matches = id.StartsWith("USB\\Class_0E", StringComparison.OrdinalIgnoreCase) ||
+                              id.Contains("&Class_0e&", StringComparison.OrdinalIgnoreCase) ||
+                              id.Contains("&Class_0E&", StringComparison.OrdinalIgnoreCase) ||
+                              id.Contains("USB_CC_VIDEO", StringComparison.OrdinalIgnoreCase);
+                logger.Debug($"  - '{id}' -> {(matches ? "MATCH" : "no match")}");
+            }
+
+            bool result = ids.Any(id =>
                 id.StartsWith("USB\\Class_0E", StringComparison.OrdinalIgnoreCase) ||
+                id.Contains("&Class_0e&", StringComparison.OrdinalIgnoreCase) ||
+                id.Contains("&Class_0E&", StringComparison.OrdinalIgnoreCase) ||
                 id.Contains("USB_CC_VIDEO", StringComparison.OrdinalIgnoreCase));
+
+            logger.Debug($"IsUvcDevice result: {result}");
+            return result;
         }
 
         /// <summary>
@@ -184,18 +237,30 @@ namespace CollimationCircles.Services.Uvc
 
             // Split on null chars and take the first non-empty line
             string firstLine = hardwareId.Split('\0', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? hardwareId;
+            logger.Debug($"Extracting VID/PID from: '{firstLine}'");
 
             var match = Regex.Match(firstLine,
                 @"VID[_=](\w{4})[^0-9A-Fa-f]?PID[_=](\w{4})",
                 RegexOptions.IgnoreCase);
 
             if (!match.Success)
+            {
+                logger.Debug($"VID/PID regex did not match. Pattern: VID[_=](\\w{{4}})[^0-9A-Fa-f]?PID[_=](\\w{{4}})");
                 return false;
+            }
 
             vendorId = int.Parse(match.Groups[1].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
             productId = int.Parse(match.Groups[2].Value, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
 
-            return vendorId > 0 && productId > 0;
+            logger.Debug($"Extracted VID: 0x{vendorId:X4}, PID: 0x{productId:X4}");
+
+            if (!(vendorId > 0 && productId > 0))
+            {
+                logger.Debug($"VID or PID is invalid (VID={vendorId}, PID={productId})");
+                return false;
+            }
+
+            return true;
         }
 
         private static string? GetDeviceStringProperty(IntPtr devInfoSet, ref SP_DEVINFO_DATA devInfoData, int property)
