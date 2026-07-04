@@ -91,34 +91,33 @@ jobs:
       matrix:
         include:
           - arch: x64
-            vcpkg_triplet: x64-windows
             runner: windows-2025-vs2026
+            msystem: MINGW64
+            target-prefix: mingw-w64-x86_64
           - arch: arm64
-            vcpkg_triplet: arm64-windows
             runner: windows-11-vs2026-arm
+            msystem: CLANGARM64
+            target-prefix: mingw-w64-clang-aarch64
     steps:
       - uses: actions/checkout@v7
 
-      - name: Install libusb and pthreads via vcpkg
-        shell: pwsh
-        run: |
-          # GitHub Windows runners have vcpkg pre-installed at C:\vcpkg
-          $vcpkg = "C:\vcpkg\vcpkg.exe"
-          if (-not (Test-Path $vcpkg)) {
-            $vcpkg = "& vcpkg"  # fallback to PATH
-          }
-          Write-Host "Installing libusb and pthreads for ${{ matrix.vcpkg_triplet }}..."
-          & $vcpkg install libusb:${{ matrix.vcpkg_triplet }} pthreads:${{ matrix.vcpkg_triplet }}
-          # Set VCPKG_ROOT for the build script
-          echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
-          echo "VCPKG_DEFAULT_TRIPLET=${{ matrix.vcpkg_triplet }}" >> $env:GITHUB_ENV
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          update: true
+          release: false
+          install: >-
+              base-devel
+              ${{ matrix.target-prefix }}-cmake
+              ${{ matrix.target-prefix }}-gcc
+              ${{ matrix.target-prefix }}-libusb
+              ${{ matrix.target-prefix }}-libjpeg-turbo
 
       - name: Build libuvc
-        shell: pwsh
+        shell: bash
         run: |
-          Write-Host "VCPKG_ROOT is: $env:VCPKG_ROOT"
           cd CollimationCircles/Libraries/libuvc
-          bash ./win/${{ matrix.arch }}/build.sh
+          ./win/${{ matrix.arch }}/build.sh
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
