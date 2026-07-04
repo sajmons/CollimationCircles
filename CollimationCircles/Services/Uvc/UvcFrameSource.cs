@@ -150,34 +150,37 @@ namespace CollimationCircles.Services.Uvc
             _lastVendorId = vendorId;
             _lastProductId = productId;
 
-            // Step 1: IOKit SetConfiguration(0) to detach the macOS kernel UVC driver.
-            // libuvc's libusb_detach_kernel_driver is NOT sufficient on macOS —
-            // the kernel driver is an IOKit service, not a libusb module.
-            // SetConfiguration(0) unconfigures the device at the IOKit level,
-            // which releases the kernel driver from all interfaces.
-            logger.Debug("OpenDevice: step 1 — IOKit SetConfiguration(0) to detach kernel driver");
-            int targetConfig = IokitHelper.SetConfiguration(vendorId, productId, 0);
-            logger.Debug($"OpenDevice: IokitSetConfiguration(0) returned targetConfig={targetConfig}");
-            if (targetConfig == 0)
+            // On macOS, the kernel UVC driver is an IOKit service, not a libusb module.
+            // libuvc's libusb_detach_kernel_driver is NOT sufficient — we must detach
+            // the driver via IOKit's SetConfiguration(0) first.
+            // On Linux, libuvc's libusb_detach_kernel_driver works natively.
+            if (OperatingSystem.IsMacOS())
             {
-                logger.Error("IOKit SetConfiguration(0) failed — cannot detach kernel driver");
-                return false;
+                logger.Debug("OpenDevice: macOS — IOKit SetConfiguration(0) to detach kernel driver");
+                int targetConfig = IokitHelper.SetConfiguration(vendorId, productId, 0);
+                logger.Debug($"OpenDevice: IokitSetConfiguration(0) returned targetConfig={targetConfig}");
+                if (targetConfig == 0)
+                {
+                    logger.Error("IOKit SetConfiguration(0) failed — cannot detach kernel driver");
+                    return false;
+                }
+                _restoreConfig = targetConfig;
+
+                // Brief wait for kernel driver to release interfaces
+                System.Threading.Thread.Sleep(100);
             }
-            _restoreConfig = targetConfig;
 
-            // Brief wait for kernel driver to release interfaces before the retry loop
-            System.Threading.Thread.Sleep(100);
-
-            // Step 2: libuvc init + find + open with retry loop.
+            // libuvc init + find + open with retry loop.
             // On macOS there's a race condition: after IOKit SetConfiguration(0)
             // detaches the kernel driver, the driver can re-attach before
             // libuvc claims the interface. We retry the IOKit detach + uvc_open
-            // sequence up to 20 times (matching the old code's strategy).
+            // sequence up to 20 times. On Linux, retries are rarely needed.
             int ret = LibUvc.uvc_init(out _ctx, IntPtr.Zero);
             if (ret != LibUvc.UVC_SUCCESS)
             {
                 logger.Error($"uvc_init failed: {LibUvc.ErrorName(ret)}");
-                IokitHelper.RestoreKernelDriver(vendorId, productId);
+                if (OperatingSystem.IsMacOS())
+                    IokitHelper.RestoreKernelDriver(vendorId, productId);
                 return false;
             }
             logger.Debug($"OpenDevice: uvc_init success, ctx={_ctx}");
@@ -185,8 +188,8 @@ namespace CollimationCircles.Services.Uvc
             bool opened = false;
             for (int attempt = 0; attempt < 20; attempt++)
             {
-                // Re-detach kernel driver on each attempt (the driver may have re-attached)
-                if (attempt > 0)
+                // On macOS, re-detach kernel driver on each attempt (the driver may have re-attached)
+                if (attempt > 0 && OperatingSystem.IsMacOS())
                 {
                     logger.Debug($"OpenDevice: attempt {attempt} — re-detaching kernel driver via IOKit SetConfiguration(0)");
                     IokitHelper.SetConfiguration(vendorId, productId, 0);
@@ -220,7 +223,8 @@ namespace CollimationCircles.Services.Uvc
                 logger.Error($"uvc_open failed after 20 attempts: {LibUvc.ErrorName(ret)}");
                 LibUvc.uvc_exit(_ctx);
                 _ctx = IntPtr.Zero;
-                IokitHelper.RestoreKernelDriver(vendorId, productId);
+                if (OperatingSystem.IsMacOS())
+                    IokitHelper.RestoreKernelDriver(vendorId, productId);
                 return false;
             }
 
@@ -247,9 +251,9 @@ namespace CollimationCircles.Services.Uvc
                 _ctx = IntPtr.Zero;
             }
 
-            // Restore the kernel driver so the camera works normally again
-            // (e.g. in AVFoundation / FaceTime / other apps)
-            if (_lastVendorId > 0 && _lastProductId > 0)
+            // Restore the kernel driver on macOS so the camera works normally again
+            // (e.g. in AVFoundation / FaceTime / other apps). Not needed on Linux.
+            if (_lastVendorId > 0 && _lastProductId > 0 && OperatingSystem.IsMacOS())
             {
                 IokitHelper.RestoreKernelDriver(_lastVendorId, _lastProductId);
             }
@@ -835,13 +839,19 @@ namespace CollimationCircles.Services.Uvc
         // -------------------------------------------------------------------
 
         /// <summary>
-        /// Restores the macOS kernel UVC driver by re-activating the device
+        /// Restores the kernel UVC driver by re-activating the device
         /// configuration via IOKit SetConfiguration(1). Useful after a crash
         /// that left the device detached from the kernel driver.
+        /// Only applies on macOS where IOKit-based detachment is used.
         /// </summary>
         internal static bool TryRecoverUvcDevice(int vendorId, int productId)
         {
             if (vendorId <= 0 || productId <= 0) return false;
+
+            if (!OperatingSystem.IsMacOS())
+            {
+                return false;
+            }
 
             try
             {
