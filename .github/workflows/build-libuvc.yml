@@ -108,6 +108,7 @@ jobs:
               base-devel
               ${{ matrix.target-prefix }}-cmake
               ${{ matrix.target-prefix }}-gcc
+              ${{ matrix.target-prefix }}-git
               ${{ matrix.target-prefix }}-libusb
               ${{ matrix.target-prefix }}-libjpeg-turbo
 
