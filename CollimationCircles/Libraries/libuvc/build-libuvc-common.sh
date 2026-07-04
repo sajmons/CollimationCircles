@@ -118,91 +118,53 @@ elif [ "$PLATFORM" = "linux" ]; then
   OUTPUT_FILE="libuvc.so"
 
 elif [ "$PLATFORM" = "win" ]; then
-  if [ -z "$VCPKG_ROOT" ]; then
-    echo "ERROR: VCPKG_ROOT is not set"; exit 1
-  fi
-  echo "[Step] Windows build — VCPKG_ROOT=$VCPKG_ROOT"
+  echo "[Step] Windows build — using MinGW/MSYS2"
 
-  # Convert Windows backslash path to forward slashes for bash/cmake
-  VCPKG_ROOT_FWD="$(echo "$VCPKG_ROOT" | sed 's|\\|/|g')"
-  TOOLCHAIN="$VCPKG_ROOT_FWD/scripts/buildsystems/vcpkg.cmake"
-  echo "[Info] Using vcpkg toolchain: $TOOLCHAIN"
-
-  TRIPLET="${VCPKG_DEFAULT_TRIPLET:-x64-windows}"
-  echo "[Info] Using vcpkg triplet: $TRIPLET"
-
-  # vcpkg installs headers and libs under installed/<triplet>/
-  VCPKG_INSTALLED="$VCPKG_ROOT_FWD/installed/$TRIPLET"
-  echo "[Info] vcpkg installed dir: $VCPKG_INSTALLED"
-  ls -la "$VCPKG_INSTALLED/include/libusb-1.0/" 2>/dev/null || echo "WARNING: libusb headers not found at expected path"
-  ls -la "$VCPKG_INSTALLED/lib/libusb-1.0.lib" 2>/dev/null || echo "WARNING: libusb lib not found at expected path"
-
-  # CMake -A flag requires uppercase for ARM64
+  # Determine MSYS2 environment path based on architecture
   case "$ARCH" in
-    x64)   CMAKE_PLATFORM="x64" ;;
-    arm64) CMAKE_PLATFORM="ARM64" ;;
-    *)     CMAKE_PLATFORM="$ARCH" ;;
+    x64)
+      MINGW_PREFIX="/mingw64"
+      MINGW_PACKAGE="mingw-w64-x86_64"
+      ;;
+    arm64)
+      MINGW_PREFIX="/clangarm64"
+      MINGW_PACKAGE="mingw-w64-clang-aarch64"
+      ;;
+    *)
+      echo "ERROR: Unknown arch: $ARCH"; exit 1
+      ;;
   esac
-  echo "[Info] CMake platform: $CMAKE_PLATFORM"
+  echo "[Info] MinGW prefix: $MINGW_PREFIX"
+  echo "[Info] MinGW package prefix: $MINGW_PACKAGE"
 
-  # Use Visual Studio generator with vcpkg toolchain
-  # Auto-detect the VS version available on the runner
-  VS_GENERATOR=""
-  if cmake --help 2>/dev/null | grep -q "Visual Studio 18 2026"; then
-    VS_GENERATOR="Visual Studio 18 2026"
-  elif cmake --help 2>/dev/null | grep -q "Visual Studio 17 2022"; then
-    VS_GENERATOR="Visual Studio 17 2022"
-  else
-    echo "WARNING: No Visual Studio generator found, using default"
-    VS_GENERATOR=""
-  fi
-  echo "[Info] VS Generator: ${VS_GENERATOR:-default}"
+  # Ensure libusb is available via pkg-config
+  export PKG_CONFIG_PATH="$MINGW_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH"
+  echo "[Info] PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
 
-  if [ -n "$VS_GENERATOR" ]; then
-    echo "[Step] Running cmake for Windows/${ARCH} with VS generator..."
-    echo "  cmake flags: -G \"$VS_GENERATOR\" -A \"$CMAKE_PLATFORM\" -DCMAKE_BUILD_TARGET=Shared -DVCPKG_TARGET_TRIPLET=$TRIPLET"
-    cmake .. \
-      -G "$VS_GENERATOR" \
-      -A "$CMAKE_PLATFORM" \
-      -DCMAKE_BUILD_TARGET=Shared \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-      -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
-      -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
-      -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
-      -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
-      -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
-  else
-    echo "[Step] Running cmake for Windows/${ARCH} (no VS generator)..."
-    echo "  cmake flags: -DCMAKE_BUILD_TARGET=Shared -DVCPKG_TARGET_TRIPLET=$TRIPLET"
-    cmake .. \
-      -DCMAKE_BUILD_TARGET=Shared \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-      -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
-      -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
-      -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
-      -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
-      -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
-  fi
+  echo "[Step] Running cmake for Windows/${ARCH} with MSYS Makefiles..."
+  echo "  cmake flags: -G \"MSYS Makefiles\" -DCMAKE_BUILD_TARGET=Shared -DCMAKE_BUILD_TYPE=Release"
+  cmake .. \
+    -G "MSYS Makefiles" \
+    -DCMAKE_BUILD_TARGET=Shared \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON
 
-  echo "[Step] Building with MSBuild (Release)..."
+  echo "[Step] Building with make..."
   cmake --build . --config Release
 
-  # MSVC outputs uvc.dll in Release/. Normalize to libuvc.dll for artifacts.
+  # MinGW outputs libuvc.dll in the build root
   echo "[Step] Locating built DLL..."
-  if [ -f "Release/libuvc.dll" ]; then
+  if [ -f "libuvc.dll" ]; then
+    OUTPUT_FILE="libuvc.dll"
+    echo "[Found] libuvc.dll"
+  elif [ -f "Release/libuvc.dll" ]; then
     OUTPUT_FILE="Release/libuvc.dll"
     echo "[Found] Release/libuvc.dll"
   elif [ -f "Release/uvc.dll" ]; then
     echo "[Found] Release/uvc.dll — copying to Release/libuvc.dll"
     cp "Release/uvc.dll" "Release/libuvc.dll"
     OUTPUT_FILE="Release/libuvc.dll"
-  elif [ -f "libuvc.dll" ]; then
-    OUTPUT_FILE="libuvc.dll"
-    echo "[Found] libuvc.dll"
-  elif [ -f "uvc.dll" ]; then
-    echo "[Found] uvc.dll — copying to libuvc.dll"
-    cp "uvc.dll" "libuvc.dll"
-    OUTPUT_FILE="libuvc.dll"
   else
     echo "ERROR: libuvc.dll not found after build"
     echo "[Debug] Searching for any DLL or LIB files..."
