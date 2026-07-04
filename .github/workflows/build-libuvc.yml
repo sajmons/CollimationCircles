@@ -112,7 +112,7 @@ jobs:
               ${{ matrix.target-prefix }}-libjpeg-turbo
 
       - name: Build libuvc
-        shell: msys2
+        shell: msys2 {0}
         run: |
           cd CollimationCircles/Libraries/libuvc
           ./win/${{ matrix.arch }}/build.sh
