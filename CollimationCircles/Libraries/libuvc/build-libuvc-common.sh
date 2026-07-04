@@ -121,21 +121,21 @@ elif [ "$PLATFORM" = "win" ]; then
   echo "[Step] Windows build — using MinGW/MSYS2"
 
   # Determine MSYS2 environment path based on architecture
-  case "$ARCH" in
-    x64)
-      MINGW_PREFIX="/mingw64"
-      MINGW_PACKAGE="mingw-w64-x86_64"
-      ;;
-    arm64)
-      MINGW_PREFIX="/clangarm64"
-      MINGW_PACKAGE="mingw-w64-clang-aarch64"
-      ;;
-    *)
-      echo "ERROR: Unknown arch: $ARCH"; exit 1
-      ;;
-  esac
-  echo "[Info] MinGW prefix: $MINGW_PREFIX"
-  echo "[Info] MinGW package prefix: $MINGW_PACKAGE"
+  # case "$ARCH" in
+  #   x64)
+  #     MINGW_PREFIX="/mingw64"
+  #     MINGW_PACKAGE="mingw-w64-x86_64"
+  #     ;;
+  #   arm64)
+  #     MINGW_PREFIX="/clangarm64"
+  #     MINGW_PACKAGE="mingw-w64-clang-aarch64"
+  #     ;;
+  #   *)
+  #     echo "ERROR: Unknown arch: $ARCH"; exit 1
+  #     ;;
+  # esac
+  # echo "[Info] MinGW prefix: $MINGW_PREFIX"
+  # echo "[Info] MinGW package prefix: $MINGW_PACKAGE"
 
   # Install cmake via pacman (MSYS2 package manager)
   # echo "[Step] Installing cmake via pacman..."
@@ -147,16 +147,19 @@ elif [ "$PLATFORM" = "win" ]; then
 
   # Run cmake with MSYS Makefiles generator
   echo "[Step] Running cmake for Windows/${ARCH} with MSYS Makefiles..."
-  cmake .. -G "MSYS Makefiles" -D CMAKE_BUILD_TYPE=RelWithDebInfo -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON -D CMAKE_INSTALL_PREFIX=$MINGW_PREFIX .
+  #cmake .. -G "MSYS Makefiles" -D CMAKE_BUILD_TYPE=RelWithDebInfo -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON -D CMAKE_INSTALL_PREFIX=$MINGW_PREFIX .
+  cmake .. -G "MSYS Makefiles" -D CMAKE_BUILD_TYPE=RelWithDebInfo -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON
   
   # Copy libusb-1.0.dll.a and libusb.h to build directory for linking
   # echo "[Step] Copying libusb-1.0.dll.a and libusb.h to build directory..."
-  # cp $MINGW_PREFIX/lib/libusb-1.0.dll.a $BUILD_DIR/CMakeFiles/uvc.dir/src
-  # cp $MINGW_PREFIX/include/libusb-1.0/libusb.h $BUILD_DIR/include/libusb.h
+  cp $MINGW_PREFIX/lib/libusb-1.0.dll.a ./CMakeFiles/uvc.dir/src
+  cp $MINGW_PREFIX/include/libusb-1.0/libusb.h ./include/libusb.h
   
   # Build with cmake --build
   echo "[Step] Building with cmake --build..."
-  cmake .. --build $BUILD_DIR --target install
+  cmake --build .
+
+  find .
 
   #cd $BUILD_DIR/build_mingw64/
   #/C/msys64/mingw64/bin/cc.exe -O2 -g -DNDEBUG -shared -o libuvc.dll -Wl,--out-implib,libuvc.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles/uvc.dir/objects.a -Wl,--no-whole-archive  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -lusb-1.0

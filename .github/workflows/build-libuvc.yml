@@ -104,8 +104,6 @@ jobs:
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.msystem }}
-          update: true
-          release: false
           install: >-
               base-devel
               ${{ matrix.target-prefix }}-cmake
@@ -114,7 +112,7 @@ jobs:
               ${{ matrix.target-prefix }}-libjpeg-turbo
 
       - name: Build libuvc
-        shell: bash
+        shell: msys2
         run: |
           cd CollimationCircles/Libraries/libuvc
           ./win/${{ matrix.arch }}/build.sh
