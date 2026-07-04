@@ -22,17 +22,17 @@ namespace CollimationCircles.Services
             // UVC camera controls (Linux/Windows/macOS)
             if (camera.APIType is APIType.Uvc)
             {
-                if (OperatingSystem.IsLinux())
+                if (OperatingSystem.IsMacOS())
+                {
+                    new UvcCameraDetectMac().SetControl(camera, controlName, value);
+                }
+                else if (OperatingSystem.IsLinux())
                 {
                     new UvcCameraDetectLinux().SetControl(camera, controlName, value);
                 }
                 else if (OperatingSystem.IsWindows())
                 {
                     new UvcCameraDetectWindows().SetControl(camera, controlName, value);
-                }
-                else if (OperatingSystem.IsMacOS())
-                {
-                    new UvcCameraDetectMac().SetControl(camera, controlName, value);
                 }
             }
 
@@ -76,17 +76,17 @@ namespace CollimationCircles.Services
             // UVC camera auto-controls (Linux/Windows/macOS)
             if (camera.APIType is APIType.Uvc)
             {
-                if (OperatingSystem.IsLinux())
+                if (OperatingSystem.IsMacOS())
+                {
+                    new UvcCameraDetectMac().SetControlAuto(camera, controlName, isAuto);
+                }
+                else if (OperatingSystem.IsLinux())
                 {
                     new UvcCameraDetectLinux().SetControlAuto(camera, controlName, isAuto);
                 }
                 else if (OperatingSystem.IsWindows())
                 {
                     new UvcCameraDetectWindows().SetControlAuto(camera, controlName, isAuto);
-                }
-                else if (OperatingSystem.IsMacOS())
-                {
-                    new UvcCameraDetectMac().SetControlAuto(camera, controlName, isAuto);
                 }
             }
 

@@ -35,8 +35,11 @@ namespace CollimationCircles.Services.Uvc
 
             if (!OperatingSystem.IsLinux())
             {
+                logger.Debug("UvcCameraDetectLinux.GetCameras: skipped — not Linux");
                 return cameras;
             }
+
+            logger.Info("UvcCameraDetectLinux.GetCameras: begin");
 
             try
             {
@@ -47,6 +50,7 @@ namespace CollimationCircles.Services.Uvc
                 logger.Error(ex, "Error while detecting UVC cameras on Linux");
             }
 
+            logger.Info($"UvcCameraDetectLinux.GetCameras: returning {cameras.Count} camera(s)");
             return cameras;
         }
 
@@ -55,12 +59,12 @@ namespace CollimationCircles.Services.Uvc
             string videoDevicesDir = "/sys/class/video4linux";
             if (!Directory.Exists(videoDevicesDir))
             {
-                logger.Warn($"/sys/class/video4linux not found — no video devices detected");
+                logger.Warn($"UvcCameraDetectLinux: /sys/class/video4linux not found — no video devices detected");
                 return;
             }
 
             string[] videoDeviceDirs = Directory.GetDirectories(videoDevicesDir);
-            logger.Info($"Found {videoDeviceDirs.Length} video device(s) in {videoDevicesDir}");
+            logger.Info($"UvcCameraDetectLinux: found {videoDeviceDirs.Length} video device(s) in {videoDevicesDir}");
 
             int index = 0;
 
@@ -68,12 +72,17 @@ namespace CollimationCircles.Services.Uvc
             {
                 try
                 {
+                    logger.Debug($"UvcCameraDetectLinux: processing '{deviceDir}'");
+
                     // Resolve the device symlink to a real path
                     string realPath = ResolveSymlink(deviceDir);
                     if (string.IsNullOrEmpty(realPath))
                     {
+                        logger.Debug($"UvcCameraDetectLinux: could not resolve symlink for '{deviceDir}'");
                         continue;
                     }
+
+                    logger.Debug($"UvcCameraDetectLinux: real path = '{realPath}'");
 
                     // The device path contains the /dev/video* name
                     string deviceName = Path.GetFileName(deviceDir);
@@ -84,6 +93,7 @@ namespace CollimationCircles.Services.Uvc
                     if (string.IsNullOrWhiteSpace(name))
                     {
                         name = deviceName;
+                        logger.Debug($"UvcCameraDetectLinux: no name file, using '{deviceName}'");
                     }
 
                     // Check if this is a USB device by looking for idVendor/idProduct
@@ -94,6 +104,7 @@ namespace CollimationCircles.Services.Uvc
 
                     if (usbDevicePath != null)
                     {
+                        logger.Debug($"UvcCameraDetectLinux: found USB device path '{usbDevicePath}'");
                         string? vidStr = ReadFileContent(Path.Combine(usbDevicePath, "idVendor"));
                         string? pidStr = ReadFileContent(Path.Combine(usbDevicePath, "idProduct"));
 
@@ -101,7 +112,16 @@ namespace CollimationCircles.Services.Uvc
                         {
                             vendorId = ParseHexId(vidStr.Trim());
                             productId = ParseHexId(pidStr.Trim());
+                            logger.Debug($"UvcCameraDetectLinux: parsed VID={vendorId} PID={productId} from '{vidStr.Trim()}' / '{pidStr.Trim()}'");
                         }
+                        else
+                        {
+                            logger.Debug($"UvcCameraDetectLinux: idVendor or idProduct not found at '{usbDevicePath}'");
+                        }
+                    }
+                    else
+                    {
+                        logger.Debug($"UvcCameraDetectLinux: no USB device path found for real path '{realPath}'");
                     }
 
                     // Only add cameras with valid USB VID/PID (UVC cameras)
@@ -121,20 +141,20 @@ namespace CollimationCircles.Services.Uvc
                         camera.Controls = [];
 
                         cameras.Add(camera);
-                        logger.Info($"Added UVC camera: '{camera.Name}' (VID={vendorId} PID={productId}) at {devPath}");
+                        logger.Info($"UvcCameraDetectLinux: added UVC camera '{camera.Name}' (VID={vendorId} PID={productId}) at {devPath}");
                     }
                     else
                     {
-                        logger.Debug($"Skipping non-USB video device '{name}' at {devPath}");
+                        logger.Debug($"UvcCameraDetectLinux: skipping non-USB video device '{name}' at {devPath} (VID={vendorId} PID={productId})");
                     }
                 }
                 catch (Exception ex)
                 {
-                    logger.Warn(ex, $"Error processing video device '{deviceDir}'");
+                    logger.Warn(ex, $"UvcCameraDetectLinux: error processing video device '{deviceDir}'");
                 }
             }
 
-            logger.Info($"Detected {cameras.Count} UVC camera(s) on Linux");
+            logger.Info($"UvcCameraDetectLinux: detected {cameras.Count} UVC camera(s)");
         }
 
         /// <summary>
