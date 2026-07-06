@@ -150,7 +150,8 @@ elif [ "$PLATFORM" = "win" ]; then
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
     -DLIBUSB_INCLUDE_DIR="$LIBUSB_INCLUDE_DIR" \
-    -DLIBUSB_LIBRARY="$LIBUSB_LIBRARY"
+    -DLIBUSB_LIBRARY="$LIBUSB_LIBRARY" \
+    -DCMAKE_SHARED_LINKER_FLAGS="-lpthread"
 
   echo "[Step] Building..."
   cmake --build .
