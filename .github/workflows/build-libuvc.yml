@@ -99,6 +99,7 @@ jobs:
             msystem: CLANGARM64
             target-prefix: mingw-w64-clang-aarch64
     steps:
+      - run: git config --global core.autocrlf input
       - uses: actions/checkout@v7
 
       - uses: msys2/setup-msys2@v2
