@@ -118,66 +118,32 @@ elif [ "$PLATFORM" = "linux" ]; then
   OUTPUT_FILE="libuvc.so"
 
 elif [ "$PLATFORM" = "win" ]; then
-  echo "[Step] Windows build — using MinGW/MSYS2"
+  echo "[Step] Windows build — using MinGW/MSYS2 (MSYS Makefiles)"
 
-  # Determine MSYS2 environment path based on architecture
-  # case "$ARCH" in
-  #   x64)
-  #     MINGW_PREFIX="/mingw64"
-  #     MINGW_PACKAGE="mingw-w64-x86_64"
-  #     ;;
-  #   arm64)
-  #     MINGW_PREFIX="/clangarm64"
-  #     MINGW_PACKAGE="mingw-w64-clang-aarch64"
-  #     ;;
-  #   *)
-  #     echo "ERROR: Unknown arch: $ARCH"; exit 1
-  #     ;;
-  # esac
-  # echo "[Info] MinGW prefix: $MINGW_PREFIX"
-  # echo "[Info] MinGW package prefix: $MINGW_PACKAGE"
+  # MSYS Makefiles generator uses pkg-config to find libusb automatically.
+  # No patches needed for FindLibUSB.cmake or CMakeLists.txt — MinGW provides
+  # POSIX headers (sys/time.h, pthread.h, clock_gettime) natively.
+  # See: https://github.com/libuvc/libuvc/issues/12#issuecomment-1367968882
 
-  # Install cmake via pacman (MSYS2 package manager)
-  # echo "[Step] Installing cmake via pacman..."
-  # pacman -S --noconfirm --needed "$MINGW_PACKAGE-cmake" 2>&1 | tail -20
+  echo "[Info] Checking pkg-config for libusb..."
+  pkg-config --cflags --libs libusb-1.0 || echo "[Warning] pkg-config could not find libusb-1.0"
 
-  # Install libusb and jpeg via pacman (MSYS2 package manager)
-  # echo "[Step] Installing libusb and jpeg via pacman..."
-  # pacman -S --noconfirm --needed "$MINGW_PACKAGE-libusb" "$MINGW_PACKAGE-libjpeg-turbo" 2>&1 | tail -20
-
-  # Run cmake with MSYS Makefiles generator
   echo "[Step] Running cmake for Windows/${ARCH} with MSYS Makefiles..."
-  #cmake .. -G "MSYS Makefiles" -D CMAKE_BUILD_TYPE=RelWithDebInfo -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON -D CMAKE_INSTALL_PREFIX=$MINGW_PREFIX .
-  cmake .. -G "MSYS Makefiles" -D CMAKE_BUILD_TYPE=RelWithDebInfo -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON
-  
-  # Copy libusb-1.0.dll.a and libusb.h to build directory for linking
-  # echo "[Step] Copying libusb-1.0.dll.a and libusb.h to build directory..."
-  cp $MINGW_PREFIX/lib/libusb-1.0.dll.a ./CMakeFiles/uvc.dir/src
-  cp $MINGW_PREFIX/include/libusb-1.0/libusb.h ./include/libusb.h
-  
-  # Build with cmake --build
-  echo "[Step] Building with cmake --build..."
+  cmake .. \
+    -G "MSYS Makefiles" \
+    -DCMAKE_BUILD_TARGET=Shared \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON
+
+  echo "[Step] Building..."
   cmake --build .
-
-  find .
-
-  #cd $BUILD_DIR/build_mingw64/
-  #/C/msys64/mingw64/bin/cc.exe -O2 -g -DNDEBUG -shared -o libuvc.dll -Wl,--out-implib,libuvc.dll.a -Wl,--major-image-version,0,--minor-image-version,0 -Wl,--whole-archive CMakeFiles/uvc.dir/objects.a -Wl,--no-whole-archive  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -lusb-1.0
-  #cd ..
-  #cmake --build build_mingw64
 
   # MinGW outputs libuvc.dll in the build root
   echo "[Step] Locating built DLL..."
   if [ -f "libuvc.dll" ]; then
     OUTPUT_FILE="libuvc.dll"
     echo "[Found] libuvc.dll"
-  elif [ -f "Release/libuvc.dll" ]; then
-    OUTPUT_FILE="Release/libuvc.dll"
-    echo "[Found] Release/libuvc.dll"
-  elif [ -f "Release/uvc.dll" ]; then
-    echo "[Found] Release/uvc.dll — copying to Release/libuvc.dll"
-    cp "Release/uvc.dll" "Release/libuvc.dll"
-    OUTPUT_FILE="Release/libuvc.dll"
   else
     echo "ERROR: libuvc.dll not found after build"
     echo "[Debug] Searching for any DLL or LIB files..."
