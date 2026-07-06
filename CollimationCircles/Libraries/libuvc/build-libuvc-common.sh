@@ -151,17 +151,10 @@ elif [ "$PLATFORM" = "win" ]; then
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
     -DLIBUSB_INCLUDE_DIR="$LIBUSB_INCLUDE_DIR" \
     -DLIBUSB_LIBRARY="$LIBUSB_LIBRARY" \
-    -DCMAKE_SHARED_LINKER_FLAGS="-lpthread"
+    -DCMAKE_SHARED_LINKER_FLAGS="-static-libgcc -static-libwinpthread -lpthread"
 
   echo "[Step] Building..."
   cmake --build .
-
-  # Copy libwinpthread-1.dll (runtime dependency of libuvc.dll on MinGW/CLANGARM64)
-  WINPTHREAD_DLL="$MINGW_PREFIX/bin/libwinpthread-1.dll"
-  if [ -f "$WINPTHREAD_DLL" ]; then
-    cp "$WINPTHREAD_DLL" "$OUTPUT_DIR/"
-    echo "[Info] Copied libwinpthread-1.dll to output"
-  fi
 
   # MinGW outputs libuvc.dll in the build root
   echo "[Step] Locating built DLL..."
