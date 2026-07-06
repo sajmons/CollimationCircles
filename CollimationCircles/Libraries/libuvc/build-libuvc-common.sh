@@ -120,13 +120,27 @@ elif [ "$PLATFORM" = "linux" ]; then
 elif [ "$PLATFORM" = "win" ]; then
   echo "[Step] Windows build — using MinGW/MSYS2 (MSYS Makefiles)"
 
-  # MSYS Makefiles generator uses pkg-config to find libusb automatically.
-  # No patches needed for FindLibUSB.cmake or CMakeLists.txt — MinGW provides
-  # POSIX headers (sys/time.h, pthread.h, clock_gettime) natively.
-  # See: https://github.com/libuvc/libuvc/issues/12#issuecomment-1367968882
+  # Determine MSYS2 environment path based on architecture
+  case "$ARCH" in
+    x64)
+      MINGW_PREFIX="/mingw64"
+      ;;
+    arm64)
+      MINGW_PREFIX="/clangarm64"
+      ;;
+    *)
+      echo "ERROR: Unknown arch: $ARCH"; exit 1
+      ;;
+  esac
+  echo "[Info] MinGW prefix: $MINGW_PREFIX"
 
-  echo "[Info] Checking pkg-config for libusb..."
-  pkg-config --cflags --libs libusb-1.0 || echo "[Warning] pkg-config could not find libusb-1.0"
+  # Patch 0004 fixes FindLibUSB.cmake to use LIBUSB_INCLUDE_DIR and LIBUSB_LIBRARY
+  # instead of the early return that skips libusb detection on MinGW.
+  # We pass the MinGW libusb paths explicitly (like the French blog and issue #245 recommend).
+  LIBUSB_INCLUDE_DIR="$MINGW_PREFIX/include/libusb-1.0"
+  LIBUSB_LIBRARY="$MINGW_PREFIX/lib/libusb-1.0.dll.a"
+  echo "[Info] LIBUSB_INCLUDE_DIR=$LIBUSB_INCLUDE_DIR"
+  echo "[Info] LIBUSB_LIBRARY=$LIBUSB_LIBRARY"
 
   echo "[Step] Running cmake for Windows/${ARCH} with MSYS Makefiles..."
   cmake .. \
@@ -134,7 +148,9 @@ elif [ "$PLATFORM" = "win" ]; then
     -DCMAKE_BUILD_TARGET=Shared \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON
+    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
+    -DLIBUSB_INCLUDE_DIR="$LIBUSB_INCLUDE_DIR" \
+    -DLIBUSB_LIBRARY="$LIBUSB_LIBRARY"
 
   echo "[Step] Building..."
   cmake --build .
