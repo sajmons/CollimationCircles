@@ -151,7 +151,7 @@ elif [ "$PLATFORM" = "win" ]; then
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
     -DLIBUSB_INCLUDE_DIR="$LIBUSB_INCLUDE_DIR" \
     -DLIBUSB_LIBRARY="$LIBUSB_LIBRARY" \
-    -DCMAKE_SHARED_LINKER_FLAGS="-static-libgcc -static-libwinpthread -lpthread"
+    -DCMAKE_SHARED_LINKER_FLAGS="-static-libgcc -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic -lpthread"
 
   echo "[Step] Building..."
   cmake --build .
