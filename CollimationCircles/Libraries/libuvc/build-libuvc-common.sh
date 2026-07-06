@@ -26,10 +26,16 @@ fi
 
 echo "=== Building libuvc: ${PLATFORM}/${ARCH} ==="
 echo "Build dir: $BUILD_DIR"
+echo "Output dir: $OUTPUT_DIR"
+echo "Patches: ${APPLY_PATCHES}"
 
 # Clone libuvc
+echo "[Step] Cloning libuvc repository..."
 git clone --depth 1 https://github.com/libuvc/libuvc.git "$BUILD_DIR/libuvc"
 cd "$BUILD_DIR/libuvc"
+echo "[Done] Cloned libuvc at commit: $(git rev-parse --short HEAD)"
+
+# Apply patches from patches/ directory
 
 # Apply patches from patches/ directory
 # Patch filenames use a prefix to indicate which platforms they apply to:
@@ -63,15 +69,20 @@ mkdir -p build && cd build
 
 if [ "$PLATFORM" = "macos" ]; then
   # macOS: build as dylib, fix install names, code-sign
+  echo "[Step] macOS build — detecting libusb path..."
   LIBUSB_PATH=$(pkg-config --variable=libdir libusb-1.0 2>/dev/null || echo "/opt/homebrew/opt/libusb/lib")
+  echo "[Info] LIBUSB_PATH=$LIBUSB_PATH"
   EXTRA_CMAKE=""
   # On x64, prefer Intel Homebrew
   if [ "$ARCH" = "x64" ] && [ -d "/usr/local/lib" ]; then
     LIBUSB_PATH="/usr/local/lib"
     export PKG_CONFIG_PATH="/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}"
     EXTRA_CMAKE="-DLIBUSB_INCLUDE_DIR=/usr/local/include/libusb-1.0 -DLIBUSB_LIBRARY=/usr/local/lib/libusb-1.0.0.dylib"
+    echo "[Info] Using Intel Homebrew paths for x64"
   fi
 
+  echo "[Step] Running cmake for macOS/${CMAKE_ARCH}..."
+  echo "  cmake flags: -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES=${CMAKE_ARCH} ${EXTRA_CMAKE}"
   cmake .. \
     -DBUILD_SHARED_LIBS=ON \
     -DCMAKE_BUILD_TYPE=Release \
@@ -79,103 +90,81 @@ if [ "$PLATFORM" = "macos" ]; then
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
     -DCMAKE_OSX_ARCHITECTURES="${CMAKE_ARCH}" \
     $EXTRA_CMAKE
+  echo "[Step] Building with make..."
   make -j$(sysctl -n hw.ncpu 2>/dev/null || echo 4)
 
   # Fix install names
+  echo "[Step] Fixing install names..."
   install_name_tool -id @rpath/libuvc.dylib libuvc.dylib
   # Try both the Cellar path and the opt symlink path
   install_name_tool -change "${LIBUSB_PATH}/libusb-1.0.0.dylib" @loader_path/libusb-1.0.0.dylib libuvc.dylib 2>/dev/null || true
   install_name_tool -change "/opt/homebrew/opt/libusb/lib/libusb-1.0.0.dylib" @loader_path/libusb-1.0.0.dylib libuvc.dylib 2>/dev/null || true
+  echo "[Done] Install names fixed"
 
   OUTPUT_FILE="libuvc.dylib"
 
 elif [ "$PLATFORM" = "linux" ]; then
   # Linux: build as .so
+  echo "[Step] Running cmake for Linux/${ARCH}..."
+  echo "  cmake flags: -DCMAKE_BUILD_TARGET=Shared -DCMAKE_BUILD_TYPE=Release"
   cmake .. \
-    -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_BUILD_TARGET=Shared \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON
+  echo "[Step] Building with make..."
   make -j$(nproc 2>/dev/null || echo 4)
 
   OUTPUT_FILE="libuvc.so"
 
 elif [ "$PLATFORM" = "win" ]; then
-  if [ -z "$VCPKG_ROOT" ]; then
-    echo "ERROR: VCPKG_ROOT is not set"; exit 1
-  fi
+  echo "[Step] Windows build — using MinGW/MSYS2 (MSYS Makefiles)"
 
-  # Convert Windows backslash path to forward slashes for bash/cmake
-  VCPKG_ROOT_FWD="$(echo "$VCPKG_ROOT" | sed 's|\\|/|g')"
-  TOOLCHAIN="$VCPKG_ROOT_FWD/scripts/buildsystems/vcpkg.cmake"
-  echo "Using vcpkg toolchain: $TOOLCHAIN"
-
-  TRIPLET="${VCPKG_DEFAULT_TRIPLET:-x64-windows}"
-  echo "Using vcpkg triplet: $TRIPLET"
-
-  # vcpkg installs headers and libs under installed/<triplet>/
-  VCPKG_INSTALLED="$VCPKG_ROOT_FWD/installed/$TRIPLET"
-  echo "vcpkg installed dir: $VCPKG_INSTALLED"
-  ls -la "$VCPKG_INSTALLED/include/libusb-1.0/" 2>/dev/null || echo "WARNING: libusb headers not found at expected path"
-  ls -la "$VCPKG_INSTALLED/lib/libusb-1.0.lib" 2>/dev/null || echo "WARNING: libusb lib not found at expected path"
-
-  # CMake -A flag requires uppercase for ARM64
+  # Determine MSYS2 environment path based on architecture
   case "$ARCH" in
-    x64)   CMAKE_PLATFORM="x64" ;;
-    arm64) CMAKE_PLATFORM="ARM64" ;;
-    *)     CMAKE_PLATFORM="$ARCH" ;;
+    x64)
+      MINGW_PREFIX="/mingw64"
+      ;;
+    arm64)
+      MINGW_PREFIX="/clangarm64"
+      ;;
+    *)
+      echo "ERROR: Unknown arch: $ARCH"; exit 1
+      ;;
   esac
+  echo "[Info] MinGW prefix: $MINGW_PREFIX"
 
-  # Use Visual Studio generator with vcpkg toolchain
-  # Auto-detect the VS version available on the runner
-  VS_GENERATOR=""
-  if cmake --help 2>/dev/null | grep -q "Visual Studio 18 2026"; then
-    VS_GENERATOR="Visual Studio 18 2026"
-  elif cmake --help 2>/dev/null | grep -q "Visual Studio 17 2022"; then
-    VS_GENERATOR="Visual Studio 17 2022"
-  else
-    echo "WARNING: No Visual Studio generator found, using default"
-    VS_GENERATOR=""
-  fi
+  # Patch 0004 fixes FindLibUSB.cmake to use LIBUSB_INCLUDE_DIR and LIBUSB_LIBRARY
+  # instead of the early return that skips libusb detection on MinGW.
+  # We pass the MinGW libusb paths explicitly (like the French blog and issue #245 recommend).
+  LIBUSB_INCLUDE_DIR="$MINGW_PREFIX/include/libusb-1.0"
+  LIBUSB_LIBRARY="$MINGW_PREFIX/lib/libusb-1.0.dll.a"
+  echo "[Info] LIBUSB_INCLUDE_DIR=$LIBUSB_INCLUDE_DIR"
+  echo "[Info] LIBUSB_LIBRARY=$LIBUSB_LIBRARY"
 
-  if [ -n "$VS_GENERATOR" ]; then
-    cmake .. \
-      -G "$VS_GENERATOR" \
-      -A "$CMAKE_PLATFORM" \
-      -DBUILD_SHARED_LIBS=ON \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-      -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
-      -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
-      -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
-      -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
-      -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
-  else
-    cmake .. \
-      -DBUILD_SHARED_LIBS=ON \
-      -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
-      -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
-      -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN" \
-      -DVCPKG_TARGET_TRIPLET="$TRIPLET" \
-      -DLIBUSB_INCLUDE_DIR="$VCPKG_INSTALLED/include/libusb-1.0" \
-      -DLIBUSB_LIBRARY="$VCPKG_INSTALLED/lib/libusb-1.0.lib"
-  fi
+  echo "[Step] Running cmake for Windows/${ARCH} with MSYS Makefiles..."
+  cmake .. \
+    -G "MSYS Makefiles" \
+    -DCMAKE_BUILD_TARGET=Shared \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
+    -DCMAKE_DISABLE_FIND_PACKAGE_JpegPkg=ON \
+    -DLIBUSB_INCLUDE_DIR="$LIBUSB_INCLUDE_DIR" \
+    -DLIBUSB_LIBRARY="$LIBUSB_LIBRARY" \
+    -DCMAKE_SHARED_LINKER_FLAGS="-static-libgcc -Wl,-Bstatic -lwinpthread -Wl,-Bdynamic -lpthread"
 
-  cmake --build . --config Release
+  echo "[Step] Building..."
+  cmake --build .
 
-  # MSVC outputs uvc.dll in Release/. Normalize to libuvc.dll for artifacts.
-  if [ -f "Release/libuvc.dll" ]; then
-    OUTPUT_FILE="Release/libuvc.dll"
-  elif [ -f "Release/uvc.dll" ]; then
-    cp "Release/uvc.dll" "Release/libuvc.dll"
-    OUTPUT_FILE="Release/libuvc.dll"
-  elif [ -f "libuvc.dll" ]; then
+  # MinGW outputs libuvc.dll in the build root
+  echo "[Step] Locating built DLL..."
+  if [ -f "libuvc.dll" ]; then
     OUTPUT_FILE="libuvc.dll"
-  elif [ -f "uvc.dll" ]; then
-    cp "uvc.dll" "libuvc.dll"
-    OUTPUT_FILE="libuvc.dll"
+    echo "[Found] libuvc.dll"
   else
     echo "ERROR: libuvc.dll not found after build"
-    find . \( -name "libuvc.dll" -o -name "libuvc.lib" \) 2>/dev/null
+    echo "[Debug] Searching for any DLL or LIB files..."
+    find . \( -name "libuvc.dll" -o -name "libuvc.lib" -o -name "uvc.dll" -o -name "uvc.lib" \) 2>/dev/null
     exit 1
   fi
 
@@ -184,12 +173,16 @@ else
 fi
 
 # Deploy
+echo "[Step] Deploying to $OUTPUT_DIR..."
 mkdir -p "$OUTPUT_DIR"
 cp "$OUTPUT_FILE" "$OUTPUT_DIR/"
+echo "[Done] Deployed $(basename $OUTPUT_FILE) ($(stat -f%z "$OUTPUT_DIR/$(basename $OUTPUT_FILE)" 2>/dev/null || stat -c%s "$OUTPUT_DIR/$(basename $OUTPUT_FILE)" 2>/dev/null || echo "?") bytes)"
 
 # Code-sign on macOS
 if [ "$PLATFORM" = "macos" ]; then
+  echo "[Step] Code-signing dylib..."
   codesign --force --sign - "$OUTPUT_DIR/$(basename $OUTPUT_FILE)"
+  echo "[Done] Code-signed"
 fi
 
 echo ""
