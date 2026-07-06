@@ -156,6 +156,13 @@ elif [ "$PLATFORM" = "win" ]; then
   echo "[Step] Building..."
   cmake --build .
 
+  # Copy libwinpthread-1.dll (runtime dependency of libuvc.dll on MinGW/CLANGARM64)
+  WINPTHREAD_DLL="$MINGW_PREFIX/bin/libwinpthread-1.dll"
+  if [ -f "$WINPTHREAD_DLL" ]; then
+    cp "$WINPTHREAD_DLL" "$OUTPUT_DIR/"
+    echo "[Info] Copied libwinpthread-1.dll to output"
+  fi
+
   # MinGW outputs libuvc.dll in the build root
   echo "[Step] Locating built DLL..."
   if [ -f "libuvc.dll" ]; then
