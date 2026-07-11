@@ -1,4 +1,5 @@
 ﻿using CollimationCircles.Models;
+using CollimationCircles.Services.Uvc;
 using CollimationCircles.Services.Zwo;
 using CommunityToolkit.Diagnostics;
 using System;
@@ -18,32 +19,40 @@ namespace CollimationCircles.Services
 
             logger.Info($"Dispatching camera control set: camera='{camera.Name}', api={camera.APIType}, control={controlName}, value={value}");
 
-            // set camera control for V4L2 (Linux cameras)
-            if (camera.APIType is APIType.V4l2)
+            // UVC camera controls (Linux/Windows/macOS)
+            if (camera.APIType is APIType.Uvc)
             {
-                new V4L2CameraDetect().SetControl(camera, controlName, value);
+                if (OperatingSystem.IsMacOS())
+                {
+                    new UvcCameraDetectMac().SetControl(camera, controlName, value);
+                }
             }
-            // set camera control for ZWO astro cameras (Windows/macOS)
+
+            // ZWO camera controls (Linux/Windows/macOS)
             else if (camera.APIType is APIType.Zwo)
             {
                 new ZWOCameraDetect().SetControl(camera, controlName, value);
             }
-            // set camera control for macOS UVC cameras (IOKit + libusb)
-            else if (camera.APIType is APIType.Uvc)
+
+            // V4L2 camera controls (Linux cameras)
+            else if (camera.APIType is APIType.V4l2)
             {
-                new MacOSCameraDetect().SetControl(camera, controlName, value);
+                new V4L2CameraDetect().SetControl(camera, controlName, value);
             }
-            // set camera control for macOS system cameras (AVFoundation/QTCapture fallback)
+            
+            // macOS system cameras (AVFoundation/QTCapture fallback)
             else if (camera.APIType is APIType.QTCapture)
             {
                 new MacOSCameraDetect().SetControl(camera, controlName, value);
             }
-            // set camera control for DirectShow (Windows)
+
+            // DirectShow cameras (Windows)
             else if (camera.APIType is APIType.Dshow)
             {
                 new DShowCameraDetect().SetControl(camera, controlName, value);
             }
-            // set camera control for Raspberry PI Camera
+
+            // Raspberry Pi cameras (Linux)
             else if (camera.APIType is APIType.LibCamera)
             {
                 new RasPiCameraDetect().SetControl(camera, controlName, value);
@@ -56,13 +65,19 @@ namespace CollimationCircles.Services
 
             logger.Info($"Dispatching camera auto-control set: camera='{camera.Name}', api={camera.APIType}, control={controlName}, isAuto={isAuto}, isPlaying={camera.IsPlaying}");
 
-            if (camera.APIType is APIType.Zwo)
+            // UVC camera auto-controls (Linux/Windows/macOS)
+            if (camera.APIType is APIType.Uvc)
+            {
+                if (OperatingSystem.IsMacOS())
+                {
+                    new UvcCameraDetectMac().SetControlAuto(camera, controlName, isAuto);
+                }
+            }
+
+            // ZWO camera auto-controls (Linux/Windows/macOS)
+            else if (camera.APIType is APIType.Zwo)
             {
                 new ZWOCameraDetect().SetControlAuto(camera, controlName, isAuto);
-            }
-            else if (camera.APIType is APIType.Uvc)
-            {
-                new MacOSCameraDetect().SetControlAuto(camera, controlName, isAuto);
             }
         }
 
@@ -79,6 +94,10 @@ namespace CollimationCircles.Services
             {
                 var macosCameras = await new MacOSCameraDetect().GetCameras();
                 cameras.AddRange(macosCameras);
+
+                // Also detect UVC cameras via libuvc on macOS
+                var macosUvcCameras = await new UvcCameraDetectMac().GetCameras();
+                cameras.AddRange(macosUvcCameras);
 
                 var raspiCameras = await new RasPiCameraDetect().GetCameras();
                 cameras.AddRange(raspiCameras);
