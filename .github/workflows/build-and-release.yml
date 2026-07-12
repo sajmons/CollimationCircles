@@ -114,15 +114,25 @@ jobs:
             }
             'linux-x64' {
               Copy-Item -Force './CollimationCircles/Libraries/ASI_linux_mac_SDK_V1.41/lib/x64/libASICamera2.so*' $output
+              # Copy libuvc for UVC camera control and streaming via libuvc on Linux
+              Copy-Item -Force './CollimationCircles/Libraries/libuvc/linux/x64/libuvc.so' $output
             }
             'linux-arm64' {
               Copy-Item -Force './CollimationCircles/Libraries/ASI_linux_mac_SDK_V1.41/lib/armv8/libASICamera2.so*' $output
+              # Copy libuvc for UVC camera control and streaming via libuvc on Linux
+              Copy-Item -Force './CollimationCircles/Libraries/libuvc/linux/arm64/libuvc.so' $output
             }
             'win-x64' {
               Copy-Item -Force './CollimationCircles/Libraries/ASI_Windows_SDK_V1.41/lib/x64/ASICamera2.dll' $output
+              # Copy libusb + libuvc for UVC camera control and streaming on Windows
+              Copy-Item -Force './CollimationCircles/Libraries/libusb/win/x64/libusb-1.0.dll' $output
+              Copy-Item -Force './CollimationCircles/Libraries/libuvc/win/x64/libuvc.dll' $output
             }
             'win-arm64' {
               Write-Warning 'No ZWO ASI Windows arm64 binary is shipped in the SDK; skipping native library copy.'
+              # Copy libusb + libuvc for UVC camera control and streaming on Windows
+              Copy-Item -Force './CollimationCircles/Libraries/libusb/win/arm64/libusb-1.0.dll' $output
+              Copy-Item -Force './CollimationCircles/Libraries/libuvc/win/arm64/libuvc.dll' $output
             }
           }
 

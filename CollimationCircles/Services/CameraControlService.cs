@@ -26,6 +26,14 @@ namespace CollimationCircles.Services
                 {
                     new UvcCameraDetectMac().SetControl(camera, controlName, value);
                 }
+                else if (OperatingSystem.IsLinux())
+                {
+                    new UvcCameraDetectLinux().SetControl(camera, controlName, value);
+                }
+                else if (OperatingSystem.IsWindows())
+                {
+                    new UvcCameraDetectWindows().SetControl(camera, controlName, value);
+                }
             }
 
             // ZWO camera controls (Linux/Windows/macOS)
@@ -72,6 +80,14 @@ namespace CollimationCircles.Services
                 {
                     new UvcCameraDetectMac().SetControlAuto(camera, controlName, isAuto);
                 }
+                else if (OperatingSystem.IsLinux())
+                {
+                    new UvcCameraDetectLinux().SetControlAuto(camera, controlName, isAuto);
+                }
+                else if (OperatingSystem.IsWindows())
+                {
+                    new UvcCameraDetectWindows().SetControlAuto(camera, controlName, isAuto);
+                }
             }
 
             // ZWO camera auto-controls (Linux/Windows/macOS)
@@ -89,6 +105,10 @@ namespace CollimationCircles.Services
             {
                 var dshowCameras = await new DShowCameraDetect().GetCameras();
                 cameras.AddRange(dshowCameras);
+
+                // Also detect UVC cameras via libuvc on Windows
+                var windowsUvcCameras = await new UvcCameraDetectWindows().GetCameras();
+                cameras.AddRange(windowsUvcCameras);
             }
             else if (OperatingSystem.IsMacOS())
             {
@@ -112,6 +132,10 @@ namespace CollimationCircles.Services
 
                 var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
                 cameras.AddRange(v4l2Cameras);
+
+                // Also detect UVC cameras via libuvc on Linux
+                var linuxUvcCameras = await new UvcCameraDetectLinux().GetCameras();
+                cameras.AddRange(linuxUvcCameras);
             }
 
             var zwoCameras = await new ZWOCameraDetect().GetCameras();
