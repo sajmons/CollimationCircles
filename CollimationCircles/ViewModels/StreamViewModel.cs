@@ -80,6 +80,18 @@ namespace CollimationCircles.ViewModels
         [NotifyCanExecuteChangedFor(nameof(ToggleServerConnectionCommand))]
         private bool isServerBusy;
 
+        [ObservableProperty]
+        private bool isCaptureProgressVisible;
+
+        [ObservableProperty]
+        private bool isCaptureProgressIndeterminate;
+
+        [ObservableProperty]
+        private double captureProgressValue;
+
+        [ObservableProperty]
+        private string captureProgressText = "Waiting for frame...";
+
         public string ConnectButtonText => IsServerConnected ? "Disconnect" : "Connect";
 
         public bool CanEditServer => !IsServerConnected && !IsServerBusy && !IsPlaying;
@@ -109,6 +121,18 @@ namespace CollimationCircles.ViewModels
                         MediaPlayer_Playing();
                         break;
                 }
+            });
+
+            WeakReferenceMessenger.Default.Register<CameraCaptureProgressMessage>(this, (r, m) =>
+            {
+                Dispatcher.UIThread.Post(() =>
+                {
+                    var progress = m.Value;
+                    IsCaptureProgressVisible = true;
+                    IsCaptureProgressIndeterminate = progress.Stage == CameraCaptureStage.Downloading;
+                    CaptureProgressValue = progress.Progress;
+                    CaptureProgressText = progress.Status;
+                });
             });
 
             CameraList.CollectionChanged += CameraList_CollectionChanged;

@@ -76,6 +76,25 @@
           </ComboBox>
         </DockPanel>        
       </StackPanel>
+
+      <Border
+        Background="#B0000000"
+        CornerRadius="6"
+        Padding="10"
+        IsVisible="{Binding IsCaptureProgressVisible}">
+        <StackPanel Spacing="6">
+          <TextBlock
+            Foreground="White"
+            Text="{Binding CaptureProgressText}" />
+          <ProgressBar
+            Minimum="0"
+            Maximum="1"
+            Value="{Binding CaptureProgressValue}"
+            IsIndeterminate="{Binding IsCaptureProgressIndeterminate}"
+            Height="8" />
+        </StackPanel>
+      </Border>
+
       <local:DynamicCameraControlsUserControl />
     </StackPanel>    
     <CheckBox

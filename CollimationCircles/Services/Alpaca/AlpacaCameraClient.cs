@@ -6,6 +6,7 @@ using CollimationCircles.Models;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -587,19 +588,54 @@ namespace CollimationCircles.Services.Alpaca
                         appliedGain = gain;
                     }
 
+                    PublishCaptureProgress(CameraCaptureStage.Exposing, 0, "Exposing", true);
                     dev.StartExposure(expSec, true);
+
+                    var exposureStart = Stopwatch.GetTimestamp();
+                    var nextExposureUpdate = exposureStart;
+                    var exposureDurationSec = Math.Max(0.001, expSec);
+                    var exposureUpdateStep = Math.Max(1L, Stopwatch.Frequency / 10L);
 
                     while (!dev.ImageReady)
                     {
+                        var now = Stopwatch.GetTimestamp();
+                        if (now >= nextExposureUpdate)
+                        {
+                            var elapsed = Stopwatch.GetElapsedTime(exposureStart, now).TotalSeconds;
+                            var progress = Math.Clamp(elapsed / exposureDurationSec, 0d, 0.98d);
+                            PublishCaptureProgress(CameraCaptureStage.Exposing, progress, $"Exposing {elapsed:F2}/{exposureDurationSec:F2}s", true);
+                            nextExposureUpdate = now + exposureUpdateStep;
+                        }
+
                         await Task.Delay(20, ct);
                     }
 
+                    PublishCaptureProgress(CameraCaptureStage.Exposing, 1, "Exposure complete", true);
+
                     Array? imageData = null;
+                    PublishCaptureProgress(CameraCaptureStage.Downloading, 0, "Downloading image", true);
                     for (int readAttempt = 1; readAttempt <= 3; readAttempt++)
                     {
+                        PublishCaptureProgress(CameraCaptureStage.Downloading, (readAttempt - 1) / 3d, $"Downloading image (attempt {readAttempt}/3)", true);
                         try
                         {
-                            imageData = dev.ImageArray as Array;
+                            var downloadStart = Stopwatch.GetTimestamp();
+                            var readTask = Task.Run(() => dev.ImageArray as Array, ct);
+
+                            while (!readTask.IsCompleted)
+                            {
+                                var elapsedMs = Stopwatch.GetElapsedTime(downloadStart).TotalMilliseconds;
+                                var animated = ((elapsedMs % 1000d) / 1000d) * 0.8d + 0.1d;
+                                PublishCaptureProgress(
+                                    CameraCaptureStage.Downloading,
+                                    animated,
+                                    $"Downloading image (attempt {readAttempt}/3, {elapsedMs:F0} ms)",
+                                    true);
+
+                                await Task.Delay(50, ct);
+                            }
+
+                            imageData = await readTask;
                             break;
                         }
                         catch (ASCOM.DriverException ex) when (IsNoImageAvailable(ex) && readAttempt < 3)
@@ -612,23 +648,39 @@ namespace CollimationCircles.Services.Alpaca
                         }
                     }
 
+                    PublishCaptureProgress(CameraCaptureStage.Downloading, 1, "Download complete", true);
+
+                    PublishCaptureProgress(CameraCaptureStage.Processing, 0, "Processing frame", true);
                     var frame = ToFrame(imageData);
+                    PublishCaptureProgress(CameraCaptureStage.Processing, 1, "Frame ready", frame is not null);
                     if (frame is not null)
                     {
                         WeakReferenceMessenger.Default.Send(new CameraFrameMessage(frame));
+                    }
+                    else
+                    {
+                        PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Waiting for next frame", false);
                     }
                 }
             }
             catch (OperationCanceledException)
             {
                 try { dev.AbortExposure(); } catch { }
+                PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Stopped", false);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Alpaca capture loop failed");
+                PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Capture failed", false);
                 Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped)));
             }
+        }
+
+        private static void PublishCaptureProgress(CameraCaptureStage stage, double progress, string status, bool isActive)
+        {
+            WeakReferenceMessenger.Default.Send(new CameraCaptureProgressMessage(
+                new CameraCaptureProgress(stage, Math.Clamp(progress, 0, 1), status, isActive)));
         }
 
         private static bool IsNoImageAvailable(ASCOM.DriverException ex)
@@ -643,68 +695,171 @@ namespace CollimationCircles.Services.Alpaca
                 return null;
             }
 
-            int width, height;
-            Func<int, int, double> get;
+            return data switch
+            {
+                byte[,] p => ToFrame2D(p),
+                short[,] p => ToFrame2D(p),
+                ushort[,] p => ToFrame2D(p),
+                int[,] p => ToFrame2D(p),
+                uint[,] p => ToFrame2D(p),
+                float[,] p => ToFrame2D(p),
+                double[,] p => ToFrame2D(p),
+                byte[,,] p => ToFrame3D(p),
+                short[,,] p => ToFrame3D(p),
+                ushort[,,] p => ToFrame3D(p),
+                int[,,] p => ToFrame3D(p),
+                uint[,,] p => ToFrame3D(p),
+                float[,,] p => ToFrame3D(p),
+                double[,,] p => ToFrame3D(p),
+                _ => ToFrameFallback(data)
+            };
+        }
 
-            if (data.Rank == 2)
-            {
-                width = data.GetLength(0);
-                height = data.GetLength(1);
-                if (data is int[,] ints)
-                {
-                    get = (x, y) => ints[x, y];
-                }
-                else
-                {
-                    get = (x, y) => Convert.ToDouble(data.GetValue(x, y));
-                }
-            }
-            else if (data.Rank == 3)
-            {
-                width = data.GetLength(0);
-                height = data.GetLength(1);
-                int planes = data.GetLength(2);
-                get = (x, y) =>
-                {
-                    double s = 0;
-                    for (int p = 0; p < planes; p++)
-                    {
-                        s += Convert.ToDouble(data.GetValue(x, y, p));
-                    }
-                    return s / planes;
-                };
-            }
-            else
-            {
-                return null;
-            }
-
+        private static CameraFrame? ToFrame2D<T>(T[,] data)
+            where T : IConvertible
+        {
+            int width = data.GetLength(0);
+            int height = data.GetLength(1);
             if (width <= 0 || height <= 0)
             {
                 return null;
             }
 
-            var values = new double[width * height];
-            double min = double.MaxValue, max = double.MinValue;
+            int total = width * height;
+            var values = new double[total];
+            double min = double.MaxValue;
+            double max = double.MinValue;
+            int idx = 0;
+
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    double v = get(x, y);
-                    values[y * width + x] = v;
-                    if (v < min) min = v;
-                    if (v > max) max = v;
+                    double value = data[x, y].ToDouble(null);
+                    values[idx++] = value;
+                    if (value < min) min = value;
+                    if (value > max) max = value;
                 }
             }
 
-            double range = max - min;
-            var pixels = new byte[values.Length];
-            if (range > 0)
+            return CreateNormalizedFrame(width, height, values, min, max);
+        }
+
+        private static CameraFrame? ToFrame3D<T>(T[,,] data)
+            where T : IConvertible
+        {
+            int width = data.GetLength(0);
+            int height = data.GetLength(1);
+            int planes = data.GetLength(2);
+
+            if (width <= 0 || height <= 0 || planes <= 0)
             {
-                for (int i = 0; i < values.Length; i++)
+                return null;
+            }
+
+            int total = width * height;
+            var values = new double[total];
+            double min = double.MaxValue;
+            double max = double.MinValue;
+            int idx = 0;
+            double invPlanes = 1.0 / planes;
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
                 {
-                    pixels[i] = (byte)((values[i] - min) * 255.0 / range);
+                    double sum = 0;
+                    for (int p = 0; p < planes; p++)
+                    {
+                        sum += data[x, y, p].ToDouble(null);
+                    }
+
+                    double value = sum * invPlanes;
+                    values[idx++] = value;
+                    if (value < min) min = value;
+                    if (value > max) max = value;
                 }
+            }
+
+            return CreateNormalizedFrame(width, height, values, min, max);
+        }
+
+        private static CameraFrame? ToFrameFallback(Array data)
+        {
+            if (data.Rank is < 2 or > 3)
+            {
+                return null;
+            }
+
+            int width = data.GetLength(0);
+            int height = data.GetLength(1);
+            if (width <= 0 || height <= 0)
+            {
+                return null;
+            }
+
+            int total = width * height;
+            var values = new double[total];
+            double min = double.MaxValue;
+            double max = double.MinValue;
+            int idx = 0;
+
+            if (data.Rank == 2)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        double value = Convert.ToDouble(data.GetValue(x, y));
+                        values[idx++] = value;
+                        if (value < min) min = value;
+                        if (value > max) max = value;
+                    }
+                }
+            }
+            else
+            {
+                int planes = data.GetLength(2);
+                if (planes <= 0)
+                {
+                    return null;
+                }
+
+                double invPlanes = 1.0 / planes;
+                for (int y = 0; y < height; y++)
+                {
+                    for (int x = 0; x < width; x++)
+                    {
+                        double sum = 0;
+                        for (int p = 0; p < planes; p++)
+                        {
+                            sum += Convert.ToDouble(data.GetValue(x, y, p));
+                        }
+
+                        double value = sum * invPlanes;
+                        values[idx++] = value;
+                        if (value < min) min = value;
+                        if (value > max) max = value;
+                    }
+                }
+            }
+
+            return CreateNormalizedFrame(width, height, values, min, max);
+        }
+
+        private static CameraFrame CreateNormalizedFrame(int width, int height, double[] values, double min, double max)
+        {
+            var pixels = new byte[values.Length];
+            double range = max - min;
+            if (range <= 0)
+            {
+                return new CameraFrame(width, height, pixels);
+            }
+
+            double scale = 255.0 / range;
+            for (int i = 0; i < values.Length; i++)
+            {
+                pixels[i] = (byte)((values[i] - min) * scale);
             }
 
             return new CameraFrame(width, height, pixels);
