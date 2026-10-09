@@ -95,7 +95,7 @@
   <system:String x:Key="Text.WebCamStream">Flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.Start">Commencer</system:String>
   <system:String x:Key="Text.Stop">Arrêt</system:String>
-  <system:String x:Key="Text.CameraStreamSeparateWindow">Épingler à la fenêtre principale</system:String>
+  <system:String x:Key="Text.PinCameraWindowToMainWindow">Épingler à la fenêtre principale</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Flux vidéo de la caméra</system:String>
   <system:String x:Key="Text.Fans">Ventilateurs</system:String>
   <system:String x:Key="Text.PatreonDesc">Le développement de cette application demande beaucoup d’efforts, de temps libre et d’engagement. Si vous appréciez cela et souhaitez montrer un certain soutien, veuillez visiter mon site Web Patreon et vous abonner aux niveaux d'adhésion ou acheter des actifs. Merci pour tout votre support!</system:String>
@@ -153,7 +153,6 @@
   <system:String x:Key="Text.LicenseData">Client ID:</system:String>  
   <system:String x:Key="Text.RemoveProfileDialogText">Voulez-vous supprimer le profil '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Supprimer le profil</system:String>
-  <system:String x:Key="Text.DisplayAdvancedDShowDialog">Afficher les paramètres avancés</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Version sans licence</system:String>
   <system:String x:Key="Text.Apply">Utiliser</system:String>
   <system:String x:Key="Text.DetectionThreshold">Seuil de cercle</system:String>
@@ -162,13 +161,6 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Trop de cercles détectés</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Essayez de changer le seuil.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">L'image doit contenir une étoile centrée et défocalisée</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityTitle">Erreur de compatibilité LibVLC</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody1">Le flux vidéo en direct n'est pas disponible car les bibliothèques natives LibVLC sont manquantes ou incompatibles sur cette plateforme.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody2">L'application continuera en mode dégradé.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody3">Fonctionnalités indisponibles : aperçu vidéo de la caméra en direct.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody4">Fonctionnalités indisponibles : lecture/pause du flux et capture instantanée depuis le flux en direct pour l'analyse.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody5">Vous pouvez toujours utiliser les fonctionnalités sans vidéo (configuration des overlays, profils et analyse d'image depuis un fichier).</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody6">Installez VLC/libVLC compatible arm64 puis redémarrez l'application.</system:String>
   <system:String x:Key="Text.LiveAnalysisResults">Résultats de l'analyse en direct</system:String>
   <system:String x:Key="Text.WaitingForStreamData">En attente des données du flux...</system:String> 
   <system:String x:Key="Text.LiveAnalysis">ANALYSE EN DIRECT</system:String>
@@ -181,4 +173,6 @@
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Fonctionnalité expérimentale!</system:String>    
   <system:String x:Key="Text.CheckForUpdate">Vérifier les mises à jour</system:String>
+  <system:String x:Key="Text.AlpacaServerAddress">Adresse du serveur Alpaca</system:String>
+  <system:String x:Key="Text.AlpacaServerPort">Port du serveur Alpaca</system:String>
 </ResourceDictionary>

@@ -17,13 +17,7 @@
 	<Grid x:Name="RootGrid"
 		  ClipToBounds="True"
 		  HorizontalAlignment="Stretch"
-		  VerticalAlignment="Stretch">
-		<vlc:VideoView x:Name="VideoViewer"
-					   HorizontalAlignment="Stretch"
-					   VerticalAlignment="Stretch"
-					   IsVisible="False">
-			<controls:CollimationAnalysisUserControl />
-		</vlc:VideoView>
+		  VerticalAlignment="Stretch">		
 		<Grid x:Name="FrameGrid"
 			  HorizontalAlignment="Stretch"
 			  VerticalAlignment="Stretch"

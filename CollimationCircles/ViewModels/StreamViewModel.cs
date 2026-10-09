@@ -2,19 +2,17 @@ using Avalonia.Threading;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
-using CollimationCircles.Services.Uvc;
-using CollimationCircles.Services.Zwo;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
@@ -23,7 +21,7 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly ICameraControlService cameraControlService;
-        private readonly ILibVLCService libVLCService;
+        private readonly ICameraService cameraService;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
@@ -34,16 +32,16 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            // Note: we intentionally do NOT check libVLCService.IsAvailable here.
-            // LibVLC is initialised lazily on first Play attempt; checking IsAvailable
-            // before that would always be false and grey-out the Play button forever.
-            get => !string.IsNullOrWhiteSpace(FullAddress) && SelectedCamera is not null;
+            get => SelectedCamera is not null && !string.IsNullOrEmpty(SelectedCamera.Name);
         }
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(ZoomInCommand))]
-        [NotifyCanExecuteChangedFor(nameof(ZoomOutCommand))]
-        [NotifyCanExecuteChangedFor(nameof(ZoomResetCommand))]
+        [NotifyCanExecuteChangedFor(nameof(BinningIncreaseCommand))]
+        [NotifyCanExecuteChangedFor(nameof(BinningDecreaseCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ResetControlsCommand))]
+        [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ToggleServerConnectionCommand))]
+        [NotifyPropertyChangedFor(nameof(CanEditServer))]
         private bool isPlaying = false;
 
         private readonly SettingsViewModel settingsViewModel;
@@ -55,70 +53,47 @@ namespace CollimationCircles.ViewModels
         private bool remoteConnection = false;
 
         [ObservableProperty]
-        private bool isWindows = OperatingSystem.IsWindows();
-
-        [ObservableProperty]
         private INotifyPropertyChanged? settingsDialogViewModel;
 
         [ObservableProperty]
         private ObservableCollection<Camera> cameraList = [];
 
+        public bool HasCameras => CameraList.Count > 0;
+
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
         private Camera selectedCamera = new();
 
         [ObservableProperty]
-        bool displayAdvancedDShowDialog = false;
+        string alpacaServerAddress = "127.0.0.1";
+
+        [ObservableProperty]
+        int alpacaServerPort = 11111;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ConnectButtonText))]
+        [NotifyPropertyChangedFor(nameof(CanEditServer))]
+        private bool isServerConnected;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanEditServer))]
+        [NotifyCanExecuteChangedFor(nameof(ToggleServerConnectionCommand))]
+        private bool isServerBusy;
+
+        public string ConnectButtonText => IsServerConnected ? "Disconnect" : "Connect";
+
+        public bool CanEditServer => !IsServerConnected && !IsServerBusy && !IsPlaying;
 
         public StreamViewModel()
         {
-            this.libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
+            this.cameraService = Ioc.Default.GetRequiredService<ICameraService>();
             this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
             this.cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
-            FullAddress = this.libVLCService.FullAddress;
+            FullAddress = this.cameraService.FullAddress;
 
             PinVideoWindowToMainWindow = settingsViewModel.PinVideoWindowToMainWindow;
-
-            Dispatcher.UIThread.Post(async () =>
-            {
-                CameraList = [.. await cameraControlService.GetCameraList()];
-                SelectedCamera = CameraList.Where(c => c.Name == settingsViewModel.LastSelectedCamera).FirstOrDefault()
-                    ?? CameraList.FirstOrDefault()
-                    ?? new();
-
-                if (StartupOptions.AutoConnectCameraVidPid is { } targetVidPid && CameraList.Count > 0)
-                {
-                    Camera? vidPidCamera = CameraList.FirstOrDefault(c =>
-                        c.VendorId == targetVidPid.VendorId &&
-                        c.ProductId == targetVidPid.ProductId);
-
-                    if (vidPidCamera is not null)
-                    {
-                        SelectedCamera = vidPidCamera;
-                        logger.Info($"Startup option --camera-vidpid matched '{SelectedCamera.Name}' (VID={targetVidPid.VendorId} PID={targetVidPid.ProductId}). Starting stream automatically.");
-                        await StartSelectedCameraAsync();
-                        return;
-                    }
-
-                    logger.Warn($"Startup option --camera-vidpid='{targetVidPid.VendorId}:{targetVidPid.ProductId}' did not match any discovered camera.");
-                }
-
-                if (!string.IsNullOrWhiteSpace(StartupOptions.AutoConnectCameraName) && CameraList.Count > 0)
-                {
-                    string targetCameraName = StartupOptions.AutoConnectCameraName!;
-                    Camera? cliCamera = CameraList.FirstOrDefault(c => string.Equals(c.Name, targetCameraName, StringComparison.OrdinalIgnoreCase));
-
-                    if (cliCamera is not null)
-                    {
-                        SelectedCamera = cliCamera;
-                        logger.Info($"Startup option --camera matched '{SelectedCamera.Name}'. Starting stream automatically.");
-                        await StartSelectedCameraAsync();
-                    }
-                    else
-                    {
-                        logger.Warn($"Startup option --camera='{targetCameraName}' did not match any discovered camera.");
-                    }
-                }
-            });
+            alpacaServerAddress = settingsViewModel.AlpacaServerAddress;
+            AlpacaServerPort = settingsViewModel.AlpacaServerPort;
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -135,6 +110,28 @@ namespace CollimationCircles.ViewModels
                         break;
                 }
             });
+
+            CameraList.CollectionChanged += CameraList_CollectionChanged;
+        }
+
+        partial void OnCameraListChanged(ObservableCollection<Camera> oldValue, ObservableCollection<Camera> newValue)
+        {
+            if (oldValue is not null)
+            {
+                oldValue.CollectionChanged -= CameraList_CollectionChanged;
+            }
+
+            if (newValue is not null)
+            {
+                newValue.CollectionChanged += CameraList_CollectionChanged;
+            }
+
+            OnPropertyChanged(nameof(HasCameras));
+        }
+
+        private void CameraList_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(HasCameras));
         }
 
         private void MediaPlayer_Opening()
@@ -142,7 +139,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer opening");
 
             ShowWebCamStream();
-            IsPlaying = SelectedCamera?.APIType is APIType.Zwo or APIType.Uvc || libVLCService.MediaPlayer?.IsPlaying == true;
+            IsPlaying = SelectedCamera?.APIType is APIType.Alpaca || cameraService.IsPlaying;
             if (SelectedCamera is not null)
             {
                 SelectedCamera.IsPlaying = IsPlaying;
@@ -154,7 +151,7 @@ namespace CollimationCircles.ViewModels
             Guard.IsNotNull(SelectedCamera);
 
             logger.Trace($"MediaPlayer playing");
-            IsPlaying = SelectedCamera.APIType is APIType.Zwo or APIType.Uvc || libVLCService.MediaPlayer?.IsPlaying == true;
+            IsPlaying = SelectedCamera.APIType is APIType.Alpaca || cameraService.IsPlaying;
             SelectedCamera.IsPlaying = IsPlaying;
         }
 
@@ -163,7 +160,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer closed");
 
             CloseWebCamStream();
-            IsPlaying = libVLCService.MediaPlayer?.IsPlaying == true;
+            IsPlaying = cameraService.IsPlaying;
             if (SelectedCamera is not null)
             {
                 SelectedCamera.IsPlaying = IsPlaying;
@@ -180,118 +177,53 @@ namespace CollimationCircles.ViewModels
         {
             Guard.IsNotNull(SelectedCamera);
 
-            logger.Info($"PlayPause clicked: camera='{SelectedCamera.Name}', APIType={SelectedCamera.APIType}, FullAddress='{FullAddress}'");
+            logger.Info($"PlayPause clicked: camera='{SelectedCamera.Name}', APIType={SelectedCamera.APIType}, FullAddress='{FullAddress}'");            
 
-            // ZWO cameras use a direct-rendering path that bypasses LibVLC entirely.
-            if (SelectedCamera.APIType == APIType.Zwo)
+            if (SelectedCamera.APIType is APIType.Alpaca)
             {
-                var zwoFrameSource = Ioc.Default.GetRequiredService<IZwoFrameSource>();
-
-                if (zwoFrameSource.IsStreaming)
-                {
-                    zwoFrameSource.Stop();
-                    MediaPlayer_Closed();
-                }
-                else
-                {
-                    await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
-                }
-
-                return;
+                SelectedCamera.ServerAddress = AlpacaServerAddress.Trim();
+                SelectedCamera.ServerPort = AlpacaServerPort;
             }
 
-            // UVC cameras on macOS use a direct-rendering path that bypasses LibVLC entirely.
-            if (SelectedCamera.APIType == APIType.Uvc)
+            if (!cameraService.IsPlaying)
             {
-                var uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
-
-                if (uvcFrameSource.IsStreaming)
-                {
-                    uvcFrameSource.Stop();
-                    MediaPlayer_Closed();
-                }
-                else
-                {
-                    try
-                    {
-                        await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Error(ex, $"Error starting UVC stream for '{SelectedCamera.Name}'");
-                    }
-                }
-
-                return;
+                await cameraService.Play(SelectedCamera);
             }
-
-            // Play() will lazily initialise LibVLC and return early if it is not
-            // available.  We fall through to the compatibility message below when
-            // IsAvailable is still false after the call.
-            if (libVLCService.MediaPlayer != null && libVLCService.IsAvailable)
+            else
             {
-                if (!libVLCService.MediaPlayer.IsPlaying)
-                {
-                    await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
-                }
-                else
-                {
-                    libVLCService.MediaPlayer.Stop();
-                }
-
-                return;
+                await cameraService.Stop(SelectedCamera);
             }
-
-            // First attempt: try to start the stream (this triggers lazy init).
-            if (!libVLCService.IsAvailable)
-            {
-                await libVLCService.Play(SelectedCamera, DisplayAdvancedDShowDialog);
-            }
-
-            if (!libVLCService.IsAvailable)
-            {
-                logger.Warn("Play requested but LibVLC is not available.");
-                _ = ShowLibVlcCompatibilityMessageAsync();
-            }
-        }
-
-        private async Task ShowLibVlcCompatibilityMessageAsync()
-        {
-            string message =
-                ResSvc.TryGetString("LibVlcCompatibilityBody1") + "\n\n" +
-                ResSvc.TryGetString("LibVlcCompatibilityBody2") + "\n" +
-                ResSvc.TryGetString("LibVlcCompatibilityBody3") + "\n" +
-                ResSvc.TryGetString("LibVlcCompatibilityBody4") + "\n" +
-                ResSvc.TryGetString("LibVlcCompatibilityBody5") + "\n" +
-                ResSvc.TryGetString("LibVlcCompatibilityBody6");
-
-            await DialogService.ShowMessageBoxAsync(null,
-                message,
-                ResSvc.TryGetString("LibVlcCompatibilityTitle"),
-                MessageBoxButton.Ok);
-        }
+        }        
 
         public bool CanExecuteZoom
         {
             get => IsPlaying;
         }
 
-        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
-        private void ZoomIn()
+        private void ChangeBinning(int delta)
         {
-            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.In));
+            if (SelectedCamera?.Controls.FirstOrDefault(c => c.Name == ControlType.Binning) is not ICameraControl bin)
+            {
+                return;
+            }
+
+            double next = Math.Clamp(bin.Value + delta, bin.Min, bin.Max);
+            if (next != bin.Value)
+            {
+                bin.Value = next;
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
-        private void ZoomOut()
-        {
-            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.Out));
-        }
+        private void BinningIncrease() => ChangeBinning(1);
 
         [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
-        private void ZoomReset()
+        private void BinningDecrease() => ChangeBinning(-1);
+
+        [RelayCommand(CanExecute = nameof(CanExecuteZoom))]
+        private void ResetControls()
         {
-            WeakReferenceMessenger.Default.Send(new ImageZoomMessage(ImageZoomAction.Reset));
+            SelectedCamera?.SetDefaultControls();
         }
 
         private void ShowWebCamStream()
@@ -332,12 +264,48 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        [RelayCommand]
-        private async Task CameraRefresh()
+        [RelayCommand(CanExecute = nameof(CanExecuteToggleServer))]
+        private async Task ToggleServerConnection()
         {
-            CameraList = new ObservableCollection<Camera>(await cameraControlService.GetCameraList());
-            SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.First();
-        }        
+            IsServerBusy = true;
+            try
+            {
+                if (IsServerConnected)
+                {
+                    if (IsPlaying)
+                    {
+                        await cameraControlService.StopCamera(SelectedCamera);
+                    }
+
+                    await cameraControlService.DisconnectServer();
+                    CameraList = [];
+                    SelectedCamera = new();
+                    IsServerConnected = false;
+                    return;
+                }
+
+                var address = AlpacaServerAddress.Trim();
+                var port = AlpacaServerPort;
+                settingsViewModel.AlpacaServerAddress = address;
+                settingsViewModel.AlpacaServerPort = port;
+
+                var cameras = await cameraControlService.ConnectServer(address, port);
+                CameraList = new ObservableCollection<Camera>(cameras);
+                SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.FirstOrDefault() ?? new();
+                IsServerConnected = true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Alpaca server connect/disconnect failed");
+                IsServerConnected = false;
+            }
+            finally
+            {
+                IsServerBusy = false;
+            }
+        }
+
+        private bool CanExecuteToggleServer() => !IsServerBusy && !IsPlaying;
 
         public void OnClosed()
         {
@@ -348,7 +316,7 @@ namespace CollimationCircles.ViewModels
         {
             if (newValue is not null)
             {
-                FullAddress = libVLCService.DefaultAddress(newValue);
+                FullAddress = cameraService.DefaultAddress(newValue);
                 RemoteConnection = SelectedCamera?.APIType == APIType.Remote;
                 this.settingsViewModel.LastSelectedCamera = newValue.Name;
                 newValue.IsPlaying = IsPlaying;
@@ -359,7 +327,7 @@ namespace CollimationCircles.ViewModels
         partial void OnFullAddressChanged(string? oldValue, string newValue)
         {
             FullAddress = newValue;
-            libVLCService.FullAddress = newValue;
+            cameraService.FullAddress = newValue;
         }
 
         [RelayCommand]

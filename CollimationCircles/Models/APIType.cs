@@ -2,12 +2,7 @@
 {
     public enum APIType
     {
-        V4l2,
-        LibCamera,
-        Dshow,
-        QTCapture,
-        Zwo,
-        Uvc,
+        Alpaca,
         Remote
     }
 }

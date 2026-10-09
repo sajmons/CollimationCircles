@@ -16,6 +16,7 @@
         Temperature,
         Sharpness,
         ExposureTime,
+        Binning,
         //AutoExposure,
         Zoom_Absolute
     }

@@ -3,11 +3,11 @@
     public interface ICameraControl
     {
         public ControlType Name { get; set; }
-        public int Min { get; set; }
-        public int Max { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
         public double Step { get; set; }
-        public int Default { get; set; }
-        public int Value { get; set; }
+        public double Default { get; set; }
+        public double Value { get; set; }
         public bool AutoSupported { get; set; }
         public bool IsModeOnly { get; set; }
         public bool IsAuto { get; set; }

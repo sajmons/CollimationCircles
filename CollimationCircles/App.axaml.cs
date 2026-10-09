@@ -1,16 +1,12 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using CollimationCircles.Services;
-using CollimationCircles.Services.Uvc;
-using CollimationCircles.Services.Zwo;
 using CollimationCircles.ViewModels;
 using CollimationCircles.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CollimationCircles;
@@ -73,9 +69,7 @@ public partial class App : Application
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
-            .AddSingleton<ILibVLCService, LibVLCService>()
-            .AddSingleton<IZwoFrameSource, ZwoFrameSource>()
-            .AddSingleton<IUvcFrameSource, UvcFrameSource>()
+            .AddSingleton<ICameraService, CameraService>()
             .AddTransient<ImageViewModel>()
             .BuildServiceProvider());
     }

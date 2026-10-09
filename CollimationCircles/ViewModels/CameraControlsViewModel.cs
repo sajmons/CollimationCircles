@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using LibVLCSharp.Shared;
 using System.ComponentModel;
 
 namespace CollimationCircles.ViewModels
@@ -13,14 +12,11 @@ namespace CollimationCircles.ViewModels
     public partial class CameraControlsViewModel : BaseViewModel
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly ILibVLCService libVLCService;
+        private readonly ICameraService libVLCService;
         private readonly StreamViewModel streamViewModel;
 
         [ObservableProperty]
-        private Camera camera = new();
-
-        [ObservableProperty]
-        private bool isLibCamera;
+        private Camera camera = new();        
 
         [ObservableProperty]
         private bool isPlaying;
@@ -30,7 +26,7 @@ namespace CollimationCircles.ViewModels
 
         public CameraControlsViewModel()
         {
-            this.libVLCService = Ioc.Default.GetRequiredService<ILibVLCService>();
+            this.libVLCService = Ioc.Default.GetRequiredService<ICameraService>();
             this.streamViewModel = Ioc.Default.GetRequiredService<StreamViewModel>();
 
             RefreshCameraContext();
@@ -57,9 +53,8 @@ namespace CollimationCircles.ViewModels
 
         private void RefreshCameraContext()
         {
-            Camera = streamViewModel.SelectedCamera;
-            IsLibCamera = Camera.APIType == APIType.LibCamera;
-            IsPlaying = streamViewModel.IsPlaying;
+            Camera = streamViewModel.SelectedCamera ?? new Camera();
+            IsPlaying = Camera.IsPlaying;
             HasCameraControls = Camera.Controls is not null && Camera.Controls.Count > 0;
         }
 
@@ -74,7 +69,7 @@ namespace CollimationCircles.ViewModels
         private void Apply()
         {
             // Play() lazily initialises LibVLC and returns early if unavailable.
-            libVLCService.Play(Camera, false);
+            libVLCService.Play(Camera);
 
             if (!libVLCService.IsAvailable)
             {

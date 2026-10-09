@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LicenceManager", "LicenceMa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollimationCirclesFeatures", "CollimationCirclesFeatures\CollimationCirclesFeatures.csproj", "{A4C68E52-597B-4A34-8E91-294A2AFB10AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DxWebCam", "DxWebCam\DxWebCam.csproj", "{1B56DBD7-B013-6FC7-6179-EF16B5D053AD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{A4C68E52-597B-4A34-8E91-294A2AFB10AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4C68E52-597B-4A34-8E91-294A2AFB10AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4C68E52-597B-4A34-8E91-294A2AFB10AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1B56DBD7-B013-6FC7-6179-EF16B5D053AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B56DBD7-B013-6FC7-6179-EF16B5D053AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1B56DBD7-B013-6FC7-6179-EF16B5D053AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1B56DBD7-B013-6FC7-6179-EF16B5D053AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

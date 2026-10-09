@@ -1,9 +1,9 @@
 ﻿using CollimationCircles.Models;
-using CollimationCircles.Services.Uvc;
-using CollimationCircles.Services.Zwo;
+using CollimationCircles.Services.Alpaca;
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
@@ -12,6 +12,8 @@ namespace CollimationCircles.Services
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private readonly AlpacaCameraClient alpacaCamera = new();
+
         public void Set(ControlType controlName, double value, Camera camera)
         {
             Guard.IsNotNull(camera);
@@ -19,107 +21,86 @@ namespace CollimationCircles.Services
 
             logger.Info($"Dispatching camera control set: camera='{camera.Name}', api={camera.APIType}, control={controlName}, value={value}");
 
-            // UVC camera controls (Linux/Windows/macOS)
-            if (camera.APIType is APIType.Uvc)
+            if (camera.APIType is APIType.Alpaca)
             {
-                if (OperatingSystem.IsMacOS())
-                {
-                    new UvcCameraDetectMac().SetControl(camera, controlName, value);
-                }
-            }
-
-            // ZWO camera controls (Linux/Windows/macOS)
-            else if (camera.APIType is APIType.Zwo)
-            {
-                new ZWOCameraDetect().SetControl(camera, controlName, value);
-            }
-
-            // V4L2 camera controls (Linux cameras)
-            else if (camera.APIType is APIType.V4l2)
-            {
-                new V4L2CameraDetect().SetControl(camera, controlName, value);
-            }
-            
-            // macOS system cameras (AVFoundation/QTCapture fallback)
-            else if (camera.APIType is APIType.QTCapture)
-            {
-                new MacOSCameraDetect().SetControl(camera, controlName, value);
-            }
-
-            // DirectShow cameras (Windows)
-            else if (camera.APIType is APIType.Dshow)
-            {
-                new DShowCameraDetect().SetControl(camera, controlName, value);
-            }
-
-            // Raspberry Pi cameras (Linux)
-            else if (camera.APIType is APIType.LibCamera)
-            {
-                new RasPiCameraDetect().SetControl(camera, controlName, value);
+                alpacaCamera.SetControl(camera, controlName, value);
             }
         }
 
-        public void SetAuto(ControlType controlName, bool isAuto, Camera camera)
+        public bool IsServerConnected => alpacaCamera.IsConnected;
+
+        public async Task<List<Camera>> ConnectServer(string address, int port)
         {
-            Guard.IsNotNull(camera);
+            return await alpacaCamera.Connect(address, port);
+        }
 
-            logger.Info($"Dispatching camera auto-control set: camera='{camera.Name}', api={camera.APIType}, control={controlName}, isAuto={isAuto}, isPlaying={camera.IsPlaying}");
+        public async Task DisconnectServer()
+        {
+            await alpacaCamera.Disconnect();
+        }
 
-            // UVC camera auto-controls (Linux/Windows/macOS)
-            if (camera.APIType is APIType.Uvc)
+        public async Task StartCamera(Camera camera)
+        {
+            if (camera.APIType is APIType.Alpaca)
             {
-                if (OperatingSystem.IsMacOS())
+                try
                 {
-                    new UvcCameraDetectMac().SetControlAuto(camera, controlName, isAuto);
+                    await alpacaCamera.Start(camera);
+                    return;
                 }
-            }
+                catch (Exception ex) when (IsDeviceNotFoundError(ex))
+                {
+                    logger.Warn(ex, $"Alpaca device not found for '{camera.Name}' (DeviceNumber={camera.DeviceNumber}) at {camera.ServerAddress}:{camera.ServerPort}. Attempting rediscovery and retry.");
 
-            // ZWO camera auto-controls (Linux/Windows/macOS)
-            else if (camera.APIType is APIType.Zwo)
-            {
-                new ZWOCameraDetect().SetControlAuto(camera, controlName, isAuto);
+                    await RediscoverAndRetargetSelectedCameraAsync(camera);
+
+                    await alpacaCamera.Start(camera);
+                    return;
+                }
             }
         }
 
-        public async Task<List<Camera>> GetCameraList()
+        private async Task RediscoverAndRetargetSelectedCameraAsync(Camera selected)
         {
-            List<Camera> cameras = [];
-
-            if (OperatingSystem.IsWindows())
+            var cameras = await alpacaCamera.Connect(selected.ServerAddress, selected.ServerPort);
+            if (cameras.Count == 0)
             {
-                var dshowCameras = await new DShowCameraDetect().GetCameras();
-                cameras.AddRange(dshowCameras);
-            }
-            else if (OperatingSystem.IsMacOS())
-            {
-                var macosCameras = await new MacOSCameraDetect().GetCameras();
-                cameras.AddRange(macosCameras);
-
-                // Also detect UVC cameras via libuvc on macOS
-                var macosUvcCameras = await new UvcCameraDetectMac().GetCameras();
-                cameras.AddRange(macosUvcCameras);
-
-                var raspiCameras = await new RasPiCameraDetect().GetCameras();
-                cameras.AddRange(raspiCameras);
-
-                var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
-                cameras.AddRange(v4l2Cameras);
-            }
-            else
-            {
-                var raspiCameras = await new RasPiCameraDetect().GetCameras();
-                cameras.AddRange(raspiCameras);
-
-                var v4l2Cameras = await new V4L2CameraDetect().GetCameras();
-                cameras.AddRange(v4l2Cameras);
+                throw new InvalidOperationException($"Rediscovery found no Alpaca cameras at {selected.ServerAddress}:{selected.ServerPort}.");
             }
 
-            var zwoCameras = await new ZWOCameraDetect().GetCameras();
-            cameras.AddRange(zwoCameras);
+            var candidate = cameras.FirstOrDefault(c => string.Equals(c.Name, selected.Name, StringComparison.OrdinalIgnoreCase))
+                            ?? cameras.FirstOrDefault(c => c.DeviceNumber == selected.DeviceNumber)
+                            ?? cameras.First();
 
-            cameras.Add(new Camera() { APIType = APIType.Remote });
+            var previousName = selected.Name;
+            var previousDeviceNumber = selected.DeviceNumber;
 
-            return cameras;
+            selected.Name = candidate.Name;
+            selected.DeviceNumber = candidate.DeviceNumber;
+
+            logger.Info($"Retargeted Alpaca camera from '{previousName}'#{previousDeviceNumber} to '{selected.Name}'#{selected.DeviceNumber} at {selected.ServerAddress}:{selected.ServerPort}.");
+        }
+
+        private static bool IsDeviceNotFoundError(Exception ex)
+        {
+            var message = ex.ToString();
+
+            return message.Contains("ErrorNumber\":1003", StringComparison.OrdinalIgnoreCase)
+                   || message.Contains("Device not found", StringComparison.OrdinalIgnoreCase)
+                   || message.Contains("HTTP Completion Status: NotFound", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public async Task StopCamera(Camera camera)
+        {
+            if (camera.APIType is APIType.Alpaca)
+            {
+                await alpacaCamera.Stop(camera);
+            }
+        }
+
+        public void SetAuto(ControlType propertyname, bool isAuto, Camera camera)
+        {
+            throw new NotImplementedException();
         }
     }
 }

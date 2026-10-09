@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:CollimationCircles.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
              x:Class="CollimationCircles.Controls.StreamUserControl"
@@ -14,126 +15,71 @@
     <StackPanel
       Orientation="Vertical"
       Spacing="{DynamicResource ControlSpacing}">
+    <StackPanel
+        Orientation="Vertical">
+        <local:AlpacaServerUserControl />
+    </StackPanel>
       <StackPanel
-        Orientation="Vertical"
-        IsEnabled="{Binding !IsPlaying}">
+        Orientation="Vertical">
         <TextBlock Text="{DynamicResource Text.CameraType}"/>
-        <DockPanel>
+        <DockPanel LastChildFill="True">
+          <ToggleButton
+            Theme="{DynamicResource ToolbarButton}"
+            IsChecked="{Binding IsPlaying}"
+            Command="{Binding PlayPauseCommand}"
+            ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}"
+            Margin="8,0,0,0"
+            DockPanel.Dock="Right">
+            <Panel>
+              <PathIcon
+                Width="{DynamicResource PathIconWidth}"
+                Height="{DynamicResource PathIconHeight}"
+                Foreground="{DynamicResource Color2}"
+                Classes="visibility-on"
+                Data="{StaticResource IconData.Stop}" />
+              <PathIcon
+                Width="{DynamicResource PathIconWidth}"
+                Height="{DynamicResource PathIconHeight}"
+                Foreground="{DynamicResource Color2}"
+                Classes="visibility-off"
+                Data="{StaticResource IconData.Play}" />
+            </Panel>
+            <ToggleButton.Styles>
+              <Style Selector="ToggleButton PathIcon.visibility-on">
+                <Setter Property="IsVisible" Value="False"/>
+              </Style>
+              <Style Selector="ToggleButton:checked PathIcon.visibility-on">
+                <Setter Property="IsVisible" Value="True"/>
+              </Style>
+              <Style Selector="ToggleButton PathIcon.visibility-off">
+                <Setter Property="IsVisible" Value="True"/>
+              </Style>
+              <Style Selector="ToggleButton:checked PathIcon.visibility-off">
+                <Setter Property="IsVisible" Value="False"/>
+              </Style>
+            </ToggleButton.Styles>
+          </ToggleButton>
           <ComboBox
-            Width="180"
-            HorizontalAlignment="Left"
+            HorizontalAlignment="Stretch"
+            IsEnabled="{Binding HasCameras}"
             ItemsSource="{Binding CameraList}"
-            SelectedItem="{Binding SelectedCamera}"
-            DockPanel.Dock="Left">
+            SelectedItem="{Binding SelectedCamera}">
             <ComboBox.ItemTemplate>
               <DataTemplate>
                 <StackPanel Orientation="Horizontal">
                   <TextBlock Text="{Binding APIType}" />
-                  <TextBlock Text=": " />
+                  <TextBlock Text=" " />
                   <TextBlock Text="{Binding Name}" />
                 </StackPanel>
               </DataTemplate>
             </ComboBox.ItemTemplate>
           </ComboBox>
-          <Button
-            Theme="{DynamicResource ToolbarButton}"
-            HorizontalAlignment="Right"
-            Command="{Binding CameraRefreshCommand}"
-            ToolTip.Tip="{DynamicResource Text.RefreshCameras}">
-            <PathIcon
-              Width="{DynamicResource PathIconWidth}"
-              Height="{DynamicResource PathIconHeight}"
-              Foreground="{DynamicResource Color2}"
-              Data="{StaticResource IconData.Refresh}" />
-          </Button>
-        </DockPanel>
-        <StackPanel
-          Orientation="Vertical"
-          IsVisible="{Binding RemoteConnection}">
-          <TextBlock
-            Text="{DynamicResource Text.EnterRemoteAddress}"
-            VerticalAlignment="Center" />
-          <TextBox
-            Text="{Binding FullAddress}"
-            VerticalAlignment="Center" />
-        </StackPanel>
+        </DockPanel>        
       </StackPanel>
-      <StackPanel Orientation="Horizontal" Spacing="{DynamicResource ControlSpacing}">
-        <ToggleButton
-          Theme="{DynamicResource ToolbarButton}"
-          IsChecked="{Binding IsPlaying}"
-          Command="{Binding PlayPauseCommand}"
-          ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}">
-          <Panel>
-            <PathIcon
-              Width="{DynamicResource PathIconWidth}"
-              Height="{DynamicResource PathIconHeight}"
-              Foreground="{DynamicResource Color2}"
-              Classes="visibility-on"
-              Data="{StaticResource IconData.Stop}" />
-            <PathIcon
-              Width="{DynamicResource PathIconWidth}"
-              Height="{DynamicResource PathIconHeight}"
-              Foreground="{DynamicResource Color2}"
-              Classes="visibility-off"
-              Data="{StaticResource IconData.Play}" />
-          </Panel>
-          <ToggleButton.Styles>
-            <Style Selector="ToggleButton PathIcon.visibility-on">
-              <Setter Property="IsVisible" Value="False"/>
-            </Style>
-            <Style Selector="ToggleButton:checked PathIcon.visibility-on">
-              <Setter Property="IsVisible" Value="True"/>
-            </Style>
-            <Style Selector="ToggleButton PathIcon.visibility-off">
-              <Setter Property="IsVisible" Value="True"/>
-            </Style>
-            <Style Selector="ToggleButton:checked PathIcon.visibility-off">
-              <Setter Property="IsVisible" Value="False"/>
-            </Style>
-          </ToggleButton.Styles>
-        </ToggleButton>        
-        <Button
-          Theme="{DynamicResource ToolbarButton}"
-          Command="{Binding ZoomInCommand}"
-          ToolTip.Tip="{DynamicResource Text.ZoomIn}"
-          IsEnabled="{Binding IsPlaying}">
-          <PathIcon
-            Width="{DynamicResource PathIconWidth}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.ZoomIn}" />
-        </Button>
-        <Button
-          Theme="{DynamicResource ToolbarButton}"
-          Command="{Binding ZoomOutCommand}"
-          ToolTip.Tip="{DynamicResource Text.ZoomOut}"
-          IsEnabled="{Binding IsPlaying}">
-          <PathIcon
-            Width="{DynamicResource PathIconWidth}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.ZoomOut}" />
-        </Button>
-        <Button
-          Theme="{DynamicResource ToolbarButton}"
-          Command="{Binding ZoomResetCommand}"
-          ToolTip.Tip="{DynamicResource Text.ZoomReset}"
-          IsEnabled="{Binding IsPlaying}">
-          <PathIcon
-            Width="{DynamicResource PathIconWidth}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.Reset}" />
-        </Button>
-      </StackPanel>
-    </StackPanel>
+      <local:DynamicCameraControlsUserControl />
+    </StackPanel>    
     <CheckBox
-      Content="{DynamicResource Text.DisplayAdvancedDShowDialog}"
-      IsChecked="{Binding DisplayAdvancedDShowDialog}"
-      IsVisible="{Binding IsWindows}"/>
-    <CheckBox
-      Content="{DynamicResource Text.CameraStreamSeparateWindow}"
+      Content="{DynamicResource Text.PinCameraWindowToMainWindow}"
       IsChecked="{Binding PinVideoWindowToMainWindow}" />    
 
   </StackPanel>

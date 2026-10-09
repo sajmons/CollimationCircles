@@ -9,88 +9,34 @@
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:CameraControlsViewModel">
   <UserControl.Styles>
-    <Style Selector="TextBox">
-      <Setter Property="FontSize" Value="10" />
-      <Setter Property="Padding" Value="0" />
-      <Setter Property="Margin" Value="0" />
-      <Setter Property="MinHeight" Value="0" />
-      <Setter Property="MinWidth" Value="0" />
-      <Setter Property="Width" Value="40" />
-      <Setter Property="VerticalContentAlignment" Value="Center" />
-      <Setter Property="HorizontalContentAlignment" Value="Center" />
-    </Style>
-    <Style Selector="Slider">
-      <Setter Property="MinHeight" Value="0" />
-      <Setter Property="Height" Value="35" />
+    <Style Selector="NumericUpDown">
+      <Setter Property="Margin" Value="0,2,0,6" />
     </Style>
   </UserControl.Styles>
   <StackPanel
     Orientation="Vertical"
-    Spacing="20"
-    IsVisible="{Binding IsPlaying}">
-    <TextBlock
-      IsVisible="{Binding !HasCameraControls}"
-      Text="No adjustable camera settings are exposed for this camera on macOS AVFoundation."
-      TextWrapping="Wrap" />
-
+    Spacing="20">
     <ItemsControl
-      IsVisible="{Binding HasCameraControls}"
+      IsEnabled="{Binding IsPlaying}"
       ItemsSource="{Binding Camera.Controls}" >
       <ItemsControl.ItemTemplate>
         <DataTemplate>
           <Grid
             ColumnDefinitions="*,Auto"
-            RowDefinitions="20,22,22">
+            RowDefinitions="20,Auto">
             <TextBlock Text="{Binding Name}"/>
-            <CheckBox
-              Grid.Row="0"
-              Grid.Column="1"
-              IsVisible="{Binding AutoSupported}"
-              IsChecked="{Binding IsAuto}"
-              Content="Auto" />
-            <Slider
-              Grid.RowSpan="3"
+            <NumericUpDown
+              Grid.Row="1"
               Grid.ColumnSpan="2"
-              IsVisible="{Binding !IsModeOnly}"
+              IsEnabled="{Binding !IsAuto}"
               Value="{Binding Value}"
               Minimum="{Binding Min}"
               Maximum="{Binding Max}"
-              IsEnabled="{Binding !IsAuto}" />
-            <TextBox
-              Grid.Row="1"
-              Grid.Column="1"
-              IsVisible="{Binding !IsModeOnly}"
-              IsEnabled="{Binding !IsAuto}"
-              Text="{Binding Value}"/>
-            <TextBlock
-              Grid.Row="1"
-              Grid.Column="0"
-              Grid.ColumnSpan="2"
-              IsVisible="{Binding IsModeOnly}"
-              Opacity="0.8"
-              Text="Mode control: use Auto toggle (Auto vs Locked)." />
+              Increment="{Binding Step}"
+              FormatString="0.###" />            
           </Grid>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
-
-    <StackPanel
-      Orientation="Horizontal"
-      HorizontalAlignment="Right"
-      Spacing="{DynamicResource ControlSpacing}">
-      <Button
-        HorizontalAlignment="Right"
-        VerticalAlignment="Bottom"
-        Content="{DynamicResource Text.Default}"
-        Command="{Binding DefaultCommand}"/>
-
-      <Button
-        HorizontalAlignment="Right"
-        VerticalAlignment="Bottom"
-        Content="{DynamicResource Text.Apply}"
-        Command="{Binding ApplyCommand}"
-        IsVisible="{Binding IsLibCamera}"/>
-    </StackPanel>
-
   </StackPanel>
 </UserControl>

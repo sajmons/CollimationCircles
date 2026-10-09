@@ -181,6 +181,14 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        private string alpacaServerAddress = "127.0.0.1";
+
+        [JsonProperty]
+        [ObservableProperty]
+        private int alpacaServerPort = 11111;
+
+        [JsonProperty]
+        [ObservableProperty]
         private ObservableCollection<Profile> profiles = [];
 
         [JsonProperty]
@@ -560,6 +568,8 @@ namespace CollimationCircles.ViewModels
                     CompactThemeDensity = vm.CompactThemeDensity;
 
                     LastSelectedCamera = vm.LastSelectedCamera;
+                    AlpacaServerAddress = vm.AlpacaServerAddress;
+                    AlpacaServerPort = vm.AlpacaServerPort;
                     Profiles = vm.Profiles;
 
                     if (!DockInMainWindow)
@@ -656,7 +666,14 @@ namespace CollimationCircles.ViewModels
 
                         var pVal = Property.GetPropValue(this, e.PropertyName);
 
-                        logger.Debug($"{e.PropertyName} changed to '{pVal}'");
+                        if (e.PropertyName is nameof(MainWindowPosition) or nameof(MainWindowWidth) or nameof(MainWindowHeight))
+                        {
+                            logger.Trace($"{e.PropertyName} changed to '{pVal}'");
+                        }
+                        else
+                        {
+                            logger.Debug($"{e.PropertyName} changed to '{pVal}'");
+                        }
                     }
                     break;
             }

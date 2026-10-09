@@ -1,13 +1,9 @@
-using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using CollimationCircles.Messages;
-using CollimationCircles.Services;
-using CollimationCircles.Services.Uvc;
-using CollimationCircles.Services.Zwo;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using LibVLCSharp.Avalonia;
 using System;
 
 namespace CollimationCircles.Views
@@ -15,33 +11,17 @@ namespace CollimationCircles.Views
     public partial class StreamView : Window
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-
-        private const double MinZoom = 0.5;
-        private const double MaxZoom = 4.0;
-        private const double ZoomStep = 0.2;
-
-        private readonly VideoView? videoViewer;
+                
         private readonly Grid? frameGrid;
         private readonly FrameRenderer? frameRenderer;
         private readonly SettingsViewModel svm;
-        private double currentZoom = 1.0;
-        private int sourceVideoWidth;
-        private int sourceVideoHeight;
-        private bool sourceDimensionsCaptured = false;
-        private bool vlcCropCleared = false;
-
-        private IZwoFrameSource? _zwoFrameSource;
-        private IUvcFrameSource? _uvcFrameSource;
-        private bool _usingZwoDirect;
-        private bool _usingUvcDirect;
 
         public StreamView()
         {
             InitializeComponent();
             svm = Ioc.Default.GetRequiredService<SettingsViewModel>();
             DataContext = Ioc.Default.GetRequiredService<CollimationAnalysisViewModel>();
-
-            videoViewer = this.Get<VideoView>("VideoViewer");
+                        
             frameGrid = this.Get<Grid>("FrameGrid");
             frameRenderer = this.Get<FrameRenderer>("FrameRenderer");
 
@@ -50,9 +30,13 @@ namespace CollimationCircles.Views
                 UpdateWindowPosition();
             });
 
-            WeakReferenceMessenger.Default.Register<ImageZoomMessage>(this, (r, m) =>
+            WeakReferenceMessenger.Default.Register<CameraFrameMessage>(this, (r, m) =>
             {
-                ApplyZoom(m.Value);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    if (frameGrid is not null) frameGrid.IsVisible = true;
+                    frameRenderer?.SetFrame(m.Value);
+                }, DispatcherPriority.Render);
             });
 
             Opened += WebCamStreamWindow_Opened;
@@ -63,99 +47,15 @@ namespace CollimationCircles.Views
         {
             WeakReferenceMessenger.Default.UnregisterAll(this);
 
-            if (_zwoFrameSource is not null)
-            {
-                _zwoFrameSource.FrameReady -= OnZwoFrameReady;
-                _zwoFrameSource = null;
-            }
-
-            if (_uvcFrameSource is not null)
-            {
-                _uvcFrameSource.FrameReady -= OnUvcFrameReady;
-                _uvcFrameSource = null;
-            }
-
             if (frameGrid is not null)
                 frameGrid.SizeChanged -= OnFrameGridSizeChanged;
         }
 
         private void WebCamStreamWindow_Opened(object? sender, System.EventArgs e)
         {
-            _zwoFrameSource = Ioc.Default.GetRequiredService<IZwoFrameSource>();
-            _uvcFrameSource = Ioc.Default.GetRequiredService<IUvcFrameSource>();
-            _usingZwoDirect = _zwoFrameSource.IsStreaming;
-            _usingUvcDirect = _uvcFrameSource.IsStreaming;
-
-            if (_usingZwoDirect || _usingUvcDirect)
             {
-                // Direct-rendering path: show FrameRenderer, hide VideoView.
-                if (videoViewer is not null) videoViewer.IsVisible = false;
-                if (frameGrid is not null) frameGrid.IsVisible = true;
-
-                if (_usingZwoDirect)
-                {
-                    sourceVideoWidth = _zwoFrameSource.FrameWidth;
-                    sourceVideoHeight = _zwoFrameSource.FrameHeight;
-                    sourceDimensionsCaptured = sourceVideoWidth > 0 && sourceVideoHeight > 0;
-                    _zwoFrameSource.FrameReady += OnZwoFrameReady;
-                }
-                else if (_usingUvcDirect)
-                {
-                    sourceVideoWidth = _uvcFrameSource.FrameWidth;
-                    sourceVideoHeight = _uvcFrameSource.FrameHeight;
-                    sourceDimensionsCaptured = sourceVideoWidth > 0 && sourceVideoHeight > 0;
-                    _uvcFrameSource.FrameReady += OnUvcFrameReady;
-                }
-
-                if (frameGrid is not null)
-                    frameGrid.SizeChanged += OnFrameGridSizeChanged;
-
-                currentZoom = 1.0;
-                UpdateWindowPosition();
-            }
-            else
-            {
-                // LibVLC path: show VideoView, hide FrameRenderer.
-                if (videoViewer is not null) videoViewer.IsVisible = true;
                 if (frameGrid is not null) frameGrid.IsVisible = false;
 
-                var mp = Ioc.Default.GetRequiredService<ILibVLCService>().MediaPlayer;
-
-                if (videoViewer != null && mp is not null)
-                {
-                    videoViewer.MediaPlayer = mp;
-
-                    logger.Info($"StreamView opened. MediaPlayer IsPlaying={mp.IsPlaying}, CropGeometry='{mp.CropGeometry}', Scale={mp.Scale}");
-
-                    // Capture source dimensions once when stream starts playing.
-                    // We retry on every Playing event until we get non-zero values,
-                    // because mp.Size(0,...) can return 0,0 before the first decoded
-                    // frame is available.
-                    mp.Playing += (s, ev) =>
-                    {
-                        if (!sourceDimensionsCaptured)
-                        {
-                            if (TryGetVideoSize(mp, out int w, out int h))
-                            {
-                                sourceVideoWidth = w;
-                                sourceVideoHeight = h;
-                                sourceDimensionsCaptured = true;
-                                logger.Info($"Captured source video dimensions from Playing event: {w}x{h}");
-                            }
-                            else
-                            {
-                                logger.Debug("Playing event fired but mp.Size(0) returned 0x0; will retry on next event.");
-                            }
-                        }
-                    };
-                }
-
-                currentZoom = 1.0;
-                sourceVideoWidth = 0;
-                sourceVideoHeight = 0;
-                sourceDimensionsCaptured = false;
-                vlcCropCleared = false;
-                UpdateImageTransform();
                 UpdateWindowPosition();
             }
         }
@@ -163,190 +63,6 @@ namespace CollimationCircles.Views
         private void OnFrameGridSizeChanged(object? sender, SizeChangedEventArgs e)
         {
             frameRenderer?.InvalidateVisual();
-        }
-
-        private void OnZwoFrameReady(byte[] frame, int width, int height)
-        {
-            // Same rendering logic for both ZWO and UVC frames
-            OnDirectFrameReady(frame, width, height);
-        }
-
-        private void OnUvcFrameReady(byte[] frame, int width, int height)
-        {
-            OnDirectFrameReady(frame, width, height);
-        }
-
-        private void OnDirectFrameReady(byte[] frame, int width, int height)
-        {
-            if (!sourceDimensionsCaptured && width > 0 && height > 0)
-            {
-                sourceVideoWidth = width;
-                sourceVideoHeight = height;
-                sourceDimensionsCaptured = true;
-                logger.Info($"Captured source video dimensions from direct frame: {width}x{height}");
-            }
-
-            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-            {
-                frameRenderer?.SetJpegFrame(frame);
-            });
-        }
-
-        private void ApplyZoom(ImageZoomAction action)
-        {
-            double prevZoom = currentZoom;
-
-            switch (action)
-            {
-                case ImageZoomAction.In:
-                    ApplyZoomDelta(ZoomStep);
-                    break;
-                case ImageZoomAction.Out:
-                    ApplyZoomDelta(-ZoomStep);
-                    break;
-                case ImageZoomAction.Reset:
-                    currentZoom = 1.0;
-                    break;
-            }
-
-            logger.Info($"ApplyZoom: action={action}, zoom {prevZoom:F2} -> {currentZoom:F2}");
-
-            UpdateImageTransform();
-        }
-
-        private void UpdateImageTransform()
-        {
-            if (_usingZwoDirect || _usingUvcDirect)
-            {
-                if (frameRenderer is not null)
-                    frameRenderer.Zoom = currentZoom;
-                return;
-            }
-
-            var mp = videoViewer?.MediaPlayer;
-            if (mp is null)
-            {
-                logger.Warn("UpdateImageTransform: MediaPlayer is null, skipping.");
-                return;
-            }
-
-            if (currentZoom <= 1.0)
-            {
-                // Clear LibVLC crop/scale only once when returning to zoom=1.0,
-                // to avoid triggering a vout reconfiguration (flicker) on every call.
-                if (!vlcCropCleared)
-                {
-                    mp.CropGeometry = string.Empty;
-                    mp.Scale = 0;
-                    vlcCropCleared = true;
-                }
-
-                // Reset VideoView to fill the window
-                if (videoViewer is not null)
-                {
-                    videoViewer.Width = double.NaN;
-                    videoViewer.Height = double.NaN;
-                    videoViewer.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Stretch;
-                    videoViewer.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Stretch;
-                }
-
-                logger.Info($"UpdateImageTransform: zoom<=1, reset VideoView to stretch (zoom={currentZoom:F2}).");
-                return;
-            }
-
-            // NOTE: On macOS VLC 3.0.x, CropGeometry "+X+Y" offset is ignored
-            // (crops from 0,0 → diagonal drift), Scale re-fits instead of clipping,
-            // and Avalonia RenderTransform has no effect on the native overlay.
-            //
-            // WORKAROUND: Resize the VideoView itself to be larger than the window
-            // and keep it centered.  The parent Grid's ClipToBounds clips the
-            // overflow, so only the center region of the video is visible.
-            // This is center-based zoom by construction — no VLC crop API needed.
-            //
-            // The VideoView's native overlay (NSView) resizes with the Avalonia
-            // control, and VLC auto-fits the video into the larger VideoView, so
-            // the video scales up.  The window clips what doesn't fit.
-
-            if (!sourceDimensionsCaptured && (sourceVideoWidth <= 0 || sourceVideoHeight <= 0))
-            {
-                bool ok = TryGetVideoSize(mp, out sourceVideoWidth, out sourceVideoHeight);
-                sourceDimensionsCaptured = true;
-                logger.Info($"UpdateImageTransform: late dimension capture, TryGetVideoSize={ok}, got {sourceVideoWidth}x{sourceVideoHeight}");
-            }
-
-            // Clear any stale LibVLC crop/scale only once (not on every zoom step,
-            // to avoid triggering a vout reconfiguration that causes flicker).
-            if (!vlcCropCleared)
-            {
-                mp.CropGeometry = string.Empty;
-                mp.Scale = 0;
-                vlcCropCleared = true;
-            }
-
-            // Get the current window client size (the visible area / clip rect).
-            double viewWidth = ClientSize.Width;
-            double viewHeight = ClientSize.Height;
-
-            if (viewWidth <= 0 || viewHeight <= 0)
-            {
-                logger.Warn($"UpdateImageTransform: client size is {viewWidth}x{viewHeight}, cannot apply zoom {currentZoom:F2}.");
-                return;
-            }
-
-            // Enlarge the VideoView by the zoom factor, centered on the window.
-            // The Grid's ClipToBounds clips the excess, showing only the center.
-            double scaledWidth = viewWidth * currentZoom;
-            double scaledHeight = viewHeight * currentZoom;
-
-            if (videoViewer is not null)
-            {
-                videoViewer.Width = scaledWidth;
-                videoViewer.Height = scaledHeight;
-                videoViewer.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                videoViewer.VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center;
-            }
-
-            // Compute equivalent center crop for logging.
-            if (sourceVideoWidth > 0 && sourceVideoHeight > 0)
-            {
-                int cropWidth = Math.Clamp((int)Math.Round(sourceVideoWidth / currentZoom), 1, sourceVideoWidth);
-                int cropHeight = Math.Clamp((int)Math.Round(sourceVideoHeight / currentZoom), 1, sourceVideoHeight);
-                int cropX = (sourceVideoWidth - cropWidth) / 2;
-                int cropY = (sourceVideoHeight - cropHeight) / 2;
-
-                logger.Info($"UpdateImageTransform: zoom={currentZoom:F2}, source={sourceVideoWidth}x{sourceVideoHeight}, " +
-                            $"view={viewWidth:F0}x{viewHeight:F0}, VideoView resized to {scaledWidth:F0}x{scaledHeight:F0} (centered, clipped), " +
-                            $"equiv. center crop={cropWidth}x{cropHeight}+{cropX}+{cropY}");
-            }
-            else
-            {
-                logger.Info($"UpdateImageTransform: zoom={currentZoom:F2}, view={viewWidth:F0}x{viewHeight:F0}, " +
-                            $"VideoView resized to {scaledWidth:F0}x{scaledHeight:F0} (centered, clipped)");
-            }
-        }
-
-        private void ApplyZoomDelta(double delta)
-        {
-            currentZoom = Math.Clamp(currentZoom + delta, MinZoom, MaxZoom);
-        }
-
-        private static bool TryGetVideoSize(LibVLCSharp.Shared.MediaPlayer mediaPlayer, out int width, out int height)
-        {
-            width = 0;
-            height = 0;
-
-            uint rawWidth = 0;
-            uint rawHeight = 0;
-
-            if (!mediaPlayer.Size(0, ref rawWidth, ref rawHeight))
-                return false;
-
-            if (rawWidth == 0 || rawHeight == 0)
-                return false;
-
-            width = (int)rawWidth;
-            height = (int)rawHeight;
-            return true;
         }
 
         private void UpdateWindowPosition()

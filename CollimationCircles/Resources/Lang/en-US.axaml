@@ -95,7 +95,7 @@
   <system:String x:Key="Text.WebCamStream">Camera video stream</system:String>
   <system:String x:Key="Text.Start">Start</system:String>
   <system:String x:Key="Text.Stop">Stop</system:String>
-  <system:String x:Key="Text.CameraStreamSeparateWindow">Pin to main window</system:String>
+  <system:String x:Key="Text.PinCameraWindowToMainWindow">Pin to main window</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Camera video stream</system:String>
   <system:String x:Key="Text.Fans">Fans</system:String>
   <system:String x:Key="Text.PatreonDesc">The development of this application requires a lot of effort, free time and commitment. If you appreciate that and want to show some support, please visit my Patreon website and subscribe to the membership levels or buy some assets. Thank you for all your support!</system:String>
@@ -153,7 +153,6 @@
   <system:String x:Key="Text.LicenseData">Client ID:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Do you want to remove profile '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Remove profile</system:String>
-  <system:String x:Key="Text.DisplayAdvancedDShowDialog">Show advanced settings</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Unlicensed version</system:String>
   <system:String x:Key="Text.ShapeList">Shapes</system:String>
   <system:String x:Key="Text.ShapeProperties">Shape properties</system:String>
@@ -175,13 +174,6 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Too many circles detected</system:String>  
   <system:String x:Key="Text.DetectionThresholdHelp">Try changing threshold.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Image should contain centered defocused star</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityTitle">LibVLC Compatibility Error</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody1">Live video stream is not available because LibVLC native libraries are missing or incompatible on this platform.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody2">The application will continue in degraded mode.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody3">Unavailable features: live camera video preview.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody4">Unavailable features: stream play/pause and snapshot from live stream for analysis.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody5">You can still use non-video features (overlay setup, profiles, and image analysis from file).</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody6">Install arm64-compatible VLC/libVLC and restart the app.</system:String>
   <system:String x:Key="Text.LiveAnalysisResults">Live analysis results</system:String>
   <system:String x:Key="Text.WaitingForStreamData">Waiting for stream data...</system:String> 
   <system:String x:Key="Text.LiveAnalysis">LIVE ANALYSIS</system:String>
@@ -195,4 +187,6 @@
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Experimental feature!</system:String>    
   <system:String x:Key="Text.CheckForUpdate">Check for Update</system:String>
+  <system:String x:Key="Text.AlpacaServerAddress">Alpaca Server Address</system:String>
+  <system:String x:Key="Text.AlpacaServerPort">Alpaca Server Port</system:String>
 </ResourceDictionary>

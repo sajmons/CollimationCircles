@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.AlpacaServerUserControl"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:StreamViewModel">
+
+    <UserControl.Styles>
+        <Style Selector="Button.serverToggle /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Green" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.serverToggle:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="DarkGreen" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.serverToggle.connected /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="Red" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style Selector="Button.serverToggle.connected:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+            <Setter Property="Background" Value="DarkRed" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+    </UserControl.Styles>
+
+    <StackPanel
+        Orientation="Vertical"
+        Spacing="{DynamicResource ControlSpacing}">
+        <TextBlock Text="{DynamicResource Text.AlpacaServerAddress}" />
+        <TextBox
+            IsEnabled="{Binding CanEditServer}"
+            Text="{Binding AlpacaServerAddress, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Text="{DynamicResource Text.AlpacaServerPort}" />
+        <NumericUpDown
+            IsEnabled="{Binding CanEditServer}"
+            Value="{Binding AlpacaServerPort, UpdateSourceTrigger=PropertyChanged}"
+            Minimum="1"
+            Maximum="65535"
+            Increment="1" />
+        <Button
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Center"
+            Classes="serverToggle"
+            Classes.connected="{Binding IsServerConnected}"
+            Content="{Binding ConnectButtonText}"
+            Command="{Binding ToggleServerConnectionCommand}" />
+    </StackPanel>
+
+</UserControl>

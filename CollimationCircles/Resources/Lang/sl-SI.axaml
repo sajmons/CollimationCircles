@@ -95,7 +95,7 @@
   <system:String x:Key="Text.WebCamStream">Video tok kamere</system:String>
   <system:String x:Key="Text.Start">Začni</system:String>
   <system:String x:Key="Text.Stop">Ustavi</system:String>
-  <system:String x:Key="Text.CameraStreamSeparateWindow">Pripni na glavno okno</system:String>
+  <system:String x:Key="Text.PinCameraWindowToMainWindow">Pripni na glavno okno</system:String>
   <system:String x:Key="Text.CameraStreamWindowTitle">Video iz kamere</system:String>
   <system:String x:Key="Text.Fans">Oboževalci</system:String>
   <system:String x:Key="Text.PatreonDesc">Razvoj te aplikacije zahteva veliko truda, prostega časa in angažiranosti. V kolikor to cenite in me želite podpreti, vas prosim, da obiščete mojo Patreon spletno stran in se naroči na članske ugodnosti ali kupite katerega od izdelkov. Hvala za vso vašo podporo!</system:String>
@@ -153,7 +153,6 @@
   <system:String x:Key="Text.LicenseData">Client ID:</system:String>
   <system:String x:Key="Text.RemoveProfileDialogText">Želite odstraniti profil '{0}'?</system:String>
   <system:String x:Key="Text.RemoveProfileDialogTitle">Odstrani profil</system:String>
-  <system:String x:Key="Text.DisplayAdvancedDShowDialog">Prikaži napredne nastavitve</system:String>
   <system:String x:Key="Text.UnlicensedVersion">Nelicencirana različica</system:String>  
   <system:String x:Key="Text.Apply">Uporabi</system:String>
   <system:String x:Key="Text.DetectionThreshold">Prag zaznave</system:String>
@@ -162,13 +161,6 @@
   <system:String x:Key="Text.TooManyCirclesDetected">Zaznanih je preveč krogov</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp">Poskusite spremeniti prag.</system:String>
   <system:String x:Key="Text.DetectionThresholdHelp2">Slika mora vsebovati centrirano defokusirano zvezdo</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityTitle">Napaka združljivosti LibVLC</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody1">Video prenos v živo ni na voljo, ker manjkajo ali niso združljive izvorne knjižnice LibVLC za to platformo.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody2">Aplikacija se bo nadaljevala v omejenem načinu.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody3">Nedosegljive funkcije: predogled videa kamere v živo.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody4">Nedosegljive funkcije: predvajanje/pavza prenosa in zajem slike iz prenosa v živo za analizo.</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody5">Funkcije brez videa še vedno delujejo (nastavitve prekrivanj, profili in analiza slike iz datoteke).</system:String>
-  <system:String x:Key="Text.LibVlcCompatibilityBody6">Namestite arm64 združljiv VLC/libVLC in znova zaženite aplikacijo.</system:String>
   <system:String x:Key="Text.LiveAnalysisResults">Rezultati analize v živo</system:String>
   <system:String x:Key="Text.WaitingForStreamData">Čakanje na podatke pretoka...</system:String> 
   <system:String x:Key="Text.LiveAnalysis">ANALIZA V ŽIVO</system:String>
@@ -181,4 +173,6 @@
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Eksperimentalna funkcija!</system:String>    
   <system:String x:Key="Text.CheckForUpdate">Preveri za nadgradnjo</system:String>
+  <system:String x:Key="Text.AlpacaServerAddress">Naslov Alpaca strežnika</system:String>
+  <system:String x:Key="Text.AlpacaServerPort">Vrata Alpaca strežnika</system:String>
 </ResourceDictionary>

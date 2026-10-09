@@ -10,16 +10,16 @@ namespace CollimationCircles.Models
         private readonly ICameraControlService cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
         private bool suppressCameraDispatch;
         public ControlType Name { get; set; } = controlName;
-        public int Min { get; set; }
-        public int Max { get; set; }
+        public double Min { get; set; }
+        public double Max { get; set; }
         public double Step { get; set; } = 0.1;
-        public int Default { get; set; }
+        public double Default { get; set; }
         public ControlValueType ValueType { get; set; }
         public bool AutoSupported { get; set; }
         public bool IsModeOnly { get; set; }
 
         [ObservableProperty]
-        private int value;
+        private double value;
 
         [ObservableProperty]
         private bool isAuto;
@@ -28,7 +28,7 @@ namespace CollimationCircles.Models
 
         private readonly Camera _camera = camera;
 
-        internal void ApplyDiscoveredState(int min, int max, double step, int @default, int currentValue, bool autoSupported, bool currentAuto, string flags, ControlValueType valueType)
+        internal void ApplyDiscoveredState(double min, double max, double step, double @default, double currentValue, bool autoSupported, bool currentAuto, string flags, ControlValueType valueType)
         {
             suppressCameraDispatch = true;
             try
@@ -57,7 +57,7 @@ namespace CollimationCircles.Models
             }
         }
 
-        partial void OnValueChanged(int oldValue, int newValue)
+        partial void OnValueChanged(double oldValue, double newValue)
         {
             if (suppressCameraDispatch)
             {
@@ -74,26 +74,7 @@ namespace CollimationCircles.Models
             {
                 logger.Warn($"Ignoring UI control change because camera is not playing: camera='{_camera?.Name}', control={Name}, attemptedValue={newValue}");
             }
-        }
-
-        partial void OnIsAutoChanged(bool oldValue, bool newValue)
-        {
-            if (suppressCameraDispatch)
-            {
-                return;
-            }
-
-            logger.Info($"UI auto-control change: camera='{_camera?.Name}', control={Name}, oldValue={oldValue}, newValue={newValue}, autoSupported={AutoSupported}, isPlaying={_camera?.IsPlaying}");
-
-            if (_camera is not null && AutoSupported)
-            {
-                cameraControlService.SetAuto(Name, newValue, _camera);
-            }
-            else
-            {
-                logger.Warn($"Ignoring UI auto-control change: camera='{_camera?.Name}', control={Name}, autoSupported={AutoSupported}, isPlaying={_camera?.IsPlaying}");
-            }
-        }
+        }        
 
         public void SetDefault()
         {
