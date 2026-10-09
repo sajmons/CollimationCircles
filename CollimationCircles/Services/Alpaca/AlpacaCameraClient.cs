@@ -7,6 +7,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,6 +21,9 @@ namespace CollimationCircles.Services.Alpaca
 
         private const double DefaultExposureSec = 1.0;
         private const int MaxDirectProbeDeviceNumber = 7;
+        private const int DiscoveryTimeoutSeconds = 5;
+
+        private static readonly HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(DiscoveryTimeoutSeconds) };
 
         private readonly object sync = new();
 
@@ -67,167 +72,168 @@ namespace CollimationCircles.Services.Alpaca
 
             logger.Info("Disconnecting from Alpaca server");
             await Stop(new Camera());
-        }       
-
-        private static async Task BackfillUniqueIdsAsync(List<Camera> cameras, string address, int port)
-        {
-            if (cameras.Count == 0 || cameras.All(c => !string.IsNullOrWhiteSpace(c.AlpacaUniqueId)))
-            {
-                return;
-            }
-
-            try
-            {
-                var host = address.Trim().Trim('[', ']');
-                var matches = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { address.Trim(), host };
-
-                if (IPAddress.TryParse(host, out var ip))
-                {
-                    matches.Add(ip.ToString());
-                }
-
-                var discovered = await AlpacaDiscovery.GetAscomDevicesAsync(
-                    ASCOM.Common.DeviceTypes.Camera,
-                    2,
-                    250,
-                    32227,
-                    3d,
-                    false,
-                    true,
-                    false,
-                    ServiceType.Http,
-                    null,
-                    CancellationToken.None);
-
-                var candidates = discovered
-                    .Where(d => d.IpPort == port)
-                    .Where(d => (!string.IsNullOrWhiteSpace(d.IpAddress) && matches.Contains(d.IpAddress))
-                             || (!string.IsNullOrWhiteSpace(d.HostName) && matches.Contains(d.HostName)))
-                    .ToList();
-
-                foreach (var camera in cameras.Where(c => string.IsNullOrWhiteSpace(c.AlpacaUniqueId)))
-                {
-                    var match = candidates.FirstOrDefault(d => d.AlpacaDeviceNumber == camera.DeviceNumber)
-                               ?? candidates.FirstOrDefault(d => string.Equals(d.AscomDeviceName, camera.Name, StringComparison.OrdinalIgnoreCase));
-
-                    if (match is not null)
-                    {
-                        camera.AlpacaUniqueId = match.UniqueId ?? string.Empty;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Debug(ex, "Could not backfill Alpaca UniqueID values from discovery; continuing with existing values.");
-            }
         }
 
         private static async Task<List<Camera>> DiscoverAsync(string address, int port)
         {
-            var targetAddress = address.Trim();
-            var targetHost = targetAddress.Trim('[', ']');
-            var targetMatches = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { targetAddress, targetHost };
-
-            if (IPAddress.TryParse(targetHost, out var targetIp))
-            {
-                targetMatches.Add(targetIp.ToString());
-            }
-            else
-            {
-                try
-                {
-                    var resolved = await Dns.GetHostAddressesAsync(targetHost);
-                    foreach (var ip in resolved)
-                    {
-                        targetMatches.Add(ip.ToString());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Debug(ex, $"DNS resolve failed for '{targetHost}', continuing with raw address matching.");
-                }
-            }
-
-            static string DeviceKey(AscomDevice d) => $"{d.IpAddress}:{d.IpPort}:{d.AlpacaDeviceNumber}:{d.UniqueId}:{d.AscomDeviceName}";
-            static bool MatchesTarget(AscomDevice d, HashSet<string> matches) =>
-                (!string.IsNullOrWhiteSpace(d.IpAddress) && matches.Contains(d.IpAddress)) ||
-                (!string.IsNullOrWhiteSpace(d.HostName) && matches.Contains(d.HostName));
-
-            var foundByKey = new Dictionary<string, AscomDevice>(StringComparer.OrdinalIgnoreCase);
-
-            for (int attempt = 1; attempt <= 3; attempt++)
-            {
-                var useIpv6 = attempt >= 2;
-                var polls = attempt == 1 ? 2 : 3;
-                var duration = attempt == 1 ? 3d : 5d;
-
-                var found = await AlpacaDiscovery.GetAscomDevicesAsync(
-                    ASCOM.Common.DeviceTypes.Camera,
-                    polls,
-                    250,
-                    32227,
-                    duration,
-                    false,
-                    true,
-                    useIpv6,
-                    ServiceType.Http,
-                    null,
-                    CancellationToken.None);
-
-                foreach (var d in found.Where(d => d.IpPort == port))
-                {
-                    foundByKey[DeviceKey(d)] = d;
-                }
-
-                var anyDirectMatch = foundByKey.Values.Any(d => MatchesTarget(d, targetMatches));
-
-                if (anyDirectMatch)
-                {
-                    break;
-                }
-            }
-
-            var portMatches = foundByKey.Values.Where(d => d.IpPort == port).ToList();
-            var directMatches = portMatches.Where(d => MatchesTarget(d, targetMatches)).ToList();
-
-            var selected = directMatches;
-            if (selected.Count == 0)
-            {
-                var serverCount = portMatches
-                    .Select(d => $"{d.IpAddress}:{d.IpPort}")
-                    .Distinct(StringComparer.OrdinalIgnoreCase)
-                    .Count();
-
-                if (serverCount == 1)
-                {
-                    logger.Warn($"No direct Alpaca discovery match for '{address}:{port}', but exactly one server was found on port {port}. Using that server.");
-                    selected = portMatches;
-                }
-            }
-
-            var cameras = new List<Camera>();
-            int index = 0;
-            foreach (var d in selected.OrderBy(d => d.AscomDeviceName ?? string.Empty))
-            {
-                cameras.Add(new Camera
-                {
-                    Index = index++,
-                    Name = d.AscomDeviceName ?? "Camera",
-                    APIType = APIType.Alpaca,
-                    ServerAddress = address,
-                    ServerPort = port,
-                    DeviceNumber = d.AlpacaDeviceNumber,
-                    AlpacaUniqueId = d.UniqueId ?? string.Empty
-                });
-            }
+            var cameras = await GetConfiguredCamerasAsync(address, port);
 
             if (cameras.Count == 0)
             {
-                logger.Warn($"Alpaca UDP discovery found no matching cameras for {address}:{port}. Trying direct camera endpoint probing.");
+                logger.Warn($"Alpaca HTTP configureddevices discovery found no cameras for {address}:{port}. Trying direct camera endpoint probing.");
                 cameras = await ProbeCamerasByDeviceNumberAsync(address, port, MaxDirectProbeDeviceNumber);
             }
 
             return cameras;
+        }
+
+        private static async Task<List<Camera>> GetConfiguredCamerasAsync(string address, int port)
+        {
+            var endpoint = BuildConfiguredDevicesEndpoint(address, port);
+
+            try
+            {
+                using var response = await httpClient.GetAsync(endpoint, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                response.EnsureSuccessStatusCode();
+
+                await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                using var json = await JsonDocument.ParseAsync(stream).ConfigureAwait(false);
+
+                if (TryReadErrorNumber(json.RootElement, out var errorNumber) && errorNumber != 0)
+                {
+                    var message = TryReadString(json.RootElement, "ErrorMessage") ?? "Unknown error";
+                    logger.Warn($"Alpaca configureddevices request failed for {address}:{port}. ErrorNumber={errorNumber}, ErrorMessage={message}");
+                    return new List<Camera>();
+                }
+
+                if (!TryGetDeviceArray(json.RootElement, out var devicesElement))
+                {
+                    return new List<Camera>();
+                }
+
+                var cameras = new List<Camera>();
+                foreach (var item in devicesElement.EnumerateArray())
+                {
+                    var deviceType = TryReadString(item, "DeviceType");
+                    if (!string.Equals(deviceType, "Camera", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    if (!TryReadInt(item, "DeviceNumber", out var deviceNumber))
+                    {
+                        continue;
+                    }
+
+                    var name = TryReadString(item, "DeviceName");
+                    var uniqueId = TryReadString(item, "UniqueID") ?? TryReadString(item, "UniqueId") ?? string.Empty;
+
+                    cameras.Add(new Camera
+                    {
+                        Index = cameras.Count,
+                        Name = string.IsNullOrWhiteSpace(name) ? $"Camera {deviceNumber}" : name,
+                        APIType = APIType.Alpaca,
+                        ServerAddress = address,
+                        ServerPort = port,
+                        DeviceNumber = deviceNumber,
+                        AlpacaUniqueId = uniqueId
+                    });
+                }
+
+                logger.Info($"Alpaca HTTP configureddevices discovery found {cameras.Count} camera(s) at {address}:{port}");
+                return cameras.OrderBy(c => c.Name ?? string.Empty).ToList();
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex, $"Alpaca HTTP configureddevices discovery failed for {address}:{port}");
+                return new List<Camera>();
+            }
+        }
+
+        private static Uri BuildConfiguredDevicesEndpoint(string address, int port)
+        {
+            var host = address.Trim().Trim('[', ']');
+            if (IPAddress.TryParse(host, out var ip) && ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+            {
+                host = $"[{host}]";
+            }
+
+            return new Uri($"http://{host}:{port}/management/v1/configureddevices");
+        }
+
+        private static bool TryGetDeviceArray(JsonElement root, out JsonElement devices)
+        {
+            if (root.ValueKind == JsonValueKind.Array)
+            {
+                devices = root;
+                return true;
+            }
+
+            if (TryGetProperty(root, "Value", out var value) && value.ValueKind == JsonValueKind.Array)
+            {
+                devices = value;
+                return true;
+            }
+
+            devices = default;
+            return false;
+        }
+
+        private static bool TryReadErrorNumber(JsonElement element, out int value)
+        {
+            return TryReadInt(element, "ErrorNumber", out value);
+        }
+
+        private static bool TryReadInt(JsonElement element, string propertyName, out int value)
+        {
+            value = default;
+            if (!TryGetProperty(element, propertyName, out var property))
+            {
+                return false;
+            }
+
+            return property.ValueKind switch
+            {
+                JsonValueKind.Number => property.TryGetInt32(out value),
+                JsonValueKind.String => int.TryParse(property.GetString(), out value),
+                _ => false
+            };
+        }
+
+        private static string? TryReadString(JsonElement element, string propertyName)
+        {
+            if (!TryGetProperty(element, propertyName, out var property))
+            {
+                return null;
+            }
+
+            if (property.ValueKind == JsonValueKind.String)
+            {
+                return property.GetString();
+            }
+
+            return property.ValueKind switch
+            {
+                JsonValueKind.Number => property.GetRawText(),
+                JsonValueKind.True => bool.TrueString,
+                JsonValueKind.False => bool.FalseString,
+                _ => null
+            };
+        }
+
+        private static bool TryGetProperty(JsonElement element, string propertyName, out JsonElement value)
+        {
+            foreach (var property in element.EnumerateObject())
+            {
+                if (string.Equals(property.Name, propertyName, StringComparison.OrdinalIgnoreCase))
+                {
+                    value = property.Value;
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
         }
 
         private static async Task<List<Camera>> ProbeCamerasByDeviceNumberAsync(string address, int port, int maxDeviceNumber)
