@@ -20,8 +20,10 @@ namespace CollimationCircles.Services.Alpaca
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private const double DefaultExposureSec = 1.0;
+        private const int DefaultBinning = 2;
         private const int MaxDirectProbeDeviceNumber = 7;
         private const int DiscoveryTimeoutSeconds = 5;
+        private const short MaxFallbackProbeBin = 4;
 
         private static readonly HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(DiscoveryTimeoutSeconds) };
 
@@ -31,7 +33,7 @@ namespace CollimationCircles.Services.Alpaca
         private CancellationTokenSource? cts;
         private Task? loop;
 
-        private int requestedBin = 1;
+        private int requestedBin = DefaultBinning;
         private double requestedGain;
         private double requestedExposureSec = DefaultExposureSec;
         private bool gainSupported;
@@ -412,11 +414,11 @@ namespace CollimationCircles.Services.Alpaca
         {
             var controls = new List<ICameraControl>();
 
-            int maxBin = 1;
-            maxBin = Math.Max(1, Math.Min((int)dev.MaxBinX, (int)dev.MaxBinY));
-            requestedBin = 1;
+            var maxBin = GetMaxSupportedBin(dev);
+            var currentBin = Math.Clamp(DefaultBinning, 1, maxBin);
+            requestedBin = currentBin;
             var bin = new CameraControl(ControlType.Binning, camera);
-            bin.ApplyDiscoveredState(1, maxBin, 1, 1, 1, false, false, string.Empty, ControlValueType.Int);
+            bin.ApplyDiscoveredState(1, maxBin, 1, currentBin, currentBin, false, false, string.Empty, ControlValueType.Int);
             controls.Add(bin);
 
             gainSupported = false;
@@ -472,6 +474,69 @@ namespace CollimationCircles.Services.Alpaca
             return controls;
         }
 
+        private static int GetCurrentBin(AlpacaCamera dev)
+        {
+            try
+            {
+                var binX = Math.Max(1, (int)dev.BinX);
+                var binY = Math.Max(1, (int)dev.BinY);
+                return Math.Max(1, Math.Min(binX, binY));
+            }
+            catch
+            {
+                return 1;
+            }
+        }
+
+        private static int GetMaxSupportedBin(AlpacaCamera dev)
+        {
+            var maxBin = 1;
+
+            try
+            {
+                maxBin = Math.Max(1, Math.Min((int)dev.MaxBinX, (int)dev.MaxBinY));
+            }
+            catch
+            {
+            }
+
+            if (maxBin > 1)
+            {
+                return maxBin;
+            }
+
+            var originalX = dev.BinX;
+            var originalY = dev.BinY;
+
+            try
+            {
+                for (short probe = 2; probe <= MaxFallbackProbeBin; probe++)
+                {
+                    try
+                    {
+                        dev.BinX = probe;
+                        dev.BinY = probe;
+
+                        if (dev.BinX == probe && dev.BinY == probe)
+                        {
+                            maxBin = probe;
+                        }
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
+            }
+            finally
+            {
+                try { dev.BinX = originalX; } catch { }
+                try { dev.BinY = originalY; } catch { }
+            }
+
+            return Math.Max(1, maxBin);
+        }
+
         private async Task CaptureLoop(AlpacaCamera dev, CancellationToken ct)
         {
             int appliedBin = 0;
@@ -499,8 +564,8 @@ namespace CollimationCircles.Services.Alpaca
                             dev.BinY = (short)bin;
                             dev.StartX = 0;
                             dev.StartY = 0;
-                            dev.NumX = dev.CameraXSize / bin;
-                            dev.NumY = dev.CameraYSize / bin;
+                            dev.NumX = dev.CameraXSize;
+                            dev.NumY = dev.CameraYSize;
                         }
                         catch (Exception ex) when (ex is not OperationCanceledException)
                         {
