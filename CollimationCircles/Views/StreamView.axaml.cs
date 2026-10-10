@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using Avalonia.Threading;
 using CollimationCircles.Messages;
 using CollimationCircles.ViewModels;
@@ -128,13 +127,16 @@ namespace CollimationCircles.Views
             if (fb.RowBytes == copyBytesPerRow)
             {
                 Marshal.Copy(bgra, 0, fb.Address, bgra.Length);
-                return;
+            }
+            else
+            {
+                for (int y = 0; y < frame.Height; y++)
+                {
+                    Marshal.Copy(bgra, y * copyBytesPerRow, fb.Address + y * fb.RowBytes, copyBytesPerRow);
+                }
             }
 
-            for (int y = 0; y < frame.Height; y++)
-            {
-                Marshal.Copy(bgra, y * copyBytesPerRow, fb.Address + y * fb.RowBytes, copyBytesPerRow);
-            }
+            frameImage?.InvalidateVisual();
         }
 
         private static void ExpandGrayToBgra(byte[] gray, byte[] bgra)

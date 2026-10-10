@@ -2,6 +2,8 @@ using ASCOM.Alpaca.Clients;
 using ASCOM.Common.Alpaca;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
+using CollimationCircles.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using OpenCvSharp;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,8 +42,19 @@ namespace CollimationCircles.Services.Alpaca
         private double requestedGain;
         private double requestedExposureSec = DefaultExposureSec;
         private bool gainSupported;
+        private BayerPatternMode effectiveBayerPattern = BayerPatternMode.None;
 
         private bool connected;
+
+        private enum BayerPatternMode
+        {
+            Auto,
+            None,
+            RGGB,
+            BGGR,
+            GRBG,
+            GBRG
+        }
 
         public bool IsConnected => connected;
 
@@ -333,10 +348,137 @@ namespace CollimationCircles.Services.Alpaca
             }
 
             logger.Info($"Connected to Alpaca camera '{camera.Name}'");
+            ResolveImageMetadata(dev);
             device = dev;
             cts = new CancellationTokenSource();
             var token = cts.Token;
             loop = Task.Run(() => CaptureLoop(dev, token));
+        }
+
+        private void ResolveImageMetadata(AlpacaCamera dev)
+        {
+            var patternFromSetting = ReadBayerPatternSetting();
+            if (TryResolveBayerPatternFromMetadata(dev, out var metadataPattern, out var metadataDescription))
+            {
+                effectiveBayerPattern = metadataPattern;
+                logger.Info($"Alpaca image metadata selected Bayer pattern '{effectiveBayerPattern}' ({metadataDescription}).");
+                return;
+            }
+
+            effectiveBayerPattern = patternFromSetting == BayerPatternMode.Auto ? BayerPatternMode.None : patternFromSetting;
+            logger.Info($"Alpaca metadata did not provide Bayer pattern. Using program setting '{patternFromSetting}' -> effective '{effectiveBayerPattern}'.");
+        }
+
+        private static BayerPatternMode ReadBayerPatternSetting()
+        {
+            var settings = Ioc.Default.GetService<SettingsViewModel>();
+            if (settings is null)
+            {
+                return BayerPatternMode.Auto;
+            }
+
+            var configured = settings.GetType().GetProperty("AlpacaBayerPatternOverride")?.GetValue(settings) as string;
+            return ParseBayerPattern(configured);
+        }
+
+        private static BayerPatternMode ParseBayerPattern(string? value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return BayerPatternMode.Auto;
+            }
+
+            var normalized = value.Trim();
+            if (normalized.Equals("Auto", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.Auto;
+            if (normalized.Equals("None", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Mono", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.None;
+            if (normalized.Equals("RGGB", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.RGGB;
+            if (normalized.Equals("BGGR", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.BGGR;
+            if (normalized.Equals("GRBG", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.GRBG;
+            if (normalized.Equals("GBRG", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.GBRG;
+
+            return BayerPatternMode.Auto;
+        }
+
+        private static bool TryResolveBayerPatternFromMetadata(AlpacaCamera dev, out BayerPatternMode pattern, out string description)
+        {
+            pattern = BayerPatternMode.None;
+            description = "";
+
+            if (TryReadPropertyValue(dev, "SensorType", out var sensorTypeValue) && sensorTypeValue is not null)
+            {
+                var sensorText = sensorTypeValue.ToString() ?? string.Empty;
+                var sensorPattern = ParseBayerPattern(sensorText);
+                if (sensorPattern is BayerPatternMode.RGGB or BayerPatternMode.BGGR or BayerPatternMode.GRBG or BayerPatternMode.GBRG)
+                {
+                    pattern = sensorPattern;
+                    description = $"SensorType={sensorText}";
+                    return true;
+                }
+
+                if (sensorText.Contains("mono", StringComparison.OrdinalIgnoreCase) || sensorText.Contains("monochrome", StringComparison.OrdinalIgnoreCase))
+                {
+                    pattern = BayerPatternMode.None;
+                    description = $"SensorType={sensorText}";
+                    return true;
+                }
+            }
+
+            if (TryReadIntegerProperty(dev, "BayerOffsetX", out var bayerOffsetX) && TryReadIntegerProperty(dev, "BayerOffsetY", out var bayerOffsetY))
+            {
+                pattern = (bayerOffsetX & 1, bayerOffsetY & 1) switch
+                {
+                    (0, 0) => BayerPatternMode.RGGB,
+                    (1, 0) => BayerPatternMode.GRBG,
+                    (0, 1) => BayerPatternMode.GBRG,
+                    (1, 1) => BayerPatternMode.BGGR,
+                    _ => BayerPatternMode.None
+                };
+
+                description = $"BayerOffsetX={bayerOffsetX}, BayerOffsetY={bayerOffsetY}";
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryReadPropertyValue(object source, string propertyName, out object? value)
+        {
+            value = null;
+
+            var property = source.GetType().GetProperty(propertyName);
+            if (property is null || property.GetIndexParameters().Length != 0)
+            {
+                return false;
+            }
+
+            try
+            {
+                value = property.GetValue(source);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool TryReadIntegerProperty(object source, string propertyName, out int value)
+        {
+            value = 0;
+            if (!TryReadPropertyValue(source, propertyName, out var boxed) || boxed is null)
+            {
+                return false;
+            }
+
+            try
+            {
+                value = Convert.ToInt32(boxed);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static void DisposeQuietly(AlpacaCamera dev)
@@ -543,35 +685,29 @@ namespace CollimationCircles.Services.Alpaca
             dev.BinX = (short)bin;
             dev.BinY = (short)bin;
 
-            var effectiveBinX = Math.Max(1, (int)dev.BinX);
-            var effectiveBinY = Math.Max(1, (int)dev.BinY);
-
             dev.StartX = 0;
             dev.StartY = 0;
 
-            var targetNumX = Math.Max(1, dev.CameraXSize / effectiveBinX);
-            var targetNumY = Math.Max(1, dev.CameraYSize / effectiveBinY);
-
-            SetRoiDimensionWithFallback(value => dev.NumX = value, targetNumX, "NumX");
-            SetRoiDimensionWithFallback(value => dev.NumY = value, targetNumY, "NumY");
+            SetRoiDimensionToFullFrame(value => dev.NumX = value, dev.CameraXSize, "NumX");
+            SetRoiDimensionToFullFrame(value => dev.NumY = value, dev.CameraYSize, "NumY");
         }
 
-        private static void SetRoiDimensionWithFallback(Action<int> setter, int desiredValue, string propertyName)
+        private static void SetRoiDimensionToFullFrame(Action<int> setter, int fullFrameSize, string propertyName)
         {
             try
             {
-                setter(desiredValue);
+                setter(Math.Max(1, fullFrameSize));
             }
             catch (ASCOM.InvalidValueException ex) when (TryParseValidRange(ex.Message, out var min, out var max))
             {
-                var clamped = Math.Clamp(desiredValue, min, max);
-                if (clamped == desiredValue)
+                var target = Math.Max(1, max);
+                if (target < min)
                 {
                     throw;
                 }
 
-                logger.Warn($"Alpaca camera rejected {propertyName}={desiredValue}; retrying with clamped value {clamped} (valid range {min}..{max}).");
-                setter(clamped);
+                logger.Warn($"Alpaca camera rejected full-frame {propertyName}={fullFrameSize}; retrying with maximum supported value {target} (valid range {min}..{max}).");
+                setter(target);
             }
         }
 
@@ -717,7 +853,7 @@ namespace CollimationCircles.Services.Alpaca
                     PublishCaptureProgress(CameraCaptureStage.Downloading, 1, "Download complete", true);
 
                     PublishCaptureProgress(CameraCaptureStage.Processing, 0, "Processing frame", true);
-                    var frame = ToFrame(imageData);
+                    var frame = ToFrame(imageData, effectiveBayerPattern);
                     PublishCaptureProgress(CameraCaptureStage.Processing, 1, "Frame ready", frame is not null);
                     if (frame is not null)
                     {
@@ -754,7 +890,7 @@ namespace CollimationCircles.Services.Alpaca
             return ex.Message.Contains("No image available", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static CameraFrame? ToFrame(Array? data)
+        private static CameraFrame? ToFrame(Array? data, BayerPatternMode bayerPattern)
         {
             if (data is null)
             {
@@ -763,13 +899,13 @@ namespace CollimationCircles.Services.Alpaca
 
             return data switch
             {
-                byte[,] p => ToFrame2D(p),
-                short[,] p => ToFrame2D(p),
-                ushort[,] p => ToFrame2D(p),
-                int[,] p => ToFrame2D(p),
-                uint[,] p => ToFrame2D(p),
-                float[,] p => ToFrame2D(p),
-                double[,] p => ToFrame2D(p),
+                byte[,] p => ToFrame2D(p, bayerPattern),
+                short[,] p => ToFrame2D(p, bayerPattern),
+                ushort[,] p => ToFrame2D(p, bayerPattern),
+                int[,] p => ToFrame2D(p, bayerPattern),
+                uint[,] p => ToFrame2D(p, bayerPattern),
+                float[,] p => ToFrame2D(p, bayerPattern),
+                double[,] p => ToFrame2D(p, bayerPattern),
                 byte[,,] p => ToFrame3D(p),
                 short[,,] p => ToFrame3D(p),
                 ushort[,,] p => ToFrame3D(p),
@@ -777,11 +913,11 @@ namespace CollimationCircles.Services.Alpaca
                 uint[,,] p => ToFrame3D(p),
                 float[,,] p => ToFrame3D(p),
                 double[,,] p => ToFrame3D(p),
-                _ => ToFrameFallback(data)
+                _ => ToFrameFallback(data, bayerPattern)
             };
         }
 
-        private static CameraFrame? ToFrame2D<T>(T[,] data)
+        private static CameraFrame? ToFrame2D<T>(T[,] data, BayerPatternMode bayerPattern)
             where T : IConvertible
         {
             int width = data.GetLength(0);
@@ -808,7 +944,8 @@ namespace CollimationCircles.Services.Alpaca
                 }
             }
 
-            return CreateNormalizedFrame(width, height, values, min, max);
+            var normalized = CreateNormalizedFrame(width, height, values, min, max);
+            return ApplyOpenCvDemosaicIfNeeded(normalized, bayerPattern);
         }
 
         private static CameraFrame? ToFrame3D<T>(T[,,] data)
@@ -850,7 +987,7 @@ namespace CollimationCircles.Services.Alpaca
             return CreateNormalizedFrame(width, height, values, min, max);
         }
 
-        private static CameraFrame? ToFrameFallback(Array data)
+        private static CameraFrame? ToFrameFallback(Array data, BayerPatternMode bayerPattern)
         {
             if (data.Rank is < 2 or > 3)
             {
@@ -882,6 +1019,9 @@ namespace CollimationCircles.Services.Alpaca
                         if (value > max) max = value;
                     }
                 }
+
+                var normalized2D = CreateNormalizedFrame(width, height, values, min, max);
+                return ApplyOpenCvDemosaicIfNeeded(normalized2D, bayerPattern);
             }
             else
             {
@@ -911,6 +1051,77 @@ namespace CollimationCircles.Services.Alpaca
             }
 
             return CreateNormalizedFrame(width, height, values, min, max);
+        }
+
+        private static CameraFrame ApplyOpenCvDemosaicIfNeeded(CameraFrame frame, BayerPatternMode bayerPattern)
+        {
+            var conversion = GetBayerToBgrConversionCode(bayerPattern);
+            if (conversion is null)
+            {
+                return frame;
+            }
+
+            try
+            {
+                using var source = new Mat(frame.Height, frame.Width, MatType.CV_8UC1);
+                CopySingleChannelPixelsToMat(frame.Pixels, source, frame.Width, frame.Height);
+                using var bgr = new Mat();
+                Cv2.CvtColor(source, bgr, conversion.Value);
+
+                using var gray = new Mat();
+                Cv2.CvtColor(bgr, gray, ColorConversionCodes.BGR2GRAY);
+
+                var pixels = CopySingleChannelMat(gray, frame.Width, frame.Height);
+                return new CameraFrame(frame.Width, frame.Height, pixels);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn($"OpenCV Bayer conversion failed for '{bayerPattern}', using raw grayscale frame: {ex.Message}");
+                return frame;
+            }
+        }
+
+        private static ColorConversionCodes? GetBayerToBgrConversionCode(BayerPatternMode bayerPattern)
+        {
+            return bayerPattern switch
+            {
+                BayerPatternMode.RGGB => ColorConversionCodes.BayerRG2BGR,
+                BayerPatternMode.BGGR => ColorConversionCodes.BayerBG2BGR,
+                BayerPatternMode.GRBG => ColorConversionCodes.BayerGR2BGR,
+                BayerPatternMode.GBRG => ColorConversionCodes.BayerGB2BGR,
+                _ => null
+            };
+        }
+
+        private static byte[] CopySingleChannelMat(Mat mat, int width, int height)
+        {
+            var pixels = new byte[width * height];
+            if (mat.Step() == width)
+            {
+                Marshal.Copy(mat.Data, pixels, 0, pixels.Length);
+                return pixels;
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                Marshal.Copy(mat.Data + (int)(y * mat.Step()), pixels, y * width, width);
+            }
+
+            return pixels;
+        }
+
+        private static void CopySingleChannelPixelsToMat(byte[] pixels, Mat mat, int width, int height)
+        {
+            if (mat.Step() == width)
+            {
+                Marshal.Copy(pixels, 0, mat.Data, pixels.Length);
+                return;
+            }
+
+            for (int y = 0; y < height; y++)
+            {
+                Marshal.Copy(pixels, y * width, mat.Data + (int)(y * mat.Step()), width);
+            }
         }
 
         private static CameraFrame CreateNormalizedFrame(int width, int height, double[] values, double min, double max)
