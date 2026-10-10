@@ -173,6 +173,5 @@
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Eksperimentalna funkcija!</system:String>    
   <system:String x:Key="Text.CheckForUpdate">Preveri za nadgradnjo</system:String>
-  <system:String x:Key="Text.AlpacaServerAddress">Naslov Alpaca strežnika</system:String>
-  <system:String x:Key="Text.AlpacaServerPort">Vrata Alpaca strežnika</system:String>
+  <system:String x:Key="Text.AlpacaServerAddress">Naslov Alpaca strežnika in vrata</system:String>
 </ResourceDictionary>

@@ -173,6 +173,5 @@
   <system:String x:Key="Text.Collimation">Collimation</system:String>
   <system:String x:Key="Text.ExperimentalFeature">Experimentelle Funktion!</system:String>    
   <system:String x:Key="Text.CheckForUpdate">Auf Updates prüfen</system:String>
-  <system:String x:Key="Text.AlpacaServerAddress">Alpaca Server Adresse</system:String>
-  <system:String x:Key="Text.AlpacaServerPort">Alpaca Server Port</system:String>
+  <system:String x:Key="Text.AlpacaServerAddress">Alpaca Server Adresse und Port</system:String>
 </ResourceDictionary>
