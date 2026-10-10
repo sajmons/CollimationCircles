@@ -64,7 +64,6 @@ public partial class App : Application
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
             .AddSingleton<ICameraService, CameraService>()
-            .AddTransient<ImageViewModel>()
             .BuildServiceProvider());
     }
 }

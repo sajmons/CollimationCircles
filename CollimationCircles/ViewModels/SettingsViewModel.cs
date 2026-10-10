@@ -185,11 +185,7 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
-        private int alpacaServerPort = 11111;
-
-        [JsonProperty]
-        [ObservableProperty]
-        private string alpacaBayerPatternOverride = "Auto";
+        private int alpacaServerPort = 11111;        
 
         [JsonProperty]
         [ObservableProperty]
@@ -337,7 +333,6 @@ namespace CollimationCircles.ViewModels
             AlwaysOnTop = true;            
             ShowMarkAtSelectedItem = true;
             ShowApplicationLog = false;
-            AlpacaBayerPatternOverride = "Auto";
 
             Version = AppService.GetAppVersion();
 
@@ -574,8 +569,7 @@ namespace CollimationCircles.ViewModels
 
                     LastSelectedCamera = vm.LastSelectedCamera;
                     AlpacaServerAddress = vm.AlpacaServerAddress;
-                    AlpacaServerPort = vm.AlpacaServerPort;
-                    AlpacaBayerPatternOverride = string.IsNullOrWhiteSpace(vm.AlpacaBayerPatternOverride) ? "Auto" : vm.AlpacaBayerPatternOverride;
+                    AlpacaServerPort = vm.AlpacaServerPort;                    
                     Profiles = vm.Profiles;
 
                     if (!DockInMainWindow)

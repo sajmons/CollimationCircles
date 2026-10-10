@@ -21,20 +21,22 @@
       ItemsSource="{Binding Camera.Controls}" >
       <ItemsControl.ItemTemplate>
         <DataTemplate>
-          <Grid
-            ColumnDefinitions="*,Auto"
-            RowDefinitions="20,Auto">
-            <TextBlock Text="{Binding Name}"/>
-            <NumericUpDown
-              Grid.Row="1"
-              Grid.ColumnSpan="2"
-              IsEnabled="{Binding !IsAuto}"
-              Value="{Binding Value}"
-              Minimum="{Binding Min}"
-              Maximum="{Binding Max}"
-              Increment="{Binding Step}"
-              FormatString="0.###" />            
-          </Grid>
+          <StackPanel>
+              <Grid
+                ColumnDefinitions="*,Auto"
+                RowDefinitions="20,Auto">
+                <TextBlock Text="{Binding Name}"/>
+                <NumericUpDown
+                  Grid.Row="1"
+                  Grid.ColumnSpan="2"
+                  IsEnabled="{Binding !IsAuto}"
+                  Value="{Binding Value}"
+                  Minimum="{Binding Min}"
+                  Maximum="{Binding Max}"
+                  Increment="{Binding Step}"
+                  FormatString="0.###" />            
+              </Grid>
+          </StackPanel>
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>

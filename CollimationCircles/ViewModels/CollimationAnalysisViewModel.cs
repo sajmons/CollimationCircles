@@ -26,7 +26,6 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly ICameraService cameraService;
         private readonly SettingsViewModel settingsViewModel;
         private readonly OpticalAxisService opticalAxisService = new();
 

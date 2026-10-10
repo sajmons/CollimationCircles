@@ -111,9 +111,6 @@
     <Compile Update="Views\RequestLicenseView.axaml.cs">
       <DependentUpon>RequestLicenseView.axaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\ImageView.axaml.cs">
-      <DependentUpon>ImageView.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="icon.icns">

@@ -8,99 +8,98 @@
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:StreamViewModel">
 
-  <StackPanel
-    Orientation="Vertical"
-    Spacing="{DynamicResource ControlSpacing}">
-
     <StackPanel
-      Orientation="Vertical"
-      Spacing="{DynamicResource ControlSpacing}">
-    <StackPanel
-        Orientation="Vertical">
-        <local:AlpacaServerUserControl />
-    </StackPanel>
-      <StackPanel
-        Orientation="Vertical">
-        <TextBlock Text="{DynamicResource Text.CameraType}"/>
-        <DockPanel LastChildFill="True">
-          <ToggleButton
-            Theme="{DynamicResource ToolbarButton}"
-            IsChecked="{Binding IsPlaying}"
-            Command="{Binding PlayPauseCommand}"
-            ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}"
-            Margin="8,0,0,0"
-            DockPanel.Dock="Right">
-            <Panel>
-              <PathIcon
-                Width="{DynamicResource PathIconWidth}"
-                Height="{DynamicResource PathIconHeight}"
-                Foreground="{DynamicResource Color2}"
-                Classes="visibility-on"
-                Data="{StaticResource IconData.Stop}" />
-              <PathIcon
-                Width="{DynamicResource PathIconWidth}"
-                Height="{DynamicResource PathIconHeight}"
-                Foreground="{DynamicResource Color2}"
-                Classes="visibility-off"
-                Data="{StaticResource IconData.Play}" />
-            </Panel>
-            <ToggleButton.Styles>
-              <Style Selector="ToggleButton PathIcon.visibility-on">
-                <Setter Property="IsVisible" Value="False"/>
-              </Style>
-              <Style Selector="ToggleButton:checked PathIcon.visibility-on">
-                <Setter Property="IsVisible" Value="True"/>
-              </Style>
-              <Style Selector="ToggleButton PathIcon.visibility-off">
-                <Setter Property="IsVisible" Value="True"/>
-              </Style>
-              <Style Selector="ToggleButton:checked PathIcon.visibility-off">
-                <Setter Property="IsVisible" Value="False"/>
-              </Style>
-            </ToggleButton.Styles>
-          </ToggleButton>
-          <ComboBox
-            HorizontalAlignment="Stretch"
-            IsEnabled="{Binding HasCameras}"
-            ItemsSource="{Binding CameraList}"
-            SelectedItem="{Binding SelectedCamera}">
-            <ComboBox.ItemTemplate>
-              <DataTemplate>
-                <StackPanel Orientation="Horizontal">
-                  <TextBlock Text="{Binding APIType}" />
-                  <TextBlock Text=" " />
-                  <TextBlock Text="{Binding Name}" />
-                </StackPanel>
-              </DataTemplate>
-            </ComboBox.ItemTemplate>
-          </ComboBox>
-        </DockPanel>        
-      </StackPanel>
+        Orientation="Vertical"
+        Spacing="{DynamicResource ControlSpacing}">
 
-      <Border
-        Background="#B0000000"
-        CornerRadius="6"
-        Padding="10"
-        IsVisible="{Binding IsCaptureProgressVisible}">
-        <StackPanel Spacing="6">
-          <TextBlock
-            Foreground="White"
-            Text="{Binding CaptureProgressText}" />
-          <ProgressBar
-            Minimum="0"
-            Maximum="1"
-            Value="{Binding CaptureProgressValue}"
-            IsIndeterminate="{Binding IsCaptureProgressIndeterminate}"
-            Height="8" />
+        <StackPanel
+            Orientation="Vertical"
+            Spacing="{DynamicResource ControlSpacing}">
+            <StackPanel
+                Orientation="Vertical">
+                <local:AlpacaServerUserControl />
+            </StackPanel>
+            <StackPanel
+                Orientation="Vertical">
+                <TextBlock Text="{DynamicResource Text.CameraType}"/>
+                <DockPanel LastChildFill="True">
+                    <ToggleButton
+                        Theme="{DynamicResource ToolbarButton}"
+                        IsChecked="{Binding IsPlaying}"
+                        Command="{Binding PlayPauseCommand}"
+                        ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}"
+                        Margin="8,0,0,0"
+                        DockPanel.Dock="Right">
+                        <Panel>
+                            <PathIcon
+                                Width="{DynamicResource PathIconWidth}"
+                                Height="{DynamicResource PathIconHeight}"
+                                Foreground="{DynamicResource Color2}"
+                                Classes="visibility-on"
+                                Data="{StaticResource IconData.Stop}" />
+                            <PathIcon
+                                Width="{DynamicResource PathIconWidth}"
+                                Height="{DynamicResource PathIconHeight}"
+                                Foreground="{DynamicResource Color2}"
+                                Classes="visibility-off"
+                                Data="{StaticResource IconData.Play}" />
+                        </Panel>
+                        <ToggleButton.Styles>
+                            <Style Selector="ToggleButton PathIcon.visibility-on">
+                                <Setter Property="IsVisible" Value="False"/>
+                            </Style>
+                            <Style Selector="ToggleButton:checked PathIcon.visibility-on">
+                                <Setter Property="IsVisible" Value="True"/>
+                            </Style>
+                            <Style Selector="ToggleButton PathIcon.visibility-off">
+                                <Setter Property="IsVisible" Value="True"/>
+                            </Style>
+                            <Style Selector="ToggleButton:checked PathIcon.visibility-off">
+                                <Setter Property="IsVisible" Value="False"/>
+                            </Style>
+                        </ToggleButton.Styles>
+                    </ToggleButton>
+                    <ComboBox
+                        HorizontalAlignment="Stretch"
+                        IsEnabled="{Binding HasCameras}"
+                        ItemsSource="{Binding CameraList}"
+                        SelectedItem="{Binding SelectedCamera}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding APIType}" />
+                                    <TextBlock Text=" " />
+                                    <TextBlock Text="{Binding Name}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </DockPanel>
         </StackPanel>
-      </Border>
 
-      <local:DynamicCameraControlsUserControl />
-    </StackPanel>    
-    <CheckBox
-      Content="{DynamicResource Text.PinCameraWindowToMainWindow}"
-      IsChecked="{Binding PinVideoWindowToMainWindow}" />    
+            <Border
+                Background="#B0000000"
+                CornerRadius="6"
+                Padding="10"
+                IsVisible="{Binding IsCaptureProgressVisible}">
+                <StackPanel Spacing="6">
+                    <TextBlock
+                        Foreground="White"
+                        Text="{Binding CaptureProgressText}" />
+                    <ProgressBar
+                        Minimum="0"
+                        Maximum="1"
+                        Value="{Binding CaptureProgressValue}"
+                        IsIndeterminate="{Binding IsCaptureProgressIndeterminate}"
+                        Height="8" />
+                </StackPanel>
+            </Border>
 
-  </StackPanel>
+            <local:DynamicCameraControlsUserControl />
+        </StackPanel>
+        <CheckBox
+            Content="{DynamicResource Text.PinCameraWindowToMainWindow}"
+            IsChecked="{Binding PinVideoWindowToMainWindow}" />
+</StackPanel>
 
 </UserControl>

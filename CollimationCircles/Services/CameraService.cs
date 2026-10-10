@@ -25,8 +25,8 @@ namespace CollimationCircles.Services
             // Keep IsPlaying in sync when a camera stops on its own (e.g. capture loop error).
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
-                ((CameraService)r).IsPlaying = m.Value == CameraState.Playing;
-            });
+                ((CameraService)r).IsPlaying = m.Value == CameraState.Playing;                
+            });            
         }
 
         private static void SendCameraStateOnUIThread(CameraState state)
@@ -89,20 +89,6 @@ namespace CollimationCircles.Services
             }
 
             return FullAddress;
-        }
-
-        public async Task<byte[]?> TakeSnapshotImageAsync()
-        {
-            try
-            {
-
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Failed to capture live snapshot data");
-            }
-
-            return null;
         }        
     }
 }

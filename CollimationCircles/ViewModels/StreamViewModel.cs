@@ -12,7 +12,6 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
@@ -44,7 +43,8 @@ namespace CollimationCircles.ViewModels
         [NotifyPropertyChangedFor(nameof(CanEditServer))]
         private bool isPlaying = false;
 
-        private readonly SettingsViewModel settingsViewModel;
+        [ObservableProperty]
+        public SettingsViewModel settingsViewModel;
 
         [ObservableProperty]
         private bool pinVideoWindowToMainWindow = true;
@@ -138,7 +138,7 @@ namespace CollimationCircles.ViewModels
             CameraList.CollectionChanged += CameraList_CollectionChanged;
         }
 
-        partial void OnCameraListChanged(ObservableCollection<Camera> oldValue, ObservableCollection<Camera> newValue)
+        partial void OnCameraListChanged(ObservableCollection<Camera>? oldValue, ObservableCollection<Camera> newValue)
         {
             if (oldValue is not null)
             {
@@ -164,10 +164,7 @@ namespace CollimationCircles.ViewModels
 
             ShowWebCamStream();
             IsPlaying = SelectedCamera?.APIType is APIType.Alpaca || cameraService.IsPlaying;
-            if (SelectedCamera is not null)
-            {
-                SelectedCamera.IsPlaying = IsPlaying;
-            }
+            SelectedCamera?.IsPlaying = IsPlaying;
         }
 
         private void MediaPlayer_Playing()
@@ -185,10 +182,7 @@ namespace CollimationCircles.ViewModels
 
             CloseWebCamStream();
             IsPlaying = cameraService.IsPlaying;
-            if (SelectedCamera is not null)
-            {
-                SelectedCamera.IsPlaying = IsPlaying;
-            }
+            SelectedCamera?.IsPlaying = IsPlaying;
         }
 
         [RelayCommand(CanExecute = nameof(CanExecutePlayPause))]
@@ -310,12 +304,12 @@ namespace CollimationCircles.ViewModels
 
                 var address = AlpacaServerAddress.Trim();
                 var port = AlpacaServerPort;
-                settingsViewModel.AlpacaServerAddress = address;
-                settingsViewModel.AlpacaServerPort = port;
+                SettingsViewModel.AlpacaServerAddress = address;
+                SettingsViewModel.AlpacaServerPort = port;
 
                 var cameras = await cameraControlService.ConnectServer(address, port);
                 CameraList = new ObservableCollection<Camera>(cameras);
-                SelectedCamera = CameraList.FirstOrDefault(c => c.Name == settingsViewModel.LastSelectedCamera) ?? CameraList.FirstOrDefault() ?? new();
+                SelectedCamera = CameraList.FirstOrDefault(c => c.Name == SettingsViewModel.LastSelectedCamera) ?? CameraList.FirstOrDefault() ?? new();
                 IsServerConnected = true;
             }
             catch (Exception ex)
