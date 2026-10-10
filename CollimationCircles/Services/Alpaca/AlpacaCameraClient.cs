@@ -42,7 +42,7 @@ namespace CollimationCircles.Services.Alpaca
         private double requestedGain;
         private double requestedExposureSec = DefaultExposureSec;
         private bool gainSupported;
-        private bool driverRequiresBinnedRoi;
+        private bool driverPrefersBinnedRoi;
         private BayerPatternMode effectiveBayerPattern = BayerPatternMode.None;
 
         private bool connected;
@@ -349,7 +349,7 @@ namespace CollimationCircles.Services.Alpaca
             }
 
             logger.Info($"Connected to Alpaca camera '{camera.Name}'");
-            driverRequiresBinnedRoi = false;
+            driverPrefersBinnedRoi = false;
             ResolveImageMetadata(dev);
             device = dev;
             cts = new CancellationTokenSource();
@@ -700,27 +700,24 @@ namespace CollimationCircles.Services.Alpaca
             try { sensorWidth = dev.CameraXSize; } catch { }
             try { sensorHeight = dev.CameraYSize; } catch { }
 
-            int targetNumX = sensorWidth;
-            int targetNumY = sensorHeight;
+            int binnedWidth = sensorWidth > 0 && safeBin > 1 ? Math.Max(1, sensorWidth / safeBin) : sensorWidth;
+            int binnedHeight = sensorHeight > 0 && safeBin > 1 ? Math.Max(1, sensorHeight / safeBin) : sensorHeight;
 
-            if (driverRequiresBinnedRoi && safeBin > 1 && sensorWidth > 0 && sensorHeight > 0)
+            int targetNumX = driverPrefersBinnedRoi ? binnedWidth : sensorWidth;
+            int targetNumY = driverPrefersBinnedRoi ? binnedHeight : sensorHeight;
+
+            if (targetNumX > 0)
             {
-                targetNumX = Math.Max(1, sensorWidth / safeBin);
-                targetNumY = Math.Max(1, sensorHeight / safeBin);
+                SetRoiDimensionToFullFrame(value => dev.NumX = value, targetNumX, binnedWidth, "NumX");
             }
-
-            SetRoiDimensionToFullFrame(value => dev.NumX = value, targetNumX, "NumX", out var numXAdjusted);
-            SetRoiDimensionToFullFrame(value => dev.NumY = value, targetNumY, "NumY", out var numYAdjusted);
-
-            if (numXAdjusted || numYAdjusted)
+            if (targetNumY > 0)
             {
-                driverRequiresBinnedRoi = true;
+                SetRoiDimensionToFullFrame(value => dev.NumY = value, targetNumY, binnedHeight, "NumY");
             }
         }
 
-        private static void SetRoiDimensionToFullFrame(Action<int> setter, int targetSize, string propertyName, out bool wasAdjusted)
+        private void SetRoiDimensionToFullFrame(Action<int> setter, int targetSize, int binnedSize, string propertyName)
         {
-            wasAdjusted = false;
             if (targetSize <= 0)
             {
                 return;
@@ -730,17 +727,15 @@ namespace CollimationCircles.Services.Alpaca
             {
                 setter(targetSize);
             }
-            catch (ASCOM.InvalidValueException ex) when (TryParseValidRange(ex.Message, out var min, out var max))
+            catch (ASCOM.InvalidValueException ex)
             {
-                var target = Math.Max(1, max);
-                if (target < min)
-                {
-                    throw;
-                }
+                driverPrefersBinnedRoi = true;
+                int target = TryParseValidRange(ex.Message, out var min, out var max)
+                    ? Math.Max(1, max)
+                    : Math.Max(1, binnedSize);
 
-                logger.Warn($"Alpaca camera rejected full-frame {propertyName}={targetSize}; retrying with maximum supported value {target} (valid range {min}..{max}).");
-                setter(target);
-                wasAdjusted = true;
+                logger.Warn($"Alpaca camera rejected {propertyName}={targetSize} ({ex.Message}); retrying with {target}.");
+                try { setter(target); } catch { }
             }
         }
 
@@ -828,10 +823,10 @@ namespace CollimationCircles.Services.Alpaca
                     {
                         dev.StartExposure(expSec, true);
                     }
-                    catch (ASCOM.InvalidValueException ex) when (TryParseValidRange(ex.Message, out var min, out var max))
+                    catch (ASCOM.InvalidValueException ex)
                     {
-                        logger.Warn($"Alpaca camera StartExposure failed with ROI error: {ex.Message}. Enabling binned ROI mode and retrying with valid max range {max}.");
-                        driverRequiresBinnedRoi = true;
+                        logger.Warn($"Alpaca camera StartExposure failed with ROI error ({ex.Message}). Enabling binned ROI mode and retrying.");
+                        driverPrefersBinnedRoi = true;
 
                         try { dev.StartX = 0; } catch { }
                         try { dev.StartY = 0; } catch { }
@@ -841,24 +836,23 @@ namespace CollimationCircles.Services.Alpaca
                         try { sensorWidth = dev.CameraXSize; } catch { }
                         try { sensorHeight = dev.CameraYSize; } catch { }
 
-                        int binnedX = Math.Max(1, max);
-                        int binnedY = sensorHeight > 0 && bin > 1 ? Math.Max(1, sensorHeight / bin) : binnedX;
+                        int binnedX = sensorWidth > 0 && bin > 1 ? Math.Max(1, sensorWidth / bin) : Math.Max(1, sensorWidth);
+                        int binnedY = sensorHeight > 0 && bin > 1 ? Math.Max(1, sensorHeight / bin) : Math.Max(1, sensorHeight);
 
-                        if (ex.Message.Contains("NumX", StringComparison.OrdinalIgnoreCase))
+                        if (TryParseValidRange(ex.Message, out var min, out var max))
                         {
-                            try { dev.NumX = binnedX; } catch { }
-                            try { dev.NumY = binnedY; } catch { }
+                            if (ex.Message.Contains("NumX", StringComparison.OrdinalIgnoreCase))
+                            {
+                                binnedX = Math.Max(1, max);
+                            }
+                            else if (ex.Message.Contains("NumY", StringComparison.OrdinalIgnoreCase))
+                            {
+                                binnedY = Math.Max(1, max);
+                            }
                         }
-                        else if (ex.Message.Contains("NumY", StringComparison.OrdinalIgnoreCase))
-                        {
-                            try { dev.NumY = Math.Max(1, max); } catch { }
-                            try { dev.NumX = sensorWidth > 0 && bin > 1 ? Math.Max(1, sensorWidth / bin) : Math.Max(1, max); } catch { }
-                        }
-                        else
-                        {
-                            try { dev.NumX = binnedX; } catch { }
-                            try { dev.NumY = binnedY; } catch { }
-                        }
+
+                        try { dev.NumX = binnedX; } catch { }
+                        try { dev.NumY = binnedY; } catch { }
 
                         dev.StartExposure(expSec, true);
                     }
