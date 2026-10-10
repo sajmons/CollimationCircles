@@ -1,9 +1,6 @@
 ﻿using Avalonia;
 using CollimationCircles.Services;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 
@@ -12,13 +9,9 @@ namespace CollimationCircles
     internal class Program
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private const string MacArm64BootstrapFlag = "COLLIMATIONCIRCLES_VLC_ENV_BOOTSTRAPPED";
 
         private static bool IsLinuxArm64 =>
             OperatingSystem.IsLinux() && RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
-
-        private static bool IsMacArm64 =>
-            OperatingSystem.IsMacOS() && RuntimeInformation.ProcessArchitecture == Architecture.Arm64;
 
         // Initialization code. Don't use any Avalonia, third-party APIs or any
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized

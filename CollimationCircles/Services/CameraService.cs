@@ -22,10 +22,6 @@ namespace CollimationCircles.Services
 
         public CameraService()
         {
-            // Initialization is deferred to first use (see EnsureInitialized) so that a
-            // crash inside the native libvlc library (e.g. on Linux ARM64) does not take
-            // down the whole application at startup.
-
             // Keep IsPlaying in sync when a camera stops on its own (e.g. capture loop error).
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {

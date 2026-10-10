@@ -377,16 +377,7 @@ public class AppService
         socket.Connect("8.8.8.8", 65530);
         IPEndPoint? endPoint = socket.LocalEndPoint as IPEndPoint;
         return endPoint?.Address.ToString();
-    }
-
-    public static async Task StartRaspberryPIStream(string port, List<string> streamArgs, string command = "rpicam-vid")
-    {
-        Guard.IsNotNullOrWhiteSpace(port);
-        Guard.IsNotNull(streamArgs);
-
-        await StartProcessAsync("pkill", [command], timeoutMilliseconds: 150);
-        await StartProcessAsync(command, streamArgs, timeoutMilliseconds: 1500);
-    }
+    }    
 
     public static string DeviceId()
     {

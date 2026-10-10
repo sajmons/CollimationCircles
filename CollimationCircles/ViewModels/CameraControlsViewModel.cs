@@ -12,7 +12,7 @@ namespace CollimationCircles.ViewModels
     public partial class CameraControlsViewModel : BaseViewModel
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private readonly ICameraService libVLCService;
+        private readonly ICameraService cameraService;
         private readonly StreamViewModel streamViewModel;
 
         [ObservableProperty]
@@ -26,7 +26,7 @@ namespace CollimationCircles.ViewModels
 
         public CameraControlsViewModel()
         {
-            this.libVLCService = Ioc.Default.GetRequiredService<ICameraService>();
+            this.cameraService = Ioc.Default.GetRequiredService<ICameraService>();
             this.streamViewModel = Ioc.Default.GetRequiredService<StreamViewModel>();
 
             RefreshCameraContext();
@@ -68,12 +68,11 @@ namespace CollimationCircles.ViewModels
         [RelayCommand]
         private void Apply()
         {
-            // Play() lazily initialises LibVLC and returns early if unavailable.
-            libVLCService.Play(Camera);
+            cameraService.Play(Camera);
 
-            if (!libVLCService.IsAvailable)
+            if (!cameraService.IsAvailable)
             {
-                logger.Warn("Cannot apply camera controls because LibVLC is not available.");
+                logger.Warn("Cannot apply camera controls because CameraService is not available.");
                 return;
             }
 

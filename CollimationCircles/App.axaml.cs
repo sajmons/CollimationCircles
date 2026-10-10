@@ -32,13 +32,7 @@ public partial class App : Application
             desktop.MainWindow = new MainView
             {
                 Topmost = vm.AlwaysOnTop
-            };
-
-            // LibVLC initialization is now lazy (see LibVLCService.EnsureInitialized).
-            // We no longer probe IsAvailable at startup because the native libvlc
-            // constructor can segfault on some platforms (e.g. Linux ARM64 with VLC
-            // 3.0.x from Debian trixie) and take the whole process down.  The
-            // compatibility message is shown on first Play attempt instead.
+            };            
         }
 
         base.OnFrameworkInitializationCompleted();

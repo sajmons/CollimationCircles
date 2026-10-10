@@ -1,5 +1,4 @@
 using ASCOM.Alpaca.Clients;
-using ASCOM.Alpaca.Discovery;
 using ASCOM.Common.Alpaca;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;

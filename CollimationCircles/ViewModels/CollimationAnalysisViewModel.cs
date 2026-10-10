@@ -26,7 +26,7 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private readonly ICameraService libVLCService;
+        private readonly ICameraService cameraService;
         private readonly SettingsViewModel settingsViewModel;
         private readonly OpticalAxisService opticalAxisService = new();
 
@@ -53,9 +53,9 @@ namespace CollimationCircles.ViewModels
 
         private CancellationTokenSource? liveAnalysisCts;
 
-        public CollimationAnalysisViewModel(ICameraService libVLCService)
+        public CollimationAnalysisViewModel(ICameraService cameraService)
         {
-            this.libVLCService = libVLCService;
+            this.cameraService = cameraService;
             this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
@@ -116,7 +116,7 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
-                    byte[]? data = await libVLCService.TakeSnapshotImageAsync();
+                    byte[]? data = await cameraService.TakeSnapshotImageAsync();
                     if (data != null)
                     {
                         using var image = new MagickImage(data);
