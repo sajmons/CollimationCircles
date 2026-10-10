@@ -6,7 +6,6 @@
 		mc:Ignorable="d"
 		d:DesignWidth="320"
 		d:DesignHeight="240"
-		xmlns:vlc="clr-namespace:LibVLCSharp.Avalonia;assembly=LibVLCSharp.Avalonia"
 		xmlns:vm="using:CollimationCircles.ViewModels"
 		xmlns:local="clr-namespace:CollimationCircles.Views"
 		x:DataType="vm:CollimationAnalysisViewModel"
@@ -23,8 +22,10 @@
 			  VerticalAlignment="Stretch"
 			  Background="Black"
 			  IsVisible="False">
-			<local:FrameRenderer x:Name="FrameRenderer" />
+			<Image x:Name="FrameImage"
+				   HorizontalAlignment="Stretch"
+				   VerticalAlignment="Stretch"
+				   Stretch="Uniform" />
 		</Grid>
-
 	</Grid>
 </Window>
