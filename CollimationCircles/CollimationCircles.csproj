@@ -37,10 +37,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ASCOM.Alpaca.Components" Version="4.0.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.4" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.22" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.2">
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.4">
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Diagnostics" Version="8.4.2" />

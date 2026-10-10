@@ -42,6 +42,7 @@ namespace CollimationCircles.Services.Alpaca
         private double requestedGain;
         private double requestedExposureSec = DefaultExposureSec;
         private bool gainSupported;
+        private bool driverRequiresBinnedRoi;
         private BayerPatternMode effectiveBayerPattern = BayerPatternMode.None;
 
         private bool connected;
@@ -348,6 +349,7 @@ namespace CollimationCircles.Services.Alpaca
             }
 
             logger.Info($"Connected to Alpaca camera '{camera.Name}'");
+            driverRequiresBinnedRoi = false;
             ResolveImageMetadata(dev);
             device = dev;
             cts = new CancellationTokenSource();
@@ -680,23 +682,53 @@ namespace CollimationCircles.Services.Alpaca
             return Math.Max(1, maxBin);
         }
 
-        private static void ApplyBinningAndFullFrameRoi(AlpacaCamera dev, int bin)
+        private void ApplyBinningAndFullFrameRoi(AlpacaCamera dev, int bin)
         {
-            dev.BinX = (short)bin;
-            dev.BinY = (short)bin;
+            int safeBin = Math.Max(1, bin);
 
-            dev.StartX = 0;
-            dev.StartY = 0;
+            try { dev.StartX = 0; } catch { }
+            try { dev.StartY = 0; } catch { }
 
-            SetRoiDimensionToFullFrame(value => dev.NumX = value, dev.CameraXSize, "NumX");
-            SetRoiDimensionToFullFrame(value => dev.NumY = value, dev.CameraYSize, "NumY");
+            dev.BinX = (short)safeBin;
+            dev.BinY = (short)safeBin;
+
+            try { dev.StartX = 0; } catch { }
+            try { dev.StartY = 0; } catch { }
+
+            int sensorWidth = 0;
+            int sensorHeight = 0;
+            try { sensorWidth = dev.CameraXSize; } catch { }
+            try { sensorHeight = dev.CameraYSize; } catch { }
+
+            int targetNumX = sensorWidth;
+            int targetNumY = sensorHeight;
+
+            if (driverRequiresBinnedRoi && safeBin > 1 && sensorWidth > 0 && sensorHeight > 0)
+            {
+                targetNumX = Math.Max(1, sensorWidth / safeBin);
+                targetNumY = Math.Max(1, sensorHeight / safeBin);
+            }
+
+            SetRoiDimensionToFullFrame(value => dev.NumX = value, targetNumX, "NumX", out var numXAdjusted);
+            SetRoiDimensionToFullFrame(value => dev.NumY = value, targetNumY, "NumY", out var numYAdjusted);
+
+            if (numXAdjusted || numYAdjusted)
+            {
+                driverRequiresBinnedRoi = true;
+            }
         }
 
-        private static void SetRoiDimensionToFullFrame(Action<int> setter, int fullFrameSize, string propertyName)
+        private static void SetRoiDimensionToFullFrame(Action<int> setter, int targetSize, string propertyName, out bool wasAdjusted)
         {
+            wasAdjusted = false;
+            if (targetSize <= 0)
+            {
+                return;
+            }
+
             try
             {
-                setter(Math.Max(1, fullFrameSize));
+                setter(targetSize);
             }
             catch (ASCOM.InvalidValueException ex) when (TryParseValidRange(ex.Message, out var min, out var max))
             {
@@ -706,8 +738,9 @@ namespace CollimationCircles.Services.Alpaca
                     throw;
                 }
 
-                logger.Warn($"Alpaca camera rejected full-frame {propertyName}={fullFrameSize}; retrying with maximum supported value {target} (valid range {min}..{max}).");
+                logger.Warn($"Alpaca camera rejected full-frame {propertyName}={targetSize}; retrying with maximum supported value {target} (valid range {min}..{max}).");
                 setter(target);
+                wasAdjusted = true;
             }
         }
 
@@ -791,7 +824,44 @@ namespace CollimationCircles.Services.Alpaca
                     }
 
                     PublishCaptureProgress(CameraCaptureStage.Exposing, 0, "Exposing", true);
-                    dev.StartExposure(expSec, true);
+                    try
+                    {
+                        dev.StartExposure(expSec, true);
+                    }
+                    catch (ASCOM.InvalidValueException ex) when (TryParseValidRange(ex.Message, out var min, out var max))
+                    {
+                        logger.Warn($"Alpaca camera StartExposure failed with ROI error: {ex.Message}. Enabling binned ROI mode and retrying with valid max range {max}.");
+                        driverRequiresBinnedRoi = true;
+
+                        try { dev.StartX = 0; } catch { }
+                        try { dev.StartY = 0; } catch { }
+
+                        int sensorWidth = 0;
+                        int sensorHeight = 0;
+                        try { sensorWidth = dev.CameraXSize; } catch { }
+                        try { sensorHeight = dev.CameraYSize; } catch { }
+
+                        int binnedX = Math.Max(1, max);
+                        int binnedY = sensorHeight > 0 && bin > 1 ? Math.Max(1, sensorHeight / bin) : binnedX;
+
+                        if (ex.Message.Contains("NumX", StringComparison.OrdinalIgnoreCase))
+                        {
+                            try { dev.NumX = binnedX; } catch { }
+                            try { dev.NumY = binnedY; } catch { }
+                        }
+                        else if (ex.Message.Contains("NumY", StringComparison.OrdinalIgnoreCase))
+                        {
+                            try { dev.NumY = Math.Max(1, max); } catch { }
+                            try { dev.NumX = sensorWidth > 0 && bin > 1 ? Math.Max(1, sensorWidth / bin) : Math.Max(1, max); } catch { }
+                        }
+                        else
+                        {
+                            try { dev.NumX = binnedX; } catch { }
+                            try { dev.NumY = binnedY; } catch { }
+                        }
+
+                        dev.StartExposure(expSec, true);
+                    }
 
                     var exposureStart = Stopwatch.GetTimestamp();
                     var nextExposureUpdate = exposureStart;
