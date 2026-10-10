@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -538,6 +539,77 @@ namespace CollimationCircles.Services.Alpaca
             return Math.Max(1, maxBin);
         }
 
+        private static void ApplyBinningAndFullFrameRoi(AlpacaCamera dev, int bin)
+        {
+            dev.BinX = (short)bin;
+            dev.BinY = (short)bin;
+
+            var effectiveBinX = Math.Max(1, (int)dev.BinX);
+            var effectiveBinY = Math.Max(1, (int)dev.BinY);
+
+            dev.StartX = 0;
+            dev.StartY = 0;
+
+            var targetNumX = Math.Max(1, dev.CameraXSize / effectiveBinX);
+            var targetNumY = Math.Max(1, dev.CameraYSize / effectiveBinY);
+
+            SetRoiDimensionWithFallback(value => dev.NumX = value, targetNumX, "NumX");
+            SetRoiDimensionWithFallback(value => dev.NumY = value, targetNumY, "NumY");
+        }
+
+        private static void SetRoiDimensionWithFallback(Action<int> setter, int desiredValue, string propertyName)
+        {
+            try
+            {
+                setter(desiredValue);
+            }
+            catch (ASCOM.InvalidValueException ex) when (TryParseValidRange(ex.Message, out var min, out var max))
+            {
+                var clamped = Math.Clamp(desiredValue, min, max);
+                if (clamped == desiredValue)
+                {
+                    throw;
+                }
+
+                logger.Warn($"Alpaca camera rejected {propertyName}={desiredValue}; retrying with clamped value {clamped} (valid range {min}..{max}).");
+                setter(clamped);
+            }
+        }
+
+        private static bool TryParseValidRange(string? message, out int min, out int max)
+        {
+            min = 0;
+            max = 0;
+
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return false;
+            }
+
+            var match = Regex.Match(
+                message,
+                @"valid\s+range\s+is:\s*(?<min>-?\d+)\s*to\s*(?<max>-?\d+)",
+                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+            if (!match.Success)
+            {
+                return false;
+            }
+
+            if (!int.TryParse(match.Groups["min"].Value, out min)
+                || !int.TryParse(match.Groups["max"].Value, out max))
+            {
+                return false;
+            }
+
+            if (max < min)
+            {
+                (min, max) = (max, min);
+            }
+
+            return true;
+        }
+
         private async Task CaptureLoop(AlpacaCamera dev, CancellationToken ct)
         {
             int appliedBin = 0;
@@ -561,12 +633,7 @@ namespace CollimationCircles.Services.Alpaca
                     {
                         try
                         {
-                            dev.BinX = (short)bin;
-                            dev.BinY = (short)bin;
-                            dev.StartX = 0;
-                            dev.StartY = 0;
-                            dev.NumX = dev.CameraXSize;
-                            dev.NumY = dev.CameraYSize;
+                            ApplyBinningAndFullFrameRoi(dev, bin);
                         }
                         catch (Exception ex) when (ex is not OperationCanceledException)
                         {
