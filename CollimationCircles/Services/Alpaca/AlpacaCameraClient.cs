@@ -2,8 +2,6 @@ using ASCOM.Alpaca.Clients;
 using ASCOM.Common.Alpaca;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
-using CollimationCircles.ViewModels;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
@@ -12,11 +10,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using OpenCvSharp;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using CollimationCircles.Helper;
 
 namespace CollimationCircles.Services.Alpaca
 {
@@ -45,19 +42,9 @@ namespace CollimationCircles.Services.Alpaca
         private bool driverPrefersBinnedRoi;
         private BayerPatternMode effectiveBayerPattern = BayerPatternMode.None;
 
-        private bool connected;
+        private bool connected;        
 
-        private enum BayerPatternMode
-        {
-            Auto,
-            None,
-            RGGB,
-            BGGR,
-            GRBG,
-            GBRG
-        }
-
-        public bool IsConnected => connected;
+        public bool IsConnected => connected;        
 
         public async Task<List<Camera>> Connect(string address, int port)
         {
@@ -359,47 +346,13 @@ namespace CollimationCircles.Services.Alpaca
 
         private void ResolveImageMetadata(AlpacaCamera dev)
         {
-            var patternFromSetting = ReadBayerPatternSetting();
             if (TryResolveBayerPatternFromMetadata(dev, out var metadataPattern, out var metadataDescription))
             {
                 effectiveBayerPattern = metadataPattern;
                 logger.Info($"Alpaca image metadata selected Bayer pattern '{effectiveBayerPattern}' ({metadataDescription}).");
                 return;
-            }
-
-            effectiveBayerPattern = patternFromSetting == BayerPatternMode.Auto ? BayerPatternMode.None : patternFromSetting;
-            logger.Info($"Alpaca metadata did not provide Bayer pattern. Using program setting '{patternFromSetting}' -> effective '{effectiveBayerPattern}'.");
-        }
-
-        private static BayerPatternMode ReadBayerPatternSetting()
-        {
-            var settings = Ioc.Default.GetService<SettingsViewModel>();
-            if (settings is null)
-            {
-                return BayerPatternMode.Auto;
-            }
-
-            var configured = settings.GetType().GetProperty("AlpacaBayerPatternOverride")?.GetValue(settings) as string;
-            return ParseBayerPattern(configured);
-        }
-
-        private static BayerPatternMode ParseBayerPattern(string? value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return BayerPatternMode.Auto;
-            }
-
-            var normalized = value.Trim();
-            if (normalized.Equals("Auto", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.Auto;
-            if (normalized.Equals("None", StringComparison.OrdinalIgnoreCase) || normalized.Equals("Mono", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.None;
-            if (normalized.Equals("RGGB", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.RGGB;
-            if (normalized.Equals("BGGR", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.BGGR;
-            if (normalized.Equals("GRBG", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.GRBG;
-            if (normalized.Equals("GBRG", StringComparison.OrdinalIgnoreCase)) return BayerPatternMode.GBRG;
-
-            return BayerPatternMode.Auto;
-        }
+            }            
+        }        
 
         private static bool TryResolveBayerPatternFromMetadata(AlpacaCamera dev, out BayerPatternMode pattern, out string description)
         {
@@ -409,7 +362,7 @@ namespace CollimationCircles.Services.Alpaca
             if (TryReadPropertyValue(dev, "SensorType", out var sensorTypeValue) && sensorTypeValue is not null)
             {
                 var sensorText = sensorTypeValue.ToString() ?? string.Empty;
-                var sensorPattern = ParseBayerPattern(sensorText);
+                var sensorPattern = FitsUtils.ParseBayerPattern(sensorText);
                 if (sensorPattern is BayerPatternMode.RGGB or BayerPatternMode.BGGR or BayerPatternMode.GRBG or BayerPatternMode.GBRG)
                 {
                     pattern = sensorPattern;
@@ -618,21 +571,7 @@ namespace CollimationCircles.Services.Alpaca
 
             return controls;
         }
-
-        private static int GetCurrentBin(AlpacaCamera dev)
-        {
-            try
-            {
-                var binX = Math.Max(1, (int)dev.BinX);
-                var binY = Math.Max(1, (int)dev.BinY);
-                return Math.Max(1, Math.Min(binX, binY));
-            }
-            catch
-            {
-                return 1;
-            }
-        }
-
+        
         private static int GetMaxSupportedBin(AlpacaCamera dev)
         {
             var maxBin = 1;
@@ -917,11 +856,11 @@ namespace CollimationCircles.Services.Alpaca
                     PublishCaptureProgress(CameraCaptureStage.Downloading, 1, "Download complete", true);
 
                     PublishCaptureProgress(CameraCaptureStage.Processing, 0, "Processing frame", true);
-                    var frame = ToFrame(imageData, effectiveBayerPattern);
+                    var frame = FitsUtils.ToFrame(imageData, effectiveBayerPattern);
                     PublishCaptureProgress(CameraCaptureStage.Processing, 1, "Frame ready", frame is not null);
                     if (frame is not null)
                     {
-                        WeakReferenceMessenger.Default.Send(new CameraFrameMessage(frame));
+                        WeakReferenceMessenger.Default.Send(new MatMessage(frame));
                     }
                     else
                     {
@@ -952,258 +891,6 @@ namespace CollimationCircles.Services.Alpaca
         private static bool IsNoImageAvailable(ASCOM.DriverException ex)
         {
             return ex.Message.Contains("No image available", StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static CameraFrame? ToFrame(Array? data, BayerPatternMode bayerPattern)
-        {
-            if (data is null)
-            {
-                return null;
-            }
-
-            return data switch
-            {
-                byte[,] p => ToFrame2D(p, bayerPattern),
-                short[,] p => ToFrame2D(p, bayerPattern),
-                ushort[,] p => ToFrame2D(p, bayerPattern),
-                int[,] p => ToFrame2D(p, bayerPattern),
-                uint[,] p => ToFrame2D(p, bayerPattern),
-                float[,] p => ToFrame2D(p, bayerPattern),
-                double[,] p => ToFrame2D(p, bayerPattern),
-                byte[,,] p => ToFrame3D(p),
-                short[,,] p => ToFrame3D(p),
-                ushort[,,] p => ToFrame3D(p),
-                int[,,] p => ToFrame3D(p),
-                uint[,,] p => ToFrame3D(p),
-                float[,,] p => ToFrame3D(p),
-                double[,,] p => ToFrame3D(p),
-                _ => ToFrameFallback(data, bayerPattern)
-            };
-        }
-
-        private static CameraFrame? ToFrame2D<T>(T[,] data, BayerPatternMode bayerPattern)
-            where T : IConvertible
-        {
-            int width = data.GetLength(0);
-            int height = data.GetLength(1);
-            if (width <= 0 || height <= 0)
-            {
-                return null;
-            }
-
-            int total = width * height;
-            var values = new double[total];
-            double min = double.MaxValue;
-            double max = double.MinValue;
-            int idx = 0;
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    double value = data[x, y].ToDouble(null);
-                    values[idx++] = value;
-                    if (value < min) min = value;
-                    if (value > max) max = value;
-                }
-            }
-
-            var normalized = CreateNormalizedFrame(width, height, values, min, max);
-            return ApplyOpenCvDemosaicIfNeeded(normalized, bayerPattern);
-        }
-
-        private static CameraFrame? ToFrame3D<T>(T[,,] data)
-            where T : IConvertible
-        {
-            int width = data.GetLength(0);
-            int height = data.GetLength(1);
-            int planes = data.GetLength(2);
-
-            if (width <= 0 || height <= 0 || planes <= 0)
-            {
-                return null;
-            }
-
-            int total = width * height;
-            var values = new double[total];
-            double min = double.MaxValue;
-            double max = double.MinValue;
-            int idx = 0;
-            double invPlanes = 1.0 / planes;
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    double sum = 0;
-                    for (int p = 0; p < planes; p++)
-                    {
-                        sum += data[x, y, p].ToDouble(null);
-                    }
-
-                    double value = sum * invPlanes;
-                    values[idx++] = value;
-                    if (value < min) min = value;
-                    if (value > max) max = value;
-                }
-            }
-
-            return CreateNormalizedFrame(width, height, values, min, max);
-        }
-
-        private static CameraFrame? ToFrameFallback(Array data, BayerPatternMode bayerPattern)
-        {
-            if (data.Rank is < 2 or > 3)
-            {
-                return null;
-            }
-
-            int width = data.GetLength(0);
-            int height = data.GetLength(1);
-            if (width <= 0 || height <= 0)
-            {
-                return null;
-            }
-
-            int total = width * height;
-            var values = new double[total];
-            double min = double.MaxValue;
-            double max = double.MinValue;
-            int idx = 0;
-
-            if (data.Rank == 2)
-            {
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        double value = Convert.ToDouble(data.GetValue(x, y));
-                        values[idx++] = value;
-                        if (value < min) min = value;
-                        if (value > max) max = value;
-                    }
-                }
-
-                var normalized2D = CreateNormalizedFrame(width, height, values, min, max);
-                return ApplyOpenCvDemosaicIfNeeded(normalized2D, bayerPattern);
-            }
-            else
-            {
-                int planes = data.GetLength(2);
-                if (planes <= 0)
-                {
-                    return null;
-                }
-
-                double invPlanes = 1.0 / planes;
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        double sum = 0;
-                        for (int p = 0; p < planes; p++)
-                        {
-                            sum += Convert.ToDouble(data.GetValue(x, y, p));
-                        }
-
-                        double value = sum * invPlanes;
-                        values[idx++] = value;
-                        if (value < min) min = value;
-                        if (value > max) max = value;
-                    }
-                }
-            }
-
-            return CreateNormalizedFrame(width, height, values, min, max);
-        }
-
-        private static CameraFrame ApplyOpenCvDemosaicIfNeeded(CameraFrame frame, BayerPatternMode bayerPattern)
-        {
-            var conversion = GetBayerToBgrConversionCode(bayerPattern);
-            if (conversion is null)
-            {
-                return frame;
-            }
-
-            try
-            {
-                using var source = new Mat(frame.Height, frame.Width, MatType.CV_8UC1);
-                CopySingleChannelPixelsToMat(frame.Pixels, source, frame.Width, frame.Height);
-                using var bgr = new Mat();
-                Cv2.CvtColor(source, bgr, conversion.Value);
-
-                using var gray = new Mat();
-                Cv2.CvtColor(bgr, gray, ColorConversionCodes.BGR2GRAY);
-
-                var pixels = CopySingleChannelMat(gray, frame.Width, frame.Height);
-                return new CameraFrame(frame.Width, frame.Height, pixels);
-            }
-            catch (Exception ex)
-            {
-                logger.Warn($"OpenCV Bayer conversion failed for '{bayerPattern}', using raw grayscale frame: {ex.Message}");
-                return frame;
-            }
-        }
-
-        private static ColorConversionCodes? GetBayerToBgrConversionCode(BayerPatternMode bayerPattern)
-        {
-            return bayerPattern switch
-            {
-                BayerPatternMode.RGGB => ColorConversionCodes.BayerRG2BGR,
-                BayerPatternMode.BGGR => ColorConversionCodes.BayerBG2BGR,
-                BayerPatternMode.GRBG => ColorConversionCodes.BayerGR2BGR,
-                BayerPatternMode.GBRG => ColorConversionCodes.BayerGB2BGR,
-                _ => null
-            };
-        }
-
-        private static byte[] CopySingleChannelMat(Mat mat, int width, int height)
-        {
-            var pixels = new byte[width * height];
-            if (mat.Step() == width)
-            {
-                Marshal.Copy(mat.Data, pixels, 0, pixels.Length);
-                return pixels;
-            }
-
-            for (int y = 0; y < height; y++)
-            {
-                Marshal.Copy(mat.Data + (int)(y * mat.Step()), pixels, y * width, width);
-            }
-
-            return pixels;
-        }
-
-        private static void CopySingleChannelPixelsToMat(byte[] pixels, Mat mat, int width, int height)
-        {
-            if (mat.Step() == width)
-            {
-                Marshal.Copy(pixels, 0, mat.Data, pixels.Length);
-                return;
-            }
-
-            for (int y = 0; y < height; y++)
-            {
-                Marshal.Copy(pixels, y * width, mat.Data + (int)(y * mat.Step()), width);
-            }
-        }
-
-        private static CameraFrame CreateNormalizedFrame(int width, int height, double[] values, double min, double max)
-        {
-            var pixels = new byte[values.Length];
-            double range = max - min;
-            if (range <= 0)
-            {
-                return new CameraFrame(width, height, pixels);
-            }
-
-            double scale = 255.0 / range;
-            for (int i = 0; i < values.Length; i++)
-            {
-                pixels[i] = (byte)((values[i] - min) * scale);
-            }
-
-            return new CameraFrame(width, height, pixels);
-        }
+        }        
     }
 }

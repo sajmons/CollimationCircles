@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Runtime.InteropServices;
+using Mat = OpenCvSharp.Mat;
 
 namespace CollimationCircles.Views
 {
@@ -21,7 +22,7 @@ namespace CollimationCircles.Views
 
         private WriteableBitmap? bitmap;
         private byte[]? bgraBuffer;
-        private CameraFrame? pendingFrame;
+        private Mat? pendingFrame;
         private bool renderQueued;
 
         public StreamView()
@@ -38,7 +39,7 @@ namespace CollimationCircles.Views
                 UpdateWindowPosition();
             });
 
-            WeakReferenceMessenger.Default.Register<CameraFrameMessage>(this, (r, m) =>
+            WeakReferenceMessenger.Default.Register<MatMessage>(this, (r, m) =>
             {
                 QueueFrameForRender(m.Value);
             });
@@ -76,7 +77,7 @@ namespace CollimationCircles.Views
         {
         }
 
-        private void QueueFrameForRender(CameraFrame frame)
+        private void QueueFrameForRender(Mat frame)
         {
             pendingFrame = frame;
             if (renderQueued)
@@ -120,7 +121,8 @@ namespace CollimationCircles.Views
             }
 
             var bgra = bgraBuffer ??= new byte[frame.Width * frame.Height * 4];
-            ExpandGrayToBgra(frame.Pixels, bgra);
+            frame.GetArray(out byte[] pixels);
+            ExpandGrayToBgra(pixels, bgra);
 
             using var fb = bitmap.Lock();
             var copyBytesPerRow = frame.Width * 4;
