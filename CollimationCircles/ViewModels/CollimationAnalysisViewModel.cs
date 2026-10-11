@@ -52,9 +52,8 @@ namespace CollimationCircles.ViewModels
 
         private CancellationTokenSource? liveAnalysisCts;
 
-        public CollimationAnalysisViewModel(ICameraService cameraService)
+        public CollimationAnalysisViewModel()
         {
-            this.cameraService = cameraService;
             this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
@@ -115,7 +114,8 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
-                    byte[]? data = await cameraService.TakeSnapshotImageAsync();
+                    // FIXME: This is a placeholder for the actual camera snapshot logic. Replace it with the appropriate method to capture an image from the camera.
+                    byte[]? data = null;//await cameraService.TakeSnapshotImageAsync();
                     if (data != null)
                     {
                         using var image = new MagickImage(data);
