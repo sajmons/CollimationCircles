@@ -578,7 +578,14 @@ namespace CollimationCircles.Services.Alpaca
 
             try
             {
-                maxBin = Math.Max(1, Math.Min((int)dev.MaxBinX, (int)dev.MaxBinY));
+                if (dev.CanAsymmetricBin)
+                {
+                    maxBin = Math.Max(1, Math.Min((int)dev.MaxBinX, (int)dev.MaxBinY));
+                }
+                else
+                {
+                    maxBin = Math.Max(1, (int)dev.MaxBinX);
+                }
             }
             catch
             {
@@ -589,8 +596,11 @@ namespace CollimationCircles.Services.Alpaca
                 return maxBin;
             }
 
-            var originalX = dev.BinX;
-            var originalY = dev.BinY;
+            // If MaxBin properties failed or reported <= 1, check CanAsymmetricBin or probe
+            short originalX = 1;
+            short originalY = 1;
+            try { originalX = dev.BinX; } catch { return 1; } // If BinX read fails, camera does not support binning
+            try { originalY = dev.BinY; } catch { }
 
             try
             {
@@ -628,8 +638,26 @@ namespace CollimationCircles.Services.Alpaca
             try { dev.StartX = 0; } catch { }
             try { dev.StartY = 0; } catch { }
 
-            dev.BinX = (short)safeBin;
-            dev.BinY = (short)safeBin;
+            // Only attempt setting binning if bin > 1 or if BinX is not already 1
+            bool skipBinSetting = false;
+            try
+            {
+                if (safeBin == 1 && dev.BinX == 1 && dev.BinY == 1)
+                {
+                    skipBinSetting = true;
+                }
+            }
+            catch
+            {
+                // If reading BinX fails, device does not support binning properties
+                if (safeBin == 1) skipBinSetting = true;
+            }
+
+            if (!skipBinSetting)
+            {
+                try { dev.BinX = (short)safeBin; } catch { if (safeBin > 1) throw; }
+                try { dev.BinY = (short)safeBin; } catch { if (safeBin > 1) throw; }
+            }
 
             try { dev.StartX = 0; } catch { }
             try { dev.StartY = 0; } catch { }
@@ -758,42 +786,53 @@ namespace CollimationCircles.Services.Alpaca
                     }
 
                     PublishCaptureProgress(CameraCaptureStage.Exposing, 0, "Exposing", true);
-                    try
+                    bool exposureStarted = false;
+                    for (int startAttempt = 1; startAttempt <= 3 && !exposureStarted; startAttempt++)
                     {
-                        dev.StartExposure(expSec, true);
-                    }
-                    catch (ASCOM.InvalidValueException ex)
-                    {
-                        logger.Warn($"Alpaca camera StartExposure failed with ROI error ({ex.Message}). Enabling binned ROI mode and retrying.");
-                        driverPrefersBinnedRoi = true;
-
-                        try { dev.StartX = 0; } catch { }
-                        try { dev.StartY = 0; } catch { }
-
-                        int sensorWidth = 0;
-                        int sensorHeight = 0;
-                        try { sensorWidth = dev.CameraXSize; } catch { }
-                        try { sensorHeight = dev.CameraYSize; } catch { }
-
-                        int binnedX = sensorWidth > 0 && bin > 1 ? Math.Max(1, sensorWidth / bin) : Math.Max(1, sensorWidth);
-                        int binnedY = sensorHeight > 0 && bin > 1 ? Math.Max(1, sensorHeight / bin) : Math.Max(1, sensorHeight);
-
-                        if (TryParseValidRange(ex.Message, out var min, out var max))
+                        try
                         {
-                            if (ex.Message.Contains("NumX", StringComparison.OrdinalIgnoreCase))
-                            {
-                                binnedX = Math.Max(1, max);
-                            }
-                            else if (ex.Message.Contains("NumY", StringComparison.OrdinalIgnoreCase))
-                            {
-                                binnedY = Math.Max(1, max);
-                            }
+                            dev.StartExposure(expSec, true);
+                            exposureStarted = true;
                         }
+                        catch (ASCOM.InvalidValueException ex)
+                        {
+                            logger.Warn($"Alpaca camera StartExposure failed with ROI error ({ex.Message}). Enabling binned ROI mode and retrying.");
+                            driverPrefersBinnedRoi = true;
 
-                        try { dev.NumX = binnedX; } catch { }
-                        try { dev.NumY = binnedY; } catch { }
+                            try { dev.StartX = 0; } catch { }
+                            try { dev.StartY = 0; } catch { }
 
-                        dev.StartExposure(expSec, true);
+                            int sensorWidth = 0;
+                            int sensorHeight = 0;
+                            try { sensorWidth = dev.CameraXSize; } catch { }
+                            try { sensorHeight = dev.CameraYSize; } catch { }
+
+                            int binnedX = sensorWidth > 0 && bin > 1 ? Math.Max(1, sensorWidth / bin) : Math.Max(1, sensorWidth);
+                            int binnedY = sensorHeight > 0 && bin > 1 ? Math.Max(1, sensorHeight / bin) : Math.Max(1, sensorHeight);
+
+                            if (TryParseValidRange(ex.Message, out var min, out var max))
+                            {
+                                if (ex.Message.Contains("NumX", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    binnedX = Math.Max(1, max);
+                                }
+                                else if (ex.Message.Contains("NumY", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    binnedY = Math.Max(1, max);
+                                }
+                            }
+
+                            try { dev.NumX = binnedX; } catch { }
+                            try { dev.NumY = binnedY; } catch { }
+
+                            dev.StartExposure(expSec, true);
+                            exposureStarted = true;
+                        }
+                        catch (System.Net.Http.HttpRequestException ex) when (startAttempt < 3 && !ct.IsCancellationRequested)
+                        {
+                            logger.Warn($"Alpaca camera StartExposure network glitch (attempt {startAttempt}/3): {ex.Message}. Retrying...");
+                            await Task.Delay(250, ct);
+                        }
                     }
 
                     var exposureStart = Stopwatch.GetTimestamp();
