@@ -111,6 +111,11 @@ namespace CollimationCircles.Helper
                 return null;
             }
 
+            if (planes >= 3)
+            {
+                return CreateNormalizedColorFrame(width, height, planes, static (x, y, p, source) => source[x, y, p].ToDouble(null), data);
+            }
+
             int total = width * height;
             var values = new double[total];
             double min = double.MaxValue;
@@ -182,6 +187,11 @@ namespace CollimationCircles.Helper
                     return null;
                 }
 
+                if (planes >= 3)
+                {
+                    return CreateNormalizedColorFrame(width, height, planes, static (x, y, p, source) => Convert.ToDouble(source.GetValue(x, y, p)), data);
+                }
+
                 double invPlanes = 1.0 / planes;
                 for (int y = 0; y < height; y++)
                 {
@@ -214,22 +224,10 @@ namespace CollimationCircles.Helper
 
             try
             {
-                using var source = new Mat(frame.Height, frame.Width, MatType.CV_8UC1);
-
-                var pixels = new byte[source.Total() * source.ElemSize()];
-                source.GetArray(out pixels);
-                CopySingleChannelPixelsToMat(pixels, source, frame.Width, frame.Height);
                 using var bgr = new Mat();
-                Cv2.CvtColor(source, bgr, conversion.Value);
-
-                using var gray = new Mat();
-                Cv2.CvtColor(bgr, gray, ColorConversionCodes.BGR2GRAY);
-
-                var pixelsOut = CopySingleChannelMat(gray, frame.Width, frame.Height);
-
-                var mat = new Mat(frame.Height, frame.Width, MatType.CV_8UC1);
-                mat.SetArray(pixelsOut);
-                return mat;
+                Cv2.CvtColor(frame, bgr, conversion.Value);
+                frame.Dispose();
+                return bgr.Clone();
             }
             catch (Exception ex)
             {
@@ -250,35 +248,71 @@ namespace CollimationCircles.Helper
             };
         }
 
-        private static byte[] CopySingleChannelMat(Mat mat, int width, int height)
+        private static Mat CreateNormalizedColorFrame<TSource>(
+            int width,
+            int height,
+            int planes,
+            Func<int, int, int, TSource, double> valueGetter,
+            TSource source)
         {
-            var pixels = new byte[width * height];
-            if (mat.Step() == width)
-            {
-                Marshal.Copy(mat.Data, pixels, 0, pixels.Length);
-                return pixels;
-            }
+            int total = width * height;
+            var blue = new double[total];
+            var green = new double[total];
+            var red = new double[total];
 
+            double minB = double.MaxValue;
+            double maxB = double.MinValue;
+            double minG = double.MaxValue;
+            double maxG = double.MinValue;
+            double minR = double.MaxValue;
+            double maxR = double.MinValue;
+
+            int idx = 0;
             for (int y = 0; y < height; y++)
             {
-                Marshal.Copy(mat.Data + (int)(y * mat.Step()), pixels, y * width, width);
+                for (int x = 0; x < width; x++)
+                {
+                    double b = valueGetter(x, y, 2, source);
+                    double g = valueGetter(x, y, 1, source);
+                    double r = valueGetter(x, y, 0, source);
+
+                    blue[idx] = b;
+                    green[idx] = g;
+                    red[idx] = r;
+
+                    if (b < minB) minB = b;
+                    if (b > maxB) maxB = b;
+                    if (g < minG) minG = g;
+                    if (g > maxG) maxG = g;
+                    if (r < minR) minR = r;
+                    if (r > maxR) maxR = r;
+
+                    idx++;
+                }
             }
 
-            return pixels;
+            var pixels = new byte[total * 3];
+            for (int i = 0, p = 0; i < total; i++)
+            {
+                pixels[p++] = NormalizeToByte(blue[i], minB, maxB);
+                pixels[p++] = NormalizeToByte(green[i], minG, maxG);
+                pixels[p++] = NormalizeToByte(red[i], minR, maxR);
+            }
+
+            var mat = new Mat(height, width, MatType.CV_8UC3);
+            mat.SetArray(pixels);
+            return mat;
         }
 
-        private static void CopySingleChannelPixelsToMat(byte[] pixels, Mat mat, int width, int height)
+        private static byte NormalizeToByte(double value, double min, double max)
         {
-            if (mat.Step() == width)
+            double range = max - min;
+            if (range <= 0)
             {
-                Marshal.Copy(pixels, 0, mat.Data, pixels.Length);
-                return;
+                return 0;
             }
 
-            for (int y = 0; y < height; y++)
-            {
-                Marshal.Copy(pixels, y * width, mat.Data + (int)(y * mat.Step()), width);
-            }
+            return (byte)((value - min) * (255.0 / range));
         }
 
         private static Mat CreateNormalizedFrame(int width, int height, double[] values, double min, double max)

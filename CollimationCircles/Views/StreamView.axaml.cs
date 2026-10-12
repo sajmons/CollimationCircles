@@ -79,6 +79,7 @@ namespace CollimationCircles.Views
 
         private void QueueFrameForRender(Mat frame)
         {
+            pendingFrame?.Dispose();
             pendingFrame = frame;
             if (renderQueued)
             {
@@ -121,24 +122,65 @@ namespace CollimationCircles.Views
             }
 
             var bgra = bgraBuffer ??= new byte[frame.Width * frame.Height * 4];
-            frame.GetArray(out byte[] pixels);
-            ExpandGrayToBgra(pixels, bgra);
-
-            using var fb = bitmap.Lock();
-            var copyBytesPerRow = frame.Width * 4;
-            if (fb.RowBytes == copyBytesPerRow)
+            try
             {
-                Marshal.Copy(bgra, 0, fb.Address, bgra.Length);
-            }
-            else
-            {
-                for (int y = 0; y < frame.Height; y++)
+                if (frame.Channels() == 1)
                 {
-                    Marshal.Copy(bgra, y * copyBytesPerRow, fb.Address + y * fb.RowBytes, copyBytesPerRow);
+                    var grayPixels = new byte[frame.Width * frame.Height];
+                    CopyMatToBuffer(frame, grayPixels, frame.Width, frame.Height, 1);
+                    ExpandGrayToBgra(grayPixels, bgra);
                 }
+                else if (frame.Channels() == 3)
+                {
+                    using var bgraFrame = new Mat();
+                    OpenCvSharp.Cv2.CvtColor(frame, bgraFrame, OpenCvSharp.ColorConversionCodes.BGR2BGRA);
+                    CopyMatToBuffer(bgraFrame, bgra, frame.Width, frame.Height, 4);
+                }
+                else if (frame.Channels() == 4)
+                {
+                    CopyMatToBuffer(frame, bgra, frame.Width, frame.Height, 4);
+                }
+                else
+                {
+                    logger.Warn($"Unsupported frame channel count: {frame.Channels()}");
+                    return;
+                }
+
+                using var fb = bitmap.Lock();
+                var copyBytesPerRow = frame.Width * 4;
+                if (fb.RowBytes == copyBytesPerRow)
+                {
+                    Marshal.Copy(bgra, 0, fb.Address, bgra.Length);
+                }
+                else
+                {
+                    for (int y = 0; y < frame.Height; y++)
+                    {
+                        Marshal.Copy(bgra, y * copyBytesPerRow, fb.Address + y * fb.RowBytes, copyBytesPerRow);
+                    }
+                }
+
+                frameImage?.InvalidateVisual();
+            }
+            finally
+            {
+                frame.Dispose();
+            }
+        }
+
+        private static void CopyMatToBuffer(Mat source, byte[] destination, int width, int height, int bytesPerPixel)
+        {
+            int bytesPerRow = width * bytesPerPixel;
+            if (source.Step() == bytesPerRow)
+            {
+                Marshal.Copy(source.Data, destination, 0, Math.Min(destination.Length, bytesPerRow * height));
+                return;
             }
 
-            frameImage?.InvalidateVisual();
+            for (int y = 0; y < height; y++)
+            {
+                Marshal.Copy(source.Data + (int)(y * source.Step()), destination, y * bytesPerRow, bytesPerRow);
+            }
         }
 
         private static void ExpandGrayToBgra(byte[] gray, byte[] bgra)
