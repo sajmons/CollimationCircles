@@ -1,0 +1,68 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (for example: v1.2.3)"
+        required: true
+        type: string
+      release_name:
+        description: "Release name"
+        required: true
+        type: string
+      notes_mode:
+        description: "How to provide release notes"
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - manual
+      manual_notes:
+        description: "Release notes text (used only when notes_mode=manual)"
+        required: false
+        type: string
+      draft:
+        description: "Create as draft"
+        required: false
+        default: false
+        type: boolean
+      prerelease:
+        description: "Mark as pre-release"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  publish-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate manual notes input
+        if: ${{ inputs.notes_mode == 'manual' && inputs.manual_notes == '' }}
+        run: |
+          echo "notes_mode is 'manual' but no manual_notes were provided."
+          exit 1
+
+      - name: Create release with automatic notes
+        if: ${{ inputs.notes_mode == 'auto' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.release_name }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true
+
+      - name: Create release with manual notes
+        if: ${{ inputs.notes_mode == 'manual' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.release_name }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          body: ${{ inputs.manual_notes }}
