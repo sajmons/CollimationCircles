@@ -1,0 +1,235 @@
+name: Manualy Publish Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (for example: v1.2.3)"
+        required: true
+        type: string
+      release_name:
+        description: "Release name"
+        required: true
+        type: string
+      notes_mode:
+        description: "How to provide release notes"
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - manual
+      manual_notes:
+        description: "Release notes text (used only when notes_mode=manual)"
+        required: false
+        type: string
+      draft:
+        description: "Create as draft"
+        required: false
+        default: false
+        type: boolean
+      prerelease:
+        description: "Mark as pre-release"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  PROJECT_PATH: CollimationCircles/CollimationCircles.csproj
+  FRAMEWORK: net10.0
+  APP_NAME: CollimationCircles
+  DOTNET_VERSION: "10.0.x"
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.tag }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate manual notes input
+        if: ${{ inputs.notes_mode == 'manual' && inputs.manual_notes == '' }}
+        run: |
+          echo "notes_mode is 'manual' but no manual_notes were provided."
+          exit 1
+
+  build:
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runtime: win-x64
+            os: windows-latest
+            index: 1
+          - runtime: win-arm64
+            os: windows-latest
+            index: 2
+          - runtime: linux-x64
+            os: ubuntu-latest
+            index: 3
+          - runtime: linux-arm64
+            os: ubuntu-latest
+            index: 4
+          - runtime: osx-x64
+            os: macos-latest
+            index: 5
+          - runtime: osx-arm64
+            os: macos-latest
+            index: 6
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Extract version from csproj
+        id: version
+        shell: pwsh
+        run: |
+          $content = Get-Content "${{ env.PROJECT_PATH }}" -Raw
+          if ($content -match '<(?:InformationalVersion|Version|VersionPrefix)>(.*?)<\/') {
+              $v = $Matches[1].Trim()
+          } else {
+              $v = "1.0.0"
+          }
+          Write-Host "Detected Version: $v"
+          echo "APP_VERSION=$v" >> $env:GITHUB_OUTPUT
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:PublishReadyToRun=true
+
+      - name: Publish
+        shell: pwsh
+        run: |
+          $publishArgs = @(
+            "publish", "${{ env.PROJECT_PATH }}",
+            "-c", "Release",
+            "-r", "${{ matrix.runtime }}",
+            "-o", "./publish/${{ matrix.runtime }}",
+            "--self-contained", "true",
+            "--no-restore",
+            "/p:PublishSingleFile=true",
+            "/p:PublishReadyToRun=true",
+            "/p:PublishTrimmed=true",
+            "/p:TrimMode=full",
+            "/p:DebugType=None",
+            "/p:DebugSymbols=false"
+          )
+          if ("${{ matrix.runtime }}".StartsWith("osx-")) {
+            $publishArgs += "/p:UseAppHost=true"
+          }
+          dotnet @publishArgs
+
+      - name: Package (Linux)
+        if: startsWith(matrix.runtime, 'linux-')
+        shell: bash
+        run: |
+          output="./publish/${{ matrix.runtime }}"
+          chmod +x "$output/${{ env.APP_NAME }}"
+          tarName="./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.tar.gz"
+          tar -czf "$tarName" -C "$output" .
+
+      - name: Package (Windows)
+        if: startsWith(matrix.runtime, 'win-')
+        shell: pwsh
+        run: |
+          $output = "./publish/${{ matrix.runtime }}"
+          $zipName = "./publish/${{ matrix.index }}-${{ env.APP_NAME }}-${{ steps.version.outputs.APP_VERSION }}-${{ matrix.runtime }}.zip"
+          Compress-Archive -Force "$output/*" $zipName
+
+      - name: Package (macOS)
+        if: startsWith(matrix.runtime, 'osx-')
+        shell: bash
+        run: |
+          RID="${{ matrix.runtime }}"
+          VER="${{ steps.version.outputs.APP_VERSION }}"
+          APP="${{ env.APP_NAME }}"
+          BUNDLE="$APP.app"
+          CP="./publish/${RID}_bundle/$BUNDLE/Contents"
+
+          mkdir -p "$CP/MacOS"
+          mkdir -p "$CP/Resources"
+
+          printf '<?xml version="1.0" encoding="utf-8"?>\n' > "$CP/Info.plist"
+          printf '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">\n' >> "$CP/Info.plist"
+          printf '<plist version="1.0">\n<dict>\n' >> "$CP/Info.plist"
+          printf '  <key>CFBundleIconFile</key><string>icon.icns</string>\n' >> "$CP/Info.plist"
+          printf '  <key>CFBundleIdentifier</key><string>com.saimons.%s</string>\n' "$APP" >> "$CP/Info.plist"
+          printf '  <key>CFBundleName</key><string>%s</string>\n' "$APP" >> "$CP/Info.plist"
+          printf '  <key>CFBundleVersion</key><string>%s</string>\n' "$VER" >> "$CP/Info.plist"
+          printf '  <key>CFBundleExecutable</key><string>%s</string>\n' "$APP" >> "$CP/Info.plist"
+          printf '  <key>CFBundlePackageType</key><string>APPL</string>\n' >> "$CP/Info.plist"
+          printf '  <key>LSMinimumSystemVersion</key><string>11.0</string>\n' >> "$CP/Info.plist"
+          printf '  <key>NSCameraUsageDescription</key><string>CollimationCircles uses the camera to display the live collimation stream.</string>\n' >> "$CP/Info.plist"
+          printf '  <key>NSMicrophoneUsageDescription</key><string>CollimationCircles may access microphone audio when opening AVFoundation capture devices.</string>\n' >> "$CP/Info.plist"
+          printf '</dict>\n</plist>\n' >> "$CP/Info.plist"
+
+          cp -R "./publish/$RID/"* "$CP/MacOS/"
+          [ -f "$CP/MacOS/icon.icns" ] && mv "$CP/MacOS/icon.icns" "$CP/Resources/"
+          chmod +x "$CP/MacOS/$APP"
+
+          TAR_NAME="./publish/${{ matrix.index }}-$APP-$VER-$RID.tar.gz"
+          tar -czf "$TAR_NAME" -C "./publish/${RID}_bundle" "$BUNDLE"
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.APP_NAME }}-${{ matrix.runtime }}
+          path: |
+            ./publish/*.zip
+            ./publish/*.tar.gz
+          retention-days: 7
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: ./artifacts
+          merge-multiple: true
+
+      - name: Create release with automatic notes
+        if: ${{ inputs.notes_mode == 'auto' }}
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.release_name }}
+          target_commitish: ${{ github.sha }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: true
+          files: |
+            ./artifacts/*.zip
+            ./artifacts/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release with manual notes
+        if: ${{ inputs.notes_mode == 'manual' }}
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: ${{ inputs.release_name }}
+          target_commitish: ${{ github.sha }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          body: ${{ inputs.manual_notes }}
+          files: |
+            ./artifacts/*.zip
+            ./artifacts/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
