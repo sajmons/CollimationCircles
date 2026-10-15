@@ -1,0 +1,140 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+             x:Class="CollimationCircles.Controls.AlpacaTelescopeUserControl"
+             xmlns:controls="using:CollimationCircles.Controls"
+             xmlns:models="using:CollimationCircles.Models"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             x:DataType="vm:StreamViewModel">    
+
+    <Grid
+        RowDefinitions="Auto,Auto"
+        RowSpacing="{DynamicResource ControlSpacing}">
+        <DockPanel Grid.Row="0" LastChildFill="True">
+            <TextBlock
+                DockPanel.Dock="Left"
+                VerticalAlignment="Center"
+                Margin="0,0,8,0"
+                Text="{DynamicResource Text.TelescopeMount}" />
+            <ComboBox
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding IsServerConnected}"
+                ItemsSource="{Binding TelescopeMounts}"
+                SelectedItem="{Binding SelectedTelescopeMount}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </DockPanel>
+
+        <Grid
+            Grid.Row="1"
+            ColumnDefinitions="Auto,*"
+            ColumnSpacing="8">
+            <UniformGrid
+                Columns="3"
+                Rows="3"
+                HorizontalAlignment="Left">
+                <Button Content="↖"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.UpLeft}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+                <Button Content="↑"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.Up}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+                <Button Content="↗"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.UpRight}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+
+                <Button Content="←"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.Left}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+                <Button Width="48"
+                        Height="48"
+                        Content="{DynamicResource Text.TelescopeStop}"
+                        Command="{Binding StopTelescopeCommand}"
+                        IsEnabled="{Binding CanControlTelescope}" />
+                <Button Content="→"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.Right}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+
+                <Button Content="↙"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.DownLeft}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+                <Button Content="↓"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.Down}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+                <Button Content="↘"
+                        Width="48"
+                        Height="48"
+                        IsEnabled="{Binding CanControlTelescope}"
+                        controls:PointerHoldCommand.IsEnabled="True"
+                        controls:PointerHoldCommand.PressedCommand="{Binding StartTelescopeMotionCommand}"
+                        controls:PointerHoldCommand.PressedCommandParameter="{x:Static models:TelescopeDirection.DownRight}"
+                        controls:PointerHoldCommand.ReleasedCommand="{Binding StopTelescopeMotionCommand}" />
+            </UniformGrid>
+
+            <StackPanel Grid.Column="1" Spacing="4">
+                <CheckBox
+                    Content="{DynamicResource Text.TelescopeTracking}"
+                    IsEnabled="{Binding CanControlTelescope}"
+                    IsChecked="{Binding TelescopeTracking}" />
+                <CheckBox
+                    Content="{DynamicResource Text.TelescopeParked}"
+                    IsEnabled="{Binding CanControlTelescope}"
+                    IsChecked="{Binding TelescopeParked}" />
+                <TextBlock Text="{DynamicResource Text.TelescopeSpeed}" />
+                <ComboBox
+                    IsEnabled="{Binding CanControlTelescope}"
+                    ItemsSource="{Binding TelescopeSpeeds}"
+                    SelectedItem="{Binding SelectedTelescopeSpeed}" />
+                <CheckBox
+                    Content="{DynamicResource Text.TelescopeInvertUpDown}"
+                    IsEnabled="{Binding CanControlTelescope}"
+                    IsChecked="{Binding InvertTelescopeUpDown}" />
+                <CheckBox
+                    Content="{DynamicResource Text.TelescopeInvertLeftRight}"
+                    IsEnabled="{Binding CanControlTelescope}"
+                    IsChecked="{Binding InvertTelescopeLeftRight}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

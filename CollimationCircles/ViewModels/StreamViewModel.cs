@@ -1,6 +1,7 @@
 using Avalonia.Threading;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
+using CollimationCircles.Services.Alpaca;
 using CollimationCircles.Services;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -12,6 +13,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.ViewModels
@@ -21,6 +23,10 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         private readonly ICameraControlService cameraControlService;
         private readonly ICameraService cameraService;
+        private readonly AlpacaTelescopeClient alpacaTelescopeClient = new();
+        private int telescopeMotionStartInProgress;
+        private bool suppressTelescopeStateDispatch;
+        private ObservableCollection<TelescopeMount>? trackedTelescopeMounts;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
@@ -73,12 +79,49 @@ namespace CollimationCircles.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(ConnectButtonText))]
         [NotifyPropertyChangedFor(nameof(CanEditServer))]
+        [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
         private bool isServerConnected;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanEditServer))]
         [NotifyCanExecuteChangedFor(nameof(ToggleServerConnectionCommand))]
+        [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
         private bool isServerBusy;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasTelescopeMounts))]
+        [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
+        private ObservableCollection<TelescopeMount> telescopeMounts = [];
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
+        private TelescopeMount? selectedTelescopeMount;
+
+        [ObservableProperty]
+        private bool telescopeTracking;
+
+        [ObservableProperty]
+        private bool telescopeParked;
+
+        [ObservableProperty]
+        private bool invertTelescopeUpDown;
+
+        [ObservableProperty]
+        private bool invertTelescopeLeftRight;
+
+        [ObservableProperty]
+        private ObservableCollection<double> telescopeSpeeds = [0.25d, 0.5d, 1.0d, 2.0d];
+
+        [ObservableProperty]
+        private double selectedTelescopeSpeed = 0.5d;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
+        private bool isTelescopeBusy;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
+        private bool isTelescopeMoving;
 
         [ObservableProperty]
         private bool isCaptureProgressVisible;
@@ -95,6 +138,15 @@ namespace CollimationCircles.ViewModels
         public string ConnectButtonText => IsServerConnected ? "Disconnect" : "Connect";
 
         public bool CanEditServer => !IsServerConnected && !IsServerBusy && !IsPlaying;
+
+        public bool HasTelescopeMounts => TelescopeMounts.Count > 0;
+
+        public bool CanControlTelescope =>
+            IsServerConnected
+            && !IsServerBusy
+            && !IsTelescopeBusy
+            && SelectedTelescopeMount is not null
+            && HasTelescopeMounts;
 
         public StreamViewModel()
         {
@@ -136,6 +188,7 @@ namespace CollimationCircles.ViewModels
             });
 
             CameraList.CollectionChanged += CameraList_CollectionChanged;
+            TelescopeMounts.CollectionChanged += TelescopeMounts_CollectionChanged;
         }
 
         partial void OnCameraListChanged(ObservableCollection<Camera>? oldValue, ObservableCollection<Camera> newValue)
@@ -153,9 +206,87 @@ namespace CollimationCircles.ViewModels
             OnPropertyChanged(nameof(HasCameras));
         }
 
+        partial void OnTelescopeMountsChanged(ObservableCollection<TelescopeMount> value)
+        {
+            if (trackedTelescopeMounts is not null)
+            {
+                trackedTelescopeMounts.CollectionChanged -= TelescopeMounts_CollectionChanged;
+            }
+
+            trackedTelescopeMounts = value;
+
+            if (trackedTelescopeMounts is not null)
+            {
+                trackedTelescopeMounts.CollectionChanged += TelescopeMounts_CollectionChanged;
+            }
+
+            OnPropertyChanged(nameof(HasTelescopeMounts));
+            OnPropertyChanged(nameof(CanControlTelescope));
+        }
+
         private void CameraList_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             OnPropertyChanged(nameof(HasCameras));
+        }
+
+        private void TelescopeMounts_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(HasTelescopeMounts));
+            OnPropertyChanged(nameof(CanControlTelescope));
+        }
+
+        partial void OnSelectedTelescopeMountChanged(TelescopeMount? value)
+        {
+            OnPropertyChanged(nameof(CanControlTelescope));
+            StartTelescopeMotionCommand.NotifyCanExecuteChanged();
+            StopTelescopeMotionCommand.NotifyCanExecuteChanged();
+
+            if (value is null)
+            {
+                suppressTelescopeStateDispatch = true;
+                TelescopeTracking = false;
+                TelescopeParked = false;
+                suppressTelescopeStateDispatch = false;
+                return;
+            }
+
+            _ = SelectTelescopeMountAsync(value);
+        }
+
+        partial void OnTelescopeParkedChanged(bool value)
+        {
+            StartTelescopeMotionCommand.NotifyCanExecuteChanged();
+
+            if (suppressTelescopeStateDispatch || SelectedTelescopeMount is null)
+            {
+                return;
+            }
+
+            _ = SetParkedStateAsync(value);
+        }
+
+        partial void OnTelescopeTrackingChanged(bool value)
+        {
+            if (suppressTelescopeStateDispatch || SelectedTelescopeMount is null)
+            {
+                return;
+            }
+
+            _ = SetTrackingStateAsync(value);
+        }
+
+        partial void OnIsTelescopeBusyChanged(bool value)
+        {
+            OnPropertyChanged(nameof(CanControlTelescope));
+            StartTelescopeMotionCommand.NotifyCanExecuteChanged();
+            StopTelescopeMotionCommand.NotifyCanExecuteChanged();
+        }
+
+        partial void OnIsServerConnectedChanged(bool value)
+        {
+            OnPropertyChanged(nameof(CanControlTelescope));
+            StartTelescopeMotionCommand.NotifyCanExecuteChanged();
+            StopTelescopeMotionCommand.NotifyCanExecuteChanged();
         }
 
         private void MediaPlayer_Opening()
@@ -298,6 +429,7 @@ namespace CollimationCircles.ViewModels
                     await cameraControlService.DisconnectServer();
                     CameraList = [];
                     SelectedCamera = new();
+                    await ResetTelescopeStateAsync();
                     IsServerConnected = false;
                     return;
                 }
@@ -310,12 +442,14 @@ namespace CollimationCircles.ViewModels
                 var cameras = await cameraControlService.ConnectServer(address, port);
                 CameraList = new ObservableCollection<Camera>(cameras);
                 SelectedCamera = CameraList.FirstOrDefault(c => c.Name == SettingsViewModel.LastSelectedCamera) ?? CameraList.FirstOrDefault() ?? new();
+                await RefreshTelescopeMountsAsync(address, port);
                 IsServerConnected = true;
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Alpaca server connect/disconnect failed");
                 IsServerConnected = false;
+                await ResetTelescopeStateAsync();
             }
             finally
             {
@@ -324,6 +458,198 @@ namespace CollimationCircles.ViewModels
         }
 
         private bool CanExecuteToggleServer() => !IsServerBusy && !IsPlaying;
+
+        private bool CanExecuteTelescopeMotion() => CanControlTelescope && !IsTelescopeMoving && !TelescopeParked;
+
+        private bool CanExecuteStopTelescopeMotion() => CanControlTelescope && IsTelescopeMoving;
+
+        [RelayCommand(CanExecute = nameof(CanExecuteTelescopeMotion))]
+        private async Task StartTelescopeMotion(TelescopeDirection direction)
+        {
+            if (Interlocked.CompareExchange(ref telescopeMotionStartInProgress, 1, 0) != 0)
+            {
+                return;
+            }
+
+            if (SelectedTelescopeMount is null)
+            {
+                Interlocked.Exchange(ref telescopeMotionStartInProgress, 0);
+                return;
+            }
+
+            var mappedDirection = MapDirection(direction);
+            IsTelescopeBusy = true;
+            try
+            {
+                await alpacaTelescopeClient.StartMotion(mappedDirection, SelectedTelescopeSpeed);
+                IsTelescopeMoving = true;
+            }
+            catch (Exception ex)
+            {
+                IsTelescopeMoving = false;
+                logger.Error(ex, $"Failed to start telescope motion for direction '{mappedDirection}'.");
+            }
+            finally
+            {
+                IsTelescopeBusy = false;
+                Interlocked.Exchange(ref telescopeMotionStartInProgress, 0);
+            }
+        }
+
+        [RelayCommand(CanExecute = nameof(CanExecuteStopTelescopeMotion))]
+        private async Task StopTelescopeMotion()
+        {
+            if (SelectedTelescopeMount is null)
+            {
+                return;
+            }
+
+            IsTelescopeBusy = true;
+            try
+            {
+                await alpacaTelescopeClient.StopMotion();
+                IsTelescopeMoving = false;
+            }
+            finally
+            {
+                IsTelescopeBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task StopTelescope()
+        {
+            await StopTelescopeMotion();
+        }
+
+        private async Task SelectTelescopeMountAsync(TelescopeMount mount)
+        {
+            IsTelescopeBusy = true;
+            try
+            {
+                alpacaTelescopeClient.SelectMount(mount);
+                var tracking = await alpacaTelescopeClient.GetTrackingAsync();
+                var parked = await alpacaTelescopeClient.GetParkedAsync();
+
+                suppressTelescopeStateDispatch = true;
+                TelescopeTracking = tracking;
+                TelescopeParked = parked;
+                suppressTelescopeStateDispatch = false;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to select telescope mount");
+            }
+            finally
+            {
+                IsTelescopeBusy = false;
+            }
+        }
+
+        private async Task SetTrackingStateAsync(bool enabled)
+        {
+            try
+            {
+                IsTelescopeBusy = true;
+                await alpacaTelescopeClient.SetTrackingAsync(enabled);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to change telescope tracking state");
+            }
+            finally
+            {
+                IsTelescopeBusy = false;
+            }
+        }
+
+        private async Task SetParkedStateAsync(bool parked)
+        {
+            try
+            {
+                IsTelescopeBusy = true;
+                if (parked)
+                {
+                    await alpacaTelescopeClient.ParkAsync();
+                    IsTelescopeMoving = false;
+                }
+                else
+                {
+                    await alpacaTelescopeClient.UnparkAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to change telescope parked state");
+            }
+            finally
+            {
+                IsTelescopeBusy = false;
+            }
+        }
+
+        private async Task RefreshTelescopeMountsAsync(string address, int port)
+        {
+            try
+            {
+                var mounts = await alpacaTelescopeClient.DiscoverMountsAsync(address, port);
+                TelescopeMounts = new ObservableCollection<TelescopeMount>(mounts);
+                SelectedTelescopeMount = TelescopeMounts.FirstOrDefault();
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to discover telescope mounts");
+                await ResetTelescopeStateAsync();
+            }
+        }
+
+        private Task ResetTelescopeStateAsync()
+        {
+            suppressTelescopeStateDispatch = true;
+            TelescopeMounts = [];
+            SelectedTelescopeMount = null;
+            TelescopeTracking = false;
+            TelescopeParked = false;
+            IsTelescopeMoving = false;
+            suppressTelescopeStateDispatch = false;
+            alpacaTelescopeClient.ClearSelectedMount();
+            return Task.CompletedTask;
+        }
+
+        private TelescopeDirection MapDirection(TelescopeDirection requestedDirection)
+        {
+            var mapped = requestedDirection;
+
+            if (InvertTelescopeUpDown)
+            {
+                mapped = mapped switch
+                {
+                    TelescopeDirection.Up => TelescopeDirection.Down,
+                    TelescopeDirection.UpLeft => TelescopeDirection.DownLeft,
+                    TelescopeDirection.UpRight => TelescopeDirection.DownRight,
+                    TelescopeDirection.Down => TelescopeDirection.Up,
+                    TelescopeDirection.DownLeft => TelescopeDirection.UpLeft,
+                    TelescopeDirection.DownRight => TelescopeDirection.UpRight,
+                    _ => mapped
+                };
+            }
+
+            if (InvertTelescopeLeftRight)
+            {
+                mapped = mapped switch
+                {
+                    TelescopeDirection.Left => TelescopeDirection.Right,
+                    TelescopeDirection.UpLeft => TelescopeDirection.UpRight,
+                    TelescopeDirection.DownLeft => TelescopeDirection.DownRight,
+                    TelescopeDirection.Right => TelescopeDirection.Left,
+                    TelescopeDirection.UpRight => TelescopeDirection.UpLeft,
+                    TelescopeDirection.DownRight => TelescopeDirection.DownLeft,
+                    _ => mapped
+                };
+            }
+
+            return mapped;
+        }
 
         public void OnClosed()
         {

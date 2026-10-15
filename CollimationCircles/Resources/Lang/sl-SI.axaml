@@ -173,4 +173,12 @@
   <system:String x:Key="Text.ExperimentalFeature">Eksperimentalna funkcija!</system:String>    
   <system:String x:Key="Text.CheckForUpdate">Preveri za nadgradnjo</system:String>
   <system:String x:Key="Text.AlpacaServerAddress">Naslov Alpaca strežnika in vrata</system:String>
+  <system:String x:Key="Text.TelescopeMount">Mount:</system:String>
+  <system:String x:Key="Text.TelescopeTracking">Tracking</system:String>
+  <system:String x:Key="Text.TelescopeParked">Parked</system:String>
+  <system:String x:Key="Text.TelescopeSpeed">Speed:</system:String>
+  <system:String x:Key="Text.TelescopeInvertUpDown">Invert ↑↓</system:String>
+  <system:String x:Key="Text.TelescopeInvertLeftRight">Invert ←→</system:String>
+  <system:String x:Key="Text.TelescopeStop">Stop</system:String>
+  <system:String x:Key="Text.AlpacaTelescopeControl">Alpaca Telescope Control</system:String>
 </ResourceDictionary>

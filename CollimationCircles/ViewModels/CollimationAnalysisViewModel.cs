@@ -167,7 +167,6 @@ namespace CollimationCircles.ViewModels
                         if (resultImage != null)
                         {
                             using var stream = new MemoryStream();
-                            resultImage.Alpha(AlphaOption.Set);
                             resultImage.Write(stream, MagickFormat.Png32);
                             stream.Position = 0;
                             var bitmap = new Bitmap(stream);
@@ -224,7 +223,6 @@ namespace CollimationCircles.ViewModels
             var classicCircles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
 
             MagickImage drawImage = new(MagickColors.None, (uint)image.Width, (uint)image.Height);
-            drawImage.Alpha(AlphaOption.Transparent);
 
             // Draw classic circles (Hough) in yellow
             var drawables = new Drawables().StrokeColor(MagickColors.Yellow).StrokeWidth(1).FillColor(MagickColors.Transparent);
@@ -262,7 +260,6 @@ namespace CollimationCircles.ViewModels
             var circles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
 
             MagickImage drawnImage = new(MagickColors.None, (uint)image.Width, (uint)image.Height);
-            drawnImage.Alpha(AlphaOption.Transparent);
             var analysis = ImageAnalysisService.AnalyzeResult(drawnImage, circles, options);
 
             string desc = $"--- MECHANICAL RMSE ---\n" +

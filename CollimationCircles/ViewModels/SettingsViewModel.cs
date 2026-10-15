@@ -151,6 +151,10 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        private bool telescopeControlExpanded = true;
+
+        [JsonProperty]
+        [ObservableProperty]
         private bool profileManagerExpanded = true;
 
         [JsonProperty]
@@ -558,6 +562,7 @@ namespace CollimationCircles.ViewModels
                     ShowKeyboardShortcuts = vm.ShowKeyboardShortcuts;
                     SettingsExpanded = vm.SettingsExpanded;
                     CameraVideoStreamExpanded = vm.CameraVideoStreamExpanded;
+                    TelescopeControlExpanded = vm.TelescopeControlExpanded;
                     ProfileManagerExpanded = vm.ProfileManagerExpanded;
                     PinVideoWindowToMainWindow = vm.PinVideoWindowToMainWindow;
                     ShowApplicationLog = vm.ShowApplicationLog;

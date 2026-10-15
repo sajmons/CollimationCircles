@@ -173,4 +173,12 @@
   <system:String x:Key="Text.ExperimentalFeature">Experimentelle Funktion!</system:String>    
   <system:String x:Key="Text.CheckForUpdate">Auf Updates prüfen</system:String>
   <system:String x:Key="Text.AlpacaServerAddress">Alpaca Server Adresse und Port</system:String>
+  <system:String x:Key="Text.TelescopeMount">Mount:</system:String>
+  <system:String x:Key="Text.TelescopeTracking">Tracking</system:String>
+  <system:String x:Key="Text.TelescopeParked">Parked</system:String>
+  <system:String x:Key="Text.TelescopeSpeed">Speed:</system:String>
+  <system:String x:Key="Text.TelescopeInvertUpDown">Invert ↑↓</system:String>
+  <system:String x:Key="Text.TelescopeInvertLeftRight">Invert ←→</system:String>
+  <system:String x:Key="Text.TelescopeStop">Stop</system:String>
+  <system:String x:Key="Text.AlpacaTelescopeControl">Alpaca Telescope Control</system:String>
 </ResourceDictionary>

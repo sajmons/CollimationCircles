@@ -75,7 +75,7 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </DockPanel>
-        </StackPanel>
+            </StackPanel>
 
             <Border
                 Background="#B0000000"
@@ -99,7 +99,7 @@
         </StackPanel>
         <CheckBox
             Content="{DynamicResource Text.PinCameraWindowToMainWindow}"
-            IsChecked="{Binding PinVideoWindowToMainWindow}" />
-</StackPanel>
+            IsChecked="{Binding PinVideoWindowToMainWindow}" />        
+    </StackPanel>
 
 </UserControl>

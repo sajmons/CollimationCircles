@@ -7,95 +7,104 @@
              x:Class="CollimationCircles.Controls.SettingsUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:SettingsViewModel">
-  <Grid
-      Background="{DynamicResource ThemeBackgroundBrush}"
-      RowDefinitions="*,Auto">
-    <TabControl>
-      <TabItem Margin="-5 0 -5 0">
-        <TabItem.Header>
-          <PathIcon
-            Margin="{DynamicResource TabIconMargin}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.Layers}"
-            ToolTip.Tip="{DynamicResource Text.Layers}" />
-        </TabItem.Header>
-        <controls:ItemListUserControl/>
-      </TabItem>      
-      <TabItem Margin="-5 0 -5 0">
-        <TabItem.Header>
-          <PathIcon
-              Margin="{DynamicResource TabIconMargin}"
-              Height="{DynamicResource PathIconHeight}"
-              Foreground="{DynamicResource Color2}"
-              Data="{StaticResource IconData.Camera}"
-              ToolTip.Tip="{DynamicResource Text.Video}" />
-        </TabItem.Header>
-        <ScrollViewer>
-          <StackPanel Spacing="{DynamicResource ControlSpacing}">
-            <Expander
-                VerticalAlignment="Top"
-                HorizontalAlignment="Stretch"
-                Header="{DynamicResource Text.WebCamStream}"
-                IsExpanded="{Binding CameraVideoStreamExpanded}">
-              <StackPanel Orientation="Vertical">
-                <controls:StreamUserControl/>                
-              </StackPanel>
-            </Expander>            
-          </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-      <TabItem Margin="-5 0 -5 0">
-        <TabItem.Header>
-          <PathIcon
-            Margin="{DynamicResource TabIconMargin}"
-            Height="{DynamicResource PathIconHeight}"
-            Foreground="{DynamicResource Color2}"
-            Data="{StaticResource IconData.Collimation}"
-            ToolTip.Tip="{DynamicResource Text.Collimation}" />
-        </TabItem.Header>
-        <Expander
-            VerticalAlignment="Top"
-            HorizontalAlignment="Stretch"
-            Header="{DynamicResource Text.LiveAnalysisResults}"
-            IsExpanded="{Binding LiveAnalysisResultsExpanded}">
-            <StackPanel Orientation="Vertical">
-            <controls:LiveAnalysisResultsUserControl/>
-            </StackPanel>
-        </Expander>
-      </TabItem>
-      <TabItem Margin="-5 0 -5 0">
-        <TabItem.Header>
-          <PathIcon
-              Margin="{DynamicResource TabIconMargin}"
-              Height="{DynamicResource PathIconHeight}"
-              Foreground="{DynamicResource Color2}"
-              Data="{StaticResource IconData.Settings}"
-              ToolTip.Tip="{DynamicResource Text.Settings}" />
-        </TabItem.Header>
-        <ScrollViewer>
-          <controls:SettingsTabUserControl />
-        </ScrollViewer>
-      </TabItem>
-      <TabItem Margin="-5 0 -5 0">
-        <TabItem.Header>
-          <PathIcon
-                Margin="{DynamicResource TabIconMargin}"
-                Height="{DynamicResource PathIconHeight}"
-                Foreground="{DynamicResource Color2}"
-                Data="{StaticResource IconData.Info}"
-                ToolTip.Tip="{DynamicResource Text.About}" />
-        </TabItem.Header>
-        <ScrollViewer>
-          <StackPanel>
-            <controls:AboutTabUserControl />            
-          </StackPanel>
-        </ScrollViewer>
-      </TabItem>
-    </TabControl>
-    <controls:LicenseUserControl
-      Grid.Row="1"
-      Margin="12"
-      IsVisible="{Binding InvalidLicense}"/>
-  </Grid>
+    <Grid
+        Background="{DynamicResource ThemeBackgroundBrush}"
+        RowDefinitions="*,Auto">
+        <TabControl>
+            <TabItem Margin="-5 0 -5 0">
+                <TabItem.Header>
+                    <PathIcon
+                        Margin="{DynamicResource TabIconMargin}"
+                        Height="{DynamicResource PathIconHeight}"
+                        Foreground="{DynamicResource Color2}"
+                        Data="{StaticResource IconData.Layers}"
+                        ToolTip.Tip="{DynamicResource Text.Layers}" />
+                </TabItem.Header>
+                <controls:ItemListUserControl/>
+            </TabItem>
+            <TabItem Margin="-5 0 -5 0">
+                <TabItem.Header>
+                    <PathIcon
+                        Margin="{DynamicResource TabIconMargin}"
+                        Height="{DynamicResource PathIconHeight}"
+                        Foreground="{DynamicResource Color2}"
+                        Data="{StaticResource IconData.Camera}"
+                        ToolTip.Tip="{DynamicResource Text.Video}" />
+                </TabItem.Header>
+                <ScrollViewer>
+                    <StackPanel Spacing="{DynamicResource ControlSpacing}">
+                        <Expander
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Stretch"
+                            Header="{DynamicResource Text.WebCamStream}"
+                            IsExpanded="{Binding CameraVideoStreamExpanded}">
+                            <StackPanel Orientation="Vertical">
+                                <controls:StreamUserControl/>
+                            </StackPanel>
+                        </Expander>
+                        <Expander
+                            VerticalAlignment="Top"
+                            HorizontalAlignment="Stretch"
+                            Header="{DynamicResource Text.AlpacaTelescopeControl}"
+                            IsExpanded="{Binding TelescopeControlExpanded}">
+                            <StackPanel Orientation="Vertical">
+                                <controls:AlpacaTelescopeUserControl />
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Margin="-5 0 -5 0">
+                <TabItem.Header>
+                    <PathIcon
+                        Margin="{DynamicResource TabIconMargin}"
+                        Height="{DynamicResource PathIconHeight}"
+                        Foreground="{DynamicResource Color2}"
+                        Data="{StaticResource IconData.Collimation}"
+                        ToolTip.Tip="{DynamicResource Text.Collimation}" />
+                </TabItem.Header>
+                <Expander
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="Stretch"
+                    Header="{DynamicResource Text.LiveAnalysisResults}"
+                    IsExpanded="{Binding LiveAnalysisResultsExpanded}">
+                    <StackPanel Orientation="Vertical">
+                        <controls:LiveAnalysisResultsUserControl/>
+                    </StackPanel>
+                </Expander>
+            </TabItem>
+            <TabItem Margin="-5 0 -5 0">
+                <TabItem.Header>
+                    <PathIcon
+                        Margin="{DynamicResource TabIconMargin}"
+                        Height="{DynamicResource PathIconHeight}"
+                        Foreground="{DynamicResource Color2}"
+                        Data="{StaticResource IconData.Settings}"
+                        ToolTip.Tip="{DynamicResource Text.Settings}" />
+                </TabItem.Header>
+                <ScrollViewer>
+                    <controls:SettingsTabUserControl />
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Margin="-5 0 -5 0">
+                <TabItem.Header>
+                    <PathIcon
+                        Margin="{DynamicResource TabIconMargin}"
+                        Height="{DynamicResource PathIconHeight}"
+                        Foreground="{DynamicResource Color2}"
+                        Data="{StaticResource IconData.Info}"
+                        ToolTip.Tip="{DynamicResource Text.About}" />
+                </TabItem.Header>
+                <ScrollViewer>
+                    <StackPanel>
+                        <controls:AboutTabUserControl />
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+        <controls:LicenseUserControl
+            Grid.Row="1"
+            Margin="12"
+            IsVisible="{Binding InvalidLicense}"/>
+    </Grid>
 </UserControl>
