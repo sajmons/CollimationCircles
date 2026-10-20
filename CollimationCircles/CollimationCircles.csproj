@@ -77,7 +77,7 @@
 
   <!-- macOS platform packages (osx-x64, osx-arm64) -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64' Or '$(RuntimeIdentifier)' == 'osx-arm64'">
-    <PackageReference Include="OpenCvSharp4.runtime.osx.x64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'osx-x64'" />
+    <PackageReference Include="OneWare.OpenCvSharp4.runtime.osx-x64" Version="4.13.0.20260628" Condition="'$(RuntimeIdentifier)' == 'osx-x64'" />
     <PackageReference Include="OpenCvSharp4.runtime.osx.arm64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'osx-arm64'" />
   </ItemGroup>  
 
