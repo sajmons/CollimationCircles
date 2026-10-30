@@ -1,5 +1,4 @@
-﻿using ImageMagick;
-using ImageMagick.Drawing;
+using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,38 +46,34 @@ namespace CollimationCircles.Services
             public bool DoCrop { get; internal set; } = false;
             public BlurOptions BlurOptions { get; set; } = new();
             public ThresholdOptions AdaptiveThresholdOptions { get; set; } = new();
-            public MorphologySettings ErodeSettings { get; set; } = new()
-            {
-                Method = MorphologyMethod.Erode,
-                Iterations = 1,
-                Kernel = Kernel.Disk
-            };
-            public MorphologySettings DilateSettings { get; set; } = new()
-            {
-                Method = MorphologyMethod.Dilate,
-                Iterations = 1,
-                Kernel = Kernel.Disk
-            };
+            public MorphologySettings ErodeSettings { get; set; } = new();
+            public MorphologySettings DilateSettings { get; set; } = new();
             public EdgeOptions EdgeSettings { get; set; } = new();
-            public IMagickGeometry? BoundingBox { get; internal set; }
+            public Rect? BoundingBox { get; internal set; }
+        }
+
+        public class MorphologySettings
+        {
+            public int Iterations { get; set; } = 1;
+            public int KernelSize { get; set; } = 3;
         }
 
         public class EdgeOptions
         {
-            public double Radius { get; set; } = 10;
+            public double LowThreshold { get; set; } = 50;
+            public double HighThreshold { get; set; } = 150;
         }
 
         public class BlurOptions
         {
             public int Radius { get; set; } = 1;
             public int Sigma { get; set; } = 1;
-            public Channels Channels { get; internal set; } = Channels.Gray;
         }
 
         public class ThresholdOptions
         {
-            public Percentage Percentage { get; internal set; } = new Percentage(20);
-            public Channels Chanels { get; internal set; } = Channels.Gray;
+            /// <summary>Threshold as a percentage (0-100) of the 8-bit range.</summary>
+            public double Percentage { get; internal set; } = 20;
         }
 
         public class AnalysisResult
@@ -87,62 +82,80 @@ namespace CollimationCircles.Services
             public double CenterRMSE { get; set; } = 0.0;
         }
 
-        public static void ProcessImage(MagickImage image, Options options)
+        private static byte[] Encode(Mat image)
         {
-            if (options.DoGrayscale)
+            Cv2.ImEncode(".png", image, out var bytes);
+            return bytes;
+        }
+
+        private static void Notify(string name, Mat image)
+        {
+            if (FilterComplited is not null)
             {
-                // Convert to grayscale directly
-                image.Grayscale(PixelIntensityMethod.Average);
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Grayscale), image.ToByteArray()));
+                FilterComplited.Invoke(null, new FilterComplitedEventArgs(name, Encode(image)));
+            }
+        }
+
+        public static void ProcessImage(Mat image, Options options)
+        {
+            if (options.DoGrayscale && image.Channels() > 1)
+            {
+                var code = image.Channels() == 4 ? ColorConversionCodes.BGRA2GRAY : ColorConversionCodes.BGR2GRAY;
+                Cv2.CvtColor(image, image, code);
+                Notify("Grayscale", image);
             }
 
             if (options.DoNormalize)
             {
-                // Apply preprocessing filters
-                image.Normalize();
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Normalize), image.ToByteArray()));
+                Cv2.Normalize(image, image, 0, 255, NormTypes.MinMax);
+                Notify("Normalize", image);
             }
 
-            if (options.DoNormalize)
+            if (options.DoGaussianBlur)
             {
-                image.GaussianBlur(
-                    options.BlurOptions.Radius,
-                    options.BlurOptions.Sigma,
-                    options.BlurOptions.Channels);
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.GaussianBlur), image.ToByteArray()));
+                int k = options.BlurOptions.Radius * 2 + 1;
+                Cv2.GaussianBlur(image, image, new Size(k, k), options.BlurOptions.Sigma);
+                Notify("GaussianBlur", image);
             }
 
             if (options.DoThreshold)
             {
-                image.Threshold(
-                    options.AdaptiveThresholdOptions.Percentage,
-                    options.AdaptiveThresholdOptions.Chanels);
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Threshold), image.ToByteArray()));
+                double thresh = 255.0 * options.AdaptiveThresholdOptions.Percentage / 100.0;
+                Cv2.Threshold(image, image, thresh, 255, ThresholdTypes.Binary);
+                Notify("Threshold", image);
             }
 
             if (options.DoErode)
             {
-                image.Morphology(options.ErodeSettings);
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Morphology) + "/Erode", image.ToByteArray()));
+                using var kernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new Size(options.ErodeSettings.KernelSize, options.ErodeSettings.KernelSize));
+                Cv2.Erode(image, image, kernel, iterations: options.ErodeSettings.Iterations);
+                Notify("Morphology/Erode", image);
             }
 
             if (options.DoDilate)
             {
-                image.Morphology(options.DilateSettings);
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Morphology) + "/Dilate", image.ToByteArray()));
+                using var kernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new Size(options.DilateSettings.KernelSize, options.DilateSettings.KernelSize));
+                Cv2.Dilate(image, image, kernel, iterations: options.DilateSettings.Iterations);
+                Notify("Morphology/Dilate", image);
             }
 
             if (options.DoEdge)
             {
-                image.Edge(options.EdgeSettings.Radius);
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Edge), image.ToByteArray()));
+                Cv2.Canny(image, image, options.EdgeSettings.LowThreshold, options.EdgeSettings.HighThreshold);
+                Notify("Edge", image);
             }
 
-            if (options.DoCrop && image.BoundingBox is not null)
+            if (options.DoCrop)
             {
-                options.BoundingBox = image.BoundingBox;
-                image.Crop(image.BoundingBox);
-                FilterComplited?.Invoke(null, new FilterComplitedEventArgs(nameof(image.Crop), image.ToByteArray()));
+                using Mat gray = image.Channels() > 1 ? image.CvtColor(ColorConversionCodes.BGR2GRAY) : image.Clone();
+                var box = Cv2.BoundingRect(gray);
+                if (box.Width > 0 && box.Height > 0)
+                {
+                    options.BoundingBox = box;
+                    using var cropped = new Mat(image, box).Clone();
+                    cropped.CopyTo(image);
+                    Notify("Crop", image);
+                }
             }
         }
 
@@ -151,10 +164,10 @@ namespace CollimationCircles.Services
         /// Uses a precomputed offset table (per candidate radius) to optimize inner-loop computations.
         /// Only circles with centers near the image center (within centerProximityThreshold)
         /// and whose accumulator value exceeds a given fraction (0 to 1) of the maximum possible votes are returned.
-        /// A non‑maximum suppression step merges nearby duplicate detections.
+        /// A non-maximum suppression step merges nearby duplicate detections.
         /// </summary>
         /// <param name="edgeImage">
-        /// A MagickImage representing an 8bpp grayscale edge image. Pixels with intensity above edgeThreshold are treated as edges.
+        /// An 8bpp grayscale edge image. Pixels with intensity above edgeThreshold are treated as edges.
         /// </param>
         /// <param name="minRadius">Minimum circle radius to search.</param>
         /// <param name="maxRadius">Maximum circle radius to search.</param>
@@ -162,13 +175,21 @@ namespace CollimationCircles.Services
         /// Detection parameters. See <see cref="DetectionParameters"/> for details.
         /// </param>        
         /// <returns>A list of filtered circles detected that meet the criteria.</returns>
-        public static List<Circle> DetectCircles(MagickImage edgeImage, int minRadius, int maxRadius, DetectionParameters detectionParameters)
+        public static List<Circle> DetectCircles(Mat edgeImage, int minRadius, int maxRadius, DetectionParameters detectionParameters)
         {
-            // Ensure the image is 8-bit grayscale.
-            if (edgeImage.ColorSpace != ColorSpace.Gray || edgeImage.Depth != 8)
+            using Mat gray = new();
+            if (edgeImage.Channels() > 1)
             {
-                edgeImage.ColorSpace = ColorSpace.Gray;
-                edgeImage.Depth = 8;
+                Cv2.CvtColor(edgeImage, gray, edgeImage.Channels() == 4 ? ColorConversionCodes.BGRA2GRAY : ColorConversionCodes.BGR2GRAY);
+            }
+            else
+            {
+                edgeImage.CopyTo(gray);
+            }
+
+            if (gray.Type() != MatType.CV_8UC1)
+            {
+                gray.ConvertTo(gray, MatType.CV_8UC1);
             }
 
             int radiusStep = detectionParameters.RadiusStep;
@@ -177,8 +198,8 @@ namespace CollimationCircles.Services
             int edgeThreshold = detectionParameters.EdgeThreshold;
             int centerProximityThreshold = detectionParameters.CenterProximityThreshold;
 
-            int width = (int)edgeImage.Width;
-            int height = (int)edgeImage.Height;
+            int width = gray.Width;
+            int height = gray.Height;
             int radiusCount = ((maxRadius - minRadius) / radiusStep) + 1;
             int[] candidateRadii = new int[radiusCount];
             for (int i = 0; i < radiusCount; i++)
@@ -202,10 +223,13 @@ namespace CollimationCircles.Services
                 }
             }
 
-            // Get pixel data from the edge image using the intensity channel ("I").
-            byte[]? pixelBytes = edgeImage.GetPixels().ToByteArray("I");
-
-            if (pixelBytes?.Length == 0) return [];
+            // Copy pixel data (continuous, row-major, 1 byte per pixel).
+            byte[] pixelBytes = new byte[width * height];
+            if (pixelBytes.Length == 0) return [];
+            for (int y = 0; y < height; y++)
+            {
+                System.Runtime.InteropServices.Marshal.Copy(gray.Ptr(y), pixelBytes, y * width, width);
+            }
 
             // Allocate a 1D accumulator array for (x, y, radius) combinations.
             int[] accumulator = new int[width * height * radiusCount];
@@ -218,7 +242,7 @@ namespace CollimationCircles.Services
                 for (int x = 0; x < width; x++)
                 {
                     int pixelIndex = y * stride + x;
-                    if (pixelBytes?[pixelIndex] > edgeThreshold)
+                    if (pixelBytes[pixelIndex] > edgeThreshold)
                     {
                         for (int ri = 0; ri < radiusCount; ri++)
                         {
@@ -299,36 +323,19 @@ namespace CollimationCircles.Services
             return filteredCircles;
         }
 
-        public static void DrawCircle(MagickImage image, int circleX, int circleY, int circleR, MagickColor color, int strokeWidth = 1)
+        public static void DrawCircle(Mat image, int circleX, int circleY, int circleR, Scalar color, int strokeWidth = 1)
         {
-            var drawables = new Drawables(); // Use 'using' for proper disposal
-            {
-                double x = circleX;
-                double y = circleY;
-                double radius = circleR;
-
-                drawables.StrokeColor(color)
-                         .StrokeWidth(strokeWidth)
-                         .FillColor(MagickColors.Transparent)
-                         .Arc(x - radius, y - radius, x + radius, y + radius, 0, 360); // Full arc = circle
-
-                image.Draw(drawables); // Apply the drawables to the image
-            }
+            Cv2.Circle(image, new Point(circleX, circleY), circleR, color, strokeWidth, LineTypes.AntiAlias);
         }
 
-        public static AnalysisResult AnalyzeResult(MagickImage original, List<Circle> circles, Options options)
+        public static AnalysisResult AnalyzeResult(Mat original, List<Circle> circles, Options options)
         {
             Random rng = new();
 
-            if (options.DoCrop && options.BoundingBox is not null)
-            {
-                original.Crop(options.BoundingBox);
-            }
-
-            // Draw detected circles on the image
+            // Draw detected circles on the image (BGRA, opaque)
             foreach (Circle circle in circles)
             {
-                MagickColor color = new((byte)rng.Next(255), (byte)rng.Next(255), (byte)rng.Next(255));
+                Scalar color = new(rng.Next(255), rng.Next(255), rng.Next(255), 255);
                 DrawCircle(original, circle.X, circle.Y, circle.Radius, color);
                 DrawCircle(original, circle.X, circle.Y, 2, color);
             }
@@ -340,9 +347,9 @@ namespace CollimationCircles.Services
             };
         }
 
-        internal static MagickImage LoadImage(string fileName)
+        internal static Mat LoadImage(string fileName)
         {
-            return new MagickImage(fileName);
+            return Cv2.ImRead(fileName, ImreadModes.Color);
         }
 
         /// <summary>

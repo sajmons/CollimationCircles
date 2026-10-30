@@ -6,8 +6,6 @@ using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
-using ImageMagick;
-using ImageMagick.Drawing;
 using OpenCvSharp;
 using System;
 using System.Collections.Generic;
@@ -119,11 +117,11 @@ namespace CollimationCircles.ViewModels
                     byte[]? data = await cameraService.TakeSnapshotImageAsync();
                     if (data != null)
                     {
-                        using var image = new MagickImage(data);
+                        using var image = Cv2.ImDecode(data, ImreadModes.Color);
 
                         string description = string.Empty;
-                        MagickImage? advancedImage = null;
-                        MagickImage? rmseImage = null;
+                        Mat? advancedImage = null;
+                        Mat? rmseImage = null;
 
                         if (IsLiveAnalysisActive)
                         {
@@ -167,11 +165,9 @@ namespace CollimationCircles.ViewModels
 
                         if (resultImage != null)
                         {
-                            using var stream = new MemoryStream();
-                            resultImage.Write(stream, MagickFormat.Png32);
-                            stream.Position = 0;
+                            Cv2.ImEncode(".png", resultImage, out var png);
+                            using var stream = new MemoryStream(png);
                             var bitmap = new Bitmap(stream);
-
                             Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                             {
                                 LiveResultText = description;
@@ -206,11 +202,10 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        private static (string Description, Dictionary<string, double>? Wavefront, CircularFeature? Circle, MagickImage Image) RunAdvancedAnalysis(MagickImage image)
+        private static (string Description, Dictionary<string, double>? Wavefront, CircularFeature? Circle, Mat Image) RunAdvancedAnalysis(Mat image)
         {
-            using Mat frame = ConvertMagickToMat(image);
             using Mat gray = new();
-            Cv2.CvtColor(frame, gray, ColorConversionCodes.BGR2GRAY);
+            Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
 
             var edges = FindEdgePoints(gray);
             var refinedEdges = OpticalAxisService.RefineEdgesSubpixel(gray, edges);
@@ -219,24 +214,22 @@ namespace CollimationCircles.ViewModels
 
             // Classic circles for visualization
             Options classicOptions = new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
-            using var copy = new MagickImage(image);
+            using var copy = image.Clone();
             ImageAnalysisService.ProcessImage(copy, classicOptions);
-            var classicCircles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
+            var classicCircles = ImageAnalysisService.DetectCircles(copy, 50, image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
 
-            MagickImage drawImage = new(MagickColors.None, (uint)image.Width, (uint)image.Height);
+            Mat drawImage = new(image.Height, image.Width, MatType.CV_8UC4, Scalar.All(0));
 
             // Draw classic circles (Hough) in yellow
-            var drawables = new Drawables().StrokeColor(MagickColors.Yellow).StrokeWidth(1).FillColor(MagickColors.Transparent);
             foreach (var c in classicCircles)
             {
-                drawables.Circle(c.X, c.Y, c.X + c.Radius, c.Y);
+                Cv2.Circle(drawImage, new Point(c.X, c.Y), c.Radius, new Scalar(0, 255, 255, 255), 1, LineTypes.AntiAlias);
             }
 
             // Draw Robust Sub-pixel Circle in Cyan
             if (circle != null)
             {
-                drawables.StrokeColor(MagickColors.Cyan).StrokeWidth(2);
-                drawables.Circle(circle.Center.X, circle.Center.Y, circle.Center.X + circle.Radius, circle.Center.Y);
+                Cv2.Circle(drawImage, new Point((int)Math.Round(circle.Center.X), (int)Math.Round(circle.Center.Y)), (int)Math.Round(circle.Radius), new Scalar(255, 255, 0, 255), 2, LineTypes.AntiAlias);
             }
 
             // Draw Coma Vector in Lime
@@ -247,20 +240,18 @@ namespace CollimationCircles.ViewModels
                     (int)(wavefront["GeometricY"] + wavefront["ComaMagnitude"] * circle.Radius * 5.0 * Math.Sin(wavefront["ComaAngle"] * Math.PI / 180.0)));
             }
 
-            drawImage.Draw(drawables);
-
             string desc = DescribeAdvancedResult(wavefront, circle);
             return (desc, wavefront, circle, drawImage);
         }
 
-        private static (string Description, MagickImage Image) RunRmseAnalysis(MagickImage image)
+        private static (string Description, Mat Image) RunRmseAnalysis(Mat image)
         {
             Options options = new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
-            using var copy = new MagickImage(image);
+            using var copy = image.Clone();
             ImageAnalysisService.ProcessImage(copy, options);
-            var circles = ImageAnalysisService.DetectCircles(copy, 50, (int)image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
+            var circles = ImageAnalysisService.DetectCircles(copy, 50, image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
 
-            MagickImage drawnImage = new(MagickColors.None, (uint)image.Width, (uint)image.Height);
+            Mat drawnImage = new(image.Height, image.Width, MatType.CV_8UC4, Scalar.All(0));
             var analysis = ImageAnalysisService.AnalyzeResult(drawnImage, circles, options);
 
             string desc = $"--- MECHANICAL RMSE ---\n" +
@@ -271,14 +262,11 @@ namespace CollimationCircles.ViewModels
             return (desc, drawnImage);
         }
 
-        private static void DrawVector(MagickImage img, int x1, int y1, int x2, int y2)
+        private static void DrawVector(Mat img, int x1, int y1, int x2, int y2)
         {
-            var drawables = new Drawables()
-                .StrokeColor(MagickColors.Lime)
-                .StrokeWidth(3)
-                .Line(x1, y1, x2, y2)
-                .FillColor(MagickColors.Lime)
-                .Circle(x1, y1, x1 + 4, y1); // Dot at geometric center
+            var lime = new Scalar(0, 255, 0, 255);
+            Cv2.Line(img, new Point(x1, y1), new Point(x2, y2), lime, 3, LineTypes.AntiAlias);
+            Cv2.Circle(img, new Point(x1, y1), 4, lime, -1, LineTypes.AntiAlias); // Dot at geometric center
 
             // Draw arrowhead
             double angle = Math.Atan2(y2 - y1, x2 - x1);
@@ -288,19 +276,8 @@ namespace CollimationCircles.ViewModels
             int ax2 = (int)(x2 - arrowSize * Math.Cos(angle + Math.PI / 6));
             int ay2 = (int)(y2 - arrowSize * Math.Sin(angle + Math.PI / 6));
 
-            drawables.Line(x2, y2, ax1, ay1);
-            drawables.Line(x2, y2, ax2, ay2);
-
-            img.Draw(drawables);
-        }
-
-        private static Mat ConvertMagickToMat(MagickImage image)
-        {
-            // Convert MagickImage to OpenCV Mat via Byte Array
-            byte[] pixels = image.ToByteArray(MagickFormat.Bgr);
-            Mat mat = new((int)image.Height, (int)image.Width, MatType.CV_8UC3);
-            System.Runtime.InteropServices.Marshal.Copy(pixels, 0, mat.Data, pixels.Length);
-            return mat;
+            Cv2.Line(img, new Point(x2, y2), new Point(ax1, ay1), lime, 3, LineTypes.AntiAlias);
+            Cv2.Line(img, new Point(x2, y2), new Point(ax2, ay2), lime, 3, LineTypes.AntiAlias);
         }
 
         private static List<Point2d> FindEdgePoints(Mat gray)
