@@ -92,7 +92,7 @@
   <system:String x:Key="Text.GitHubIssue">Prijavi težavo</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Prijavi težavo na GitHub</system:String>
   <system:String x:Key="Text.SelectedOpacity">Prosojnost</system:String>
-  <system:String x:Key="Text.WebCamStream">Video tok kamere</system:String>
+  <system:String x:Key="Text.WebCamStream">Nadzor kamere</system:String>
   <system:String x:Key="Text.Start">Začni</system:String>
   <system:String x:Key="Text.Stop">Ustavi</system:String>
   <system:String x:Key="Text.PinCameraWindowToMainWindow">Pripni na glavno okno</system:String>
@@ -180,5 +180,5 @@
   <system:String x:Key="Text.TelescopeInvertUpDown">Invert ↑↓</system:String>
   <system:String x:Key="Text.TelescopeInvertLeftRight">Invert ←→</system:String>
   <system:String x:Key="Text.TelescopeStop">Stop</system:String>
-  <system:String x:Key="Text.AlpacaTelescopeControl">Alpaca Telescope Control</system:String>
+  <system:String x:Key="Text.AlpacaTelescopeControl">Nadzor teleskopa</system:String>
 </ResourceDictionary>

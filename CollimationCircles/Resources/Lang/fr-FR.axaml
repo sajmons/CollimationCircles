@@ -92,7 +92,7 @@
   <system:String x:Key="Text.GitHubIssue">Problème</system:String>
   <system:String x:Key="Text.OpenGitHubIssue">Ouvrir un nouveau problème sur GitHub</system:String>
   <system:String x:Key="Text.SelectedOpacity">Opacité</system:String>
-  <system:String x:Key="Text.WebCamStream">Flux vidéo de la caméra</system:String>
+  <system:String x:Key="Text.WebCamStream">Contrôle de la caméra</system:String>
   <system:String x:Key="Text.Start">Commencer</system:String>
   <system:String x:Key="Text.Stop">Arrêt</system:String>
   <system:String x:Key="Text.PinCameraWindowToMainWindow">Épingler à la fenêtre principale</system:String>
@@ -180,5 +180,5 @@
   <system:String x:Key="Text.TelescopeInvertUpDown">Invert ↑↓</system:String>
   <system:String x:Key="Text.TelescopeInvertLeftRight">Invert ←→</system:String>
   <system:String x:Key="Text.TelescopeStop">Stop</system:String>
-  <system:String x:Key="Text.AlpacaTelescopeControl">Alpaca Telescope Control</system:String>
+  <system:String x:Key="Text.AlpacaTelescopeControl">Contrôle du télescope</system:String>
 </ResourceDictionary>
