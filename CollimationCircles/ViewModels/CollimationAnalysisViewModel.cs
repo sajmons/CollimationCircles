@@ -2,7 +2,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CollimationCircles.Messages;
 using CollimationCircles.Services;
-using CollimationCirclesFeatures;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -27,6 +26,7 @@ namespace CollimationCircles.ViewModels
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly SettingsViewModel settingsViewModel;
+        private readonly ICameraService cameraService;
         private readonly OpticalAxisService opticalAxisService = new();
 
         [ObservableProperty]
@@ -55,6 +55,7 @@ namespace CollimationCircles.ViewModels
         public CollimationAnalysisViewModel()
         {
             this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            this.cameraService = Ioc.Default.GetRequiredService<ICameraService>();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -115,7 +116,7 @@ namespace CollimationCircles.ViewModels
                 try
                 {
                     // FIXME: This is a placeholder for the actual camera snapshot logic. Replace it with the appropriate method to capture an image from the camera.
-                    byte[]? data = null;//await cameraService.TakeSnapshotImageAsync();
+                    byte[]? data = await cameraService.TakeSnapshotImageAsync();
                     if (data != null)
                     {
                         using var image = new MagickImage(data);
@@ -304,12 +305,14 @@ namespace CollimationCircles.ViewModels
 
         private static List<Point2d> FindEdgePoints(Mat gray)
         {
-            Mat edges = new();
+            using Mat edges = new();
             Cv2.Canny(gray, edges, 50, 150);
             List<Point2d> points = [];
-            for (int y = 0; y < edges.Height; y++)
+            int height = edges.Height;
+            int width = edges.Width;
+            for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < edges.Width; x++)
+                for (int x = 0; x < width; x++)
                 {
                     if (edges.At<byte>(y, x) > 0) points.Add(new Point2d(x, y));
                 }

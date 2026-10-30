@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
+using OpenCvSharp;
 using System;
 using System.Threading.Tasks;
 
@@ -16,6 +17,9 @@ namespace CollimationCircles.Services
         private const string DefaultAlpacaHost = "127.0.0.1";
         private const int DefaultAlpacaPort = 11111;
 
+        private readonly object frameSync = new();
+        private Mat? latestFrame;
+
         public bool IsAvailable { get; private set; }
         public string FullAddress { get; set; } = string.Empty;
         public bool IsPlaying { get; private set; }
@@ -25,8 +29,18 @@ namespace CollimationCircles.Services
             // Keep IsPlaying in sync when a camera stops on its own (e.g. capture loop error).
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
-                ((CameraService)r).IsPlaying = m.Value == CameraState.Playing;                
-            });            
+                ((CameraService)r).IsPlaying = m.Value == CameraState.Playing;
+            });
+
+            WeakReferenceMessenger.Default.Register<MatMessage>(this, (r, m) =>
+            {
+                var service = (CameraService)r;
+                lock (service.frameSync)
+                {
+                    service.latestFrame?.Dispose();
+                    service.latestFrame = m.Value.Clone();
+                }
+            });
         }
 
         private static void SendCameraStateOnUIThread(CameraState state)
@@ -69,6 +83,26 @@ namespace CollimationCircles.Services
             await Ioc.Default.GetRequiredService<ICameraControlService>().StopCamera(camera);
             IsPlaying = false;
             SendCameraStateOnUIThread(CameraState.Stopped);
+        }
+
+        public Task<byte[]?> TakeSnapshotImageAsync()
+        {
+            lock (frameSync)
+            {
+                if (latestFrame is null || latestFrame.Empty())
+                {
+                    return Task.FromResult<byte[]?>(null);
+                }
+
+                using var snapshot = latestFrame.Clone();
+                if (snapshot.Empty())
+                {
+                    return Task.FromResult<byte[]?>(null);
+                }
+
+                Cv2.ImEncode(".png", snapshot, out var bytes);
+                return Task.FromResult<byte[]?>(bytes);
+            }
         }
 
         public string DefaultAddress(Camera camera)
