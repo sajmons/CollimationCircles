@@ -45,6 +45,9 @@
 
 		<Image
 		Grid.RowSpan="3"
+		Stretch="Uniform"
+		HorizontalAlignment="Stretch"
+		VerticalAlignment="Stretch"
 		Source="{Binding AnalysisPreview}"
 		IsVisible="{Binding AnalysisPreview, Converter={x:Static ObjectConverters.IsNotNull}}"/>
 

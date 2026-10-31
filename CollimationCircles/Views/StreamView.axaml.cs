@@ -7,7 +7,6 @@ using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
-using System.Runtime.InteropServices;
 using Mat = OpenCvSharp.Mat;
 
 namespace CollimationCircles.Views
@@ -18,12 +17,13 @@ namespace CollimationCircles.Views
                 
         private readonly Grid? frameGrid;
         private readonly Image? frameImage;
+        private readonly Control? analysisOverlay;
         private readonly SettingsViewModel svm;
 
         private WriteableBitmap? bitmap;
-        private byte[]? bgraBuffer;
         private Mat? pendingFrame;
         private bool renderQueued;
+        private readonly object frameSync = new();
 
         public StreamView()
         {
@@ -33,6 +33,8 @@ namespace CollimationCircles.Views
                         
             frameGrid = this.Get<Grid>("FrameGrid");
             frameImage = this.Get<Image>("FrameImage");
+            analysisOverlay = this.Get<Control>("AnalysisOverlay");
+            frameGrid.SizeChanged += OnFrameGridSizeChanged;
 
             WeakReferenceMessenger.Default.Register<SettingsChangedMessage>(this, (r, m) =>
             {
@@ -41,7 +43,7 @@ namespace CollimationCircles.Views
 
             WeakReferenceMessenger.Default.Register<MatMessage>(this, (r, m) =>
             {
-                QueueFrameForRender(m.Value);
+                QueueFrameForRender(m.Value.Clone());
             });
 
             Opened += WebCamStreamWindow_Opened;
@@ -54,7 +56,6 @@ namespace CollimationCircles.Views
 
             bitmap?.Dispose();
             bitmap = null;
-            bgraBuffer = null;
             if (frameImage is not null)
             {
                 frameImage.Source = null;
@@ -75,26 +76,54 @@ namespace CollimationCircles.Views
 
         private void OnFrameGridSizeChanged(object? sender, SizeChangedEventArgs e)
         {
+            UpdateOverlaySize();
         }
 
-        private void QueueFrameForRender(Mat frame)
+        private void UpdateOverlaySize()
         {
-            pendingFrame?.Dispose();
-            pendingFrame = frame;
-            if (renderQueued)
+            if (analysisOverlay is null || frameGrid is null || bitmap is null)
             {
                 return;
             }
 
-            renderQueued = true;
+            var bounds = frameGrid.Bounds;
+            if (bounds.Width <= 0 || bounds.Height <= 0)
+            {
+                return;
+            }
+
+            var scale = Math.Min(bounds.Width / bitmap.PixelSize.Width, bounds.Height / bitmap.PixelSize.Height);
+            analysisOverlay.Width = bitmap.PixelSize.Width * scale;
+            analysisOverlay.Height = bitmap.PixelSize.Height * scale;
+        }
+
+        private void QueueFrameForRender(Mat frame)
+        {
+            lock (frameSync)
+            {
+                pendingFrame?.Dispose();
+                pendingFrame = frame;
+                if (renderQueued)
+                {
+                    return;
+                }
+
+                renderQueued = true;
+            }
+
             Dispatcher.UIThread.Post(RenderPendingFrame, DispatcherPriority.Render);
         }
 
         private void RenderPendingFrame()
         {
-            renderQueued = false;
-            var frame = pendingFrame;
-            pendingFrame = null;
+            Mat? frame;
+            lock (frameSync)
+            {
+                renderQueued = false;
+                frame = pendingFrame;
+                pendingFrame = null;
+            }
+
             if (frame is null)
             {
                 return;
@@ -113,87 +142,43 @@ namespace CollimationCircles.Views
                     new Vector(96, 96),
                     Avalonia.Platform.PixelFormat.Bgra8888,
                     Avalonia.Platform.AlphaFormat.Opaque);
-                bgraBuffer = new byte[frame.Width * frame.Height * 4];
 
                 if (frameImage is not null)
                 {
                     frameImage.Source = bitmap;
                 }
+
+                UpdateOverlaySize();
             }
 
-            var bgra = bgraBuffer ??= new byte[frame.Width * frame.Height * 4];
-            try
+            using (frame)
             {
-                if (frame.Channels() == 1)
+                var code = frame.Channels() switch
                 {
-                    var grayPixels = new byte[frame.Width * frame.Height];
-                    CopyMatToBuffer(frame, grayPixels, frame.Width, frame.Height, 1);
-                    ExpandGrayToBgra(grayPixels, bgra);
-                }
-                else if (frame.Channels() == 3)
-                {
-                    using var bgraFrame = new Mat();
-                    OpenCvSharp.Cv2.CvtColor(frame, bgraFrame, OpenCvSharp.ColorConversionCodes.BGR2BGRA);
-                    CopyMatToBuffer(bgraFrame, bgra, frame.Width, frame.Height, 4);
-                }
-                else if (frame.Channels() == 4)
-                {
-                    CopyMatToBuffer(frame, bgra, frame.Width, frame.Height, 4);
-                }
-                else
+                    1 => OpenCvSharp.ColorConversionCodes.GRAY2BGRA,
+                    3 => OpenCvSharp.ColorConversionCodes.BGR2BGRA,
+                    _ => (OpenCvSharp.ColorConversionCodes?)null
+                };
+
+                if (code is null && frame.Channels() != 4)
                 {
                     logger.Warn($"Unsupported frame channel count: {frame.Channels()}");
                     return;
                 }
 
                 using var fb = bitmap.Lock();
-                var copyBytesPerRow = frame.Width * 4;
-                if (fb.RowBytes == copyBytesPerRow)
+                using var target = Mat.FromPixelData(frame.Height, frame.Width, OpenCvSharp.MatType.CV_8UC4, fb.Address, fb.RowBytes);
+
+                if (code is { } c)
                 {
-                    Marshal.Copy(bgra, 0, fb.Address, bgra.Length);
+                    OpenCvSharp.Cv2.CvtColor(frame, target, c);
                 }
                 else
                 {
-                    for (int y = 0; y < frame.Height; y++)
-                    {
-                        Marshal.Copy(bgra, y * copyBytesPerRow, fb.Address + y * fb.RowBytes, copyBytesPerRow);
-                    }
+                    frame.CopyTo(target);
                 }
 
                 frameImage?.InvalidateVisual();
-            }
-            finally
-            {
-                frame.Dispose();
-            }
-        }
-
-        private static void CopyMatToBuffer(Mat source, byte[] destination, int width, int height, int bytesPerPixel)
-        {
-            int bytesPerRow = width * bytesPerPixel;
-            if (source.Step() == bytesPerRow)
-            {
-                Marshal.Copy(source.Data, destination, 0, Math.Min(destination.Length, bytesPerRow * height));
-                return;
-            }
-
-            for (int y = 0; y < height; y++)
-            {
-                Marshal.Copy(source.Data + (int)(y * source.Step()), destination, y * bytesPerRow, bytesPerRow);
-            }
-        }
-
-        private static void ExpandGrayToBgra(byte[] gray, byte[] bgra)
-        {
-            int src = 0;
-            int dst = 0;
-            while (src < gray.Length)
-            {
-                var value = gray[src++];
-                bgra[dst++] = value;
-                bgra[dst++] = value;
-                bgra[dst++] = value;
-                bgra[dst++] = 255;
             }
         }
 

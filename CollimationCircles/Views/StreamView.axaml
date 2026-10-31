@@ -26,6 +26,10 @@
 				   HorizontalAlignment="Stretch"
 				   VerticalAlignment="Stretch"
 				   Stretch="Uniform" />
+			<controls:CollimationAnalysisUserControl x:Name="AnalysisOverlay"
+				HorizontalAlignment="Center"
+				VerticalAlignment="Center"
+				IsHitTestVisible="False" />
 		</Grid>
 	</Grid>
 </Window>

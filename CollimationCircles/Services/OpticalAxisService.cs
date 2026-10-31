@@ -199,35 +199,71 @@ namespace CollimationCircles.Services
         }
 
         /// <summary>
-        /// Analyzes a defocused star to calculate Coma and Astigmatism using Zernike moments.
+        /// Analyzes a defocused star. The outer disc is the largest bright blob; the secondary mirror shadow is the dark hole inside it.
+        /// Collimation error is the offset of the shadow from the disc center, relative to the disc radius.
         /// </summary>
         public static Dictionary<string, double>? AnalyzeStarWavefront(Mat starImg)
         {
-            // 1. Find Centroid (L10, L01)
-            var m = Cv2.Moments(starImg, true);
-            double cX = m.M10 / m.M00;
-            double cY = m.M01 / m.M00;
+            using Mat gray = starImg.Channels() == 1 ? starImg.Clone() : starImg.CvtColor(ColorConversionCodes.BGR2GRAY);
+            using Mat binary = new();
+            Cv2.Threshold(gray, binary, 0, 255, ThresholdTypes.Binary | ThresholdTypes.Otsu);
 
-            // 2. Identify Geometric Center (using Ocular shadow if possible)
-            // For now, assume highest intensity region vs geometric center of the Airy disc
-            var disc = FitCircleRobust(FindEdgePoints(starImg));
-            if (disc == null) return null;
+            Cv2.FindContours(binary, out Point[][] contours, out _, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+            if (contours.Length == 0) return null;
 
-            double dx = cX - disc.Center.X;
-            double dy = cY - disc.Center.Y;
+            var outer = contours.OrderByDescending(c => Cv2.ContourArea(c)).First();
+            double area = Cv2.ContourArea(outer);
+            if (area < 100) return null;
 
-            // Coma is proportional to the offset between Intensity Centroid and Geometric Center
-            double comaMagnitude = Math.Sqrt(dx * dx + dy * dy) / disc.Radius;
-            double comaAngle = Math.Atan2(dy, dx) * 180.0 / Math.PI;
+            using Mat mask = Mat.Zeros(gray.Size(), MatType.CV_8UC1);
+            Cv2.DrawContours(mask, [outer], -1, Scalar.White, -1);
+
+            var outerMoments = Cv2.Moments(mask, true);
+            if (outerMoments.M00 <= 0) return null;
+            double oX = outerMoments.M10 / outerMoments.M00;
+            double oY = outerMoments.M01 / outerMoments.M00;
+            double radius = Math.Sqrt(area / Math.PI);
+
+            // Ignore the blurred rim so that only the inner shadow is detected
+            using Mat inner = new();
+            int k = Math.Max(1, (int)(radius * 0.15));
+            using var kernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new Size(2 * k + 1, 2 * k + 1));
+            Cv2.Erode(mask, inner, kernel);
+
+            Cv2.MinMaxLoc(gray, out double min, out _, out _, out _, inner);
+            double mean = Cv2.Mean(gray, inner).Val0;
+            double holeThreshold = min + 0.5 * (mean - min);
+
+            using Mat hole = new();
+            Cv2.Threshold(gray, hole, holeThreshold, 255, ThresholdTypes.BinaryInv);
+            Cv2.BitwiseAnd(hole, inner, hole);
+
+            Cv2.FindContours(hole, out Point[][] holeContours, out _, RetrievalModes.External, ContourApproximationModes.ApproxSimple);
+            if (holeContours.Length == 0) return null;
+
+            var shadow = holeContours.OrderByDescending(c => Cv2.ContourArea(c)).First();
+            if (Cv2.ContourArea(shadow) < 4) return null;
+
+            using Mat shadowMask = Mat.Zeros(gray.Size(), MatType.CV_8UC1);
+            Cv2.DrawContours(shadowMask, [shadow], -1, Scalar.White, -1);
+            var sm = Cv2.Moments(shadowMask, true);
+            if (sm.M00 <= 0) return null;
+            double sX = sm.M10 / sm.M00;
+            double sY = sm.M01 / sm.M00;
+
+            double dx = sX - oX;
+            double dy = sY - oY;
 
             return new Dictionary<string, double>
             {
-                { "ComaMagnitude", comaMagnitude },
-                { "ComaAngle", comaAngle },
-                { "CentroidX", cX },
-                { "CentroidY", cY },
-                { "GeometricX", disc.Center.X },
-                { "GeometricY", disc.Center.Y }
+                { "ComaMagnitude", Math.Sqrt(dx * dx + dy * dy) / radius },
+                { "ComaAngle", Math.Atan2(dy, dx) * 180.0 / Math.PI },
+                { "CentroidX", sX },
+                { "CentroidY", sY },
+                { "GeometricX", oX },
+                { "GeometricY", oY },
+                { "Radius", radius },
+                { "ShadowRadius", Math.Sqrt(Cv2.ContourArea(shadow) / Math.PI) }
             };
         }
 

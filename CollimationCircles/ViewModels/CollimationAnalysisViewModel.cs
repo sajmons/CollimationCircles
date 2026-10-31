@@ -1,8 +1,8 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using CollimationCircles.Messages;
 using CollimationCircles.Services;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
@@ -23,9 +23,14 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
+        private const int MaxAnalysisWidth = 640;
+        private const int AnalysisIntervalMs = 200;
+        private const double MinArrowLength = 40;
+        private const int MaxDetectedCircles = 8;
+        private const double MinCircleRadiusFraction = 50.0 / MaxAnalysisWidth;
+
         private readonly SettingsViewModel settingsViewModel;
         private readonly ICameraService cameraService;
-        private readonly OpticalAxisService opticalAxisService = new();
 
         [ObservableProperty]
         private ObservableCollection<ScrewInstruction> screwInstructions = [];
@@ -52,8 +57,8 @@ namespace CollimationCircles.ViewModels
 
         public CollimationAnalysisViewModel()
         {
-            this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
-            this.cameraService = Ioc.Default.GetRequiredService<ICameraService>();
+            settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            cameraService = Ioc.Default.GetRequiredService<ICameraService>();
 
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
@@ -69,18 +74,9 @@ namespace CollimationCircles.ViewModels
             });
         }
 
-        async partial void OnIsLiveAnalysisActiveChanged(bool value)
-        {
-            //await CheckFeatureLicensed(FeatureList.LiveAnalysis, () =>
-            //{
-                HandleModeSwitch(value || IsLiveRmseActive);
-            //});
-        }
+        partial void OnIsLiveAnalysisActiveChanged(bool value) => HandleModeSwitch(value || IsLiveRmseActive);
 
-        partial void OnIsLiveRmseActiveChanged(bool value)
-        {
-            HandleModeSwitch(value || IsLiveAnalysisActive);
-        }
+        partial void OnIsLiveRmseActiveChanged(bool value) => HandleModeSwitch(value || IsLiveAnalysisActive);
 
         private void HandleModeSwitch(bool anyActive)
         {
@@ -96,8 +92,8 @@ namespace CollimationCircles.ViewModels
 
                 if (liveAnalysisCts == null)
                 {
-                    liveAnalysisCts = new CancellationTokenSource();
-                    _ = Task.Run(() => LiveAnalysisLoop(liveAnalysisCts.Token));
+                    var cts = liveAnalysisCts = new CancellationTokenSource();
+                    _ = Task.Run(() => LiveAnalysisLoop(cts.Token));
                 }
             }
             else
@@ -113,146 +109,183 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
-                    // FIXME: This is a placeholder for the actual camera snapshot logic. Replace it with the appropriate method to capture an image from the camera.
                     byte[]? data = await cameraService.TakeSnapshotImageAsync();
                     if (data != null)
                     {
-                        using var image = Cv2.ImDecode(data, ImreadModes.Color);
-
-                        string description = string.Empty;
-                        Mat? advancedImage = null;
-                        Mat? rmseImage = null;
-
-                        if (IsLiveAnalysisActive)
-                        {
-                            var advanced = RunAdvancedAnalysis(image);
-                            description += advanced.Description;
-                            advancedImage = advanced.Image;
-
-                            // Calculate Screw Instructions
-                            var screwVM = settingsViewModel.Items.OfType<ScrewViewModel>().FirstOrDefault();
-                            if (screwVM != null && advanced.Wavefront != null)
-                            {
-                                var adjustments = OpticalAxisService.CalculateScrewAdjustments(
-                                    advanced.Wavefront["ComaMagnitude"],
-                                    advanced.Wavefront["ComaAngle"],
-                                    screwVM.RotationAngle,
-                                    screwVM.Count);
-
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                                {
-                                    UpdateScrewInstructions(adjustments, screwVM);
-                                });
-                            }
-                            else
-                            {
-                                Avalonia.Threading.Dispatcher.UIThread.Post(() => ScrewInstructions.Clear());
-                            }
-                        }
-                        else
-                        {
-                            Avalonia.Threading.Dispatcher.UIThread.Post(() => ScrewInstructions.Clear());
-                        }
-
-                        if (IsLiveRmseActive)
-                        {
-                            var rmse = RunRmseAnalysis(image);
-                            description += (string.IsNullOrEmpty(description) ? "" : "\n") + rmse.Description;
-                            rmseImage = rmse.Image;
-                        }
-
-                        var resultImage = advancedImage ?? rmseImage;
-
-                        if (resultImage != null)
-                        {
-                            Cv2.ImEncode(".png", resultImage, out var png);
-                            using var stream = new MemoryStream(png);
-                            var bitmap = new Bitmap(stream);
-                            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                            {
-                                LiveResultText = description;
-                                AnalysisPreview = bitmap;
-                            });
-                        }
-                        else
-                        {
-                            Avalonia.Threading.Dispatcher.UIThread.Post(() => AnalysisPreview = null);
-                        }
-
-                        advancedImage?.Dispose();
-                        rmseImage?.Dispose();
+                        AnalyzeSnapshot(data);
                     }
-                }
-                catch (OperationCanceledException)
-                {
-                    Avalonia.Threading.Dispatcher.UIThread.Post(() =>
-                    {
-                        LiveResultText = string.Empty;
-                        AnalysisPreview = null;
-                        ScrewInstructions.Clear();
-                    });
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "Error in Live Analysis Loop");
                 }
 
-                try { await Task.Delay(200, token); }
+                try { await Task.Delay(AnalysisIntervalMs, token); }
                 catch (OperationCanceledException) { break; }
+            }
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                LiveResultText = string.Empty;
+                AnalysisPreview = null;
+                ScrewInstructions.Clear();
+            });
+        }
+
+        private void AnalyzeSnapshot(byte[] data)
+        {
+            using var fullImage = Cv2.ImDecode(data, ImreadModes.Color);
+            if (fullImage.Empty())
+            {
+                return;
+            }
+
+            using var image = DownscaleForAnalysis(fullImage);
+
+            var descriptions = new List<string>();
+            Mat? overlay = null;
+
+            try
+            {
+                if (IsLiveAnalysisActive)
+                {
+                    var advanced = RunAdvancedAnalysis(image);
+                    descriptions.Add(advanced.Description);
+                    overlay = advanced.Image;
+                    PostScrewInstructions(advanced.Wavefront);
+                }
+                else
+                {
+                    Dispatcher.UIThread.Post(ScrewInstructions.Clear);
+                }
+
+                if (IsLiveRmseActive)
+                {
+                    var rmse = RunRmseAnalysis(image);
+                    descriptions.Add(rmse.Description);
+                    if (overlay is null)
+                    {
+                        overlay = rmse.Image;
+                    }
+                    else
+                    {
+                        rmse.Image.Dispose();
+                    }
+                }
+
+                Bitmap? bitmap = null;
+                if (overlay != null)
+                {
+                    Cv2.ImEncode(".png", overlay, out var png);
+                    using var stream = new MemoryStream(png);
+                    bitmap = new Bitmap(stream);
+                }
+
+                var text = string.Join("\n", descriptions);
+                Dispatcher.UIThread.Post(() =>
+                {
+                    LiveResultText = text;
+                    AnalysisPreview = bitmap;
+                });
+            }
+            finally
+            {
+                overlay?.Dispose();
             }
         }
 
-        private static (string Description, Dictionary<string, double>? Wavefront, CircularFeature? Circle, Mat Image) RunAdvancedAnalysis(Mat image)
+        private void PostScrewInstructions(Dictionary<string, double>? wavefront)
+        {
+            var screwVM = settingsViewModel.Items.OfType<ScrewViewModel>().FirstOrDefault();
+            if (screwVM is null || wavefront is null)
+            {
+                Dispatcher.UIThread.Post(ScrewInstructions.Clear);
+                return;
+            }
+
+            var adjustments = CalculateScrewAdjustments(
+                wavefront["ComaMagnitude"],
+                wavefront["ComaAngle"],
+                screwVM.RotationAngle,
+                screwVM.Count);
+
+            Dispatcher.UIThread.Post(() => UpdateScrewInstructions(adjustments, screwVM));
+        }
+
+        private static Mat DownscaleForAnalysis(Mat source)
+        {
+            if (source.Width <= MaxAnalysisWidth)
+            {
+                return source.Clone();
+            }
+
+            double scale = (double)MaxAnalysisWidth / source.Width;
+            var resized = new Mat();
+            Cv2.Resize(source, resized, new Size(MaxAnalysisWidth, (int)Math.Round(source.Height * scale)), 0, 0, InterpolationFlags.Area);
+            return resized;
+        }
+
+        private static Options CreateCircleOptions() => new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
+
+        private static List<Circle> DetectClassicCircles(Mat image, Options options)
+        {
+            using var gray = new Mat();
+            Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
+            Cv2.Normalize(gray, gray, 0, 255, NormTypes.MinMax);
+            Cv2.GaussianBlur(gray, gray, new Size(9, 9), 2);
+
+            int minRadius = Math.Max(10, (int)(image.Width * MinCircleRadiusFraction));
+            var found = Cv2.HoughCircles(gray, HoughModes.Gradient, 1, minRadius, 100, 30, minRadius, image.Width / 2);
+
+            var circles = found
+                .Take(MaxDetectedCircles)
+                .Select(c => new Circle { X = (int)Math.Round(c.Center.X), Y = (int)Math.Round(c.Center.Y), Radius = (int)Math.Round(c.Radius), Votes = 0 })
+                .ToList();
+
+            logger.Debug($"Hough detection found {circles.Count} circle(s) on {image.Width}x{image.Height} image");
+            return circles;
+        }
+
+        private static (string Description, Dictionary<string, double>? Wavefront, Mat Image) RunAdvancedAnalysis(Mat image)
         {
             using Mat gray = new();
             Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
+            Cv2.GaussianBlur(gray, gray, new Size(5, 5), 0);
+            Cv2.Normalize(gray, gray, 0, 255, NormTypes.MinMax);
 
-            var edges = FindEdgePoints(gray);
-            var refinedEdges = OpticalAxisService.RefineEdgesSubpixel(gray, edges);
-            var circle = OpticalAxisService.FitCircleRobust(refinedEdges);
-            var wavefront = OpticalAxisService.AnalyzeStarWavefront(gray);
-
-            // Classic circles for visualization
-            Options classicOptions = new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
-            using var copy = image.Clone();
-            ImageAnalysisService.ProcessImage(copy, classicOptions);
-            var classicCircles = ImageAnalysisService.DetectCircles(copy, 50, image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
+            var wavefront = AnalyzeStarWavefront(gray);
+            var classicCircles = DetectClassicCircles(image, CreateCircleOptions());
 
             Mat drawImage = new(image.Height, image.Width, MatType.CV_8UC4, Scalar.All(0));
 
-            // Draw classic circles (Hough) in yellow
             foreach (var c in classicCircles)
             {
                 Cv2.Circle(drawImage, new Point(c.X, c.Y), c.Radius, new Scalar(0, 255, 255, 255), 1, LineTypes.AntiAlias);
             }
 
-            // Draw Robust Sub-pixel Circle in Cyan
-            if (circle != null)
+            if (wavefront != null)
             {
-                Cv2.Circle(drawImage, new Point((int)Math.Round(circle.Center.X), (int)Math.Round(circle.Center.Y)), (int)Math.Round(circle.Radius), new Scalar(255, 255, 0, 255), 2, LineTypes.AntiAlias);
+                double x = wavefront["GeometricX"];
+                double y = wavefront["GeometricY"];
+                double radius = wavefront["Radius"];
+                var cyan = new Scalar(255, 255, 0, 255);
+                Cv2.Circle(drawImage, new Point((int)x, (int)y), (int)Math.Round(radius), cyan, 2, LineTypes.AntiAlias);
+                Cv2.Circle(drawImage, new Point((int)wavefront["CentroidX"], (int)wavefront["CentroidY"]), Math.Max(2, (int)Math.Round(wavefront["ShadowRadius"])), new Scalar(0, 0, 255, 255), 2, LineTypes.AntiAlias);
+                double length = Math.Clamp(wavefront["ComaMagnitude"] * radius * 20.0, MinArrowLength, Math.Max(MinArrowLength, radius));
+                double angle = wavefront["ComaAngle"] * Math.PI / 180.0;
+                DrawVector(drawImage, (int)x, (int)y, (int)(x + length * Math.Cos(angle)), (int)(y + length * Math.Sin(angle)));
             }
 
-            // Draw Coma Vector in Lime
-            if (wavefront != null && circle != null)
-            {
-                DrawVector(drawImage, (int)wavefront["GeometricX"], (int)wavefront["GeometricY"],
-                    (int)(wavefront["GeometricX"] + wavefront["ComaMagnitude"] * circle.Radius * 5.0 * Math.Cos(wavefront["ComaAngle"] * Math.PI / 180.0)),
-                    (int)(wavefront["GeometricY"] + wavefront["ComaMagnitude"] * circle.Radius * 5.0 * Math.Sin(wavefront["ComaAngle"] * Math.PI / 180.0)));
-            }
-
-            string desc = DescribeAdvancedResult(wavefront, circle);
-            return (desc, wavefront, circle, drawImage);
+            return (DescribeAdvancedResult(wavefront), wavefront, drawImage);
         }
 
         private static (string Description, Mat Image) RunRmseAnalysis(Mat image)
         {
-            Options options = new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
-            using var copy = image.Clone();
-            ImageAnalysisService.ProcessImage(copy, options);
-            var circles = ImageAnalysisService.DetectCircles(copy, 50, image.Width / 2, new DetectionParameters { VoteThresholdFraction = 0.8 });
+            var options = CreateCircleOptions();
+            var circles = DetectClassicCircles(image, options);
 
             Mat drawnImage = new(image.Height, image.Width, MatType.CV_8UC4, Scalar.All(0));
-            var analysis = ImageAnalysisService.AnalyzeResult(drawnImage, circles, options);
+            var analysis = AnalyzeResult(drawnImage, circles, options);
 
             string desc = $"--- MECHANICAL RMSE ---\n" +
                          $"Circles: {analysis.CircleCount}\n" +
@@ -266,53 +299,27 @@ namespace CollimationCircles.ViewModels
         {
             var lime = new Scalar(0, 255, 0, 255);
             Cv2.Line(img, new Point(x1, y1), new Point(x2, y2), lime, 3, LineTypes.AntiAlias);
-            Cv2.Circle(img, new Point(x1, y1), 4, lime, -1, LineTypes.AntiAlias); // Dot at geometric center
+            Cv2.Circle(img, new Point(x1, y1), 4, lime, -1, LineTypes.AntiAlias);
 
-            // Draw arrowhead
             double angle = Math.Atan2(y2 - y1, x2 - x1);
-            double arrowSize = 15;
-            int ax1 = (int)(x2 - arrowSize * Math.Cos(angle - Math.PI / 6));
-            int ay1 = (int)(y2 - arrowSize * Math.Sin(angle - Math.PI / 6));
-            int ax2 = (int)(x2 - arrowSize * Math.Cos(angle + Math.PI / 6));
-            int ay2 = (int)(y2 - arrowSize * Math.Sin(angle + Math.PI / 6));
-
-            Cv2.Line(img, new Point(x2, y2), new Point(ax1, ay1), lime, 3, LineTypes.AntiAlias);
-            Cv2.Line(img, new Point(x2, y2), new Point(ax2, ay2), lime, 3, LineTypes.AntiAlias);
+            const double arrowSize = 15;
+            foreach (var offset in new[] { -Math.PI / 6, Math.PI / 6 })
+            {
+                var tip = new Point((int)(x2 - arrowSize * Math.Cos(angle + offset)), (int)(y2 - arrowSize * Math.Sin(angle + offset)));
+                Cv2.Line(img, new Point(x2, y2), tip, lime, 3, LineTypes.AntiAlias);
+            }
         }
 
-        private static List<Point2d> FindEdgePoints(Mat gray)
+        private static string DescribeAdvancedResult(Dictionary<string, double>? wavefront)
         {
-            using Mat edges = new();
-            Cv2.Canny(gray, edges, 50, 150);
-            List<Point2d> points = [];
-            int height = edges.Height;
-            int width = edges.Width;
-            for (int y = 0; y < height; y++)
+            if (wavefront is null)
             {
-                for (int x = 0; x < width; x++)
-                {
-                    if (edges.At<byte>(y, x) > 0) points.Add(new Point2d(x, y));
-                }
+                return "Star not detected\n";
             }
-            return points;
-        }
 
-        private static string DescribeAdvancedResult(Dictionary<string, double>? wavefront, OpticalAxisService.CircularFeature? circle)
-        {
-            Guard.IsNotNull(wavefront, nameof(wavefront));
-            Guard.IsNotNull(circle, nameof(circle));
-
-            string message = string.Empty;
-            if (circle != null)
-            {
-                message += $"Sub-pixel Circle: Center({circle.Center.X:F2}, {circle.Center.Y:F2}),\nRad: {circle.Radius:F2}\n";
-            }
-            if (wavefront != null)
-            {
-                message += $"Coma Magnitude: {wavefront["ComaMagnitude"]:F4}\n";
-                message += $"Coma Angle: {wavefront["ComaAngle"]:F1}°\n";
-            }
-            return message;
+            return $"Disc radius: {wavefront["Radius"]:F1}px\n" +
+                   $"Shadow offset: {wavefront["ComaMagnitude"] * 100:F1}% of radius\n" +
+                   $"Offset angle: {wavefront["ComaAngle"]:F1}°\n";
         }
 
         private void UpdateScrewInstructions(List<ScrewAdjustment> adjustments, ScrewViewModel screwVM)

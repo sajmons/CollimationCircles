@@ -294,7 +294,7 @@ namespace CollimationCircles.Services
 
             // Non-maximum suppression: merge duplicates (detections with centers and radii differing less than radiusStep).
             List<Circle> filteredCircles = [];
-            foreach (var circle in candidateCircles)
+            foreach (var circle in candidateCircles.OrderByDescending(c => c.Votes))
             {
                 bool duplicateFound = false;
                 foreach (var existing in filteredCircles)
