@@ -21,7 +21,7 @@ namespace CollimationCircles.Services.Alpaca
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private const double DefaultExposureSec = 1.0;
+        private const double DefaultExposureSec = 0.01;
         private const int DefaultBinning = 2;
         private const int MaxDirectProbeDeviceNumber = 7;
         private const int DiscoveryTimeoutSeconds = 5;
@@ -900,6 +900,7 @@ namespace CollimationCircles.Services.Alpaca
                     if (frame is not null)
                     {
                         WeakReferenceMessenger.Default.Send(new MatMessage(frame));
+                        frame.Dispose();
                     }
                     else
                     {
