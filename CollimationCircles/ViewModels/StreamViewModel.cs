@@ -1,20 +1,23 @@
 using Avalonia.Threading;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
-using CollimationCircles.Services.Alpaca;
 using CollimationCircles.Services;
+using CollimationCircles.Services.Alpaca;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using OpenCvSharp;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using static OpenCvSharp.FileStorage;
 
 namespace CollimationCircles.ViewModels
 {
@@ -326,7 +329,7 @@ namespace CollimationCircles.ViewModels
         {
             Guard.IsNotNull(SelectedCamera);
 
-            logger.Info($"PlayPause clicked: camera='{SelectedCamera.Name}', APIType={SelectedCamera.APIType}, FullAddress='{FullAddress}'");            
+            logger.Info($"PlayPause clicked: camera='{SelectedCamera.Name}', APIType={SelectedCamera.APIType}, FullAddress='{FullAddress}'");
 
             if (SelectedCamera.APIType is APIType.Alpaca)
             {
@@ -342,7 +345,7 @@ namespace CollimationCircles.ViewModels
             {
                 await cameraService.Stop(SelectedCamera);
             }
-        }        
+        }
 
         public bool CanExecuteZoom
         {
@@ -679,6 +682,51 @@ namespace CollimationCircles.ViewModels
         {
             SelectedCamera?.SetDefaultControls();
             logger.Info("Default camera controls command ececuted");
+        }
+
+        [RelayCommand]
+        private async Task LoadImage()
+        {
+            var settings = new OpenFileDialogSettings
+            {
+                Title = ResSvc.TryGetString("OpenFile"),
+                Filters =
+                [
+                    new("JPG", "jpg"),
+                    new("JPEG", "jpeg"),
+                    new("PNG", "png"),
+                ]
+            };
+
+            var path = await DialogService.ShowOpenFileDialogAsync(null, settings);
+
+            if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
+            {
+                if (Dispatcher.UIThread.CheckAccess())
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
+                    });
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Opening));                        
+                    });
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Playing));
+                    });
+
+                    await Task.Delay(1000).ContinueWith(_ =>
+                    {
+                        using var src = Cv2.ImRead(path.Path.LocalPath, ImreadModes.Color);
+                        WeakReferenceMessenger.Default.Send(new MatMessage(src));
+                        src.Dispose();
+                    });
+                }
+            }
         }
     }
 }

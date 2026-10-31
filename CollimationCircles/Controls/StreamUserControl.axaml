@@ -22,13 +22,23 @@
             <StackPanel
                 Orientation="Vertical">
                 <TextBlock Text="{DynamicResource Text.CameraType}"/>
-                <DockPanel LastChildFill="True">
+                <DockPanel LastChildFill="True" HorizontalSpacing="{DynamicResource ControlSpacing}">
+                    <Button
+                        DockPanel.Dock="Right"
+                        Theme="{DynamicResource ToolbarButton}"
+                        Command="{Binding LoadImageCommand}"
+                        ToolTip.Tip="{DynamicResource Text.OpenWebSiteContactForm}">
+                        <PathIcon
+                            Width="{DynamicResource PathIconWidth}"
+                            Height="{DynamicResource PathIconHeight}"
+                            Foreground="{DynamicResource Color2}"
+                            Data="{StaticResource IconData.Load}" />
+                    </Button>
                     <ToggleButton
                         Theme="{DynamicResource ToolbarButton}"
                         IsChecked="{Binding IsPlaying}"
                         Command="{Binding PlayPauseCommand}"
                         ToolTip.Tip="{DynamicResource Text.PlayStopCameraVideoStream}"
-                        Margin="8,0,0,0"
                         DockPanel.Dock="Right">
                         <Panel>
                             <PathIcon
@@ -58,7 +68,7 @@
                                 <Setter Property="IsVisible" Value="False"/>
                             </Style>
                         </ToggleButton.Styles>
-                    </ToggleButton>
+                    </ToggleButton>                    
                     <ComboBox
                         HorizontalAlignment="Stretch"
                         IsEnabled="{Binding HasCameras}"
@@ -73,7 +83,7 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    </ComboBox>                    
                 </DockPanel>
             </StackPanel>
 
@@ -99,7 +109,7 @@
         </StackPanel>
         <CheckBox
             Content="{DynamicResource Text.PinCameraWindowToMainWindow}"
-            IsChecked="{Binding PinVideoWindowToMainWindow}" />        
+            IsChecked="{Binding PinVideoWindowToMainWindow}" />
     </StackPanel>
 
 </UserControl>
