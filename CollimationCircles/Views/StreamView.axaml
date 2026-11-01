@@ -30,6 +30,11 @@
 				HorizontalAlignment="Center"
 				VerticalAlignment="Center"
 				IsHitTestVisible="False" />
+
+			<controls:LiveAnalysisResultUserControl
+				HorizontalAlignment="Left"
+				Padding="{DynamicResource ExpanderContentPadding}"
+				Width="200"/>
 		</Grid>
 	</Grid>
 </Window>

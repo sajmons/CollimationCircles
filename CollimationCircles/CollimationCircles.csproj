@@ -97,6 +97,12 @@
     <Compile Update="Controls\LicenseUserControl.axaml.cs">
       <DependentUpon>LicenseUserControl.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Controls\LiveAnalysisResultUserControl.axaml.cs">
+      <DependentUpon>LiveAnalysisResultUserControl.axaml</DependentUpon>
+    </Compile>
+    <Compile Update="Controls\LiveAnalysisUserControl.axaml.cs">
+      <DependentUpon>LiveAnalysisUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\ProfileManagerUserControl.axaml.cs">
       <DependentUpon>ProfileManagerUserControl.axaml</DependentUpon>
     </Compile>

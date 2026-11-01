@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Controls
 {
-    public partial class LiveAnalysisResultsUserControl : UserControl
+    public partial class LiveAnalysisResultUserControl : UserControl
     {
-        public LiveAnalysisResultsUserControl()
+        public LiveAnalysisResultUserControl()
         {
             InitializeComponent();
             if (!Design.IsDesignMode)

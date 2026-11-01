@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
+			 x:Class="CollimationCircles.Controls.LiveAnalysisResultUserControl"
+			 xmlns:vm="using:CollimationCircles.ViewModels"
+			 x:DataType="vm:CollimationAnalysisViewModel">
+
+	<StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
+
+		<TextBlock
+			IsVisible="{Binding !IsStreaming}"
+			Text="{DynamicResource Text.LiveAnalysisTip}"
+			VerticalAlignment="Center"
+			TextWrapping="Wrap"/>
+
+		<Border IsVisible="{Binding IsAnyLiveAnalysisActive}"
+				Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+				BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}"
+				BorderThickness="2"
+				Padding="12"
+				CornerRadius="8"
+				Margin="0,8,0,8">
+			<StackPanel Spacing="6">
+				<StackPanel
+					Orientation="Horizontal"
+					Spacing="8">
+					<Ellipse Width="8" Height="8" Fill="Red">
+						<Ellipse.Styles>
+							<Style Selector="Ellipse">
+								<Style.Animations>
+									<Animation Duration="0:0:1" IterationCount="Infinite">
+										<KeyFrame KeyTime="0:0:0">
+											<Setter Property="Opacity" Value="1"/>
+										</KeyFrame>
+										<KeyFrame KeyTime="0:0:0.5">
+											<Setter Property="Opacity" Value="0.2"/>
+										</KeyFrame>
+										<KeyFrame KeyTime="0:0:1">
+											<Setter Property="Opacity" Value="1"/>
+										</KeyFrame>
+									</Animation>
+								</Style.Animations>
+							</Style>
+						</Ellipse.Styles>
+					</Ellipse>
+					<TextBlock
+						Text="{DynamicResource Text.LiveAnalysis}"
+						FontWeight="Bold"
+						FontSize="10"
+						VerticalAlignment="Center"
+						LetterSpacing="1"
+						Background="Transparent" />
+				</StackPanel>
+
+				<TextBlock
+					Text="{Binding LiveResultText}"
+					FontFamily="Consolas,Courier New"
+					FontSize="12"
+					TextWrapping="Wrap"
+					IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+				<ItemsControl ItemsSource="{Binding ScrewInstructions}" Margin="0,4">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Border Background="#1AFFFFFF" CornerRadius="4" Padding="8,4" Margin="0,2">
+								<Grid ColumnDefinitions="20,Auto,*">
+									<Ellipse Grid.Column="0" Width="10" Height="10" Fill="{Binding Brush}" HorizontalAlignment="Left"/>
+									<TextBlock Grid.Column="1" Text="{Binding Id, StringFormat='Screw {0}: '}" Foreground="LightGray" VerticalAlignment="Center" FontSize="11"/>
+									<TextBlock Grid.Column="2" Text="{Binding DisplayText}" Foreground="Lime" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11"/>
+								</Grid>
+							</Border>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+		</Border>
+	</StackPanel>
+</UserControl>

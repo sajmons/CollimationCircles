@@ -122,9 +122,25 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        partial void OnIsLiveAnalysisActiveChanged(bool value) => HandleModeSwitch(value || IsLiveRmseActive);
+        partial void OnIsLiveAnalysisActiveChanged(bool value)
+        {
+            if (value && IsLiveRmseActive)
+            {
+                IsLiveRmseActive = false;
+            }
 
-        partial void OnIsLiveRmseActiveChanged(bool value) => HandleModeSwitch(value || IsLiveAnalysisActive);
+            HandleModeSwitch(value || IsLiveRmseActive);
+        }
+
+        partial void OnIsLiveRmseActiveChanged(bool value)
+        {
+            if (value && IsLiveAnalysisActive)
+            {
+                IsLiveAnalysisActive = false;
+            }
+
+            HandleModeSwitch(value || IsLiveAnalysisActive);
+        }
 
         private void HandleModeSwitch(bool anyActive)
         {
