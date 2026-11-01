@@ -4,7 +4,7 @@
              xmlns:local="using:CollimationCircles.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
-             x:Class="CollimationCircles.Controls.StreamUserControl"
+             x:Class="CollimationCircles.Controls.AlpacaCameraUserControl"
              xmlns:vm="using:CollimationCircles.ViewModels"
              x:DataType="vm:StreamViewModel">
 
@@ -15,19 +15,13 @@
         <StackPanel
             Orientation="Vertical"
             Spacing="{DynamicResource ControlSpacing}">
-            <StackPanel
-                Orientation="Vertical">
-                <local:AlpacaServerUserControl />
-            </StackPanel>
-            <StackPanel
-                Orientation="Vertical">
-                <TextBlock Text="{DynamicResource Text.CameraType}"/>
+            <StackPanel Orientation="Vertical">
                 <DockPanel LastChildFill="True" HorizontalSpacing="{DynamicResource ControlSpacing}">
                     <Button
                         DockPanel.Dock="Right"
                         Theme="{DynamicResource ToolbarButton}"
                         Command="{Binding LoadImageCommand}"
-                        ToolTip.Tip="{DynamicResource Text.OpenWebSiteContactForm}">
+                        ToolTip.Tip="{DynamicResource Text.LoadExistingImage}">
                         <PathIcon
                             Width="{DynamicResource PathIconWidth}"
                             Height="{DynamicResource PathIconHeight}"
@@ -68,7 +62,7 @@
                                 <Setter Property="IsVisible" Value="False"/>
                             </Style>
                         </ToggleButton.Styles>
-                    </ToggleButton>                    
+                    </ToggleButton>
                     <ComboBox
                         HorizontalAlignment="Stretch"
                         IsEnabled="{Binding HasCameras}"
@@ -83,7 +77,7 @@
                                 </StackPanel>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-                    </ComboBox>                    
+                    </ComboBox>
                 </DockPanel>
             </StackPanel>
 

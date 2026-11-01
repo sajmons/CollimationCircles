@@ -300,22 +300,7 @@ namespace CollimationCircles.Services
             }
 
             return adjustments;
-        }
-
-        private static List<Point2d> FindEdgePoints(Mat img)
-        {
-            using Mat edges = new();
-            Cv2.Canny(img, edges, 50, 150);
-            List<Point2d> points = [];
-            for (int y = 0; y < edges.Height; y++)
-            {
-                for (int x = 0; x < edges.Width; x++)
-                {
-                    if (edges.At<byte>(y, x) > 0) points.Add(new Point2d(x, y));
-                }
-            }
-            return points;
-        }
+        }        
 
         /// <summary>
         /// Generates a Zernike Polynomial value at (rho, theta).

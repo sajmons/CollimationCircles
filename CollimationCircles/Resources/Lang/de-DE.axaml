@@ -106,7 +106,7 @@
     <system:String x:Key="Text.ShowApplicationLog">Anwendungsprotokoll anzeigen</system:String>
     <system:String x:Key="Text.OpenLogFileLocation">Speicherort der Anwendungsprotokolldatei anzeigen</system:String>
     <system:String x:Key="Text.AutoStartCameraStream">Starten Sie den Kamerastream nach Möglichkeit automatisch</system:String>
-    <system:String x:Key="Text.Video">Video</system:String>
+    <system:String x:Key="Text.AlpacaServer">Alpaca Server</system:String>
     <system:String x:Key="Text.ShowAboutDialog">Über diese Anwendung</system:String>
     <system:String x:Key="Text.Close">Schließen</system:String>
     <system:String x:Key="Text.IncreaseInclination">Neigung erhöhen</system:String>
@@ -181,4 +181,5 @@
     <system:String x:Key="Text.TelescopeStop">Stop</system:String>
     <system:String x:Key="Text.AlpacaTelescopeControl">Teleskopsteuerung</system:String>
     <system:String x:Key="Text.ManualImageLoading">Bild laden</system:String>
+    <system:String x:Key="Text.LoadExistingImage">Vorhandenes Bild laden</system:String>
 </ResourceDictionary>

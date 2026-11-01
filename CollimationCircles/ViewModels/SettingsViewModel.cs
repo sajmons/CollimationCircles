@@ -489,34 +489,7 @@ namespace CollimationCircles.ViewModels
         public void OnClosed()
         {
             SettingsDialogViewModel = null;
-        }
-
-        [RelayCommand]
-        internal async Task CheckForUpdate()
-        {
-            logger.Info($"Checking for application update");
-
-            string appVersion = AppService.GetAppVersion();
-
-            var (success, result, newVersion) = await AppService.DownloadUrl(appVersion);
-
-            if (success && !string.IsNullOrWhiteSpace(result))
-            {
-                logger.Info($"Found new version {newVersion}");
-
-                var dialogResult = await DialogService.ShowMessageBoxAsync(null,
-                    ResSvc.TryGetString("NewVersionDownload").F(newVersion), ResSvc.TryGetString("NewVersion"), MessageBoxButton.YesNo);
-
-                if (dialogResult is true)
-                {
-                    AppService.OpenUrl(result);
-                }
-            }
-            else if (!success)
-            {
-                await DialogService.ShowMessageBoxAsync(null, result, ResSvc.TryGetString("Error"));
-            }
-        }
+        }        
 
         internal void SaveState()
         {

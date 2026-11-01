@@ -4,9 +4,9 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CollimationCircles.Controls
 {
-    public partial class StreamUserControl : UserControl
+    public partial class AlpacaCameraUserControl : UserControl
     {
-        public StreamUserControl()
+        public AlpacaCameraUserControl()
         {
             InitializeComponent();
 

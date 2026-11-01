@@ -106,7 +106,7 @@
     <system:String x:Key="Text.ShowApplicationLog">Prikaži dnevnik aplikacije</system:String>
     <system:String x:Key="Text.OpenLogFileLocation">Prikaži lokacijo datoteke dnevnika</system:String>
     <system:String x:Key="Text.AutoStartCameraStream">Če je mogoče, samodejno zaženi tok kamere</system:String>
-    <system:String x:Key="Text.Video">Video</system:String>
+    <system:String x:Key="Text.AlpacaServer">Alpaca strežnik</system:String>
     <system:String x:Key="Text.ShowAboutDialog">O programu</system:String>
     <system:String x:Key="Text.Close">Zapri</system:String>
     <system:String x:Key="Text.IncreaseInclination">Povečaj naklon</system:String>
@@ -181,4 +181,5 @@
     <system:String x:Key="Text.TelescopeStop">Stop</system:String>
     <system:String x:Key="Text.AlpacaTelescopeControl">Nadzor teleskopa</system:String>
     <system:String x:Key="Text.ManualImageLoading">Naloži sliko</system:String>
+    <system:String x:Key="Text.LoadExistingImage">Naloži obstoječo sliko</system:String>
 </ResourceDictionary>

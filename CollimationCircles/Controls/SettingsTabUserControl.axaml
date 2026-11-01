@@ -73,13 +73,7 @@
                 <CheckBox
                     Content="{DynamicResource Text.ShowKeyboardShortcuts}"
                     IsChecked="{Binding ShowKeyboardShortcuts}" />
-            </StackPanel>
-            <Button
-                Content="{DynamicResource Text.CheckForUpdate}"
-                Command="{Binding CheckForUpdateCommand}"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Center"
-                VerticalAlignment="Bottom"/>
+            </StackPanel>            
         </Grid>
     </Border>
 

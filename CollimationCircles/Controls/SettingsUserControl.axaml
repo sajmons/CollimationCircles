@@ -28,18 +28,24 @@
                         Margin="{DynamicResource TabIconMargin}"
                         Height="{DynamicResource PathIconHeight}"
                         Foreground="{DynamicResource Color2}"
-                        Data="{StaticResource IconData.Camera}"
-                        ToolTip.Tip="{DynamicResource Text.Video}" />
+                        Data="{StaticResource IconData.Telescope}"
+                        ToolTip.Tip="{DynamicResource Text.AlpacaServer}" />
                 </TabItem.Header>
                 <ScrollViewer>
                     <StackPanel Spacing="{DynamicResource ControlSpacing}">
+                        <controls:AlpacaServerUserControl />
                         <Expander
                             VerticalAlignment="Top"
                             HorizontalAlignment="Stretch"
                             Header="{DynamicResource Text.WebCamStream}"
                             IsExpanded="{Binding CameraVideoStreamExpanded}">
-                            <StackPanel Orientation="Vertical">
-                                <controls:StreamUserControl/>
+                            <StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
+                                <GroupBox Header="{DynamicResource Text.CameraType}">
+                                    <controls:AlpacaCameraUserControl />
+                                </GroupBox>
+                                <GroupBox Header="{DynamicResource Text.LiveAnalysisResults}">
+                                    <controls:LiveAnalysisUserControl/>
+                                </GroupBox>
                             </StackPanel>
                         </Expander>
                         <Expander
@@ -53,25 +59,6 @@
                         </Expander>
                     </StackPanel>
                 </ScrollViewer>
-            </TabItem>
-            <TabItem Margin="-5 0 -5 0">
-                <TabItem.Header>
-                    <PathIcon
-                        Margin="{DynamicResource TabIconMargin}"
-                        Height="{DynamicResource PathIconHeight}"
-                        Foreground="{DynamicResource Color2}"
-                        Data="{StaticResource IconData.Collimation}"
-                        ToolTip.Tip="{DynamicResource Text.Collimation}" />
-                </TabItem.Header>
-                <Expander
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Stretch"
-                    Header="{DynamicResource Text.LiveAnalysisResults}"
-                    IsExpanded="{Binding LiveAnalysisResultsExpanded}">
-                    <StackPanel Orientation="Vertical">
-                        <controls:LiveAnalysisUserControl/>
-                    </StackPanel>
-                </Expander>
             </TabItem>
             <TabItem Margin="-5 0 -5 0">
                 <TabItem.Header>

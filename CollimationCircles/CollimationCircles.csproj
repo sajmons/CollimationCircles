@@ -113,6 +113,9 @@
       <SubType>Code</SubType>
       <DependentUpon>CollimationAnalysisUserControl.axaml</DependentUpon>
     </Compile>
+    <Compile Update="Controls\AlpacaCameraUserControl.axaml.cs">
+      <DependentUpon>AlpacaCameraUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\RequestLicenseView.axaml.cs">
       <DependentUpon>RequestLicenseView.axaml</DependentUpon>
     </Compile>
