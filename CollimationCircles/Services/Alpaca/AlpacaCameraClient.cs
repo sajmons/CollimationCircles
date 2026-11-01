@@ -311,7 +311,7 @@ namespace CollimationCircles.Services.Alpaca
             }
 
             // Alpaca servers
-            var current = await DiscoverAsync(camera.ServerAddress, camera.ServerPort);
+            var current = await GetConfiguredCamerasAsync(camera.ServerAddress, camera.ServerPort);
             var match = current.FirstOrDefault(c => c.Name == camera.Name);
             if (match is not null && match.DeviceNumber != camera.DeviceNumber)
             {
@@ -891,14 +891,19 @@ namespace CollimationCircles.Services.Alpaca
                             imageData = await readTask;
                             break;
                         }
-                        catch (ASCOM.DriverException ex) when (IsNoImageAvailable(ex) && readAttempt < 3)
-                        {
-                            await Task.Delay(30, ct);
-                        }
                         catch (ASCOM.DriverException ex) when (IsNoImageAvailable(ex))
                         {
-                            logger.Debug($"Alpaca camera reported image not available after exposure, skipping frame: {ex.Message}");
+                            logger.Warn($"Alpaca camera reported ImageReady but no image was available, restarting exposure: {ex.Message}");
+                            imageData = null;
+                            break;
                         }
+                    }
+
+                    if (imageData is null)
+                    {
+                        PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Waiting for next frame", false);
+                        await Task.Delay(100, ct);
+                        continue;
                     }
 
                     PublishCaptureProgress(CameraCaptureStage.Downloading, 1, "Download complete", true);

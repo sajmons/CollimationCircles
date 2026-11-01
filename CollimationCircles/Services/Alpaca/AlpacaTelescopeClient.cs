@@ -14,7 +14,7 @@ namespace CollimationCircles.Services.Alpaca
     internal class AlpacaTelescopeClient
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
-        private static readonly HttpClient httpClient = new() { Timeout = TimeSpan.FromSeconds(5) };
+        private static readonly HttpClient httpClient = new(new SocketsHttpHandler { MaxConnectionsPerServer = 1 }) { Timeout = TimeSpan.FromSeconds(5) };
 
         private const int ClientId = 7342;
 
@@ -220,7 +220,7 @@ namespace CollimationCircles.Services.Alpaca
                     {
                         foreach (var direction in directions)
                         {
-                            await PulseGuideAsync(direction, pulseDurationMs).ConfigureAwait(false);
+                            await PulseGuideAsync(direction, pulseDurationMs, token).ConfigureAwait(false);
 
                             if (token.IsCancellationRequested)
                             {
@@ -255,9 +255,9 @@ namespace CollimationCircles.Services.Alpaca
             Interlocked.Exchange(ref pulseGuideTask, null);
         }
 
-        private async Task PulseGuideAsync(int direction, int durationMilliseconds)
+        private async Task PulseGuideAsync(int direction, int durationMilliseconds, CancellationToken token)
         {
-            await SendPutAsync("pulseguide", ("Direction", direction.ToString()), ("Duration", durationMilliseconds.ToString())).ConfigureAwait(false);
+            await SendPutAsync("pulseguide", token, ("Direction", direction.ToString()), ("Duration", durationMilliseconds.ToString())).ConfigureAwait(false);
         }
 
         private static List<int> GetPulseGuideDirections(double eastWestRate, double northSouthRate)
@@ -435,7 +435,12 @@ namespace CollimationCircles.Services.Alpaca
             return TryReadBool(json.RootElement, "Value", out var value) && value;
         }
 
-        private async Task SendPutAsync(string endpoint, params (string Name, string Value)[] parameters)
+        private Task SendPutAsync(string endpoint, params (string Name, string Value)[] parameters)
+        {
+            return SendPutAsync(endpoint, CancellationToken.None, parameters);
+        }
+
+        private async Task SendPutAsync(string endpoint, CancellationToken token, params (string Name, string Value)[] parameters)
         {
             var transactionId = await NextClientTransactionIdAsync().ConfigureAwait(false);
             var uri = BuildTelescopeUri(endpoint, transactionId);
@@ -459,7 +464,7 @@ namespace CollimationCircles.Services.Alpaca
             }
 
             using var content = new FormUrlEncodedContent(payload);
-            using var response = await httpClient.PutAsync(uri, content).ConfigureAwait(false);
+            using var response = await httpClient.PutAsync(uri, content, token).ConfigureAwait(false);
             response.EnsureSuccessStatusCode();
 
             await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
