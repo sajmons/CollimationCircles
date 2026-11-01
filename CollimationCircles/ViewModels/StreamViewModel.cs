@@ -40,7 +40,7 @@ namespace CollimationCircles.ViewModels
 
         public bool CanExecutePlayPause
         {
-            get => SelectedCamera is not null && !string.IsNullOrEmpty(SelectedCamera.Name);
+            get => IsPlaying || (SelectedCamera is not null && !string.IsNullOrEmpty(SelectedCamera.Name));
         }
 
         [ObservableProperty]
@@ -303,11 +303,9 @@ namespace CollimationCircles.ViewModels
 
         private void MediaPlayer_Playing()
         {
-            Guard.IsNotNull(SelectedCamera);
-
             logger.Trace($"MediaPlayer playing");
-            IsPlaying = SelectedCamera.APIType is APIType.Alpaca || cameraService.IsPlaying;
-            SelectedCamera.IsPlaying = IsPlaying;
+            IsPlaying = true;
+            SelectedCamera?.IsPlaying = IsPlaying;
         }
 
         private void MediaPlayer_Closed()
@@ -315,7 +313,7 @@ namespace CollimationCircles.ViewModels
             logger.Trace($"MediaPlayer closed");
 
             CloseWebCamStream();
-            IsPlaying = cameraService.IsPlaying;
+            IsPlaying = false;
             SelectedCamera?.IsPlaying = IsPlaying;
         }
 
@@ -682,6 +680,51 @@ namespace CollimationCircles.ViewModels
         {
             SelectedCamera?.SetDefaultControls();
             logger.Info("Default camera controls command ececuted");
-        }        
+        }
+
+        [RelayCommand]
+        private async Task LoadImage()
+        {
+            var settings = new OpenFileDialogSettings
+            {
+                Title = ResSvc.TryGetString("OpenFile"),
+                Filters =
+                [
+                    new("JPG", "jpg"),
+                    new("JPEG", "jpeg"),
+                    new("PNG", "png"),
+                ]
+            };
+
+            var path = await DialogService.ShowOpenFileDialogAsync(null, settings);
+
+            if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
+            {
+                if (Dispatcher.UIThread.CheckAccess())
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
+                    });
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Opening));
+                    });
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Playing));
+                    });
+
+                    await Task.Delay(1000).ContinueWith(_ =>
+                    {
+                        using var src = Cv2.ImRead(path.Path.LocalPath, ImreadModes.Color);
+                        WeakReferenceMessenger.Default.Send(new MatMessage(src));
+                        src.Dispose();
+                    });
+                }
+            }
+        }
     }
 }

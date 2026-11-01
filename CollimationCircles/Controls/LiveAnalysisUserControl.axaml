@@ -11,18 +11,7 @@
 
 		<Grid 
 			ColumnSpacing="{DynamicResource ControlSpacing}"
-			ColumnDefinitions="Auto,*">
-			<Button
-				DockPanel.Dock="Right"
-				Theme="{DynamicResource ToolbarButton}"
-				Command="{Binding LoadImageCommand}"
-				ToolTip.Tip="{DynamicResource Text.LoadImage}">
-				<PathIcon
-					Width="{DynamicResource PathIconWidth}"
-					Height="{DynamicResource PathIconHeight}"
-					Foreground="{DynamicResource Color2}"
-					Data="{StaticResource IconData.Image}" />
-			</Button>
+			ColumnDefinitions="Auto,*">			
 			<TextBlock
 				Grid.Column="1"
 				IsVisible="{Binding !IsStreaming}"

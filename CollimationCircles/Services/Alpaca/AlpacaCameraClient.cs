@@ -860,7 +860,7 @@ namespace CollimationCircles.Services.Alpaca
                     PublishCaptureProgress(CameraCaptureStage.Downloading, 0, "Downloading image", true);
                     for (int readAttempt = 1; readAttempt <= 3; readAttempt++)
                     {
-                        PublishCaptureProgress(CameraCaptureStage.Downloading, (readAttempt - 1) / 3d, $"Downloading image (attempt {readAttempt}/3)", true);
+                        PublishCaptureProgress(CameraCaptureStage.Downloading, (readAttempt - 1) / 3d, $"Downloading ({readAttempt}/3)", true);
                         try
                         {
                             var downloadStart = Stopwatch.GetTimestamp();
@@ -873,7 +873,7 @@ namespace CollimationCircles.Services.Alpaca
                                 PublishCaptureProgress(
                                     CameraCaptureStage.Downloading,
                                     animated,
-                                    $"Downloading image (attempt {readAttempt}/3, {elapsedMs:F0} ms)",
+                                    $"Downloading ({readAttempt}/3, {elapsedMs:F0} ms)",
                                     true);
 
                                 await Task.Delay(50, ct);
