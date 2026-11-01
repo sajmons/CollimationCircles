@@ -42,19 +42,21 @@ namespace CollimationCircles.Services.Alpaca
         private bool driverPrefersBinnedRoi;
         private BayerPatternMode effectiveBayerPattern = BayerPatternMode.None;
 
-        private bool connected;        
+        private bool connected;
+        private CancellationTokenSource? probeCts;
 
         public bool IsConnected => connected;        
 
         public async Task<List<Camera>> Connect(string address, int port)
         {
             await Disconnect();
+            probeCts = new CancellationTokenSource();
 
             logger.Info($"Connecting to Alpaca server at {address}:{port}");
 
             try
             {
-                var cameras = await DiscoverAsync(address, port);
+                var cameras = await DiscoverAsync(address, port, probeCts.Token);
                 connected = true;
                 logger.Info($"Connected to Alpaca server at {address}:{port}, found {cameras.Count} camera(s)");
                 return cameras;
@@ -70,6 +72,7 @@ namespace CollimationCircles.Services.Alpaca
         {
             var wasConnected = connected;
             connected = false;
+            probeCts?.Cancel();
 
             if (!wasConnected && device is null)
             {
@@ -80,14 +83,14 @@ namespace CollimationCircles.Services.Alpaca
             await Stop(new Camera());
         }
 
-        private static async Task<List<Camera>> DiscoverAsync(string address, int port)
+        private static async Task<List<Camera>> DiscoverAsync(string address, int port, CancellationToken token = default)
         {
             var cameras = await GetConfiguredCamerasAsync(address, port);
 
             if (cameras.Count == 0)
             {
                 logger.Warn($"Alpaca HTTP configureddevices discovery found no cameras for {address}:{port}. Trying direct camera endpoint probing.");
-                cameras = await ProbeCamerasByDeviceNumberAsync(address, port, MaxDirectProbeDeviceNumber);
+                cameras = await ProbeCamerasByDeviceNumberAsync(address, port, MaxDirectProbeDeviceNumber, token);
             }
 
             return cameras;
@@ -242,12 +245,13 @@ namespace CollimationCircles.Services.Alpaca
             return false;
         }
 
-        private static async Task<List<Camera>> ProbeCamerasByDeviceNumberAsync(string address, int port, int maxDeviceNumber)
+        private static async Task<List<Camera>> ProbeCamerasByDeviceNumberAsync(string address, int port, int maxDeviceNumber, CancellationToken token)
         {
             var cameras = new List<Camera>();
 
             for (int deviceNumber = 0; deviceNumber <= maxDeviceNumber; deviceNumber++)
             {
+                token.ThrowIfCancellationRequested();
                 var dev = new AlpacaCamera(ServiceType.Http, address, port, deviceNumber, true, null);
                 try
                 {
@@ -270,6 +274,11 @@ namespace CollimationCircles.Services.Alpaca
                 catch (ASCOM.DriverException ex) when (IsExpectedProbeMiss(ex))
                 {
                     logger.Trace($"Alpaca camera probe skipped for {address}:{port} device {deviceNumber}: {ex.Message}");
+                }
+                catch (TimeoutException ex)
+                {
+                    logger.Warn($"Alpaca server {address}:{port} is unreachable, aborting probe: {ex.Message}");
+                    break;
                 }
                 catch (Exception ex)
                 {

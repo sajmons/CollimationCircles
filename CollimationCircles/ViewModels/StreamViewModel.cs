@@ -440,11 +440,17 @@ namespace CollimationCircles.ViewModels
                 SettingsViewModel.AlpacaServerAddress = address;
                 SettingsViewModel.AlpacaServerPort = port;
 
-                var cameras = await cameraControlService.ConnectServer(address, port);
+                var cameras = await Task.Run(() => cameraControlService.ConnectServer(address, port)).WaitAsync(TimeSpan.FromSeconds(10));
                 CameraList = new ObservableCollection<Camera>(cameras);
                 SelectedCamera = CameraList.FirstOrDefault(c => c.Name == SettingsViewModel.LastSelectedCamera) ?? CameraList.FirstOrDefault() ?? new();
                 await RefreshTelescopeMountsAsync(address, port);
                 IsServerConnected = true;
+            }
+            catch (TimeoutException ex)
+            {
+                logger.Warn(ex, $"Connection to Alpaca server {AlpacaServerAddress}:{AlpacaServerPort} timed out");
+                IsServerConnected = false;
+                await ResetTelescopeStateAsync();
             }
             catch (Exception ex)
             {
@@ -593,9 +599,14 @@ namespace CollimationCircles.ViewModels
         {
             try
             {
-                var mounts = await alpacaTelescopeClient.DiscoverMountsAsync(address, port);
+                var mounts = await Task.Run(() => alpacaTelescopeClient.DiscoverMountsAsync(address, port)).WaitAsync(TimeSpan.FromSeconds(10));
                 TelescopeMounts = new ObservableCollection<TelescopeMount>(mounts);
                 SelectedTelescopeMount = TelescopeMounts.FirstOrDefault();
+            }
+            catch (TimeoutException ex)
+            {
+                logger.Warn(ex, $"Telescope mount discovery on Alpaca server {address}:{port} timed out");
+                await ResetTelescopeStateAsync();
             }
             catch (Exception ex)
             {
