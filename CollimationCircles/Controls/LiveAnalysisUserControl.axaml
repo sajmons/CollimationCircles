@@ -8,13 +8,36 @@
 			 x:DataType="vm:CollimationAnalysisViewModel">
 
 	<StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
+
 		<Grid 
+			ColumnSpacing="{DynamicResource ControlSpacing}"
+			ColumnDefinitions="Auto,*">
+			<Button
+				DockPanel.Dock="Right"
+				Theme="{DynamicResource ToolbarButton}"
+				Command="{Binding LoadImageCommand}"
+				ToolTip.Tip="{DynamicResource Text.LoadImage}">
+				<PathIcon
+					Width="{DynamicResource PathIconWidth}"
+					Height="{DynamicResource PathIconHeight}"
+					Foreground="{DynamicResource Color2}"
+					Data="{StaticResource IconData.Image}" />
+			</Button>
+			<TextBlock
+				Grid.Column="1"
+				IsVisible="{Binding !IsStreaming}"
+				Text="{DynamicResource Text.LiveAnalysisTip}"
+				VerticalAlignment="Top"
+				TextWrapping="Wrap"/>
+		</Grid>
+
+		<Grid
 			ColumnSpacing="{DynamicResource ControlSpacing}"
 			RowSpacing="{DynamicResource ControlSpacing}"
 			ColumnDefinitions="*,Auto"
 			RowDefinitions="Auto,Auto">
-			
-			<TextBlock				
+
+			<TextBlock
 				Text="{DynamicResource Text.DefocusedStarAnalysis}"
 				VerticalAlignment="Center"/>
 			<ToggleSwitch
@@ -23,10 +46,10 @@
 				IsEnabled="{Binding IsStreaming}"
 				ToolTip.Tip="{DynamicResource Text.TipDefocusedStarAnalysis}"
 				OnContent="" OffContent="">
-			</ToggleSwitch>			
+			</ToggleSwitch>
 
-			<TextBlock 
-				Grid.Row="1"				
+			<TextBlock
+				Grid.Row="1"
 				Text="{DynamicResource Text.OpticalTubeAnalysis}"
 				VerticalAlignment="Center"/>
 			<ToggleSwitch
@@ -37,13 +60,7 @@
 				HorizontalAlignment="Stretch"
 				ToolTip.Tip="{DynamicResource Text.TipOpticalTubeAnalysis}"
 				OnContent="" OffContent="">
-			</ToggleSwitch>			
+			</ToggleSwitch>
 		</Grid>
-		
-		<TextBlock
-			IsVisible="{Binding !IsStreaming}"
-			Text="{DynamicResource Text.LiveAnalysisTip}"
-			VerticalAlignment="Center"
-			TextWrapping="Wrap"/>		
 	</StackPanel>
 </UserControl>

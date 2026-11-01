@@ -181,5 +181,5 @@
     <system:String x:Key="Text.TelescopeStop">Stop</system:String>
     <system:String x:Key="Text.AlpacaTelescopeControl">Contrôle du télescope</system:String>
     <system:String x:Key="Text.ManualImageLoading">Charger l'image</system:String>
-    <system:String x:Key="Text.LoadExistingImage">Charger une image existante</system:String>
+    <system:String x:Key="Text.LoadImage">Charger une image</system:String>
 </ResourceDictionary>

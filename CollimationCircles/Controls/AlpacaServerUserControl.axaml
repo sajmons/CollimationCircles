@@ -26,37 +26,38 @@
         </Style>
     </UserControl.Styles>
 
-    <Grid
-        RowDefinitions="Auto,Auto,Auto"
-        RowSpacing="{DynamicResource ControlSpacing}"
-        ColumnDefinitions="70*,30*"
-        ColumnSpacing="{DynamicResource ControlSpacing}">
-        <TextBlock
-            Grid.ColumnSpan="2"
-            Text="{DynamicResource Text.AlpacaServerAddress}" />
-        <TextBox
-            Grid.Row="1"
-            Grid.Column="0"
-            IsEnabled="{Binding CanEditServer}"
-            Text="{Binding AlpacaServerAddress,
-            UpdateSourceTrigger=PropertyChanged}" />        
-        <NumericUpDown
-            Grid.Row="1"
-            Grid.Column="2"
-            ShowButtonSpinner="False"
-            IsEnabled="{Binding CanEditServer}"
-            Value="{Binding AlpacaServerPort, UpdateSourceTrigger=PropertyChanged}"
-            Minimum="1"
-            Maximum="65535"
-            Increment="1" />
-        <Button
-            Grid.Row="2"
-            Grid.ColumnSpan="2"
-            HorizontalAlignment="Stretch"
-            HorizontalContentAlignment="Center"
-            Classes="serverToggle"
-            Classes.connected="{Binding IsServerConnected}"
-            Content="{Binding ConnectButtonText}"
-            Command="{Binding ToggleServerConnectionCommand}" />
-    </Grid>
+    <GroupBox
+        Background="{DynamicResource ExpanderContentBackground}"
+        Header="{DynamicResource Text.AlpacaServerAddress}" >
+        <Grid
+            RowDefinitions="Auto,Auto,Auto"
+            RowSpacing="{DynamicResource ControlSpacing}"
+            ColumnDefinitions="70*,30*"
+            ColumnSpacing="{DynamicResource ControlSpacing}">
+            <TextBox
+                Grid.Row="1"
+                Grid.Column="0"
+                IsEnabled="{Binding CanEditServer}"
+                Text="{Binding AlpacaServerAddress,
+                UpdateSourceTrigger=PropertyChanged}" />
+            <NumericUpDown
+                Grid.Row="1"
+                Grid.Column="2"
+                ShowButtonSpinner="False"
+                IsEnabled="{Binding CanEditServer}"
+                Value="{Binding AlpacaServerPort, UpdateSourceTrigger=PropertyChanged}"
+                Minimum="1"
+                Maximum="65535"
+                Increment="1" />
+            <Button
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Classes="serverToggle"
+                Classes.connected="{Binding IsServerConnected}"
+                Content="{Binding ConnectButtonText}"
+                Command="{Binding ToggleServerConnectionCommand}" />
+        </Grid>
+    </GroupBox>
 </UserControl>

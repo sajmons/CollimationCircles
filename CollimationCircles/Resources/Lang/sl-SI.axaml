@@ -181,5 +181,5 @@
     <system:String x:Key="Text.TelescopeStop">Stop</system:String>
     <system:String x:Key="Text.AlpacaTelescopeControl">Nadzor teleskopa</system:String>
     <system:String x:Key="Text.ManualImageLoading">Naloži sliko</system:String>
-    <system:String x:Key="Text.LoadExistingImage">Naloži obstoječo sliko</system:String>
+    <system:String x:Key="Text.LoadImage">Naloži sliko</system:String>
 </ResourceDictionary>
