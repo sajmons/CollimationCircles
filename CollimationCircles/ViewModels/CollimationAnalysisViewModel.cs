@@ -2,6 +2,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using CollimationCircles.Messages;
+using CollimationCircles.Models;
 using CollimationCircles.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
@@ -27,7 +28,8 @@ namespace CollimationCircles.ViewModels
         private const int AnalysisIntervalMs = 200;
         private const double MinArrowLength = 40;
         private const int MaxDetectedCircles = 8;
-        private const double MinCircleRadiusFraction = 50.0 / MaxAnalysisWidth;
+        private const double MinCircleRadiusFraction = 20.0 / MaxAnalysisWidth;
+        private const double MinEdgeSupport = 0.6;
 
         private readonly SettingsViewModel settingsViewModel;
         private readonly ICameraService cameraService;
@@ -60,6 +62,12 @@ namespace CollimationCircles.ViewModels
             settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
             cameraService = Ioc.Default.GetRequiredService<ICameraService>();
 
+            settingsViewModel.Items.CollectionChanged += OnItemsChanged;
+            foreach (var item in settingsViewModel.Items)
+            {
+                HookScrewItem(item);
+            }
+
             WeakReferenceMessenger.Default.Register<CameraStateMessage>(this, (r, m) =>
             {
                 switch (m.Value)
@@ -72,6 +80,46 @@ namespace CollimationCircles.ViewModels
                         break;
                 }
             });
+        }
+
+        private Dictionary<string, double>? lastScrewInput;
+
+        private static bool IsScrewSetting(string? name) =>
+            name is nameof(CollimationHelper.Count) or nameof(CollimationHelper.RotationAngle) or nameof(CollimationHelper.ItemColor);
+
+        private void HookScrewItem(CollimationHelper item)
+        {
+            if (item is ScrewViewModel)
+            {
+                item.PropertyChanged -= OnScrewPropertyChanged;
+                item.PropertyChanged += OnScrewPropertyChanged;
+            }
+        }
+
+        private void OnScrewPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (IsScrewSetting(e.PropertyName))
+            {
+                RefreshScrewInstructions();
+            }
+        }
+
+        private void OnItemsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            foreach (var item in settingsViewModel.Items)
+            {
+                HookScrewItem(item);
+            }
+
+            RefreshScrewInstructions();
+        }
+
+        private void RefreshScrewInstructions()
+        {
+            if (IsAnyLiveAnalysisActive)
+            {
+                PostScrewInstructions(lastScrewInput);
+            }
         }
 
         partial void OnIsLiveAnalysisActiveChanged(bool value) => HandleModeSwitch(value || IsLiveRmseActive);
@@ -154,7 +202,7 @@ namespace CollimationCircles.ViewModels
                     overlay = advanced.Image;
                     PostScrewInstructions(advanced.Wavefront);
                 }
-                else
+                else if (!IsLiveRmseActive)
                 {
                     Dispatcher.UIThread.Post(ScrewInstructions.Clear);
                 }
@@ -163,6 +211,10 @@ namespace CollimationCircles.ViewModels
                 {
                     var rmse = RunRmseAnalysis(image);
                     descriptions.Add(rmse.Description);
+                    if (!IsLiveAnalysisActive)
+                    {
+                        PostScrewInstructions(rmse.Offset);
+                    }
                     if (overlay is null)
                     {
                         overlay = rmse.Image;
@@ -196,6 +248,7 @@ namespace CollimationCircles.ViewModels
 
         private void PostScrewInstructions(Dictionary<string, double>? wavefront)
         {
+            lastScrewInput = wavefront;
             var screwVM = settingsViewModel.Items.OfType<ScrewViewModel>().FirstOrDefault();
             if (screwVM is null || wavefront is null)
             {
@@ -227,22 +280,130 @@ namespace CollimationCircles.ViewModels
 
         private static Options CreateCircleOptions() => new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
 
+        private static double EdgeSupport(Mat edges, double cx, double cy, double radius)
+        {
+            const int samples = 90;
+            int hits = 0;
+            for (int i = 0; i < samples; i++)
+            {
+                double a = 2 * Math.PI * i / samples;
+                int x = (int)Math.Round(cx + radius * Math.Cos(a));
+                int y = (int)Math.Round(cy + radius * Math.Sin(a));
+                if (x >= 0 && y >= 0 && x < edges.Width && y < edges.Height && edges.At<byte>(y, x) > 0)
+                {
+                    hits++;
+                }
+            }
+
+            return (double)hits / samples;
+        }
+
         private static List<Circle> DetectClassicCircles(Mat image, Options options)
         {
             using var gray = new Mat();
             Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
             Cv2.Normalize(gray, gray, 0, 255, NormTypes.MinMax);
-            Cv2.GaussianBlur(gray, gray, new Size(9, 9), 2);
+            Cv2.GaussianBlur(gray, gray, new Size(7, 7), 2);
 
-            int minRadius = Math.Max(10, (int)(image.Width * MinCircleRadiusFraction));
-            var found = Cv2.HoughCircles(gray, HoughModes.Gradient, 1, minRadius, 100, 30, minRadius, image.Width / 2);
+            double minRadius = Math.Max(10, image.Width * MinCircleRadiusFraction);
+            double maxRadius = image.Width / 2.0;
+            var candidates = new List<(Circle Circle, double Area)>();
 
-            var circles = found
-                .Take(MaxDetectedCircles)
-                .Select(c => new Circle { X = (int)Math.Round(c.Center.X), Y = (int)Math.Round(c.Center.Y), Radius = (int)Math.Round(c.Radius), Votes = 0 })
-                .ToList();
+            // Edge map used to verify that a candidate circle lies on a real image edge.
+            using var edges = new Mat();
+            Cv2.Canny(gray, edges, 30, 90);
+            using var edgeKernel = Cv2.GetStructuringElement(MorphShapes.Ellipse, new Size(3, 3));
+            Cv2.Dilate(edges, edges, edgeKernel);
 
-            logger.Debug($"Hough detection found {circles.Count} circle(s) on {image.Width}x{image.Height} image");
+            // Nested tube edges differ in brightness
+            var masks = new List<Mat>();
+            for (int level = 25; level <= 225; level += 25)
+            {
+                var m = new Mat();
+                Cv2.Threshold(gray, m, level, 255, ThresholdTypes.Binary);
+                var mi = new Mat();
+                Cv2.BitwiseNot(m, mi);
+                masks.Add(m);
+                masks.Add(mi);
+            }
+
+            foreach (var mask in masks)
+            {
+                Cv2.FindContours(mask, out var contours, out _, RetrievalModes.List, ContourApproximationModes.ApproxSimple);
+                foreach (var contour in contours)
+                {
+                    if (contour.Length < 5)
+                    {
+                        continue;
+                    }
+
+                    var box = Cv2.BoundingRect(contour);
+                    if (box.Left <= 1 || box.Top <= 1 || box.Right >= image.Width - 1 || box.Bottom >= image.Height - 1)
+                    {
+                        continue;
+                    }
+
+                    var hull = Cv2.ConvexHull(contour);
+                    double hullArea = Cv2.ContourArea(hull);
+                    if (hullArea < Math.PI * minRadius * minRadius)
+                    {
+                        continue;
+                    }
+
+                    Cv2.MinEnclosingCircle(hull, out var enclosingCenter, out float enclosingRadius);
+                    double circleArea = Math.PI * enclosingRadius * enclosingRadius;
+                    if (enclosingRadius < minRadius || enclosingRadius > maxRadius || hullArea / circleArea < 0.85)
+                    {
+                        continue;
+                    }
+
+                    var ellipse = Cv2.FitEllipse(hull);
+                    double major = Math.Max(ellipse.Size.Width, ellipse.Size.Height);
+                    double minor = Math.Min(ellipse.Size.Width, ellipse.Size.Height);
+                    if (major <= 0 || minor / major < 0.85)
+                    {
+                        continue;
+                    }
+
+                    double radiusFit = (major + minor) / 4.0;
+                    if (EdgeSupport(edges, ellipse.Center.X, ellipse.Center.Y, radiusFit) < MinEdgeSupport)
+                    {
+                        continue;
+                    }
+
+                    candidates.Add((new Circle
+                    {
+                        X = (int)Math.Round(ellipse.Center.X),
+                        Y = (int)Math.Round(ellipse.Center.Y),
+                        Radius = (int)Math.Round((major + minor) / 4.0),
+                        Votes = 0
+                    }, hullArea));
+                }
+            }
+
+            foreach (var m in masks)
+            {
+                m.Dispose();
+            }
+
+            const int mergeTolerance = 6;
+            var circles = new List<Circle>();
+            foreach (var (circle, _) in candidates.OrderByDescending(c => c.Area))
+            {
+                bool duplicate = circles.Any(e =>
+                    Math.Abs(e.X - circle.X) <= mergeTolerance && Math.Abs(e.Y - circle.Y) <= mergeTolerance && Math.Abs(e.Radius - circle.Radius) <= mergeTolerance);
+                if (!duplicate)
+                {
+                    circles.Add(circle);
+                }
+
+                if (circles.Count >= MaxDetectedCircles)
+                {
+                    break;
+                }
+            }
+
+            logger.Debug($"Contour detection found {circles.Count} circle(s) on {image.Width}x{image.Height} image");
             return circles;
         }
 
@@ -279,7 +440,7 @@ namespace CollimationCircles.ViewModels
             return (DescribeAdvancedResult(wavefront), wavefront, drawImage);
         }
 
-        private static (string Description, Mat Image) RunRmseAnalysis(Mat image)
+        private static (string Description, Mat Image, Dictionary<string, double>? Offset) RunRmseAnalysis(Mat image)
         {
             var options = CreateCircleOptions();
             var circles = DetectClassicCircles(image, options);
@@ -289,10 +450,26 @@ namespace CollimationCircles.ViewModels
 
             string desc = $"--- MECHANICAL RMSE ---\n" +
                          $"Circles: {analysis.CircleCount}\n" +
-                         $"RMSE: {analysis.CenterRMSE:F2}\n" +
+                         $"RMSE: {analysis.CenterRMSE:F2} px\n" +
+                         $"RMSE: {analysis.CenterRMSEPercent:F1}% of radius\n" +
                          $"------------------------";
 
-            return (desc, drawnImage);
+            Dictionary<string, double>? offset = null;
+            if (circles.Count >= 2)
+            {
+                var outer = circles.MaxBy(c => c.Radius)!;
+                var inner = circles.MinBy(c => c.Radius)!;
+                double dx = inner.X - outer.X;
+                double dy = inner.Y - outer.Y;
+                double magnitude = Math.Sqrt(dx * dx + dy * dy) / Math.Max(1, outer.Radius);
+                double angle = Math.Atan2(dy, dx) * 180.0 / Math.PI;
+                offset = new Dictionary<string, double> { { "ComaMagnitude", magnitude }, { "ComaAngle", angle } };
+
+                desc += $"\nInner/outer offset: {magnitude * 100:F1}% of radius\nOffset angle: {angle:F1}°";
+                Cv2.Line(drawnImage, new Point(outer.X, outer.Y), new Point(inner.X, inner.Y), new Scalar(0, 255, 0, 255), 2, LineTypes.AntiAlias);
+            }
+
+            return (desc, drawnImage, offset);
         }
 
         private static void DrawVector(Mat img, int x1, int y1, int x2, int y2)
@@ -329,12 +506,13 @@ namespace CollimationCircles.ViewModels
                 ScrewInstructions.Clear();
                 foreach (var adj in adjustments)
                 {
-                    ScrewInstructions.Add(new ScrewInstruction { Id = adj.Id, Color = screwVM.ItemColor });
+                    ScrewInstructions.Add(new ScrewInstruction { Id = adj.Id });
                 }
             }
 
             for (int i = 0; i < adjustments.Count; i++)
             {
+                ScrewInstructions[i].Color = screwVM.ItemColor;
                 ScrewInstructions[i].Direction = adjustments[i].Direction;
                 ScrewInstructions[i].Turns = adjustments[i].Turns;
             }

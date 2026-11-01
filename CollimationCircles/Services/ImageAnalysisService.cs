@@ -80,6 +80,8 @@ namespace CollimationCircles.Services
         {
             public int? CircleCount { get; set; } = null;
             public double CenterRMSE { get; set; } = 0.0;
+            /// <summary>Center RMSE as a percentage of the largest detected circle radius (scale independent).</summary>
+            public double CenterRMSEPercent { get; set; } = 0.0;
         }
 
         private static byte[] Encode(Mat image)
@@ -330,12 +332,23 @@ namespace CollimationCircles.Services
 
         public static AnalysisResult AnalyzeResult(Mat original, List<Circle> circles, Options options)
         {
-            Random rng = new();
+            Scalar[] palette =
+            [
+                new(0, 255, 255, 255),
+                new(255, 128, 0, 255),
+                new(0, 0, 255, 255),
+                new(255, 0, 255, 255),
+                new(0, 255, 0, 255),
+                new(0, 165, 255, 255),
+                new(255, 255, 0, 255),
+                new(255, 255, 255, 255)
+            ];
 
-            // Draw detected circles on the image (BGRA, opaque)
-            foreach (Circle circle in circles)
+            // Draw detected circles (BGRA, opaque); color is determined by size rank so it is stable between frames
+            int rank = 0;
+            foreach (Circle circle in circles.OrderByDescending(c => c.Radius))
             {
-                Scalar color = new(rng.Next(255), rng.Next(255), rng.Next(255), 255);
+                Scalar color = palette[rank++ % palette.Length];
                 DrawCircle(original, circle.X, circle.Y, circle.Radius, color);
                 DrawCircle(original, circle.X, circle.Y, 2, color);
             }
@@ -343,7 +356,10 @@ namespace CollimationCircles.Services
             return new AnalysisResult
             {
                 CircleCount = circles.Count,
-                CenterRMSE = CalculateCenterRMSE(circles)
+                CenterRMSE = CalculateCenterRMSE(circles),
+                CenterRMSEPercent = circles.Count == 0 || circles.Max(c => c.Radius) <= 0
+                    ? 0
+                    : CalculateCenterRMSE(circles) / circles.Max(c => c.Radius) * 100.0
             };
         }
 
