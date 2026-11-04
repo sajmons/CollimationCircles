@@ -303,6 +303,60 @@ namespace CollimationCircles.Services.Alpaca
             await SendPutAsync("tracking", ("Tracking", tracking ? "true" : "false")).ConfigureAwait(false);
         }
 
+        public async Task<(double? FocalLengthMm, double? ApertureMm)> GetOpticsAsync()
+        {
+            EnsureMountSelected();
+            await EnsureConnectedAsync().ConfigureAwait(false);
+
+            double? focalLength = await TryGetDoubleAsync("focallength").ConfigureAwait(false);
+            double? aperture = await TryGetDoubleAsync("aperturediameter").ConfigureAwait(false);
+
+            if (aperture is null)
+            {
+                var area = await TryGetDoubleAsync("aperturearea").ConfigureAwait(false);
+                if (area is > 0)
+                {
+                    aperture = 2.0 * Math.Sqrt(area.Value / Math.PI);
+                }
+            }
+
+            double? focalMm = focalLength is > 0 ? focalLength * 1000.0 : null;
+            double? apertureMm = aperture is > 0 ? aperture * 1000.0 : null;
+            logger.Info("Telescope optics: focal length={0} mm, aperture={1} mm", focalMm, apertureMm);
+            return (focalMm, apertureMm);
+        }
+
+        private async Task<double?> TryGetDoubleAsync(string endpoint)
+        {
+            try
+            {
+                var transactionId = await NextClientTransactionIdAsync().ConfigureAwait(false);
+                var uri = BuildTelescopeUri(endpoint, transactionId);
+                using var response = await httpClient.GetAsync(uri).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    logger.Info($"Telescope property {endpoint} not available: HTTP {(int)response.StatusCode} {body}");
+                    return null;
+                }
+
+                await using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                using var json = await JsonDocument.ParseAsync(stream).ConfigureAwait(false);
+                EnsureSuccess(json.RootElement, endpoint);
+
+                if (TryGetProperty(json.RootElement, "Value", out var value) && value.TryGetDouble(out var result))
+                {
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex, $"Could not read telescope property {endpoint}.");
+            }
+
+            return null;
+        }
+
         public async Task<bool> GetParkedAsync()
         {
             EnsureMountSelected();

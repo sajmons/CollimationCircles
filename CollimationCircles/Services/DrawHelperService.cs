@@ -90,7 +90,7 @@ namespace CollimationCircles.Services
 
         private void DrawScrew(DrawingContext context, SettingsViewModel vm, ScrewViewModel item, Matrix translate)
         {
-            double angle = 360 / item.Count;
+            double angle = -360 / item.Count;
 
             Matrix rotate2 = Matrix.CreateRotation(item.RotationAngle * Math.PI / 180);
             using (context.PushTransform(translate.Invert() * rotate2 * translate))

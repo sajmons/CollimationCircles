@@ -28,13 +28,7 @@
 				   Stretch="Uniform" />
 			<controls:CollimationAnalysisUserControl x:Name="AnalysisOverlay"
 				HorizontalAlignment="Center"
-				VerticalAlignment="Center"
-				IsHitTestVisible="False" />
-
-			<controls:LiveAnalysisResultUserControl
-				HorizontalAlignment="Left"
-				Padding="{DynamicResource ExpanderContentPadding}"
-				Width="200"/>
+				VerticalAlignment="Center" />			
 		</Grid>
 	</Grid>
 </Window>

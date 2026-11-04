@@ -7,6 +7,11 @@ using System.Linq;
 
 namespace CollimationCircles.Services
 {
+    /// <summary>
+    /// Optical axis helpers: defocused star analysis (<see cref="AnalyzeStarWavefront"/>), circle fitting,
+    /// center mark detection and screw adjustment calculation (angle based, calibrated and single screw guidance).
+    /// The circle detection and RMSE used by the optical tube analysis are in <see cref="ImageAnalysisService"/>.
+    /// </summary>
     public class OpticalAxisService
     {
         public class CircularFeature
@@ -80,9 +85,6 @@ namespace CollimationCircles.Services
         private static CircularFeature? FitCircleAlgebraic(List<Point2d> pts)
         {
             if (pts.Count < 3) return null;
-
-            double avgX = pts.Average(p => p.X);
-            double avgY = pts.Average(p => p.Y);
 
             var M = Matrix<double>.Build;
             var V = Vector<double>.Build;
@@ -202,6 +204,9 @@ namespace CollimationCircles.Services
         /// Analyzes a defocused star. The outer disc is the largest bright blob; the secondary mirror shadow is the dark hole inside it.
         /// Collimation error is the offset of the shadow from the disc center, relative to the disc radius.
         /// </summary>
+        private const double MinObstructionRatio = 0.1;
+        private const double MaxObstructionRatio = 0.6;
+
         public static Dictionary<string, double>? AnalyzeStarWavefront(Mat starImg)
         {
             using Mat gray = starImg.Channels() == 1 ? starImg.Clone() : starImg.CvtColor(ColorConversionCodes.BGR2GRAY);
@@ -251,6 +256,10 @@ namespace CollimationCircles.Services
             double sX = sm.M10 / sm.M00;
             double sY = sm.M01 / sm.M00;
 
+            double shadowRadius = Math.Sqrt(Cv2.ContourArea(shadow) / Math.PI);
+            double obstructionRatio = shadowRadius / radius;
+            if (obstructionRatio < MinObstructionRatio || obstructionRatio > MaxObstructionRatio) return null;
+
             double dx = sX - oX;
             double dy = sY - oY;
 
@@ -267,10 +276,205 @@ namespace CollimationCircles.Services
             };
         }
 
-        public static List<ScrewAdjustment> CalculateScrewAdjustments(double comaMagnitude, double comaAngleDegrees, double rotationAngleDegrees, int count, double sensitivity = 2.0)
+        public static List<ScrewAdjustment>? CalculateCalibratedAdjustments(double offsetX, double offsetY, IReadOnlyList<(double X, double Y)> response, double alignedThreshold = 0.001)
+        {
+            if (response.Count < 2) return null;
+
+            double a = 0, b = 0, c = 0;
+            foreach (var (x, y) in response)
+            {
+                a += x * x;
+                b += x * y;
+                c += y * y;
+            }
+
+            double det = a * c - b * b;
+            if (det < 0.01 * (a + c) * (a + c)) return null;
+
+            bool aligned = Math.Sqrt(offsetX * offsetX + offsetY * offsetY) < alignedThreshold;
+
+            double wx = -(c * offsetX - b * offsetY) / det;
+            double wy = -(-b * offsetX + a * offsetY) / det;
+
+            var adjustments = new List<ScrewAdjustment>();
+            for (int i = 0; i < response.Count; i++)
+            {
+                double turns = aligned ? 0 : response[i].X * wx + response[i].Y * wy;
+                adjustments.Add(new ScrewAdjustment
+                {
+                    Id = i + 1,
+                    Direction = aligned ? "Fixed" : (turns > 0 ? "CW" : "CCW"),
+                    Magnitude = Math.Abs(turns),
+                    Turns = Math.Abs(turns)
+                });
+            }
+
+            return adjustments;
+        }
+
+        /// <summary>
+        /// Picks the single screw whose turn reduces the offset the most and returns the turns for it only;
+        /// all other screws are reported as "Fixed".
+        /// </summary>
+        public static List<ScrewAdjustment>? CalculateSingleScrewAdjustment(double offsetX, double offsetY, IReadOnlyList<(double X, double Y)> response, double alignedThreshold = 0.001)
+        {
+            if (response.Count < 1) return null;
+
+            bool aligned = Math.Sqrt(offsetX * offsetX + offsetY * offsetY) < alignedThreshold;
+            int best = -1;
+            double bestGain = 0;
+            double bestTurns = 0;
+            for (int i = 0; i < response.Count && !aligned; i++)
+            {
+                double norm = response[i].X * response[i].X + response[i].Y * response[i].Y;
+                if (norm <= 1e-12) continue;
+
+                double dot = response[i].X * offsetX + response[i].Y * offsetY;
+                double gain = dot * dot / norm;
+                if (gain > bestGain)
+                {
+                    bestGain = gain;
+                    bestTurns = -dot / norm;
+                    best = i;
+                }
+            }
+
+            var adjustments = new List<ScrewAdjustment>();
+            for (int i = 0; i < response.Count; i++)
+            {
+                bool active = i == best;
+                adjustments.Add(new ScrewAdjustment
+                {
+                    Id = i + 1,
+                    Direction = active ? (bestTurns > 0 ? "CW" : "CCW") : "Fixed",
+                    Magnitude = active ? Math.Abs(bestTurns) : 0,
+                    Turns = active ? Math.Abs(bestTurns) : 0
+                });
+            }
+
+            return adjustments;
+        }
+
+        /// <summary>
+        /// Builds an approximate per-turn response for each screw from the screw geometry, used when no calibration exists.
+        /// </summary>
+        public static List<(double X, double Y)> BuildEstimatedResponse(double rotationAngleDegrees, int count, double sensitivity = 20.0)
+        {
+            var response = new List<(double X, double Y)>();
+            if (count < 1) return response;
+
+            double angleStep = 360.0 / count;
+            for (int i = 0; i < count; i++)
+            {
+                double rad = (90.0 + rotationAngleDegrees + i * angleStep) * Math.PI / 180.0;
+                response.Add((-Math.Cos(rad) / sensitivity, -Math.Sin(rad) / sensitivity));
+            }
+
+            return response;
+        }
+
+        /// <summary>
+        /// Finds the best screw to turn right now: the single screw that reduces the remaining error the most.
+        /// Optionally considers pairs of screws (never all screws). All other screws are reported as "Fixed".
+        /// </summary>
+        public static List<ScrewAdjustment>? CalculateBestSubsetAdjustment(double offsetX, double offsetY, IReadOnlyList<(double X, double Y)> response, double alignedThreshold = 0.001, double minPairImprovement = 0.2, bool allowPairs = false)
+        {
+            int n = response.Count;
+            if (n < 1) return null;
+
+            double[] turns = new double[n];
+            bool aligned = Math.Sqrt(offsetX * offsetX + offsetY * offsetY) < alignedThreshold;
+
+            if (!aligned)
+            {
+                double bestSingleResidual = double.MaxValue;
+                int bestSingle = -1;
+                double bestSingleTurns = 0;
+                for (int i = 0; i < n; i++)
+                {
+                    double norm = response[i].X * response[i].X + response[i].Y * response[i].Y;
+                    if (norm <= 1e-12) continue;
+
+                    double t = -(response[i].X * offsetX + response[i].Y * offsetY) / norm;
+                    double rx = offsetX + t * response[i].X;
+                    double ry = offsetY + t * response[i].Y;
+                    double residual = Math.Sqrt(rx * rx + ry * ry);
+                    if (residual < bestSingleResidual)
+                    {
+                        bestSingleResidual = residual;
+                        bestSingle = i;
+                        bestSingleTurns = t;
+                    }
+                }
+
+                if (bestSingle >= 0)
+                {
+                    turns[bestSingle] = bestSingleTurns;
+                }
+
+                if (allowPairs && n >= 3)
+                {
+                    double bestPairResidual = double.MaxValue;
+                    int bestI = -1, bestJ = -1;
+                    double bestTi = 0, bestTj = 0;
+                    for (int i = 0; i < n - 1; i++)
+                    {
+                        for (int j = i + 1; j < n; j++)
+                        {
+                            double a = response[i].X * response[i].X + response[i].Y * response[i].Y;
+                            double b = response[i].X * response[j].X + response[i].Y * response[j].Y;
+                            double c = response[j].X * response[j].X + response[j].Y * response[j].Y;
+                            double det = a * c - b * b;
+                            if (a <= 1e-12 || c <= 1e-12 || det < 0.05 * a * c) continue;
+
+                            double ci = response[i].X * offsetX + response[i].Y * offsetY;
+                            double cj = response[j].X * offsetX + response[j].Y * offsetY;
+                            double ti = (-ci * c + cj * b) / det;
+                            double tj = (-cj * a + ci * b) / det;
+                            double rx = offsetX + ti * response[i].X + tj * response[j].X;
+                            double ry = offsetY + ti * response[i].Y + tj * response[j].Y;
+                            double residual = Math.Sqrt(rx * rx + ry * ry);
+                            if (residual < bestPairResidual)
+                            {
+                                bestPairResidual = residual;
+                                bestI = i;
+                                bestJ = j;
+                                bestTi = ti;
+                                bestTj = tj;
+                            }
+                        }
+                    }
+
+                    bool pairBetter = bestI >= 0 && (bestSingle < 0 || bestPairResidual < bestSingleResidual * (1.0 - minPairImprovement));
+                    if (pairBetter)
+                    {
+                        Array.Clear(turns);
+                        turns[bestI] = bestTi;
+                        turns[bestJ] = bestTj;
+                    }
+                }
+            }
+
+            var adjustments = new List<ScrewAdjustment>();
+            for (int i = 0; i < n; i++)
+            {
+                bool active = Math.Abs(turns[i]) > 1e-9;
+                adjustments.Add(new ScrewAdjustment
+                {
+                    Id = i + 1,
+                    Direction = active ? (turns[i] > 0 ? "CW" : "CCW") : "Fixed",
+                    Magnitude = active ? Math.Abs(turns[i]) : 0,
+                    Turns = active ? Math.Abs(turns[i]) : 0
+                });
+            }
+
+            return adjustments;
+        }
+
+        public static List<ScrewAdjustment> CalculateScrewAdjustments(double comaMagnitude, double comaAngleDegrees, double rotationAngleDegrees, int count, double sensitivity = 20.0)
         {
             var adjustments = new List<ScrewAdjustment>();
-            if (comaMagnitude < 0.005) // Aligned threshold
+            if (comaMagnitude < 0.001) // Aligned threshold (0.1% of radius)
             {
                 for (int i = 1; i <= count; i++) 
                     adjustments.Add(new ScrewAdjustment { Id = i, Direction = "Fixed", Magnitude = 0, Turns = 0 });

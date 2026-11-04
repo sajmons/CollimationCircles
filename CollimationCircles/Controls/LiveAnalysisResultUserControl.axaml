@@ -5,6 +5,7 @@
 			 mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
 			 x:Class="CollimationCircles.Controls.LiveAnalysisResultUserControl"
 			 xmlns:vm="using:CollimationCircles.ViewModels"
+			 xmlns:controls="using:CollimationCircles.Controls"
 			 x:DataType="vm:CollimationAnalysisViewModel">
 
 	<StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
@@ -23,6 +24,7 @@
 				CornerRadius="8"
 				Margin="0,8,0,8">
 			<StackPanel Spacing="6">
+				<StackPanel Spacing="6" IsVisible="{Binding !IsCalibrating}">
 				<StackPanel
 					Orientation="Horizontal"
 					Spacing="8">
@@ -64,16 +66,50 @@
 				<ItemsControl ItemsSource="{Binding ScrewInstructions}" Margin="0,4">
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<Border Background="#1AFFFFFF" CornerRadius="4" Padding="8,4" Margin="0,2">
+							<Border CornerRadius="4" Classes.locked="{Binding !IsActive}">
+															<Border.Styles>
+																<Style Selector="Border.locked">
+																	<Setter Property="Opacity" Value="0.35"/>
+																</Style>
+															</Border.Styles>
 								<Grid ColumnDefinitions="20,Auto,*">
-									<Ellipse Grid.Column="0" Width="10" Height="10" Fill="{Binding Brush}" HorizontalAlignment="Left"/>
-									<TextBlock Grid.Column="1" Text="{Binding Id, StringFormat='Screw {0}: '}" Foreground="LightGray" VerticalAlignment="Center" FontSize="11"/>
-									<TextBlock Grid.Column="2" Text="{Binding DisplayText}" Foreground="Lime" FontWeight="SemiBold" HorizontalAlignment="Right" VerticalAlignment="Center" FontSize="11"/>
+									<Ellipse 
+										Grid.Column="0" 
+										Width="10" 
+										Height="10" 
+										Fill="{Binding Brush}" 
+										HorizontalAlignment="Left"/>
+									<TextBlock 
+										Grid.Column="1" 
+										Text="{Binding Id, StringFormat=' {0}: '}" 
+										Foreground="LightGray" 
+										VerticalAlignment="Center" 
+										FontSize="11"/>
+									<TextBlock 
+										Grid.Column="2" 
+										Text="{Binding DisplayText}" 
+										Foreground="Lime" 
+										FontWeight="SemiBold" 
+										VerticalAlignment="Center" 
+										FontSize="11"/>
 								</Grid>
 							</Border>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
 				</ItemsControl>
+
+
+				<TextBlock
+					Text="{Binding GuidanceText}"
+					Foreground="Lime"
+					FontWeight="SemiBold"
+					TextWrapping="Wrap"
+					FontSize="11"
+					IsVisible="{Binding GuidanceText, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+				</StackPanel>
+
+				<controls:ScrewCalibrationUserControl />
 			</StackPanel>
 		</Border>
 	</StackPanel>

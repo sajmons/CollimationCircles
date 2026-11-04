@@ -59,6 +59,7 @@ public partial class App : Application
             .AddSingleton<ProfileManagerViewModel>()
             .AddTransient<AboutViewModel>()
             .AddSingleton<RequestLicenseViewModel>()
+            .AddSingleton<ScrewCalibrationViewModel>()
             .AddSingleton<CollimationAnalysisViewModel>()
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()

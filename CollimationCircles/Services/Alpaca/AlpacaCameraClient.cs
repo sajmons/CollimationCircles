@@ -21,7 +21,7 @@ namespace CollimationCircles.Services.Alpaca
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private const double DefaultExposureSec = 0.01;
+        private const double DefaultExposureSec = 1;
         private const int DefaultBinning = 2;
         private const int MaxDirectProbeDeviceNumber = 7;
         private const int DiscoveryTimeoutSeconds = 5;
@@ -346,11 +346,39 @@ namespace CollimationCircles.Services.Alpaca
 
             logger.Info($"Connected to Alpaca camera '{camera.Name}'");
             driverPrefersBinnedRoi = false;
+            PublishCameraScale(dev);
             ResolveImageMetadata(dev);
             device = dev;
             cts = new CancellationTokenSource();
             var token = cts.Token;
             loop = Task.Run(() => CaptureLoop(dev, token));
+        }
+
+        private void PublishCameraScale(AlpacaCamera dev)
+        {
+            double pixelUm = 0;
+            try
+            {
+                pixelUm = dev.PixelSizeX;
+            }
+            catch (Exception ex)
+            {
+                logger.Debug(ex, "Could not read camera PixelSizeX.");
+            }
+
+            int bin;
+            lock (sync)
+            {
+                bin = requestedBin;
+            }
+
+            logger.Info($"Camera pixel size={pixelUm} um, binning={bin}");
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                var settings = CommunityToolkit.Mvvm.DependencyInjection.Ioc.Default.GetService<CollimationCircles.ViewModels.SettingsViewModel>();
+                if (settings is null) return;
+                if (pixelUm > 0) settings.CameraPixelSizeUm = pixelUm;
+            });
         }
 
         private void ResolveImageMetadata(AlpacaCamera dev)

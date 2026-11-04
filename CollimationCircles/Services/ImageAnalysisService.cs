@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
 {
+    /// <summary>
+    /// Image-processing pipeline and circle detection (Hough transform) with the mechanical center RMSE.
+    /// Used by the optical tube (RMSE) analysis to compare the concentric tube/mirror circles.
+    /// Defocused star analysis is in <see cref="OpticalAxisService.AnalyzeStarWavefront"/>.
+    /// </summary>
     internal static class ImageAnalysisService
     {
         public class DetectionParameters
@@ -32,6 +37,17 @@ namespace CollimationCircles.Services
             public int Y { get; set; }       // Y-coordinate of center
             public int Radius { get; set; }  // Circle radius
             public int Votes { get; set; }   // Accumulator votes
+
+            private double? centerX;
+            private double? centerY;
+            private double? exactRadius;
+
+            /// <summary>Sub-pixel X of the center (falls back to <see cref="X"/>).</summary>
+            public double CenterX { get => centerX ?? X; set => centerX = value; }
+            /// <summary>Sub-pixel Y of the center (falls back to <see cref="Y"/>).</summary>
+            public double CenterY { get => centerY ?? Y; set => centerY = value; }
+            /// <summary>Sub-pixel radius (falls back to <see cref="Radius"/>).</summary>
+            public double ExactRadius { get => exactRadius ?? Radius; set => exactRadius = value; }
         }
 
         public class Options
@@ -357,9 +373,9 @@ namespace CollimationCircles.Services
             {
                 CircleCount = circles.Count,
                 CenterRMSE = CalculateCenterRMSE(circles),
-                CenterRMSEPercent = circles.Count == 0 || circles.Max(c => c.Radius) <= 0
+                CenterRMSEPercent = circles.Count == 0 || circles.Max(c => c.ExactRadius) <= 0
                     ? 0
-                    : CalculateCenterRMSE(circles) / circles.Max(c => c.Radius) * 100.0
+                    : CalculateCenterRMSE(circles) / circles.Max(c => c.ExactRadius) * 100.0
             };
         }
 
@@ -381,14 +397,14 @@ namespace CollimationCircles.Services
                 return 0;
 
             // Compute average center coordinates.
-            double avgX = circles.Average(c => c.X);
-            double avgY = circles.Average(c => c.Y);
+            double avgX = circles.Average(c => c.CenterX);
+            double avgY = circles.Average(c => c.CenterY);
 
             // Compute the sum of squared distances from each circle center to the average center.
             double sumSquares = circles.Sum(c =>
             {
-                double dx = c.X - avgX;
-                double dy = c.Y - avgY;
+                double dx = c.CenterX - avgX;
+                double dy = c.CenterY - avgY;
                 return dx * dx + dy * dy;
             });
 

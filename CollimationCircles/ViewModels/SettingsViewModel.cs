@@ -68,6 +68,18 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        private double telescopeApertureMm = 0;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private double telescopeFocalLengthMm = 0;
+
+        [JsonProperty]
+        [ObservableProperty]
+        private double cameraPixelSizeUm = 0;
+
+        [JsonProperty]
+        [ObservableProperty]
         [Range(Constraints.RotationAngleMin, Constraints.RotationAngleMax)]
         [NotifyDataErrorInfo]
         private double rotationAngle = 0;        

@@ -1,4 +1,4 @@
-using Avalonia.Media;
+﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using CollimationCircles.Messages;
@@ -27,21 +27,25 @@ namespace CollimationCircles.ViewModels
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private const int MaxAnalysisWidth = 640;
+        private const int ReferenceWidth = 640;
         private const int AnalysisIntervalMs = 200;
         private const double MinArrowLength = 40;
         private const int MaxDetectedCircles = 8;
-        private const double MinCircleRadiusFraction = 20.0 / MaxAnalysisWidth;
+        private const double MinCircleRadiusFraction = 20.0 / ReferenceWidth;
         private const double MinEdgeSupport = 0.6;
 
         private readonly SettingsViewModel settingsViewModel;
         private readonly ICameraService cameraService;
+        private readonly ScrewCalibrationViewModel calibration;
 
         [ObservableProperty]
         private ObservableCollection<ScrewInstruction> screwInstructions = [];
 
         [ObservableProperty]
         bool isStreaming = false;
+
+        [ObservableProperty]
+        bool isCalibrating = false;
 
         [ObservableProperty]
         bool isLiveAnalysisActive = false;
@@ -64,6 +68,17 @@ namespace CollimationCircles.ViewModels
         {
             settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
             cameraService = Ioc.Default.GetRequiredService<ICameraService>();
+            calibration = Ioc.Default.GetRequiredService<ScrewCalibrationViewModel>();
+            calibration.IsAnyLiveAnalysisActive = () => IsAnyLiveAnalysisActive;
+            calibration.IsAdvancedAnalysisActive = () => IsLiveAnalysisActive;
+            calibration.CalibrationChanged += RefreshScrewInstructions;
+            calibration.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(ScrewCalibrationViewModel.IsCalibrating))
+                {
+                    IsCalibrating = calibration.IsCalibrating;
+                }
+            };
 
             settingsViewModel.Items.CollectionChanged += OnItemsChanged;
             foreach (var item in settingsViewModel.Items)
@@ -85,6 +100,11 @@ namespace CollimationCircles.ViewModels
             });
         }
 
+        private const double MaxGuidedStepTurns = 0.125;
+        const bool IsGuidedMode = true;
+
+        [ObservableProperty]
+        string guidanceText = string.Empty;
         private Dictionary<string, double>? lastScrewInput;
 
         private static bool IsScrewSetting(string? name) =>
@@ -103,6 +123,7 @@ namespace CollimationCircles.ViewModels
         {
             if (IsScrewSetting(e.PropertyName))
             {
+                calibration.InvalidateIfScrewChanged();
                 RefreshScrewInstructions();
             }
         }
@@ -121,7 +142,7 @@ namespace CollimationCircles.ViewModels
         {
             if (IsAnyLiveAnalysisActive)
             {
-                PostScrewInstructions(lastScrewInput);
+                PostScrewInstructions(lastScrewInput, record: false);
             }
         }
 
@@ -145,8 +166,42 @@ namespace CollimationCircles.ViewModels
             HandleModeSwitch(value || IsLiveAnalysisActive);
         }
 
+        private bool overlaysAligned;
+
+        private void AutoAlignOverlays(Dictionary<string, double>? data)
+        {
+            if (overlaysAligned || data is null
+                || !data.TryGetValue("CenterX", out var cx) || !data.TryGetValue("CenterY", out var cy)
+                || !data.TryGetValue("ImageWidth", out var imgW) || !data.TryGetValue("ImageHeight", out var imgH)
+                || imgW <= 0 || imgH <= 0)
+            {
+                return;
+            }
+
+            overlaysAligned = true;
+            double viewW = settingsViewModel.DockInMainWindow
+                ? settingsViewModel.MainWindowWidth - settingsViewModel.SettingsWindowWidth / 2 + 9
+                : settingsViewModel.MainWindowWidth;
+            double viewH = settingsViewModel.MainWindowHeight;
+            double uniform = Math.Min(viewW / imgW, viewH / imgH);
+            int offX = (int)Math.Round((cx - imgW / 2) * uniform);
+            int offY = (int)Math.Round((cy - imgH / 2) * uniform);
+            logger.Info($"Auto-align overlays: center=({cx:F1},{cy:F1}) image={imgW}x{imgH} view={viewW:F0}x{viewH:F0} offset=({offX},{offY})");
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                settingsViewModel.GlobalOffsetX = Math.Clamp(offX, settingsViewModel.OffsetMin, settingsViewModel.OffsetMax);
+                settingsViewModel.GlobalOffsetY = Math.Clamp(offY, settingsViewModel.OffsetMin, settingsViewModel.OffsetMax);
+            });
+        }
+
         private void HandleModeSwitch(bool anyActive)
         {
+            if (anyActive)
+            {
+                overlaysAligned = false;
+            }
+
             IsAnyLiveAnalysisActive = anyActive;
             if (anyActive)
             {
@@ -207,7 +262,7 @@ namespace CollimationCircles.ViewModels
                 return;
             }
 
-            using var image = DownscaleForAnalysis(fullImage);
+            var image = fullImage;
 
             var descriptions = new List<string>();
             Mat? overlay = null;
@@ -219,6 +274,16 @@ namespace CollimationCircles.ViewModels
                     var advanced = RunAdvancedAnalysis(image);
                     descriptions.Add(advanced.Description);
                     overlay = advanced.Image;
+                    if (advanced.Wavefront is { } wf)
+                    {
+                        AutoAlignOverlays(new Dictionary<string, double>
+                        {
+                            { "CenterX", wf["GeometricX"] },
+                            { "CenterY", wf["GeometricY"] },
+                            { "ImageWidth", image.Width },
+                            { "ImageHeight", image.Height }
+                        });
+                    }
                     PostScrewInstructions(advanced.Wavefront);
                 }
                 else if (!IsLiveRmseActive)
@@ -230,6 +295,7 @@ namespace CollimationCircles.ViewModels
                 {
                     var rmse = RunRmseAnalysis(image);
                     descriptions.Add(rmse.Description);
+                    AutoAlignOverlays(rmse.Offset);
                     if (!IsLiveAnalysisActive)
                     {
                         PostScrewInstructions(rmse.Offset);
@@ -265,9 +331,35 @@ namespace CollimationCircles.ViewModels
             }
         }
 
-        private void PostScrewInstructions(Dictionary<string, double>? wavefront)
+        private string lastGuidanceLog = string.Empty;
+
+        private void LogGuidance(Dictionary<string, double> wavefront, ScrewViewModel screwVM, bool calibrated, List<ScrewAdjustment> adjustments, string guidance)
+        {
+            double mag = wavefront["ComaMagnitude"];
+            double ang = wavefront["ComaAngle"];
+            double rad = ang * Math.PI / 180.0;
+            string adj = string.Join(", ", adjustments.Select(a => $"S{a.Id}={a.Direction} {a.Turns:F3}"));
+            string signature = $"{calibrated}|{adj}|{guidance}";
+            if (signature == lastGuidanceLog)
+            {
+                return;
+            }
+
+            lastGuidanceLog = signature;
+            logger.Info("Guidance: mode={0}, source={1}, offset magnitude={2:F4}, angle={3:F1} deg, offset=({4:F4},{5:F4}), screws={6}, rotation={7:F1}, adjustments=[{8}], text=\"{9}\"",
+                IsLiveAnalysisActive ? "advanced" : "rmse",
+                calibrated ? "calibrated" : "geometric-estimate",
+                mag, ang, mag * Math.Cos(rad), mag * Math.Sin(rad),
+                screwVM.Count, screwVM.RotationAngle, adj, guidance);
+        }
+
+        private void PostScrewInstructions(Dictionary<string, double>? wavefront, bool record = true)
         {
             lastScrewInput = wavefront;
+            if (record)
+            {
+                calibration.RecordOffset(wavefront);
+            }
             var screwVM = settingsViewModel.Items.OfType<ScrewViewModel>().FirstOrDefault();
             if (screwVM is null || wavefront is null)
             {
@@ -275,26 +367,65 @@ namespace CollimationCircles.ViewModels
                 return;
             }
 
-            var adjustments = CalculateScrewAdjustments(
+            List<ScrewAdjustment>? adjustments = null;
+            var response = calibration.GetResponse(screwVM.Count, IsLiveAnalysisActive);
+            if (response is not null)
+            {
+                double rad = wavefront["ComaAngle"] * Math.PI / 180.0;
+                double mag = wavefront["ComaMagnitude"];
+                adjustments = CalculateCalibratedAdjustments(mag * Math.Cos(rad), mag * Math.Sin(rad), response);
+            }
+
+            adjustments ??= CalculateScrewAdjustments(
                 wavefront["ComaMagnitude"],
                 wavefront["ComaAngle"],
                 screwVM.RotationAngle,
                 screwVM.Count);
 
-            Dispatcher.UIThread.Post(() => UpdateScrewInstructions(adjustments, screwVM));
-        }
-
-        private static Mat DownscaleForAnalysis(Mat source)
-        {
-            if (source.Width <= MaxAnalysisWidth)
+            string guidance = string.Empty;
+            if (IsGuidedMode)
             {
-                return source.Clone();
+                var guidedResponse = calibration.GetResponse(screwVM.Count, IsLiveAnalysisActive)
+                    ?? BuildEstimatedResponse(screwVM.RotationAngle, screwVM.Count);
+                double guidedRad = wavefront["ComaAngle"] * Math.PI / 180.0;
+                double guidedMag = wavefront["ComaMagnitude"];
+                var best = CalculateBestSubsetAdjustment(guidedMag * Math.Cos(guidedRad), guidedMag * Math.Sin(guidedRad), guidedResponse) ?? adjustments;
+
+                double maxTurns = best.Where(a => a.Direction != "Fixed").Select(a => a.Turns).DefaultIfEmpty(0).Max();
+                double factor = maxTurns > MaxGuidedStepTurns ? MaxGuidedStepTurns / maxTurns : 1.0;
+                adjustments = best.Select(a => a.Direction == "Fixed"
+                    ? a
+                    : new ScrewAdjustment { Id = a.Id, Direction = a.Direction, Magnitude = a.Magnitude * factor, Turns = a.Turns * factor }).ToList();
+
+                if (wavefront.TryGetValue("OffsetPx", out var offsetPx) && offsetPx < GetDeadZonePx())
+                {
+                    adjustments = adjustments.Select(a => new ScrewAdjustment { Id = a.Id, Direction = "Fixed", Magnitude = 0, Turns = 0 }).ToList();
+                }
+
+                var activeIds = adjustments.Where(a => a.Direction != "Fixed").Select(a => a.Id).ToList();
+                guidance = activeIds.Count switch
+                {
+                    0 => "Error is minimal. Stop adjusting.",
+                    1 => $"Turn only Screw {activeIds[0]}, then wait for the reading to settle and re-check.",
+                    _ => $"Turn only Screws {string.Join(" and ", activeIds)} together, then wait for the reading to settle and re-check."
+                };
             }
 
-            double scale = (double)MaxAnalysisWidth / source.Width;
-            var resized = new Mat();
-            Cv2.Resize(source, resized, new Size(MaxAnalysisWidth, (int)Math.Round(source.Height * scale)), 0, 0, InterpolationFlags.Area);
-            return resized;
+            var finalAdjustments = adjustments;
+            LogGuidance(wavefront, screwVM, response is not null, finalAdjustments, guidance);
+            Dispatcher.UIThread.Post(() =>
+            {
+                GuidanceText = guidance;
+                UpdateScrewInstructions(finalAdjustments, screwVM);
+            });
+        }
+
+        private static double ScaleOf(Mat image) => Math.Max(1.0, (double)image.Width / ReferenceWidth);
+
+        private static int OddKernel(int baseSize, double scale)
+        {
+            int k = (int)Math.Round(baseSize * scale);
+            return k % 2 == 0 ? k + 1 : k;
         }
 
         private static Options CreateCircleOptions() => new() { DoNormalize = true, DoGaussianBlur = true, DoThreshold = true, DoEdge = true };
@@ -322,7 +453,9 @@ namespace CollimationCircles.ViewModels
             using var gray = new Mat();
             Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
             Cv2.Normalize(gray, gray, 0, 255, NormTypes.MinMax);
-            Cv2.GaussianBlur(gray, gray, new Size(7, 7), 2);
+            double scale = ScaleOf(image);
+            int blurK = OddKernel(7, scale);
+            Cv2.GaussianBlur(gray, gray, new Size(blurK, blurK), 2 * scale);
 
             double minRadius = Math.Max(10, image.Width * MinCircleRadiusFraction);
             double maxRadius = image.Width / 2.0;
@@ -395,7 +528,10 @@ namespace CollimationCircles.ViewModels
                         X = (int)Math.Round(ellipse.Center.X),
                         Y = (int)Math.Round(ellipse.Center.Y),
                         Radius = (int)Math.Round((major + minor) / 4.0),
-                        Votes = 0
+                        Votes = 0,
+                        CenterX = ellipse.Center.X,
+                        CenterY = ellipse.Center.Y,
+                        ExactRadius = radiusFit
                     }, hullArea));
                 }
             }
@@ -405,7 +541,7 @@ namespace CollimationCircles.ViewModels
                 m.Dispose();
             }
 
-            const int mergeTolerance = 6;
+            int mergeTolerance = (int)Math.Round(6 * scale);
             var circles = new List<Circle>();
             foreach (var (circle, _) in candidates.OrderByDescending(c => c.Area))
             {
@@ -430,7 +566,8 @@ namespace CollimationCircles.ViewModels
         {
             using Mat gray = new();
             Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
-            Cv2.GaussianBlur(gray, gray, new Size(5, 5), 0);
+            int advBlur = OddKernel(5, ScaleOf(image));
+            Cv2.GaussianBlur(gray, gray, new Size(advBlur, advBlur), 0);
             Cv2.Normalize(gray, gray, 0, 255, NormTypes.MinMax);
 
             var wavefront = AnalyzeStarWavefront(gray);
@@ -459,7 +596,47 @@ namespace CollimationCircles.ViewModels
             return (DescribeAdvancedResult(wavefront), wavefront, drawImage);
         }
 
-        private static (string Description, Mat Image, Dictionary<string, double>? Offset) RunRmseAnalysis(Mat image)
+        private int GetCurrentBinning()
+        {
+            var stream = Ioc.Default.GetService<StreamViewModel>();
+            var control = stream?.SelectedCamera?.Controls?.FirstOrDefault(c => c.Name == ControlType.Binning);
+            return control is null ? 1 : Math.Max(1, (int)Math.Round(control.Value));
+        }
+
+        private double GetBinnedPixelUm() => settingsViewModel.CameraPixelSizeUm * GetCurrentBinning();
+
+        private double GetDeadZonePx()
+        {
+            double deadZone = 1.0;
+            double pixelUm = GetBinnedPixelUm();
+            if (pixelUm > 0 && settingsViewModel.TelescopeApertureMm > 0 && settingsViewModel.TelescopeFocalLengthMm > 0)
+            {
+                double fRatio = settingsViewModel.TelescopeFocalLengthMm / settingsViewModel.TelescopeApertureMm;
+                double toleranceUm = 4.88 * 0.55 * fRatio * fRatio;
+                deadZone = Math.Max(deadZone, toleranceUm / pixelUm);
+            }
+
+            return deadZone;
+        }
+
+        private string DescribeOffsetScale(double offsetPx)
+        {
+            string text = $"\nOffset: {offsetPx:F1} px";
+            double pixelUm = GetBinnedPixelUm();
+            if (pixelUm > 0)
+            {
+                text += $" ({offsetPx * pixelUm / 1000.0:F3} mm at sensor)";
+                if (settingsViewModel.TelescopeFocalLengthMm > 0)
+                {
+                    text += $", {offsetPx * 206.265 * pixelUm / settingsViewModel.TelescopeFocalLengthMm:F1} arcsec";
+                }
+            }
+
+            text += $"\nDead zone: {GetDeadZonePx():F1} px";
+            return text;
+        }
+
+        private (string Description, Mat Image, Dictionary<string, double>? Offset) RunRmseAnalysis(Mat image)
         {
             var options = CreateCircleOptions();
             var circles = DetectClassicCircles(image, options);
@@ -474,18 +651,49 @@ namespace CollimationCircles.ViewModels
                          $"------------------------";
 
             Dictionary<string, double>? offset = null;
+            if (circles.Count < 2)
+            {
+                desc += $"\nNot enough circles detected ({circles.Count} of 2 needed). Adjust exposure/gain or camera position.";
+            }
+
             if (circles.Count >= 2)
             {
-                var outer = circles.MaxBy(c => c.Radius)!;
-                var inner = circles.MinBy(c => c.Radius)!;
-                double dx = inner.X - outer.X;
-                double dy = inner.Y - outer.Y;
-                double magnitude = Math.Sqrt(dx * dx + dy * dy) / Math.Max(1, outer.Radius);
+                var outer = circles.MaxBy(c => c.ExactRadius)!;
+                var inner = circles.MinBy(c => c.ExactRadius)!;
+                double dx = inner.CenterX - outer.CenterX;
+                double dy = inner.CenterY - outer.CenterY;
+                double magnitude = Math.Sqrt(dx * dx + dy * dy) / Math.Max(1, outer.ExactRadius);
                 double angle = Math.Atan2(dy, dx) * 180.0 / Math.PI;
-                offset = new Dictionary<string, double> { { "ComaMagnitude", magnitude }, { "ComaAngle", angle } };
+                double offsetPx = Math.Sqrt(dx * dx + dy * dy);
+                offset = new Dictionary<string, double> { { "ComaMagnitude", magnitude }, { "ComaAngle", angle }, { "OffsetPx", offsetPx }, { "CenterX", outer.CenterX }, { "CenterY", outer.CenterY }, { "ImageWidth", image.Width }, { "ImageHeight", image.Height } };
 
                 desc += $"\nInner/outer offset: {magnitude * 100:F1}% of radius\nOffset angle: {angle:F1}°";
+                desc += DescribeOffsetScale(offsetPx);
                 Cv2.Line(drawnImage, new Point(outer.X, outer.Y), new Point(inner.X, inner.Y), new Scalar(0, 255, 0, 255), 2, LineTypes.AntiAlias);
+
+                double s = ScaleOf(image);
+                bool nearlyAligned = magnitude * 100 < 1.0;
+                var markColor = nearlyAligned ? new Scalar(0, 255, 0, 255) : new Scalar(0, 165, 255, 255);
+                var targetColor = new Scalar(255, 255, 0, 255);
+                var outerPt = new Point(outer.X, outer.Y);
+                var innerPt = new Point(inner.X, inner.Y);
+
+                int arm = (int)Math.Round(14 * s);
+                Cv2.Line(drawnImage, new Point(outerPt.X - arm, outerPt.Y), new Point(outerPt.X + arm, outerPt.Y), targetColor, 2, LineTypes.AntiAlias);
+                Cv2.Line(drawnImage, new Point(outerPt.X, outerPt.Y - arm), new Point(outerPt.X, outerPt.Y + arm), targetColor, 2, LineTypes.AntiAlias);
+                Cv2.Circle(drawnImage, outerPt, (int)Math.Round(8 * s), targetColor, 2, LineTypes.AntiAlias);
+
+                Cv2.Circle(drawnImage, innerPt, (int)Math.Round(10 * s), markColor, 2, LineTypes.AntiAlias);
+                Cv2.Circle(drawnImage, innerPt, Math.Max(2, (int)Math.Round(2 * s)), markColor, -1, LineTypes.AntiAlias);
+
+                string label = $"RMSE {analysis.CenterRMSEPercent:F1}%  {angle:F0} deg";
+                double fontScale = 0.5 * s;
+                int thickness = Math.Max(1, (int)Math.Round(s));
+                var textSize = Cv2.GetTextSize(label, HersheyFonts.HersheySimplex, fontScale, thickness, out int baseline);
+                int tx = Math.Clamp(innerPt.X + (int)Math.Round(14 * s), 4, Math.Max(4, drawnImage.Width - textSize.Width - 4));
+                int ty = Math.Clamp(innerPt.Y - (int)Math.Round(14 * s), textSize.Height + 4, drawnImage.Height - 4);
+                Cv2.Rectangle(drawnImage, new Point(tx - 3, ty - textSize.Height - 3), new Point(tx + textSize.Width + 3, ty + baseline + 1), new Scalar(0, 0, 0, 200), -1);
+                Cv2.PutText(drawnImage, label, new Point(tx, ty), HersheyFonts.HersheySimplex, fontScale, markColor, thickness, LineTypes.AntiAlias);
             }
 
             return (desc, drawnImage, offset);
@@ -544,17 +752,58 @@ namespace CollimationCircles.ViewModels
         private int id;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(DisplayText))]
+        [NotifyPropertyChangedFor(nameof(IsActive))]
         private string direction = string.Empty;
-
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(DisplayText))]
+        [NotifyPropertyChangedFor(nameof(IsActive))]
         private double turns;
-
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Brush))]
         private Color color;
 
         public IBrush Brush => new SolidColorBrush(Color);
 
-        public string DisplayText => Direction == "Fixed" ? "Locked" : $"{Direction} {Turns:F2} turns";
+        public bool IsActive => DisplayText != "Locked";
+
+        public string DisplayText => FormatTurns(Direction, Turns);
+
+        private static string FormatTurns(string direction, double turns)
+        {
+            const int steps = 16;
+            double exactDegrees = turns * 360.0;
+            if (direction == "Fixed" || exactDegrees < 2)
+            {
+                return "Locked";
+            }
+
+            string way = direction == "CW" ? "CW" : "CCW";
+            int sixteenths = (int)Math.Round(turns * steps);
+            if (sixteenths == 0)
+            {
+                return $"{way} small nudge (~{exactDegrees:F0}°)";
+            }
+            int whole = sixteenths / steps;
+            int rest = sixteenths % steps;
+
+            string amount;
+            if (rest == 0)
+            {
+                amount = whole.ToString();
+            }
+            else
+            {
+                int gcd = Gcd(rest, steps);
+                string frac = $"{rest / gcd}/{steps / gcd}";
+                amount = whole > 0 ? $"{whole} {frac}" : frac;
+            }
+
+            double degrees = sixteenths * 360.0 / steps;
+            string unit = sixteenths <= steps ? "turn" : "turns";
+            return $"{way} {amount} {unit} (~{degrees:F0}°)";
+        }
+
+        private static int Gcd(int a, int b) => b == 0 ? a : Gcd(b, a % b);
     }
 }

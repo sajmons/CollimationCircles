@@ -10,50 +10,55 @@
         x:DataType="vm:SettingsViewModel"
         Icon="/Resources/Images/icon_256px.ico"
         Title="{Binding Title, Mode=TwoWay}"
-		    Background="Transparent"
+        Background="Transparent"
         TransparencyBackgroundFallback="Transparent"
         TransparencyLevelHint="Transparent"
         Width="{Binding MainWindowWidth, Mode=TwoWay}"
         Height="{Binding MainWindowHeight, Mode=TwoWay}"
         Opacity="{Binding MainWindowOpacity, Mode=TwoWay}">
 
-  <Grid x:Name="TopGrid">
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-      <ColumnDefinition Width="Auto" />
-    </Grid.ColumnDefinitions>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*" />
-      <RowDefinition Height="100" />
-    </Grid.RowDefinitions>    
+    <Grid x:Name="TopGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
 
-    <controls:SettingsUserControl
-      Grid.Column="1"
-      Grid.RowSpan="2"
-      Width="{Binding SettingsMinWidth}"
-      Height="{Binding MainWindowHeight}"
-      Background="{DynamicResource ThemeBackgroundBrush}"
-      IsVisible="{Binding DockInMainWindow}"/>
+        <controls:LiveAnalysisResultUserControl
+				HorizontalAlignment="Left"
+				Padding="{DynamicResource ExpanderContentPadding}"
+				Width="200"/>
 
-    <Button
-      Theme="{DynamicResource ToolbarButton}"
-      Grid.Column="0"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Top"
-      Margin="12"
-      ToolTip.Tip="{DynamicResource Text.SettingsWindow}"
-      Command="{Binding ShowSettingsCommand}"
-      IsVisible="{Binding DockInMainWindow}">
-      <PathIcon
-        Width="{DynamicResource PathIconWidth}"
-        Height="{DynamicResource PathIconHeight}"
-        Foreground="{DynamicResource Color2}"
-        Data="{StaticResource IconData.Undock}"/>
-    </Button>
+        <controls:SettingsUserControl
+            Grid.Column="1"
+            Grid.RowSpan="2"
+            Width="{Binding SettingsMinWidth}"
+            Height="{Binding MainWindowHeight}"
+            Background="{DynamicResource ThemeBackgroundBrush}"
+            IsVisible="{Binding DockInMainWindow}"/>
 
-    <controls:AppLogUserControl
-      Grid.Row="1" />
-    
-  </Grid>
+        <Button
+            Theme="{DynamicResource ToolbarButton}"
+            Grid.Column="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Margin="12"
+            ToolTip.Tip="{DynamicResource Text.SettingsWindow}"
+            Command="{Binding ShowSettingsCommand}"
+            IsVisible="{Binding DockInMainWindow}">
+            <PathIcon
+                Width="{DynamicResource PathIconWidth}"
+                Height="{DynamicResource PathIconHeight}"
+                Foreground="{DynamicResource Color2}"
+                Data="{StaticResource IconData.Undock}"/>
+        </Button>
+
+        <controls:AppLogUserControl
+            Grid.Row="1" />
+
+    </Grid>
 
 </Window>

@@ -538,6 +538,16 @@ namespace CollimationCircles.ViewModels
                 var tracking = await alpacaTelescopeClient.GetTrackingAsync();
                 var parked = await alpacaTelescopeClient.GetParkedAsync();
 
+                var optics = await alpacaTelescopeClient.GetOpticsAsync();
+                if (optics.FocalLengthMm is > 0)
+                {
+                    SettingsViewModel.TelescopeFocalLengthMm = optics.FocalLengthMm.Value;
+                }
+                if (optics.ApertureMm is > 0)
+                {
+                    SettingsViewModel.TelescopeApertureMm = optics.ApertureMm.Value;
+                }
+
                 suppressTelescopeStateDispatch = true;
                 TelescopeTracking = tracking;
                 TelescopeParked = parked;

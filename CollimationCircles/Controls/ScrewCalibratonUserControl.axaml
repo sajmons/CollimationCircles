@@ -1,0 +1,23 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:CollimationCircles.ViewModels"
+			 x:Class="CollimationCircles.Controls.ScrewCalibrationUserControl"
+			 x:DataType="vm:ScrewCalibrationViewModel">
+
+	<StackPanel Spacing="6">
+		<TextBlock
+			Text="{Binding CalibrationMessage}"
+			TextWrapping="Wrap"
+			FontSize="11"
+			IsVisible="{Binding CalibrationMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+		<TextBlock Text="{Binding SourceText}" FontSize="10" Opacity="0.7"/>
+
+		<StackPanel Orientation="Horizontal" Spacing="6">
+			<Button Content="Calibrate screws" Command="{Binding StartCalibrationCommand}" IsVisible="{Binding !IsCalibrating}"/>
+			<Button Content="Capture" Command="{Binding CaptureCalibrationCommand}" IsVisible="{Binding IsCalibrating}"/>
+			<Button Content="Cancel" Command="{Binding CancelCalibrationCommand}" IsVisible="{Binding IsCalibrating}"/>
+			<Button Content="Reset" Command="{Binding ClearCalibrationCommand}" IsVisible="{Binding HasCalibration}"/>
+		</StackPanel>
+	</StackPanel>
+</UserControl>
