@@ -524,7 +524,9 @@ namespace CollimationCircles.ViewModels
                     RotationAngle = vm.RotationAngle;
                     ColorList = vm.ColorList;
                     LabelSize = vm.LabelSize;
-
+                    TelescopeApertureMm = vm.TelescopeApertureMm;
+                    TelescopeFocalLengthMm = vm.TelescopeFocalLengthMm;
+                    CameraPixelSizeUm = vm.CameraPixelSizeUm;
                     Items.Clear();
                     Items.AddRange(vm.Items);
 

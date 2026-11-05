@@ -587,10 +587,8 @@ namespace CollimationCircles.ViewModels
                 double radius = wavefront["Radius"];
                 var cyan = new Scalar(255, 255, 0, 255);
                 Cv2.Circle(drawImage, new Point((int)x, (int)y), (int)Math.Round(radius), cyan, 2, LineTypes.AntiAlias);
-                Cv2.Circle(drawImage, new Point((int)wavefront["CentroidX"], (int)wavefront["CentroidY"]), Math.Max(2, (int)Math.Round(wavefront["ShadowRadius"])), new Scalar(0, 0, 255, 255), 2, LineTypes.AntiAlias);
-                double length = Math.Clamp(wavefront["ComaMagnitude"] * radius * 20.0, MinArrowLength, Math.Max(MinArrowLength, radius));
-                double angle = wavefront["ComaAngle"] * Math.PI / 180.0;
-                DrawVector(drawImage, (int)x, (int)y, (int)(x + length * Math.Cos(angle)), (int)(y + length * Math.Sin(angle)));
+                DrawAlignmentMarkers(drawImage, new Point((int)x, (int)y), new Point((int)wavefront["CentroidX"], (int)wavefront["CentroidY"]),
+                    wavefront["ComaMagnitude"], $"Offset {wavefront["ComaMagnitude"] * 100:F1}%  {wavefront["ComaAngle"]:F0} deg", ScaleOf(image));
             }
 
             return (DescribeAdvancedResult(wavefront), wavefront, drawImage);
@@ -671,48 +669,35 @@ namespace CollimationCircles.ViewModels
                 desc += DescribeOffsetScale(offsetPx);
                 Cv2.Line(drawnImage, new Point(outer.X, outer.Y), new Point(inner.X, inner.Y), new Scalar(0, 255, 0, 255), 2, LineTypes.AntiAlias);
 
-                double s = ScaleOf(image);
-                bool nearlyAligned = magnitude * 100 < 1.0;
-                var markColor = nearlyAligned ? new Scalar(0, 255, 0, 255) : new Scalar(0, 165, 255, 255);
-                var targetColor = new Scalar(255, 255, 0, 255);
-                var outerPt = new Point(outer.X, outer.Y);
-                var innerPt = new Point(inner.X, inner.Y);
-
-                int arm = (int)Math.Round(14 * s);
-                Cv2.Line(drawnImage, new Point(outerPt.X - arm, outerPt.Y), new Point(outerPt.X + arm, outerPt.Y), targetColor, 2, LineTypes.AntiAlias);
-                Cv2.Line(drawnImage, new Point(outerPt.X, outerPt.Y - arm), new Point(outerPt.X, outerPt.Y + arm), targetColor, 2, LineTypes.AntiAlias);
-                Cv2.Circle(drawnImage, outerPt, (int)Math.Round(8 * s), targetColor, 2, LineTypes.AntiAlias);
-
-                Cv2.Circle(drawnImage, innerPt, (int)Math.Round(10 * s), markColor, 2, LineTypes.AntiAlias);
-                Cv2.Circle(drawnImage, innerPt, Math.Max(2, (int)Math.Round(2 * s)), markColor, -1, LineTypes.AntiAlias);
-
-                string label = $"RMSE {analysis.CenterRMSEPercent:F1}%  {angle:F0} deg";
-                double fontScale = 0.5 * s;
-                int thickness = Math.Max(1, (int)Math.Round(s));
-                var textSize = Cv2.GetTextSize(label, HersheyFonts.HersheySimplex, fontScale, thickness, out int baseline);
-                int tx = Math.Clamp(innerPt.X + (int)Math.Round(14 * s), 4, Math.Max(4, drawnImage.Width - textSize.Width - 4));
-                int ty = Math.Clamp(innerPt.Y - (int)Math.Round(14 * s), textSize.Height + 4, drawnImage.Height - 4);
-                Cv2.Rectangle(drawnImage, new Point(tx - 3, ty - textSize.Height - 3), new Point(tx + textSize.Width + 3, ty + baseline + 1), new Scalar(0, 0, 0, 200), -1);
-                Cv2.PutText(drawnImage, label, new Point(tx, ty), HersheyFonts.HersheySimplex, fontScale, markColor, thickness, LineTypes.AntiAlias);
+                DrawAlignmentMarkers(drawnImage, new Point(outer.X, outer.Y), new Point(inner.X, inner.Y), magnitude,
+                    $"RMSE {analysis.CenterRMSEPercent:F1}%  {angle:F0} deg", ScaleOf(image));
             }
 
             return (desc, drawnImage, offset);
         }
 
-        private static void DrawVector(Mat img, int x1, int y1, int x2, int y2)
+        private static void DrawAlignmentMarkers(Mat img, Point target, Point marker, double magnitude, string label, double s)
         {
-            var lime = new Scalar(0, 255, 0, 255);
-            Cv2.Line(img, new Point(x1, y1), new Point(x2, y2), lime, 3, LineTypes.AntiAlias);
-            Cv2.Circle(img, new Point(x1, y1), 4, lime, -1, LineTypes.AntiAlias);
+            bool nearlyAligned = magnitude * 100 < 1.0;
+            var markColor = nearlyAligned ? new Scalar(0, 255, 0, 255) : new Scalar(0, 165, 255, 255);
+            var targetColor = new Scalar(255, 255, 0, 255);
 
-            double angle = Math.Atan2(y2 - y1, x2 - x1);
-            const double arrowSize = 15;
-            foreach (var offset in new[] { -Math.PI / 6, Math.PI / 6 })
-            {
-                var tip = new Point((int)(x2 - arrowSize * Math.Cos(angle + offset)), (int)(y2 - arrowSize * Math.Sin(angle + offset)));
-                Cv2.Line(img, new Point(x2, y2), tip, lime, 3, LineTypes.AntiAlias);
-            }
-        }
+            int arm = (int)Math.Round(14 * s);
+            Cv2.Line(img, new Point(target.X - arm, target.Y), new Point(target.X + arm, target.Y), targetColor, 2, LineTypes.AntiAlias);
+            Cv2.Line(img, new Point(target.X, target.Y - arm), new Point(target.X, target.Y + arm), targetColor, 2, LineTypes.AntiAlias);
+            Cv2.Circle(img, target, (int)Math.Round(8 * s), targetColor, 2, LineTypes.AntiAlias);
+
+            Cv2.Circle(img, marker, (int)Math.Round(10 * s), markColor, 2, LineTypes.AntiAlias);
+            Cv2.Circle(img, marker, Math.Max(2, (int)Math.Round(2 * s)), markColor, -1, LineTypes.AntiAlias);
+
+            double fontScale = 0.5 * s;
+            int thickness = Math.Max(1, (int)Math.Round(s));
+            var textSize = Cv2.GetTextSize(label, HersheyFonts.HersheySimplex, fontScale, thickness, out int baseline);
+            int tx = Math.Clamp(marker.X + (int)Math.Round(14 * s), 4, Math.Max(4, img.Width - textSize.Width - 4));
+            int ty = Math.Clamp(marker.Y - (int)Math.Round(14 * s), textSize.Height + 4, img.Height - 4);
+            Cv2.Rectangle(img, new Point(tx - 3, ty - textSize.Height - 3), new Point(tx + textSize.Width + 3, ty + baseline + 1), new Scalar(0, 0, 0, 200), -1);
+            Cv2.PutText(img, label, new Point(tx, ty), HersheyFonts.HersheySimplex, fontScale, markColor, thickness, LineTypes.AntiAlias);
+        }        
 
         private static string DescribeAdvancedResult(Dictionary<string, double>? wavefront)
         {
