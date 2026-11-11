@@ -179,7 +179,6 @@
     <system:String x:Key="Text.TelescopeStop">Stop</system:String>
     <system:String x:Key="Text.AlpacaTelescopeControl">Teleskopsteuerung</system:String>
     <system:String x:Key="Text.ManualImageLoading">Bild laden</system:String>
-    <system:String x:Key="Text.LoadImage">Bild laden</system:String>
     <system:String x:Key="Text.TelescopeControls">Teleskopsteuerung</system:String>
     <system:String x:Key="Text.BackgroundScreen">Hintergrundschirm</system:String>
     <system:String x:Key="Text.GrabImageFromBackgroundScreen">Bild vom Hintergrundschirm aufnehmen</system:String>

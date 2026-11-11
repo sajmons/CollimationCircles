@@ -179,7 +179,6 @@
     <system:String x:Key="Text.TelescopeStop">Stop</system:String>
     <system:String x:Key="Text.AlpacaTelescopeControl">Nadzor teleskopa</system:String>
     <system:String x:Key="Text.ManualImageLoading">Naloži sliko</system:String>
-    <system:String x:Key="Text.LoadImage">Naloži sliko</system:String>
     <system:String x:Key="Text.TelescopeControls">Nadzor teleskopa</system:String>
     <system:String x:Key="Text.BackgroundScreen">Ozadje zaslona</system:String>
     <system:String x:Key="Text.GrabImageFromBackgroundScreen">Zajami sliko z ozadja zaslona</system:String>    

@@ -16,18 +16,7 @@
             <StackPanel Orientation="Vertical">
                 <DockPanel
                     LastChildFill="True"
-                    HorizontalSpacing="{DynamicResource ControlSpacing}">
-                    <Button
-                        DockPanel.Dock="Right"
-                        Theme="{DynamicResource ToolbarButton}"
-                        Command="{Binding LoadImageCommand}"
-                        ToolTip.Tip="{DynamicResource Text.LoadImage}">
-                        <PathIcon
-                            Width="{DynamicResource PathIconWidth}"
-                            Height="{DynamicResource PathIconHeight}"
-                            Foreground="{DynamicResource Color2}"
-                            Data="{StaticResource IconData.Image}" />
-                    </Button>
+                    HorizontalSpacing="{DynamicResource ControlSpacing}">                    
                     <ToggleButton
                         Theme="{DynamicResource ToolbarButton}"
                         IsChecked="{Binding IsPlaying}"

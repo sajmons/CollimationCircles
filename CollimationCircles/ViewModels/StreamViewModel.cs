@@ -735,50 +735,5 @@ namespace CollimationCircles.ViewModels
             SelectedCamera?.SetDefaultControls();
             logger.Info("Default camera controls command ececuted");
         }
-
-        [RelayCommand]
-        private async Task LoadImage()
-        {
-            var settings = new OpenFileDialogSettings
-            {
-                Title = ResSvc.TryGetString("OpenFile"),
-                Filters =
-                [
-                    new("JPG", "jpg"),
-                    new("JPEG", "jpeg"),
-                    new("PNG", "png"),
-                ]
-            };
-
-            var path = await DialogService.ShowOpenFileDialogAsync(null, settings);
-
-            if (!string.IsNullOrWhiteSpace(path?.Path?.LocalPath))
-            {
-                if (Dispatcher.UIThread.CheckAccess())
-                {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped));
-                    });
-
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Opening));
-                    });
-
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Playing));
-                    });
-
-                    await Task.Delay(1000).ContinueWith(_ =>
-                    {
-                        using var src = Cv2.ImRead(path.Path.LocalPath, ImreadModes.Color);
-                        WeakReferenceMessenger.Default.Send(new MatMessage(src));
-                        src.Dispose();
-                    });
-                }
-            }
-        }
     }
 }
