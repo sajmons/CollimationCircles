@@ -11,6 +11,8 @@
 		x:DataType="vm:CollimationAnalysisViewModel"
 		x:Class="CollimationCircles.Views.StreamView"
 		Title="{DynamicResource Text.CameraStreamWindowTitle}"
+		TransparencyLevelHint="Transparent"
+		TransparencyBackgroundFallback="Transparent"
 		Width="640"
 		Height="480">
 	<Grid x:Name="RootGrid"

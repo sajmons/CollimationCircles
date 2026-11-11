@@ -7,19 +7,7 @@
 			 xmlns:vm="using:CollimationCircles.ViewModels"
 			 x:DataType="vm:CollimationAnalysisViewModel">
 
-	<StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
-
-		<Grid 
-			ColumnSpacing="{DynamicResource ControlSpacing}"
-			ColumnDefinitions="Auto,*">			
-			<TextBlock
-				Grid.Column="1"
-				IsVisible="{Binding !IsStreaming}"
-				Text="{DynamicResource Text.LiveAnalysisTip}"
-				VerticalAlignment="Top"
-				TextWrapping="Wrap"/>
-		</Grid>
-
+	<GroupBox Header="{DynamicResource Text.LiveAnalysisResults}">
 		<Grid
 			ColumnSpacing="{DynamicResource ControlSpacing}"
 			RowSpacing="{DynamicResource ControlSpacing}"
@@ -51,5 +39,5 @@
 				OnContent="" OffContent="">
 			</ToggleSwitch>
 		</Grid>
-	</StackPanel>
+	</GroupBox>
 </UserControl>

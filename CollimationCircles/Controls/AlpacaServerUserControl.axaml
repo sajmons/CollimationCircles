@@ -27,6 +27,7 @@
     </UserControl.Styles>
 
     <GroupBox
+        IsVisible="{Binding ShowAlpacaServer}"
         Background="{DynamicResource ExpanderContentBackground}"
         Header="{DynamicResource Text.AlpacaServerAddress}" >
         <Grid

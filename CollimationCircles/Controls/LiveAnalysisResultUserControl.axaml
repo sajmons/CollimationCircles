@@ -10,12 +10,6 @@
 
 	<StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
 
-		<TextBlock
-			IsVisible="{Binding !IsStreaming}"
-			Text="{DynamicResource Text.LiveAnalysisTip}"
-			VerticalAlignment="Center"
-			TextWrapping="Wrap"/>
-
 		<Border IsVisible="{Binding IsAnyLiveAnalysisActive}"
 				Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
 				BorderBrush="{DynamicResource SystemControlHighlightAccentBrush}"

@@ -56,7 +56,8 @@
     <PackageReference Include="Standard.Licensing" Version="1.3.1" />
     <PackageReference Include="System.Management" Version="10.0.14" />    
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
-    <PackageReference Include="TextCopy" Version="6.2.1" />    
+    <PackageReference Include="TextCopy" Version="6.2.1" />
+    <PackageReference Include="ThatCapture" Version="1.0.3" />    
   </ItemGroup>
 
   <!-- Cross-platform packages -->
@@ -88,6 +89,9 @@
     </AvaloniaXaml>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\OpticsUserControl.axaml.cs">
+      <DependentUpon>OpticsUserControl.axaml</DependentUpon>
+    </Compile>
     <Compile Update="Controls\AlpacaTelescopeUserControl.axaml.cs">
       <DependentUpon>AlpacaTelescopeUserControl.axaml</DependentUpon>
     </Compile>

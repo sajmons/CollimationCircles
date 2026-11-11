@@ -6,6 +6,7 @@ using Avalonia.Styling;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
+using CollimationCircles.Services.ScreenCapturing;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
@@ -13,7 +14,7 @@ using System;
 
 namespace CollimationCircles.Views
 {
-    public partial class MainView : Window
+    public partial class MainView : Window, IScreenCaptureTarget
     {
         private readonly IDrawHelperService dhs;
         private readonly SettingsViewModel vm;
@@ -49,6 +50,18 @@ namespace CollimationCircles.Views
                     bool isDark = args.ThemeVariant == Avalonia.Platform.PlatformThemeVariant.Dark;
                     vm.SelectedTheme = (isDark ? ThemeVariant.Dark : ThemeVariant.Light);
                 };
+        }
+
+        public PixelRect GetCaptureRect()
+        {
+            // The docked settings panel occupies the second column and is not part of the transparent drawing area.
+            var origin = TopGrid.PointToScreen(new Point(0, 0));
+            var scale = RenderScaling;
+            var width = TopGrid.ColumnDefinitions[0].ActualWidth;
+
+            return new PixelRect(
+                origin,
+                new PixelSize((int)Math.Round(width * scale), (int)Math.Round(TopGrid.Bounds.Height * scale)));
         }
 
         private void MainView_PositionChanged(object? sender, PixelPointEventArgs e)

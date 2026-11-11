@@ -18,7 +18,8 @@
 			HorizontalAlignment="Stretch"
 			VerticalAlignment="Stretch"
 			Source="{Binding AnalysisPreview}"
-			IsVisible="{Binding AnalysisPreview, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+			IsVisible="{Binding AnalysisPreview, 
+			Converter={x:Static ObjectConverters.IsNotNull}}"/>
 
 		<TextBlock
 			Grid.Row="2"
@@ -27,6 +28,7 @@
 			FontSize="12"
 			Opacity="0.6"
 			Padding="8"
-			IsVisible="{Binding LiveResultText, Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
+			IsVisible="{Binding LiveResultText, 
+			Converter={x:Static StringConverters.IsNullOrEmpty}}"/>
 	</Grid>
 </UserControl>

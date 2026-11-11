@@ -1,5 +1,6 @@
 ﻿using CollimationCircles.Models;
 using CollimationCircles.Services.Alpaca;
+using CollimationCircles.Services.ScreenCapturing;
 using CommunityToolkit.Diagnostics;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace CollimationCircles.Services
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private readonly AlpacaCameraClient alpacaCamera = new();
+        private readonly ScreenCaptureCameraClient screenCapture = new();
 
         public void Set(ControlType controlName, double value, Camera camera)
         {
@@ -41,8 +43,17 @@ namespace CollimationCircles.Services
 
         public async Task StartCamera(Camera camera)
         {
+            if (camera.APIType is APIType.ScreenCapture)
+            {
+                await alpacaCamera.Stop(camera);
+                await screenCapture.Start(camera);
+                return;
+            }
+
             if (camera.APIType is APIType.Alpaca)
             {
+                await screenCapture.Stop();
+
                 try
                 {
                     await alpacaCamera.Start(camera);
@@ -92,10 +103,9 @@ namespace CollimationCircles.Services
 
         public async Task StopCamera(Camera camera)
         {
-            if (camera.APIType is APIType.Alpaca)
-            {
-                await alpacaCamera.Stop(camera);
-            }
+            // Whichever source is running must stop, even if the selection changed while playing.
+            await screenCapture.Stop();
+            await alpacaCamera.Stop(camera);
         }
 
         public void SetAuto(ControlType propertyname, bool isAuto, Camera camera)

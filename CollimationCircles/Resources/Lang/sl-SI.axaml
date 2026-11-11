@@ -131,10 +131,9 @@
     <system:String x:Key="Text.Auto">Samodejno</system:String>
     <system:String x:Key="Text.ExposureTime">Čas osvetlitve</system:String>
     <system:String x:Key="Text.Temperature">Temperatura</system:String>
-    <system:String x:Key="Text.CameraControls">Lastnosti kamere</system:String>
+    <system:String x:Key="Text.ImageSource">Vir slike</system:String>
     <system:String x:Key="Text.Default">Privzeto</system:String>
     <system:String x:Key="Text.EnterRemoteAddress">Vpišite naslov</system:String>
-    <system:String x:Key="Text.RefreshCameras">Osveži kamere</system:String>
     <system:String x:Key="Text.License">Licenca:</system:String>
     <system:String x:Key="Text.ProfileManagerTitle">Upravljalec profilov</system:String>
     <system:String x:Key="Text.AddCurrentProfile">Dodaj nov profil</system:String>
@@ -167,7 +166,6 @@
     <system:String x:Key="Text.TipDefocusedStarAnalysis">Preklop analize defokusirane zvezde v realnem času</system:String>
     <system:String x:Key="Text.OpticalTubeAnalysis">Analiza optične cevi</system:String>
     <system:String x:Key="Text.TipOpticalTubeAnalysis">Preklop analize optične cevi v realnem času</system:String>
-    <system:String x:Key="Text.LiveAnalysisTip">Ni slike. Zaženite kamero ali naložite sliko.</system:String>
     <system:String x:Key="Text.CompactThemeDensity">Kompakten izgled</system:String>
     <system:String x:Key="Text.Collimation">Kolimacija</system:String>
     <system:String x:Key="Text.CheckForUpdate">Preveri za nadgradnjo</system:String>
@@ -182,4 +180,10 @@
     <system:String x:Key="Text.AlpacaTelescopeControl">Nadzor teleskopa</system:String>
     <system:String x:Key="Text.ManualImageLoading">Naloži sliko</system:String>
     <system:String x:Key="Text.LoadImage">Naloži sliko</system:String>
+    <system:String x:Key="Text.TelescopeControls">Nadzor teleskopa</system:String>
+    <system:String x:Key="Text.BackgroundScreen">Ozadje zaslona</system:String>
+    <system:String x:Key="Text.GrabImageFromBackgroundScreen">Zajami sliko z ozadja zaslona</system:String>    
+    <system:String x:Key="Text.AlpacaCamera">Alpaca kamera</system:String>
+    <system:String x:Key="Text.AcquireImageFromAlpacaCamera">Zajami sliko z Alpaca kamere</system:String>
+    <system:String x:Key="Text.CameraControls">Nadzor kamere</system:String>
 </ResourceDictionary>

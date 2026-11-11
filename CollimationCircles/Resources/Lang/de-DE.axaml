@@ -131,10 +131,9 @@
     <system:String x:Key="Text.Auto">Automatisch</system:String>
     <system:String x:Key="Text.ExposureTime">Expositionszeit</system:String>
     <system:String x:Key="Text.Temperature">Temperatur</system:String>
-    <system:String x:Key="Text.CameraControls">Kamerasteuerung</system:String>
+    <system:String x:Key="Text.ImageSource">Bildquelle</system:String>
     <system:String x:Key="Text.Default">Standard</system:String>
     <system:String x:Key="Text.EnterRemoteAddress">Adresse eingeben</system:String>
-    <system:String x:Key="Text.RefreshCameras">Refresh camera list</system:String>
     <system:String x:Key="Text.License">Lizenz:</system:String>
     <system:String x:Key="Text.ProfileManagerTitle">Profilmanager</system:String>
     <system:String x:Key="Text.AddCurrentProfile">Neues Profil hinzufügen</system:String>
@@ -167,7 +166,6 @@
     <system:String x:Key="Text.TipDefocusedStarAnalysis">Echtzeit-Analyse defokussierter Sterne umschalten</system:String>
     <system:String x:Key="Text.OpticalTubeAnalysis">Optische Tubusanalyse</system:String>
     <system:String x:Key="Text.TipOpticalTubeAnalysis">Echtzeit-Analyse des optischen Tubus umschalten</system:String>
-    <system:String x:Key="Text.LiveAnalysisTip">Kein Frame verfügbar. Starten Sie die Kamera oder laden Sie ein Bild.</system:String>
     <system:String x:Key="Text.CompactThemeDensity">Kompakter Look</system:String>
     <system:String x:Key="Text.Collimation">Collimation</system:String>
     <system:String x:Key="Text.CheckForUpdate">Auf Updates prüfen</system:String>
@@ -182,4 +180,10 @@
     <system:String x:Key="Text.AlpacaTelescopeControl">Teleskopsteuerung</system:String>
     <system:String x:Key="Text.ManualImageLoading">Bild laden</system:String>
     <system:String x:Key="Text.LoadImage">Bild laden</system:String>
+    <system:String x:Key="Text.TelescopeControls">Teleskopsteuerung</system:String>
+    <system:String x:Key="Text.BackgroundScreen">Hintergrundschirm</system:String>
+    <system:String x:Key="Text.GrabImageFromBackgroundScreen">Bild vom Hintergrundschirm aufnehmen</system:String>
+    <system:String x:Key="Text.AlpacaCamera">Alpaca Kamera</system:String>
+    <system:String x:Key="Text.AcquireImageFromAlpacaCamera">Bild von Alpaca Kamera aufnehmen</system:String>
+    <system:String x:Key="Text.CameraControls">Kamerasteuerung</system:String>
 </ResourceDictionary>

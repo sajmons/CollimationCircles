@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="using:CollimationCircles.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:CollimationCircles.Controls"
              mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="650"
@@ -28,47 +29,20 @@
                         Margin="{DynamicResource TabIconMargin}"
                         Height="{DynamicResource PathIconHeight}"
                         Foreground="{DynamicResource Color2}"
-                        Data="{StaticResource IconData.Telescope}"
-                        ToolTip.Tip="{DynamicResource Text.AlpacaServer}" />
+                        Data="{StaticResource IconData.Circles}"
+                        ToolTip.Tip="{DynamicResource Text.Collimation}" />
                 </TabItem.Header>
-                <ScrollViewer>
-                    <StackPanel Spacing="{DynamicResource ControlSpacing}">
-                        <controls:AlpacaServerUserControl />
-                        <Expander
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Stretch"
-                            Header="{DynamicResource Text.WebCamStream}"
-                            IsExpanded="{Binding CameraVideoStreamExpanded}">
-                            <StackPanel Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
-                                <GroupBox Header="{DynamicResource Text.CameraType}">
-                                    <controls:AlpacaCameraUserControl />
-                                </GroupBox>
-                                <GroupBox Header="{DynamicResource Text.LiveAnalysisResults}">
-                                    <controls:LiveAnalysisUserControl/>
-                                </GroupBox>
-                                <GroupBox Header="Optics (optional)">
-                                    <StackPanel Spacing="{DynamicResource ControlSpacing}">
-                                        <TextBlock Text="Aperture (mm)" />
-                                        <NumericUpDown Value="{Binding TelescopeApertureMm}" Minimum="0" Maximum="10000" Increment="1" FormatString="0.#" />
-                                        <TextBlock Text="Focal length (mm)" />
-                                        <NumericUpDown Value="{Binding TelescopeFocalLengthMm}" Minimum="0" Maximum="100000" Increment="1" FormatString="0.#" />
-                                        <TextBlock Text="Pixel size (µm)" />
-                                        <NumericUpDown Value="{Binding CameraPixelSizeUm}" Minimum="0" Maximum="100" Increment="0.01" FormatString="0.00" />
-                                    </StackPanel>
-                                </GroupBox>
-                            </StackPanel>
-                        </Expander>
-                        <Expander
-                            VerticalAlignment="Top"
-                            HorizontalAlignment="Stretch"
-                            Header="{DynamicResource Text.AlpacaTelescopeControl}"
-                            IsExpanded="{Binding TelescopeControlExpanded}">
-                            <StackPanel Orientation="Vertical">
-                                <controls:AlpacaTelescopeUserControl />
-                            </StackPanel>
-                        </Expander>
-                    </StackPanel>
-                </ScrollViewer>
+                <StackPanel>
+                    <ScrollViewer>
+                        <StackPanel Spacing="{DynamicResource ControlSpacing}">
+                            <controls:AlpacaCameraUserControl />
+                            <controls:LiveAnalysisUserControl/>
+                            <controls:AlpacaServerUserControl />                            
+                            <controls:AlpacaTelescopeUserControl />
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </StackPanel>
             </TabItem>
             <TabItem Margin="-5 0 -5 0">
                 <TabItem.Header>

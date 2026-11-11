@@ -3,6 +3,6 @@
     public enum APIType
     {
         Alpaca,
-        Remote
+        ScreenCapture,
     }
 }

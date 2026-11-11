@@ -1,8 +1,10 @@
 using Avalonia.Controls;
 using Avalonia;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using CollimationCircles.Messages;
+using CollimationCircles.Services.ScreenCapturing;
 using CollimationCircles.ViewModels;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
@@ -11,7 +13,7 @@ using Mat = OpenCvSharp.Mat;
 
 namespace CollimationCircles.Views
 {
-    public partial class StreamView : Window
+    public partial class StreamView : Window, IScreenCaptureTarget
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
                 
@@ -21,6 +23,7 @@ namespace CollimationCircles.Views
         private readonly SettingsViewModel svm;
 
         private WriteableBitmap? bitmap;
+        private PixelSize? frameSize;
         private Mat? pendingFrame;
         private bool renderQueued;
         private readonly object frameSync = new();
@@ -43,7 +46,14 @@ namespace CollimationCircles.Views
 
             WeakReferenceMessenger.Default.Register<MatMessage>(this, (r, m) =>
             {
-                QueueFrameForRender(m.Value.Clone());
+                if (m.Display)
+                {
+                    QueueFrameForRender(m.Value.Clone());
+                    return;
+                }
+
+                var size = new PixelSize(m.Value.Width, m.Value.Height);
+                Dispatcher.UIThread.Post(() => ShowOverlayOnly(size), DispatcherPriority.Render);
             });
 
             Opened += WebCamStreamWindow_Opened;
@@ -56,6 +66,7 @@ namespace CollimationCircles.Views
 
             bitmap?.Dispose();
             bitmap = null;
+            frameSize = null;
             if (frameImage is not null)
             {
                 frameImage.Source = null;
@@ -81,7 +92,7 @@ namespace CollimationCircles.Views
 
         private void UpdateOverlaySize()
         {
-            if (analysisOverlay is null || frameGrid is null || bitmap is null)
+            if (analysisOverlay is null || frameGrid is null || frameSize is not { } size)
             {
                 return;
             }
@@ -92,9 +103,42 @@ namespace CollimationCircles.Views
                 return;
             }
 
-            var scale = Math.Min(bounds.Width / bitmap.PixelSize.Width, bounds.Height / bitmap.PixelSize.Height);
-            analysisOverlay.Width = bitmap.PixelSize.Width * scale;
-            analysisOverlay.Height = bitmap.PixelSize.Height * scale;
+            var scale = Math.Min(bounds.Width / size.Width, bounds.Height / size.Height);
+            analysisOverlay.Width = size.Width * scale;
+            analysisOverlay.Height = size.Height * scale;
+        }
+
+        private void ShowOverlayOnly(PixelSize size)
+        {
+            lock (frameSync)
+            {
+                pendingFrame?.Dispose();
+                pendingFrame = null;
+            }
+
+            // The window is transparent so the screen content behind it stays visible.
+            Background = Brushes.Transparent;
+
+            if (frameImage is not null)
+            {
+                frameImage.IsVisible = false;
+                frameImage.Source = null;
+            }
+
+            if (frameGrid is not null)
+            {
+                frameGrid.Background = Brushes.Transparent;
+                frameGrid.IsVisible = true;
+            }
+
+            bitmap?.Dispose();
+            bitmap = null;
+
+            if (frameSize != size)
+            {
+                frameSize = size;
+                UpdateOverlaySize();
+            }
         }
 
         private void QueueFrameForRender(Mat frame)
@@ -129,8 +173,16 @@ namespace CollimationCircles.Views
                 return;
             }
 
+            ClearValue(BackgroundProperty);
+
+            if (frameImage is not null)
+            {
+                frameImage.IsVisible = true;
+            }
+
             if (frameGrid is not null)
             {
+                frameGrid.Background = Brushes.Black;
                 frameGrid.IsVisible = true;
             }
 
@@ -147,7 +199,11 @@ namespace CollimationCircles.Views
                 {
                     frameImage.Source = bitmap;
                 }
+            }
 
+            if (frameSize != bitmap.PixelSize)
+            {
+                frameSize = bitmap.PixelSize;
                 UpdateOverlaySize();
             }
 
@@ -180,6 +236,17 @@ namespace CollimationCircles.Views
 
                 frameImage?.InvalidateVisual();
             }
+        }
+
+        public PixelRect GetCaptureRect()
+        {
+            var root = this.Get<Grid>("RootGrid");
+            var origin = root.PointToScreen(new Point(0, 0));
+            var scale = RenderScaling;
+
+            return new PixelRect(
+                origin,
+                new PixelSize((int)Math.Round(root.Bounds.Width * scale), (int)Math.Round(root.Bounds.Height * scale)));
         }
 
         private void UpdateWindowPosition()

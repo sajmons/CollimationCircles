@@ -131,10 +131,9 @@
     <system:String x:Key="Text.Auto">Automatique</system:String>
     <system:String x:Key="Text.ExposureTime">Délai d'exposition</system:String>
     <system:String x:Key="Text.Temperature">Température</system:String>
-    <system:String x:Key="Text.CameraControls">Commandes de la caméra</system:String>
+    <system:String x:Key="Text.ImageSource">Source de l'image</system:String>
     <system:String x:Key="Text.Default">Défaut</system:String>
     <system:String x:Key="Text.EnterRemoteAddress">Entrer l'adresse</system:String>
-    <system:String x:Key="Text.RefreshCameras">Actualiser la liste des caméras</system:String>
     <system:String x:Key="Text.License">Licence:</system:String>
     <system:String x:Key="Text.ProfileManagerTitle">Gestionnaire de profil</system:String>
     <system:String x:Key="Text.AddCurrentProfile">Ajouter un nouveau profil</system:String>
@@ -167,7 +166,6 @@
     <system:String x:Key="Text.TipDefocusedStarAnalysis">Basculer l'analyse d'étoile défocalisée en temps réel</system:String>
     <system:String x:Key="Text.OpticalTubeAnalysis">Analyse du tube optique</system:String>
     <system:String x:Key="Text.TipOpticalTubeAnalysis">Basculer l'analyse du tube optique en temps réel</system:String>
-    <system:String x:Key="Text.LiveAnalysisTip">Aucune image disponible. Démarrez la caméra ou chargez une image.</system:String>
     <system:String x:Key="Text.CompactThemeDensity">Aspect compact</system:String>
     <system:String x:Key="Text.Collimation">Collimation</system:String>
     <system:String x:Key="Text.CheckForUpdate">Vérifier les mises à jour</system:String>
@@ -182,4 +180,10 @@
     <system:String x:Key="Text.AlpacaTelescopeControl">Contrôle du télescope</system:String>
     <system:String x:Key="Text.ManualImageLoading">Charger l'image</system:String>
     <system:String x:Key="Text.LoadImage">Charger une image</system:String>
+    <system:String x:Key="Text.TelescopeControls">Contrôle du télescope</system:String>
+    <system:String x:Key="Text.BackgroundScreen">Écran de fond</system:String>
+    <system:String x:Key="Text.GrabImageFromBackgroundScreen">Capture image from background screen</system:String>    
+    <system:String x:Key="Text.AlpacaCamera">Caméra alpaga</system:String>
+    <system:String x:Key="Text.AcquireImageFromAlpacaCamera">Capturer une image depuis la caméra Alpaca</system:String>
+    <system:String x:Key="Text.CameraControls">Contrôle de la caméra</system:String>
 </ResourceDictionary>

@@ -16,7 +16,7 @@
         Padding="{DynamicResource ExpanderContentPadding}">
         <Grid RowDefinitions="*,Auto">
             <StackPanel
-                Orientation="Vertical">
+                Orientation="Vertical" Spacing="{DynamicResource ControlSpacing}">
 
                 <Grid
                     ColumnDefinitions="*,95"
@@ -73,6 +73,8 @@
                 <CheckBox
                     Content="{DynamicResource Text.ShowKeyboardShortcuts}"
                     IsChecked="{Binding ShowKeyboardShortcuts}" />
+                
+                <controls:OpticsUserControl />
             </StackPanel>            
         </Grid>
     </Border>

@@ -1,0 +1,24 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:CollimationCircles.ViewModels"
+             xmlns:controls="clr-namespace:CollimationCircles.Controls"
+             mc:Ignorable="d"
+             d:DesignWidth="600"
+             d:DesignHeight="280"
+             x:Class="CollimationCircles.Controls.OpticsUserControl"
+             x:DataType="vm:SettingsViewModel">
+
+    <GroupBox Header="Optics (optional)">
+        <StackPanel Spacing="{DynamicResource ControlSpacing}">
+            <TextBlock Text="Aperture (mm)" />
+            <NumericUpDown Value="{Binding TelescopeApertureMm}" Minimum="0" Maximum="10000" Increment="1" FormatString="0.#" />
+            <TextBlock Text="Focal length (mm)" />
+            <NumericUpDown Value="{Binding TelescopeFocalLengthMm}" Minimum="0" Maximum="100000" Increment="1" FormatString="0.#" />
+            <TextBlock Text="Pixel size (µm)" />
+            <NumericUpDown Value="{Binding CameraPixelSizeUm}" Minimum="0" Maximum="100" Increment="0.01" FormatString="0.00" />
+        </StackPanel>
+    </GroupBox>
+
+</UserControl>
