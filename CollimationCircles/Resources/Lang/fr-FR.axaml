@@ -165,6 +165,10 @@
     <system:String x:Key="Text.DefocusedStarAnalysis">Analyse d'étoile défocalisée</system:String>
     <system:String x:Key="Text.TipDefocusedStarAnalysis">Basculer l'analyse d'étoile défocalisée en temps réel</system:String>
     <system:String x:Key="Text.OpticalTubeAnalysis">Analyse du tube optique</system:String>
+    <system:String x:Key="Text.FocusSide">Côté de la mise au point</system:String>
+    <system:String x:Key="Text.InsideFocus">Intrafocal</system:String>
+    <system:String x:Key="Text.OutsideFocus">Extrafocal</system:String>
+    <system:String x:Key="Text.TipFocusSide">Indiquez si l'étoile défocalisée est intrafocale (porte-oculaire rentré) ou extrafocale (sorti). Les indications de direction sont inversées en intrafocal.</system:String>
     <system:String x:Key="Text.TipOpticalTubeAnalysis">Basculer l'analyse du tube optique en temps réel</system:String>
     <system:String x:Key="Text.CompactThemeDensity">Aspect compact</system:String>
     <system:String x:Key="Text.Collimation">Collimation</system:String>

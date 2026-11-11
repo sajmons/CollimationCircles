@@ -203,11 +203,14 @@ namespace CollimationCircles.Services
         /// <summary>
         /// Analyzes a defocused star. The outer disc is the largest bright blob; the secondary mirror shadow is the dark hole inside it.
         /// Collimation error is the offset of the shadow from the disc center, relative to the disc radius.
+        /// The defocused pattern is point-inverted (rotated 180 degrees) between inside and outside focus, so for inside focus the
+        /// offset vector is negated. ComaMagnitude/ComaAngle are therefore always expressed in the same frame (outside focus),
+        /// which keeps calibration and screw guidance valid on both sides of focus. CentroidX/Y stay in raw image coordinates.
         /// </summary>
         private const double MinObstructionRatio = 0.1;
         private const double MaxObstructionRatio = 0.6;
 
-        public static Dictionary<string, double>? AnalyzeStarWavefront(Mat starImg)
+        public static Dictionary<string, double>? AnalyzeStarWavefront(Mat starImg, bool insideFocus = false)
         {
             using Mat gray = starImg.Channels() == 1 ? starImg.Clone() : starImg.CvtColor(ColorConversionCodes.BGR2GRAY);
             using Mat binary = new();
@@ -262,11 +265,18 @@ namespace CollimationCircles.Services
 
             double dx = sX - oX;
             double dy = sY - oY;
+            double rawMagnitude = Math.Sqrt(dx * dx + dy * dy);
+
+            // Inside focus: the pattern is inverted, so map the offset into the common (outside focus) frame
+            double nx = insideFocus ? -dx : dx;
+            double ny = insideFocus ? -dy : dy;
 
             return new Dictionary<string, double>
             {
-                { "ComaMagnitude", Math.Sqrt(dx * dx + dy * dy) / radius },
-                { "ComaAngle", Math.Atan2(dy, dx) * 180.0 / Math.PI },
+                { "ComaMagnitude", rawMagnitude / radius },
+                { "ComaAngle", Math.Atan2(ny, nx) * 180.0 / Math.PI },
+                { "InsideFocus", insideFocus ? 1 : 0 },
+                { "OffsetPx", rawMagnitude },
                 { "CentroidX", sX },
                 { "CentroidY", sY },
                 { "GeometricX", oX },

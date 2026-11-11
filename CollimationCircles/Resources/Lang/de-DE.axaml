@@ -165,6 +165,10 @@
     <system:String x:Key="Text.DefocusedStarAnalysis">Defokussierte Sternanalyse</system:String>
     <system:String x:Key="Text.TipDefocusedStarAnalysis">Echtzeit-Analyse defokussierter Sterne umschalten</system:String>
     <system:String x:Key="Text.OpticalTubeAnalysis">Optische Tubusanalyse</system:String>
+    <system:String x:Key="Text.FocusSide">Fokusseite</system:String>
+    <system:String x:Key="Text.InsideFocus">Innerhalb des Fokus</system:String>
+    <system:String x:Key="Text.OutsideFocus">Außerhalb des Fokus</system:String>
+    <system:String x:Key="Text.TipFocusSide">Wählen Sie, ob der defokussierte Stern innerhalb des Fokus (Okularauszug eingefahren) oder außerhalb des Fokus (ausgefahren) liegt. Die Richtungshinweise werden für innerhalb des Fokus umgekehrt.</system:String>
     <system:String x:Key="Text.TipOpticalTubeAnalysis">Echtzeit-Analyse des optischen Tubus umschalten</system:String>
     <system:String x:Key="Text.CompactThemeDensity">Kompakter Look</system:String>
     <system:String x:Key="Text.Collimation">Collimation</system:String>

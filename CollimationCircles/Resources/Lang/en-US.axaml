@@ -178,6 +178,10 @@
     <system:String x:Key="Text.DefocusedStarAnalysis">Defocused star analysis</system:String>
     <system:String x:Key="Text.TipDefocusedStarAnalysis">Toggle Real-time defocused star analysis</system:String>
     <system:String x:Key="Text.OpticalTubeAnalysis">Optical tube analysis</system:String>
+    <system:String x:Key="Text.FocusSide">Focus side</system:String>
+    <system:String x:Key="Text.InsideFocus">Inside focus</system:String>
+    <system:String x:Key="Text.OutsideFocus">Outside focus</system:String>
+    <system:String x:Key="Text.TipFocusSide">Select whether the defocused star is inside focus (focuser racked in) or outside focus (racked out). Collimation direction hints are flipped for inside focus.</system:String>
     <system:String x:Key="Text.TipOpticalTubeAnalysis">Toggle Real-time Optical Tube Analysis</system:String>
     <system:String x:Key="Text.GlobalProperties">Global properties</system:String>
     <system:String x:Key="Text.CompactThemeDensity">Compact Theme</system:String>

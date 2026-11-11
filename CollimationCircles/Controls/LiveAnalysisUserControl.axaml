@@ -11,14 +11,15 @@
 		<Grid
 			ColumnSpacing="{DynamicResource ControlSpacing}"
 			RowSpacing="{DynamicResource ControlSpacing}"
-			ColumnDefinitions="*,Auto"
-			RowDefinitions="Auto,Auto">
+			ColumnDefinitions="*,Auto,Auto"
+			RowDefinitions="Auto,Auto,Auto">
 
 			<TextBlock
+				Grid.ColumnSpan="2"
 				Text="{DynamicResource Text.DefocusedStarAnalysis}"
 				VerticalAlignment="Center"/>
 			<ToggleSwitch
-				Grid.Column="1"
+				Grid.Column="2"
 				IsChecked="{Binding IsLiveAnalysisActive}"
 				IsEnabled="{Binding IsStreaming}"
 				ToolTip.Tip="{DynamicResource Text.TipDefocusedStarAnalysis}"
@@ -27,11 +28,26 @@
 
 			<TextBlock
 				Grid.Row="1"
-				Text="{DynamicResource Text.OpticalTubeAnalysis}"
+				Text="{DynamicResource Text.FocusSide}"
 				VerticalAlignment="Center"/>
 			<ToggleSwitch
 				Grid.Row="1"
 				Grid.Column="1"
+				IsChecked="{Binding IsInsideFocus}"
+				IsEnabled="{Binding IsStreaming}"
+				OnContent="{DynamicResource Text.InsideFocus}"
+				OffContent="{DynamicResource Text.OutsideFocus}"
+				ToolTip.Tip="{DynamicResource Text.TipFocusSide}">
+			</ToggleSwitch>
+
+			<TextBlock
+				Grid.Row="2"
+				Grid.ColumnSpan="2"
+				Text="{DynamicResource Text.OpticalTubeAnalysis}"
+				VerticalAlignment="Center"/>
+			<ToggleSwitch
+				Grid.Row="2"
+				Grid.Column="2"
 				IsChecked="{Binding IsLiveRmseActive}"
 				IsEnabled="{Binding IsStreaming}"
 				HorizontalAlignment="Stretch"

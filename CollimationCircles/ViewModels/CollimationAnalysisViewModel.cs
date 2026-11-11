@@ -54,6 +54,16 @@ namespace CollimationCircles.ViewModels
         bool isLiveRmseActive = false;
 
         [ObservableProperty]
+        bool isInsideFocus;
+
+        partial void OnIsInsideFocusChanged(bool value)
+        {
+            settingsViewModel.IsInsideFocus = value;
+            logger.Info("Focus side changed: {0}", value ? "inside focus" : "outside focus");
+            RefreshScrewInstructions();
+        }
+
+        [ObservableProperty]
         bool isAnyLiveAnalysisActive = false;
 
         [ObservableProperty]
@@ -69,6 +79,7 @@ namespace CollimationCircles.ViewModels
             settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
             cameraService = Ioc.Default.GetRequiredService<ICameraService>();
             calibration = Ioc.Default.GetRequiredService<ScrewCalibrationViewModel>();
+            isInsideFocus = settingsViewModel.IsInsideFocus;
             calibration.IsAnyLiveAnalysisActive = () => IsAnyLiveAnalysisActive;
             calibration.IsAdvancedAnalysisActive = () => IsLiveAnalysisActive;
             calibration.CalibrationChanged += RefreshScrewInstructions;
@@ -92,6 +103,8 @@ namespace CollimationCircles.ViewModels
                 {
                     case CameraState.Stopped:
                         IsStreaming = false;
+                        IsLiveAnalysisActive = false;
+                        IsLiveRmseActive = false;
                         break;
                     case CameraState.Playing:
                         IsStreaming = true;
@@ -271,7 +284,7 @@ namespace CollimationCircles.ViewModels
             {
                 if (IsLiveAnalysisActive)
                 {
-                    var advanced = RunAdvancedAnalysis(image);
+                    var advanced = RunAdvancedAnalysis(image, IsInsideFocus);
                     descriptions.Add(advanced.Description);
                     overlay = advanced.Image;
                     if (advanced.Wavefront is { } wf)
@@ -347,7 +360,7 @@ namespace CollimationCircles.ViewModels
 
             lastGuidanceLog = signature;
             logger.Info("Guidance: mode={0}, source={1}, offset magnitude={2:F4}, angle={3:F1} deg, offset=({4:F4},{5:F4}), screws={6}, rotation={7:F1}, adjustments=[{8}], text=\"{9}\"",
-                IsLiveAnalysisActive ? "advanced" : "rmse",
+                IsLiveAnalysisActive ? (IsInsideFocus ? "advanced/inside" : "advanced/outside") : "rmse",
                 calibrated ? "calibrated" : "geometric-estimate",
                 mag, ang, mag * Math.Cos(rad), mag * Math.Sin(rad),
                 screwVM.Count, screwVM.RotationAngle, adj, guidance);
@@ -562,7 +575,7 @@ namespace CollimationCircles.ViewModels
             return circles;
         }
 
-        private static (string Description, Dictionary<string, double>? Wavefront, Mat Image) RunAdvancedAnalysis(Mat image)
+        private static (string Description, Dictionary<string, double>? Wavefront, Mat Image) RunAdvancedAnalysis(Mat image, bool insideFocus)
         {
             using Mat gray = new();
             Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
@@ -570,7 +583,7 @@ namespace CollimationCircles.ViewModels
             Cv2.GaussianBlur(gray, gray, new Size(advBlur, advBlur), 0);
             Cv2.Normalize(gray, gray, 0, 255, NormTypes.MinMax);
 
-            var wavefront = AnalyzeStarWavefront(gray);
+            var wavefront = AnalyzeStarWavefront(gray, insideFocus);
             var classicCircles = DetectClassicCircles(image, CreateCircleOptions());
 
             Mat drawImage = new(image.Height, image.Width, MatType.CV_8UC4, Scalar.All(0));
@@ -588,7 +601,7 @@ namespace CollimationCircles.ViewModels
                 var cyan = new Scalar(255, 255, 0, 255);
                 Cv2.Circle(drawImage, new Point((int)x, (int)y), (int)Math.Round(radius), cyan, 2, LineTypes.AntiAlias);
                 DrawAlignmentMarkers(drawImage, new Point((int)x, (int)y), new Point((int)wavefront["CentroidX"], (int)wavefront["CentroidY"]),
-                    wavefront["ComaMagnitude"], $"Offset {wavefront["ComaMagnitude"] * 100:F1}%  {wavefront["ComaAngle"]:F0} deg", ScaleOf(image));
+                    wavefront["ComaMagnitude"], $"{(insideFocus ? "In" : "Out")} focus  Offset {wavefront["ComaMagnitude"] * 100:F1}%  {wavefront["ComaAngle"]:F0} deg", ScaleOf(image));
             }
 
             return (DescribeAdvancedResult(wavefront), wavefront, drawImage);
@@ -706,7 +719,8 @@ namespace CollimationCircles.ViewModels
                 return "Star not detected\n";
             }
 
-            return $"Disc radius: {wavefront["Radius"]:F1}px\n" +
+            return $"Focus: {(wavefront["InsideFocus"] > 0 ? "inside" : "outside")}\n" +
+                   $"Disc radius: {wavefront["Radius"]:F1}px\n" +
                    $"Shadow offset: {wavefront["ComaMagnitude"] * 100:F1}% of radius\n" +
                    $"Offset angle: {wavefront["ComaAngle"]:F1}°\n";
         }

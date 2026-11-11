@@ -80,6 +80,10 @@ namespace CollimationCircles.ViewModels
 
         [JsonProperty]
         [ObservableProperty]
+        private bool isInsideFocus = false;
+
+        [JsonProperty]
+        [ObservableProperty]
         [Range(Constraints.RotationAngleMin, Constraints.RotationAngleMax)]
         [NotifyDataErrorInfo]
         private double rotationAngle = 0;        
@@ -527,6 +531,7 @@ namespace CollimationCircles.ViewModels
                     TelescopeApertureMm = vm.TelescopeApertureMm;
                     TelescopeFocalLengthMm = vm.TelescopeFocalLengthMm;
                     CameraPixelSizeUm = vm.CameraPixelSizeUm;
+                    IsInsideFocus = vm.IsInsideFocus;
                     Items.Clear();
                     Items.AddRange(vm.Items);
 

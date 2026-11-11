@@ -165,6 +165,10 @@
     <system:String x:Key="Text.DefocusedStarAnalysis">Analiza defokusirane zvezde</system:String>
     <system:String x:Key="Text.TipDefocusedStarAnalysis">Preklop analize defokusirane zvezde v realnem času</system:String>
     <system:String x:Key="Text.OpticalTubeAnalysis">Analiza optične cevi</system:String>
+    <system:String x:Key="Text.FocusSide">Stran fokusa</system:String>
+    <system:String x:Key="Text.InsideFocus">Znotraj fokusa</system:String>
+    <system:String x:Key="Text.OutsideFocus">Zunaj fokusa</system:String>
+    <system:String x:Key="Text.TipFocusSide">Izberite, ali je razmazana zvezda znotraj fokusa (izvlek fokuserja navznoter) ali zunaj fokusa (navzven). Smeri nasvetov za kolimacijo se pri znotraj fokusa obrnejo.</system:String>
     <system:String x:Key="Text.TipOpticalTubeAnalysis">Preklop analize optične cevi v realnem času</system:String>
     <system:String x:Key="Text.CompactThemeDensity">Kompakten izgled</system:String>
     <system:String x:Key="Text.Collimation">Kolimacija</system:String>
