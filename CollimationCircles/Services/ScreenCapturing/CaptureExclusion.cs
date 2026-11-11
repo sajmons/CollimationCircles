@@ -9,12 +9,16 @@ namespace CollimationCircles.Services.ScreenCapturing
 {
     /// <summary>
     /// Hides application windows from screen capture so the content behind them is captured instead of our own
-    /// overlay. Only Windows 10 (2004+) offers this; elsewhere the call is a no-op and windows appear in captures.
+    /// overlay. Supported on Windows 10 (2004+) and macOS; on Linux there is no equivalent for X11 or Wayland,
+    /// so the call is a no-op and windows appear in captures.
     /// </summary>
     internal sealed class CaptureExclusion
     {
         private const uint WdaNone = 0x0;
         private const uint WdaExcludeFromCapture = 0x11;
+
+        private const nuint NSWindowSharingNone = 0;
+        private const nuint NSWindowSharingReadOnly = 1;
 
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -24,9 +28,20 @@ namespace CollimationCircles.Services.ScreenCapturing
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetWindowDisplayAffinity(IntPtr hWnd, uint dwAffinity);
 
+        [DllImport("/usr/lib/libobjc.A.dylib", EntryPoint = "sel_registerName")]
+        private static extern IntPtr SelRegisterName([MarshalAs(UnmanagedType.LPStr)] string name);
+
+        [DllImport("/usr/lib/libobjc.A.dylib", EntryPoint = "objc_msgSend")]
+        private static extern void ObjcSendNUInt(IntPtr receiver, IntPtr selector, nuint value);
+
+        private static void SetMacSharingType(IntPtr nsWindow, nuint sharingType)
+        {
+            ObjcSendNUInt(nsWindow, SelRegisterName("setSharingType:"), sharingType);
+        }
+
         public void Apply(IReadOnlyList<Window> windows)
         {
-            if (!OperatingSystem.IsWindows())
+            if (!OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS())
             {
                 return;
             }
@@ -42,7 +57,11 @@ namespace CollimationCircles.Services.ScreenCapturing
                     continue;
                 }
 
-                if (!SetWindowDisplayAffinity(handle.Handle, WdaExcludeFromCapture))
+                if (OperatingSystem.IsMacOS())
+                {
+                    SetMacSharingType(handle.Handle, NSWindowSharingNone);
+                }
+                else if (!SetWindowDisplayAffinity(handle.Handle, WdaExcludeFromCapture))
                 {
                     logger.Warn($"Unable to exclude window '{window.Title}' from screen capture.");
                 }
@@ -53,13 +72,20 @@ namespace CollimationCircles.Services.ScreenCapturing
 
         public void Restore()
         {
-            if (OperatingSystem.IsWindows())
+            if (OperatingSystem.IsWindows() || OperatingSystem.IsMacOS())
             {
                 foreach (var window in excludedWindows)
                 {
                     if (window.TryGetPlatformHandle() is IPlatformHandle handle && handle.Handle != IntPtr.Zero)
                     {
-                        SetWindowDisplayAffinity(handle.Handle, WdaNone);
+                        if (OperatingSystem.IsMacOS())
+                        {
+                            SetMacSharingType(handle.Handle, NSWindowSharingReadOnly);
+                        }
+                        else
+                        {
+                            SetWindowDisplayAffinity(handle.Handle, WdaNone);
+                        }
                     }
                 }
             }
