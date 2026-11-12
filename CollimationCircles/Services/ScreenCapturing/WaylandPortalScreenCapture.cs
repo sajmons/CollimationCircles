@@ -113,7 +113,7 @@ namespace CollimationCircles.Services.ScreenCapturing
                     }
                     else
                     {
-                        response.TrySetException(notification.Exception);
+                        response.TrySetException(notification.CompletionReason);
                     }
                 },
                 emitOnCapturedContext: false,
