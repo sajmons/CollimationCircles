@@ -29,6 +29,7 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - always on top option
 - up to date online help available
 - 3.x and newer camera video stream support to display video from your telescope in background
+- background screen capture (e.g. a SharpCap preview) using native OS APIs, raw pixels analysed in memory: GDI on Windows, CoreGraphics on macOS (Screen Recording permission required), X11 on Linux (Wayland sessions are not supported)
 
 # Dependancies
 Colimation circles depends on some external software for handling video streams. 

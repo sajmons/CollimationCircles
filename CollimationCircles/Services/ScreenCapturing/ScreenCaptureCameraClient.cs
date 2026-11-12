@@ -13,23 +13,20 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
-using ThatCapture;
 
 namespace CollimationCircles.Services.ScreenCapturing
 {
     /// <summary>
     /// Camera that captures the screen content behind the application windows.
-    /// Uses native capture on Windows and ThatCapture on other platforms.
+    /// Pixels are read directly from the operating system as raw BGRA data and handed to the analysis as a Mat.
     /// The capture region is the stream window when it is visible and active, otherwise the main window.
     /// </summary>
     internal class ScreenCaptureCameraClient
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        private const int FrameIntervalMs = 100;
+        private const int FrameIntervalMs = 250;
 
-        private readonly WindowsScreenCapture? windowsCapture = OperatingSystem.IsWindows() ? new() : null;
-        private readonly ThatCapture.ScreenCapture? capture = OperatingSystem.IsWindows() ? null : new();
         private readonly CaptureExclusion exclusion = new();
         private CancellationTokenSource? cts;
         private Task? loop;
@@ -38,12 +35,12 @@ namespace CollimationCircles.Services.ScreenCapturing
         {
             await Stop();
 
-            var platform = windowsCapture is not null ? "Windows" : capture!.Platform.ToString();
-            logger.Info($"Starting screen capture camera (platform: {platform})");
+            var backend = ScreenCaptureBackendFactory.Create();
+            logger.Info($"Starting screen capture camera (backend: {backend.Name})");
 
             cts = new CancellationTokenSource();
             var token = cts.Token;
-            loop = Task.Run(() => CaptureLoop(token));
+            loop = Task.Run(() => CaptureLoop(backend, token));
         }
 
         public async Task Stop()
@@ -79,7 +76,7 @@ namespace CollimationCircles.Services.ScreenCapturing
             logger.Info("Stopped screen capture camera");
         }
 
-        private async Task CaptureLoop(CancellationToken ct)
+        private async Task CaptureLoop(IScreenCaptureBackend backend, CancellationToken ct)
         {
             try
             {
@@ -89,12 +86,12 @@ namespace CollimationCircles.Services.ScreenCapturing
                 {
                     stopwatch.Restart();
 
-                    var rect = await Dispatcher.UIThread.InvokeAsync(ResolveCaptureRect);
+                    var region = await Dispatcher.UIThread.InvokeAsync(ResolveCaptureRegion);
 
-                    if (rect is { Width: > 0, Height: > 0 } r)
+                    if (region is { Bounds: { Width: > 0, Height: > 0 } })
                     {
-                        using var frame = await CaptureFrameAsync(r);
-                        if (frame is not null && !ct.IsCancellationRequested)
+                        using var frame = ToMat(backend.Capture(region));
+                        if (!ct.IsCancellationRequested)
                         {
                             // The captured screen is already visible behind the stream window, so only the overlay is drawn.
                             WeakReferenceMessenger.Default.Send(new MatMessage(frame, display: false));
@@ -119,57 +116,15 @@ namespace CollimationCircles.Services.ScreenCapturing
             }
         }
 
-        private async Task<Mat?> CaptureFrameAsync(PixelRect rect)
+        private static Mat ToMat(ScreenCaptureFrame frame)
         {
-            if (windowsCapture is not null)
-            {
-                return ToMat(windowsCapture.CaptureArea(rect.X, rect.Y, rect.Width, rect.Height));
-            }
-
-            var result = await capture!.CaptureAreaAsync(rect.X, rect.Y, rect.Width, rect.Height);
-            switch (result)
-            {
-                case CaptureResult.Ok(var captured):
-                    return ToMat(captured);
-                case CaptureResult.Err(var error):
-                    throw new InvalidOperationException($"Screen capture failed: {error}");
-                default:
-                    throw new InvalidOperationException("Screen capture returned an unsupported result.");
-            }
-        }
-
-        private static Mat? ToMat(CapturedFrame frame)
-        {
-            return ToMat(frame.Pixels, frame.Width, frame.Height, frame.Stride, frame.Format);
-        }
-
-        private static Mat? ToMat(ScreenCaptureFrame frame)
-        {
-            return ToMat(frame.Pixels, frame.Width, frame.Height, frame.Stride, ThatCapture.PixelFormat.Bgra8888);
-        }
-
-        private static Mat? ToMat(byte[] pixels, int width, int height, int stride, ThatCapture.PixelFormat format)
-        {
-            var conversion = format switch
-            {
-                ThatCapture.PixelFormat.Bgra8888 => ColorConversionCodes.BGRA2BGR,
-                ThatCapture.PixelFormat.Rgba8888 => ColorConversionCodes.RGBA2BGR,
-                _ => (ColorConversionCodes?)null
-            };
-
-            if (conversion is null)
-            {
-                logger.Warn($"Unsupported screen capture pixel format: {format}");
-                return null;
-            }
-
-            var handle = GCHandle.Alloc(pixels, GCHandleType.Pinned);
+            var handle = GCHandle.Alloc(frame.Pixels, GCHandleType.Pinned);
             try
             {
                 // Stride may include row padding, so it must be passed explicitly.
-                using var source = Mat.FromPixelData(height, width, MatType.CV_8UC4, handle.AddrOfPinnedObject(), stride);
+                using var source = Mat.FromPixelData(frame.Height, frame.Width, MatType.CV_8UC4, handle.AddrOfPinnedObject(), frame.Stride);
                 var bgr = new Mat();
-                Cv2.CvtColor(source, bgr, conversion.Value);
+                Cv2.CvtColor(source, bgr, ColorConversionCodes.BGRA2BGR);
                 return bgr;
             }
             finally
@@ -178,7 +133,7 @@ namespace CollimationCircles.Services.ScreenCapturing
             }
         }
 
-        private PixelRect? ResolveCaptureRect()
+        private CaptureRegion? ResolveCaptureRegion()
         {
             if (Application.Current?.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime)
             {
@@ -188,15 +143,25 @@ namespace CollimationCircles.Services.ScreenCapturing
             var windows = lifetime.Windows;
             exclusion.Apply(windows);
 
-            IScreenCaptureTarget? target = windows
+            Avalonia.Controls.Window? window = windows
                 .OfType<StreamView>()
                 .FirstOrDefault(w => w.IsVisible && w.IsActive && w.WindowState != WindowState.Minimized);
 
-            target ??= windows
+            window ??= windows
                 .OfType<MainView>()
                 .FirstOrDefault(w => w.IsVisible && w.WindowState != WindowState.Minimized);
 
-            return target?.GetCaptureRect();
+            if (window is not IScreenCaptureTarget target)
+            {
+                return null;
+            }
+
+            var bounds = target.GetCaptureRect();
+            var screen = window.Screens.ScreenFromWindow(window) ?? window.Screens.Primary;
+
+            return screen is null
+                ? new CaptureRegion(bounds, bounds, window.RenderScaling, null)
+                : new CaptureRegion(bounds, screen.Bounds, screen.Scaling, screen.DisplayName);
         }
     }
 }

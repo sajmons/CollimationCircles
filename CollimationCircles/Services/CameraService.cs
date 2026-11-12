@@ -85,6 +85,14 @@ namespace CollimationCircles.Services
             SendCameraStateOnUIThread(CameraState.Stopped);
         }
 
+        public Mat? GetLatestFrame()
+        {
+            lock (frameSync)
+            {
+                return latestFrame is null || latestFrame.Empty() ? null : latestFrame.Clone();
+            }
+        }
+
         public Task<byte[]?> TakeSnapshotImageAsync()
         {
             lock (frameSync)

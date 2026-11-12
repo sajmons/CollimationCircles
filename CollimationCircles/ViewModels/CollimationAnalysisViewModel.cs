@@ -14,7 +14,6 @@ using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -244,10 +243,10 @@ namespace CollimationCircles.ViewModels
             {
                 try
                 {
-                    byte[]? data = await cameraService.TakeSnapshotImageAsync();
-                    if (data != null)
+                    using var frame = cameraService.GetLatestFrame();
+                    if (frame is not null)
                     {
-                        AnalyzeSnapshot(data);
+                        AnalyzeSnapshot(frame);
                     }
                 }
                 catch (Exception ex)
@@ -267,15 +266,23 @@ namespace CollimationCircles.ViewModels
             });
         }
 
-        private void AnalyzeSnapshot(byte[] data)
+        private void AnalyzeSnapshot(Mat frame)
         {
-            using var fullImage = Cv2.ImDecode(data, ImreadModes.Color);
-            if (fullImage.Empty())
+            using var image = new Mat();
+            switch (frame.Channels())
             {
-                return;
+                case 1:
+                    Cv2.CvtColor(frame, image, ColorConversionCodes.GRAY2BGR);
+                    break;
+                case 3:
+                    frame.CopyTo(image);
+                    break;
+                case 4:
+                    Cv2.CvtColor(frame, image, ColorConversionCodes.BGRA2BGR);
+                    break;
+                default:
+                    throw new InvalidOperationException($"Unsupported analysis frame channel count: {frame.Channels()}");
             }
-
-            var image = fullImage;
 
             var descriptions = new List<string>();
             Mat? overlay = null;
@@ -326,9 +333,17 @@ namespace CollimationCircles.ViewModels
                 Bitmap? bitmap = null;
                 if (overlay != null)
                 {
-                    Cv2.ImEncode(".png", overlay, out var png);
-                    using var stream = new MemoryStream(png);
-                    bitmap = new Bitmap(stream);
+                    var preview = new WriteableBitmap(
+                        new Avalonia.PixelSize(overlay.Width, overlay.Height),
+                        new Avalonia.Vector(96, 96),
+                        Avalonia.Platform.PixelFormat.Bgra8888,
+                        Avalonia.Platform.AlphaFormat.Unpremul);
+                    using (var buffer = preview.Lock())
+                    using (var target = Mat.FromPixelData(overlay.Height, overlay.Width, MatType.CV_8UC4, buffer.Address, buffer.RowBytes))
+                    {
+                        overlay.CopyTo(target);
+                    }
+                    bitmap = preview;
                 }
 
                 var text = string.Join("\n", descriptions);

@@ -4,7 +4,8 @@ using System.Runtime.InteropServices;
 
 namespace CollimationCircles.Services.ScreenCapturing
 {
-    internal sealed class WindowsScreenCapture
+    /// <summary>Captures screen pixels with GDI. Requires Windows 10 2004+ for CAPTUREBLT with excluded windows.</summary>
+    internal sealed class WindowsScreenCapture : IScreenCaptureBackend
     {
         private const uint SrcCopy = 0x00CC0020;
         private const uint CaptureBlt = 0x40000000;
@@ -12,7 +13,15 @@ namespace CollimationCircles.Services.ScreenCapturing
         private const uint DibRgbColors = 0;
         private static readonly IntPtr HgdiError = new(-1);
 
-        public ScreenCaptureFrame CaptureArea(int x, int y, int width, int height)
+        public string Name => "Windows GDI";
+
+        public ScreenCaptureFrame Capture(CaptureRegion region)
+        {
+            var bounds = region.Bounds;
+            return CaptureArea(bounds.X, bounds.Y, bounds.Width, bounds.Height);
+        }
+
+        private ScreenCaptureFrame CaptureArea(int x, int y, int width, int height)
         {
             var stride = checked(width * 4);
             var pixels = new byte[checked(stride * height)];
@@ -147,6 +156,4 @@ namespace CollimationCircles.Services.ScreenCapturing
             public uint ColorsImportant;
         }
     }
-
-    internal sealed record ScreenCaptureFrame(byte[] Pixels, int Width, int Height, int Stride);
 }

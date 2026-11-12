@@ -53,12 +53,10 @@
     <PackageReference Include="NLog" Version="6.2.2" />
     <PackageReference Include="Octokit" Version="14.0.0" />
     <PackageReference Include="OpenCvSharp4" Version="4.13.0.20261107" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="4.1.3" />
     <PackageReference Include="Standard.Licensing" Version="1.3.1" />
     <PackageReference Include="System.Management" Version="11.0.0" />    
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
-    <PackageReference Include="ThatCapture" Version="1.0.3" />    
   </ItemGroup>
 
   <!-- Cross-platform packages -->

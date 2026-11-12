@@ -1,4 +1,5 @@
 using CollimationCircles.Models;
+using OpenCvSharp;
 using System.Threading.Tasks;
 
 namespace CollimationCircles.Services
@@ -12,5 +13,6 @@ namespace CollimationCircles.Services
         public Task Stop(Camera camera);
         public string DefaultAddress(Camera camera);
         public Task<byte[]?> TakeSnapshotImageAsync();
+        public Mat? GetLatestFrame();
     }
 }
