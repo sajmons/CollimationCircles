@@ -123,7 +123,7 @@ jobs:
           # OpenCV only uses it for AVIF images, so the dependency is redirected to a stub exporting the imported symbols.
           for dep in $(otool -L "$LIB" | tail -n +2 | awk '{print $1}' | grep -E '^(/usr/local|/opt/homebrew)/' || true); do
             name="$(basename "$dep")"
-            short="${name%%.*}"
+            short="${name%.dylib}"
             echo "Replacing $dep with a stub"
 
             nm -um "$LIB" | grep "(from $short)" | awk '{print $3}' | sort -u > "$RUNNER_TEMP/$short.symbols"
