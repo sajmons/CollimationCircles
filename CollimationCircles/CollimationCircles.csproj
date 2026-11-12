@@ -57,6 +57,7 @@
     <PackageReference Include="System.Management" Version="11.0.0" />    
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="TextCopy" Version="6.2.1" />
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.95.2" />
   </ItemGroup>
 
   <!-- Cross-platform packages -->

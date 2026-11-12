@@ -41,10 +41,9 @@ namespace CollimationCircles.Services.ScreenCapturing
 
             if (OperatingSystem.IsLinux())
             {
-                // Wayland compositors do not allow reading other applications' pixels through X11.
                 if (string.Equals(Environment.GetEnvironmentVariable("XDG_SESSION_TYPE"), "wayland", StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new PlatformNotSupportedException("Screen capture is not supported in Wayland sessions. Use an X11 session.");
+                    return new WaylandPortalScreenCapture();
                 }
 
                 return new X11ScreenCapture();
