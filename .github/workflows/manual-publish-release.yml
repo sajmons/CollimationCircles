@@ -106,7 +106,7 @@ jobs:
 
       - name: Restore dependencies
         run: |
-          dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:PublishReadyToRun=true
+          dotnet restore ${{ env.PROJECT_PATH }} -r ${{ matrix.runtime }} /p:RuntimeIdentifier=${{ matrix.runtime }} /p:PublishReadyToRun=true
 
       - name: Publish
         shell: pwsh
@@ -129,6 +129,11 @@ jobs:
             $publishArgs += "/p:UseAppHost=true"
           }
           dotnet @publishArgs
+          if ($LASTEXITCODE -ne 0) { throw "Publish failed for ${{ matrix.runtime }}" }
+          $nativeLibrary = if ("${{ matrix.runtime }}".StartsWith("win-")) { "OpenCvSharpExtern.dll" } elseif ("${{ matrix.runtime }}".StartsWith("osx-")) { "libOpenCvSharpExtern.dylib" } else { "libOpenCvSharpExtern.so" }
+          if (-not (Test-Path "./publish/${{ matrix.runtime }}/$nativeLibrary" -PathType Leaf)) {
+            throw "Missing OpenCV native library $nativeLibrary for ${{ matrix.runtime }}"
+          }
 
       - name: Package (Linux)
         if: startsWith(matrix.runtime, 'linux-')

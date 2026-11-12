@@ -254,9 +254,11 @@ tar -czf ./artifacts/release/CollimationCircles-net10.0-osx-arm64.tar.gz -C ./ar
 Optional quick check before publishing:
 ```
 dotnet clean ./CollimationCircles/CollimationCircles.csproj
-dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64
-dotnet build ./CollimationCircles/CollimationCircles.csproj -c Release -f net10.0
+dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64 -p:RuntimeIdentifier=osx-arm64
+dotnet build ./CollimationCircles/CollimationCircles.csproj -c Release -f net10.0 -r osx-arm64
 ```
+
+When restoring separately before a `--no-restore` publish, set `RuntimeIdentifier` explicitly as above (using the target RID). The project selects its OpenCV native runtime package using this property; `dotnet restore -r` alone does not set it for package selection.
 
 ## Build and publish on Windows
 
