@@ -149,6 +149,19 @@ jobs:
             exit 1
           fi
 
+      - name: Make OpenCV library loadable on older macOS (macOS)
+        if: startsWith(matrix.runtime, 'osx-')
+        shell: bash
+        run: |
+          set -euo pipefail
+          LIB="./publish/${{ matrix.runtime }}/libOpenCvSharpExtern.dylib"
+
+          # The OpenCV runtime imports symbols that only exist on recent macOS (e.g. VideoToolbox pixel rotation),
+          # which makes dyld reject the whole library on older systems. Weak imports resolve to NULL instead.
+          python3 .github/scripts/weaken-macos-imports.py "$LIB"
+          codesign --force --sign - "$LIB"
+          codesign --verify --verbose "$LIB"
+
       - name: Package (Linux)
         if: startsWith(matrix.runtime, 'linux-')
         shell: bash
