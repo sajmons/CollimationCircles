@@ -161,7 +161,7 @@ jobs:
             short="${name%%.*}"
             echo "Replacing $dep with a stub"
 
-            nm -um "$LIB" | grep "(from $short)" | awk '{print $3}' | sort -u > "$RUNNER_TEMP/$short.symbols"
+            nm -um "$LIB" | grep -E "\(from ${short}([.)])" | awk '{print $3}' | sort -u > "$RUNNER_TEMP/$short.symbols"
             if [ ! -s "$RUNNER_TEMP/$short.symbols" ]; then
               echo "::error::No imported symbols found for $short"
               nm -um "$LIB" | head -n 20
