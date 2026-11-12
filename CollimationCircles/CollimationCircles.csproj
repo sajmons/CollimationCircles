@@ -11,8 +11,8 @@
     <PackageProjectUrl>https://github.com/sajmons/CollimationCircles</PackageProjectUrl>
     <RepositoryUrl>https://github.com/sajmons/CollimationCircles</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Version>5.0.0-beta5</Version>
-    <InformationalVersion>5.0.0-beta5</InformationalVersion>
+    <Version>5.0.0-beta6</Version>
+    <InformationalVersion>5.0.0-beta6</InformationalVersion>
     <Authors>Simon Šander</Authors>
     <Product>Collimation Circles</Product>
     <Copyright>Copyright © 2023</Copyright>
@@ -76,7 +76,7 @@
 
   <!-- macOS platform packages (osx-x64, osx-arm64) -->
   <ItemGroup Condition="'$(RuntimeIdentifier)' == 'osx-x64' Or '$(RuntimeIdentifier)' == 'osx-arm64'">
-    <PackageReference Include="OneWare.OpenCvSharp4.runtime.osx-x64" Version="4.13.0.20260628" Condition="'$(RuntimeIdentifier)' == 'osx-x64'" />
+    <PackageReference Include="OpenCvSharp4.runtime.osx.x64" Version="4.13.0.20261107" Condition="'$(RuntimeIdentifier)' == 'osx-x64'" />
     <PackageReference Include="OpenCvSharp4.runtime.osx.arm64" Version="4.13.0.20260627" Condition="'$(RuntimeIdentifier)' == 'osx-arm64'" />
   </ItemGroup>  
 

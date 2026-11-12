@@ -105,21 +105,19 @@ namespace CollimationCircles.Services.ScreenCapturing
             using var subscription = await connection.AddMatchAsync(
                 rule,
                 (Message message, object? state) => ReadResponse(message),
-                (Exception? exception, (uint Code, string? Uri) value, object? readerState, object? handlerState) =>
+                (Notification<(uint Code, string? Uri)> notification) =>
                 {
-                    if (exception is not null)
+                    if (notification.HasValue)
                     {
-                        response.TrySetException(exception);
+                        response.TrySetResult(notification.Value);
                     }
                     else
                     {
-                        response.TrySetResult(value);
+                        response.TrySetException(notification.Exception);
                     }
                 },
-                null,
-                null,
-                false,
-                ObserverFlags.None);
+                emitOnCapturedContext: false,
+                flags: ObserverFlags.None);
 
             await connection.CallMethodAsync(CreateScreenshotCall(connection, token));
 

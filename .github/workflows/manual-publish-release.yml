@@ -134,6 +134,14 @@ jobs:
           if (-not (Test-Path "./publish/${{ matrix.runtime }}/$nativeLibrary" -PathType Leaf)) {
             throw "Missing OpenCV native library $nativeLibrary for ${{ matrix.runtime }}"
           }
+          if ("${{ matrix.runtime }}".StartsWith("osx-")) {
+            $header = [System.IO.File]::ReadAllBytes("./publish/${{ matrix.runtime }}/$nativeLibrary")[0..7]
+            $cpuType = [BitConverter]::ToUInt32($header, 4)
+            $expected = if ("${{ matrix.runtime }}" -eq "osx-arm64") { 0x0100000C } else { 0x01000007 }
+            if ([BitConverter]::ToUInt32($header, 0) -ne 0xFEEDFACFL -or $cpuType -ne $expected) {
+              throw ("OpenCV native library architecture mismatch for ${{ matrix.runtime }} (cputype 0x{0:X8})" -f $cpuType)
+            }
+          }
 
       - name: Package (Linux)
         if: startsWith(matrix.runtime, 'linux-')
