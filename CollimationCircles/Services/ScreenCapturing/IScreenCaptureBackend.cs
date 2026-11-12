@@ -43,7 +43,7 @@ namespace CollimationCircles.Services.ScreenCapturing
             {
                 if (string.Equals(Environment.GetEnvironmentVariable("XDG_SESSION_TYPE"), "wayland", StringComparison.OrdinalIgnoreCase))
                 {
-                    return new WaylandPortalScreenCapture();
+                    return new WaylandScreenCapture();
                 }
 
                 return new X11ScreenCapture();

@@ -29,7 +29,7 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - always on top option
 - up to date online help available
 - 3.x and newer camera video stream support to display video from your telescope in background
-- background screen capture (e.g. a SharpCap preview) using native OS APIs: GDI on Windows, CoreGraphics on macOS (Screen Recording permission required), X11 on Linux, and the xdg-desktop-portal Screenshot API on Wayland (slower, shows a permission prompt on first use)
+- background screen capture (e.g. a SharpCap preview) using native OS APIs: GDI on Windows, CoreGraphics on macOS (Screen Recording permission required), X11 on Linux, and the xdg-desktop-portal ScreenCast API with PipeWire on Wayland (asks once to share the screen; requires `gstreamer1.0-tools` and `gstreamer1.0-pipewire`), falling back to `grim` on wlroots desktops such as Raspberry Pi OS and StellarMate (`sudo apt install grim`, no prompt)
 
 # Dependancies
 Colimation circles depends on some external software for handling video streams. 

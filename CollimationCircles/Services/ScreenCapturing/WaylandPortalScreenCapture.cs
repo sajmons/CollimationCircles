@@ -1,97 +1,379 @@
-using OpenCvSharp;
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Tmds.DBus.Protocol;
 
 namespace CollimationCircles.Services.ScreenCapturing
 {
+    /// <summary>The desktop portal cannot provide a screen cast, so another capture method should be tried.</summary>
+    internal sealed class ScreenCastUnavailableException(string message, Exception? innerException = null)
+        : InvalidOperationException(message, innerException);
+
     /// <summary>
-    /// Captures the screen in Wayland sessions with the xdg-desktop-portal Screenshot API.
-    /// The portal only hands out a PNG file, so each capture is decoded in memory, cropped and the file is deleted.
-    /// The first capture shows a permission prompt from the desktop environment.
+    /// Captures the screen in Wayland sessions with the xdg-desktop-portal ScreenCast API.
+    /// The user approves screen sharing once when capture starts, after which frames arrive continuously
+    /// from PipeWire without any further prompts or shutter sounds. PipeWire frames are read with a
+    /// gst-launch-1.0 child process that is handed the portal's PipeWire connection and writes raw BGRA frames to a pipe.
     /// </summary>
-    internal sealed class WaylandPortalScreenCapture : IScreenCaptureBackend
+    internal sealed class WaylandPortalScreenCapture : IScreenCaptureBackend, IDisposable
     {
         private const string PortalService = "org.freedesktop.portal.Desktop";
         private const string PortalPath = "/org/freedesktop/portal/desktop";
-        private const string ScreenshotInterface = "org.freedesktop.portal.Screenshot";
+        private const string ScreenCastInterface = "org.freedesktop.portal.ScreenCast";
         private const string RequestInterface = "org.freedesktop.portal.Request";
 
-        private static readonly TimeSpan ResponseTimeout = TimeSpan.FromSeconds(60);
+        private const uint SourceTypeMonitor = 1;
+        private const uint CursorModeHidden = 1;
+        private const uint PersistUntilRevoked = 2;
+        private const int FcntlSetFd = 2;
+
+        private static readonly TimeSpan ResponseTimeout = TimeSpan.FromSeconds(120);
+        private static readonly TimeSpan FirstFrameTimeout = TimeSpan.FromSeconds(15);
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public string Name => "Wayland desktop portal";
+        private readonly CancellationTokenSource lifetime = new();
+        private readonly object sync = new();
+        private readonly StringBuilder gstErrors = new();
+
+        private DBusConnection? connection;
+        private Process? gst;
+        private byte[]? latest;
+        private int frameWidth;
+        private int frameHeight;
+        private Exception? readerError;
+
+        private delegate void BodyWriter(ref MessageWriter writer);
+
+        private sealed record StreamInfo(uint NodeId, int Width, int Height);
+
+        private sealed record PortalResponse(uint Code, string? SessionHandle, string? RestoreToken, List<StreamInfo> Streams);
+
+        [DllImport("libc", SetLastError = true)]
+        private static extern int fcntl(int fd, int cmd, int arg);
+
+        public string Name => "Wayland screen cast portal";
 
         public ScreenCaptureFrame Capture(CaptureRegion region)
         {
-            var uri = RequestScreenshotAsync().GetAwaiter().GetResult();
-            var path = new Uri(uri).LocalPath;
+            ThrowIfStopped();
 
-            byte[] png;
+            if (gst is null)
+            {
+                StartAsync(region).GetAwaiter().GetResult();
+            }
+
+            return CropLatest(region);
+        }
+
+        public void Dispose()
+        {
+            if (lifetime.IsCancellationRequested)
+            {
+                return;
+            }
+
+            lifetime.Cancel();
+
             try
             {
-                png = File.ReadAllBytes(path);
+                if (gst is { HasExited: false })
+                {
+                    gst.Kill(true);
+                }
             }
-            finally
+            catch (Exception ex)
             {
-                try
-                {
-                    File.Delete(path);
-                }
-                catch (Exception ex)
-                {
-                    logger.Warn($"Unable to delete portal screenshot '{path}': {ex.Message}");
-                }
+                logger.Warn($"Unable to stop gst-launch: {ex.Message}");
             }
 
-            return Crop(png, region);
+            gst?.Dispose();
+
+            // Closing the D-Bus connection also ends the portal session and the screen sharing indicator.
+            connection?.Dispose();
+
+            lock (sync)
+            {
+                Monitor.PulseAll(sync);
+            }
         }
 
-        private static ScreenCaptureFrame Crop(byte[] png, CaptureRegion region)
+        private void ThrowIfStopped()
         {
-            using var full = Cv2.ImDecode(png, ImreadModes.Color);
-            if (full.Empty())
+            if (lifetime.IsCancellationRequested)
             {
-                throw new InvalidOperationException("The portal screenshot could not be decoded.");
+                throw new OperationCanceledException();
+            }
+        }
+
+        private async Task StartAsync(CaptureRegion region)
+        {
+            var bus = new DBusConnection(DBusAddress.Session
+                ?? throw new InvalidOperationException("The D-Bus session bus is unavailable."));
+            connection = bus;
+            await bus.ConnectAsync();
+
+            var created = await RequestAsync(bus, token => BuildCall(bus, "CreateSession", "a{sv}", (ref MessageWriter w) =>
+                w.WriteDictionary(new Dictionary<string, VariantValue>
+                {
+                    ["handle_token"] = token,
+                    ["session_handle_token"] = "cc_session_" + Guid.NewGuid().ToString("N")
+                })));
+            EnsureAccepted(created);
+
+            var session = created.SessionHandle
+                ?? throw new InvalidOperationException("The desktop portal returned no screen cast session.");
+
+            var selected = await RequestAsync(bus, token => BuildCall(bus, "SelectSources", "oa{sv}", (ref MessageWriter w) =>
+            {
+                w.WriteObjectPath(session);
+
+                var options = new Dictionary<string, VariantValue>
+                {
+                    ["handle_token"] = token,
+                    ["types"] = SourceTypeMonitor,
+                    ["multiple"] = false,
+                    ["cursor_mode"] = CursorModeHidden,
+                    ["persist_mode"] = PersistUntilRevoked
+                };
+
+                var restoreToken = LoadRestoreToken();
+                if (!string.IsNullOrEmpty(restoreToken))
+                {
+                    options["restore_token"] = restoreToken;
+                }
+
+                w.WriteDictionary(options);
+            }));
+            EnsureAccepted(selected);
+
+            logger.Info("Waiting for the screen sharing selection in the desktop portal dialog");
+
+            var started = await RequestAsync(bus, token => BuildCall(bus, "Start", "osa{sv}", (ref MessageWriter w) =>
+            {
+                w.WriteObjectPath(session);
+                w.WriteString(string.Empty);
+                w.WriteDictionary(new Dictionary<string, VariantValue> { ["handle_token"] = token });
+            }));
+            EnsureAccepted(started);
+
+            if (!string.IsNullOrEmpty(started.RestoreToken))
+            {
+                SaveRestoreToken(started.RestoreToken);
             }
 
-            var bounds = region.Bounds;
-            var left = Math.Max(0, bounds.X);
-            var top = Math.Max(0, bounds.Y);
-            var width = Math.Min(full.Width, bounds.Right) - left;
-            var height = Math.Min(full.Height, bounds.Bottom) - top;
+            var stream = started.Streams.Count > 0
+                ? started.Streams[0]
+                : throw new InvalidOperationException("The desktop portal did not provide a screen stream.");
+
+            var width = stream.Width > 0 ? stream.Width : region.MonitorBounds.Width;
+            var height = stream.Height > 0 ? stream.Height : region.MonitorBounds.Height;
             if (width <= 0 || height <= 0)
             {
-                throw new InvalidOperationException("The capture area is outside of the screenshot.");
+                throw new InvalidOperationException("The size of the shared screen is unknown.");
             }
 
-            using var cropped = new Mat(full, new Rect(left, top, width, height));
-            using var bgra = new Mat();
-            Cv2.CvtColor(cropped, bgra, ColorConversionCodes.BGR2BGRA);
+            var remote = await bus.CallMethodAsync(
+                BuildCall(bus, "OpenPipeWireRemote", "oa{sv}", (ref MessageWriter w) =>
+                {
+                    w.WriteObjectPath(session);
+                    w.WriteDictionary(new Dictionary<string, VariantValue>());
+                }),
+                (Message message, object? state) => message.GetBodyReader().ReadHandle<SafeFileHandle>(),
+                null);
 
-            var stride = width * 4;
-            var pixels = new byte[checked(stride * height)];
-            Marshal.Copy(bgra.Data, pixels, 0, pixels.Length);
-            return new ScreenCaptureFrame(pixels, width, height, stride);
+            ThrowIfStopped();
+            StartGstreamer(remote, stream.NodeId, width, height);
+            logger.Info($"Screen cast started (PipeWire node {stream.NodeId}, {width}x{height})");
         }
 
-        private static async Task<string> RequestScreenshotAsync()
+        private void StartGstreamer(SafeFileHandle remote, uint nodeId, int width, int height)
         {
-            using var connection = new DBusConnection(DBusAddress.Session
-                ?? throw new InvalidOperationException("The D-Bus session bus is unavailable."));
-            await connection.ConnectAsync();
+            using (remote)
+            {
+                var fd = (int)remote.DangerousGetHandle();
 
+                // Received file descriptors are close-on-exec, but the child process must inherit this one.
+                if (fcntl(fd, FcntlSetFd, 0) != 0)
+                {
+                    throw new InvalidOperationException($"Unable to share the PipeWire connection (errno {Marshal.GetLastWin32Error()}).");
+                }
+
+                var startInfo = new ProcessStartInfo("gst-launch-1.0")
+                {
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+
+                // -q keeps gst-launch from printing status text into the pipe that carries the frames.
+                foreach (var argument in new[]
+                {
+                    "-q",
+                    "pipewiresrc", $"fd={fd}", $"path={nodeId}",
+                    "!", "videoconvert",
+                    "!", "videoscale",
+                    "!", $"video/x-raw,format=BGRA,width={width},height={height}",
+                    "!", "fdsink", "fd=1"
+                })
+                {
+                    startInfo.ArgumentList.Add(argument);
+                }
+
+                Process process;
+                try
+                {
+                    process = Process.Start(startInfo)
+                        ?? throw new InvalidOperationException("gst-launch-1.0 could not be started.");
+                }
+                catch (Win32Exception ex)
+                {
+                    throw new ScreenCastUnavailableException(
+                        "Continuous screen capture on Wayland needs GStreamer with PipeWire support. " +
+                        "Install it with: sudo apt install gstreamer1.0-tools gstreamer1.0-pipewire", ex);
+                }
+
+                process.ErrorDataReceived += (_, e) =>
+                {
+                    if (e.Data is not null)
+                    {
+                        lock (gstErrors)
+                        {
+                            if (gstErrors.Length < 4000)
+                            {
+                                gstErrors.AppendLine(e.Data);
+                            }
+                        }
+                    }
+                };
+                process.BeginErrorReadLine();
+
+                gst = process;
+
+                var reader = new Thread(() => ReadFrames(process, width, height))
+                {
+                    IsBackground = true,
+                    Name = "Wayland screen cast reader"
+                };
+                reader.Start();
+            }
+        }
+
+        private void ReadFrames(Process process, int width, int height)
+        {
+            try
+            {
+                var size = checked(width * height * 4);
+                var back = new byte[size];
+                var stream = process.StandardOutput.BaseStream;
+
+                while (!lifetime.IsCancellationRequested)
+                {
+                    stream.ReadExactly(back);
+
+                    lock (sync)
+                    {
+                        (latest, back) = (back, latest ?? new byte[size]);
+                        frameWidth = width;
+                        frameHeight = height;
+                        Monitor.PulseAll(sync);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (lifetime.IsCancellationRequested)
+                {
+                    return;
+                }
+
+                string details;
+                lock (gstErrors)
+                {
+                    details = gstErrors.ToString().Trim();
+                }
+
+                var message = $"The screen cast stopped: {ex.Message}" + (details.Length > 0 ? $" {details}" : string.Empty);
+                lock (sync)
+                {
+                    readerError = new InvalidOperationException(message, ex);
+                    Monitor.PulseAll(sync);
+                }
+            }
+        }
+
+        private ScreenCaptureFrame CropLatest(CaptureRegion region)
+        {
+            var deadline = DateTime.UtcNow + FirstFrameTimeout;
+
+            lock (sync)
+            {
+                while (true)
+                {
+                    ThrowIfStopped();
+
+                    if (readerError is not null)
+                    {
+                        throw readerError;
+                    }
+
+                    if (latest is not null)
+                    {
+                        break;
+                    }
+
+                    if (DateTime.UtcNow > deadline)
+                    {
+                        throw new TimeoutException("No frame arrived from the screen cast.");
+                    }
+
+                    Monitor.Wait(sync, 200);
+                }
+
+                // The stream covers the monitor the user shared; its resolution can differ from the window pixels.
+                var monitor = region.MonitorBounds;
+                var scaleX = frameWidth / (double)Math.Max(1, monitor.Width);
+                var scaleY = frameHeight / (double)Math.Max(1, monitor.Height);
+
+                var left = Math.Max(0, (int)Math.Round((region.Bounds.X - monitor.X) * scaleX));
+                var top = Math.Max(0, (int)Math.Round((region.Bounds.Y - monitor.Y) * scaleY));
+                var right = Math.Min(frameWidth, (int)Math.Round((region.Bounds.Right - monitor.X) * scaleX));
+                var bottom = Math.Min(frameHeight, (int)Math.Round((region.Bounds.Bottom - monitor.Y) * scaleY));
+
+                var width = right - left;
+                var height = bottom - top;
+                if (width <= 0 || height <= 0)
+                {
+                    throw new InvalidOperationException("The capture area is outside of the shared screen.");
+                }
+
+                var stride = width * 4;
+                var pixels = new byte[checked(stride * height)];
+                for (var y = 0; y < height; y++)
+                {
+                    Buffer.BlockCopy(latest, ((top + y) * frameWidth + left) * 4, pixels, y * stride, stride);
+                }
+
+                return new ScreenCaptureFrame(pixels, width, height, stride);
+            }
+        }
+
+        private async Task<PortalResponse> RequestAsync(DBusConnection bus, Func<string, MessageBuffer> createCall)
+        {
             // The portal answers asynchronously with a Response signal on a request path derived from this token.
             var token = "cc_" + Guid.NewGuid().ToString("N");
-            var sender = (connection.UniqueName ?? throw new InvalidOperationException("No D-Bus unique name."))
+            var sender = (bus.UniqueName ?? throw new InvalidOperationException("No D-Bus unique name."))
                 .TrimStart(':').Replace('.', '_');
             var requestPath = $"/org/freedesktop/portal/desktop/request/{sender}/{token}";
 
-            var response = new TaskCompletionSource<(uint Code, string? Uri)>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var response = new TaskCompletionSource<PortalResponse>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             var rule = new MatchRule
             {
@@ -102,10 +384,10 @@ namespace CollimationCircles.Services.ScreenCapturing
             };
 
             // The signal must be subscribed before the call, otherwise a fast response can be missed.
-            using var subscription = await connection.AddMatchAsync(
+            using var subscription = await bus.AddMatchAsync(
                 rule,
                 (Message message, object? state) => ReadResponse(message),
-                (Notification<(uint Code, string? Uri)> notification) =>
+                (Notification<PortalResponse> notification) =>
                 {
                     if (notification.HasValue)
                     {
@@ -119,57 +401,138 @@ namespace CollimationCircles.Services.ScreenCapturing
                 emitOnCapturedContext: false,
                 flags: ObserverFlags.None);
 
-            await connection.CallMethodAsync(CreateScreenshotCall(connection, token));
-
-            if (await Task.WhenAny(response.Task, Task.Delay(ResponseTimeout)) != response.Task)
+            try
             {
-                throw new TimeoutException("The desktop portal did not answer the screenshot request.");
+                await bus.CallMethodAsync(createCall(token));
+            }
+            catch (DBusErrorReplyException ex) when (
+                ex.ErrorName is "org.freedesktop.DBus.Error.UnknownMethod"
+                    or "org.freedesktop.DBus.Error.UnknownInterface"
+                    or "org.freedesktop.DBus.Error.ServiceUnknown")
+            {
+                // The portal frontend only exposes ScreenCast when a desktop backend implements it.
+                throw new ScreenCastUnavailableException(
+                    "The desktop portal does not support screen casting. Install the xdg-desktop-portal backend for your desktop " +
+                    "(xdg-desktop-portal-gnome, xdg-desktop-portal-kde or xdg-desktop-portal-wlr), " +
+                    "make sure it is running in this session and restart the application.", ex);
             }
 
-            var (code, uri) = await response.Task;
-            return code switch
+            using var timeout = CancellationTokenSource.CreateLinkedTokenSource(lifetime.Token);
+            if (await Task.WhenAny(response.Task, Task.Delay(ResponseTimeout, timeout.Token)) != response.Task)
             {
-                0 when !string.IsNullOrEmpty(uri) => uri,
-                0 => throw new InvalidOperationException("The desktop portal returned no screenshot."),
-                1 => throw new InvalidOperationException("The screenshot permission was denied or cancelled."),
-                _ => throw new InvalidOperationException($"The desktop portal failed to take a screenshot (code {code}).")
-            };
+                ThrowIfStopped();
+                throw new TimeoutException("The desktop portal did not answer the screen cast request.");
+            }
+
+            timeout.Cancel();
+            return await response.Task;
         }
 
-        private static MessageBuffer CreateScreenshotCall(DBusConnection connection, string token)
+        private static void EnsureAccepted(PortalResponse response)
         {
-            using var writer = connection.GetMessageWriter();
-
-            writer.WriteMethodCallHeader(
-                destination: PortalService,
-                path: PortalPath,
-                @interface: ScreenshotInterface,
-                signature: "sa{sv}",
-                member: "Screenshot");
-
-            writer.WriteString(string.Empty);
-            writer.WriteDictionary(new Dictionary<string, VariantValue>
+            switch (response.Code)
             {
-                ["handle_token"] = token,
-                ["interactive"] = false
-            });
-
-            return writer.CreateMessage();
+                case 0:
+                    return;
+                case 1:
+                    throw new InvalidOperationException("Screen sharing was denied or cancelled.");
+                default:
+                    throw new InvalidOperationException($"The desktop portal failed to start the screen cast (code {response.Code}).");
+            }
         }
 
-        private static (uint Code, string? Uri) ReadResponse(Message message)
+        private static MessageBuffer BuildCall(DBusConnection bus, string member, string signature, BodyWriter body)
+        {
+            var writer = bus.GetMessageWriter();
+            try
+            {
+                writer.WriteMethodCallHeader(
+                    destination: PortalService,
+                    path: PortalPath,
+                    @interface: ScreenCastInterface,
+                    signature: signature,
+                    member: member);
+
+                body(ref writer);
+                return writer.CreateMessage();
+            }
+            finally
+            {
+                writer.Dispose();
+            }
+        }
+
+        private static PortalResponse ReadResponse(Message message)
         {
             var reader = message.GetBodyReader();
             var code = reader.ReadUInt32();
             var results = reader.ReadDictionaryOfStringToVariantValue();
 
-            string? uri = null;
-            if (results.TryGetValue("uri", out var value))
+            string? session = null;
+            if (results.TryGetValue("session_handle", out var sessionValue))
             {
-                uri = value.GetString();
+                session = sessionValue.Type == VariantValueType.ObjectPath
+                    ? sessionValue.GetObjectPathAsString()
+                    : sessionValue.GetString();
             }
 
-            return (code, uri);
+            string? restoreToken = null;
+            if (results.TryGetValue("restore_token", out var tokenValue))
+            {
+                restoreToken = tokenValue.GetString();
+            }
+
+            var streams = new List<StreamInfo>();
+            if (results.TryGetValue("streams", out var streamsValue))
+            {
+                for (var i = 0; i < streamsValue.Count; i++)
+                {
+                    var item = streamsValue.GetItem(i);
+                    var properties = item.GetItem(1).GetDictionary<string, VariantValue>();
+
+                    int width = 0, height = 0;
+                    if (properties.TryGetValue("size", out var size))
+                    {
+                        width = size.GetItem(0).GetInt32();
+                        height = size.GetItem(1).GetInt32();
+                    }
+
+                    streams.Add(new StreamInfo(item.GetItem(0).GetUInt32(), width, height));
+                }
+            }
+
+            return new PortalResponse(code, session, restoreToken, streams);
+        }
+
+        private static string RestoreTokenPath => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "CollimationCircles",
+            "screencast-restore-token.txt");
+
+        private static string? LoadRestoreToken()
+        {
+            try
+            {
+                return File.Exists(RestoreTokenPath) ? File.ReadAllText(RestoreTokenPath).Trim() : null;
+            }
+            catch (Exception ex)
+            {
+                logger.Warn($"Unable to read the screen cast restore token: {ex.Message}");
+                return null;
+            }
+        }
+
+        private static void SaveRestoreToken(string token)
+        {
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(RestoreTokenPath)!);
+                File.WriteAllText(RestoreTokenPath, token);
+            }
+            catch (Exception ex)
+            {
+                logger.Warn($"Unable to save the screen cast restore token: {ex.Message}");
+            }
         }
     }
 }

@@ -29,6 +29,7 @@ namespace CollimationCircles.Services.ScreenCapturing
 
         private readonly CaptureExclusion exclusion = new();
         private CancellationTokenSource? cts;
+        private IScreenCaptureBackend? activeBackend;
         private Task? loop;
 
         public async Task Start(Camera camera)
@@ -38,6 +39,7 @@ namespace CollimationCircles.Services.ScreenCapturing
             var backend = ScreenCaptureBackendFactory.Create();
             logger.Info($"Starting screen capture camera (backend: {backend.Name})");
 
+            activeBackend = backend;
             cts = new CancellationTokenSource();
             var token = cts.Token;
             loop = Task.Run(() => CaptureLoop(backend, token));
@@ -47,8 +49,10 @@ namespace CollimationCircles.Services.ScreenCapturing
         {
             var source = cts;
             var task = loop;
+            var backend = activeBackend;
             cts = null;
             loop = null;
+            activeBackend = null;
 
             if (source is null)
             {
@@ -56,6 +60,9 @@ namespace CollimationCircles.Services.ScreenCapturing
             }
 
             source.Cancel();
+
+            // Disposing first unblocks a capture that is still waiting, e.g. for a screen sharing permission dialog.
+            (backend as IDisposable)?.Dispose();
 
             try
             {
@@ -108,11 +115,18 @@ namespace CollimationCircles.Services.ScreenCapturing
             catch (OperationCanceledException)
             {
             }
+            catch (Exception) when (ct.IsCancellationRequested)
+            {
+            }
             catch (Exception ex)
             {
                 logger.Error(ex, "Screen capture loop failed");
                 Dispatcher.UIThread.Post(() =>
                     WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped)));
+            }
+            finally
+            {
+                (backend as IDisposable)?.Dispose();
             }
         }
 
