@@ -143,6 +143,47 @@ jobs:
             }
           }
 
+      - name: Remove Homebrew dependencies from OpenCV library (macOS)
+        if: startsWith(matrix.runtime, 'osx-')
+        shell: bash
+        run: |
+          set -euo pipefail
+          DIR="./publish/${{ matrix.runtime }}"
+          LIB="$DIR/libOpenCvSharpExtern.dylib"
+          ARCH="${{ matrix.runtime }}"
+          ARCH="${ARCH#osx-}"
+          if [ "$ARCH" = "x64" ]; then ARCH="x86_64"; fi
+
+          # The official x64 OpenCV runtime links Homebrew's libavif by absolute path, which does not exist on user machines.
+          # OpenCV only uses it for AVIF images, so the dependency is redirected to a stub exporting the imported symbols.
+          for dep in $(otool -L "$LIB" | tail -n +2 | awk '{print $1}' | grep -E '^(/usr/local|/opt/homebrew)/' || true); do
+            name="$(basename "$dep")"
+            short="${name%%.*}"
+            echo "Replacing $dep with a stub"
+
+            nm -um "$LIB" | grep "(from $short)" | awk '{print $3}' | sort -u > "$RUNNER_TEMP/$short.symbols"
+            if [ ! -s "$RUNNER_TEMP/$short.symbols" ]; then
+              echo "::error::No imported symbols found for $short"
+              nm -um "$LIB" | head -n 20
+              exit 1
+            fi
+
+            : > "$RUNNER_TEMP/$short.c"
+            while read -r sym; do
+              printf 'void *%s(void) { return 0; }\n' "${sym#_}" >> "$RUNNER_TEMP/$short.c"
+            done < "$RUNNER_TEMP/$short.symbols"
+
+            clang -arch "$ARCH" -dynamiclib -mmacosx-version-min=11.0 -install_name "@loader_path/$name" -o "$DIR/$name" "$RUNNER_TEMP/$short.c"
+            install_name_tool -change "$dep" "@loader_path/$name" "$LIB"
+            codesign --force --sign - "$DIR/$name" "$LIB"
+          done
+
+          otool -L "$LIB"
+          if otool -L "$LIB" | tail -n +2 | grep -E '^[[:space:]]*(/usr/local|/opt/homebrew)/'; then
+            echo "::error::OpenCV native library still depends on Homebrew libraries"
+            exit 1
+          fi
+
       - name: Package (Linux)
         if: startsWith(matrix.runtime, 'linux-')
         shell: bash
