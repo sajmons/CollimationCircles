@@ -27,6 +27,8 @@ namespace CollimationCircles.Services.ScreenCapturing
 
     internal static class ScreenCaptureBackendFactory
     {
+        public static bool IsSupported => OperatingSystem.IsWindows() || OperatingSystem.IsMacOS() || OperatingSystem.IsLinux();
+
         public static IScreenCaptureBackend Create()
         {
             if (OperatingSystem.IsWindows())

@@ -3,14 +3,13 @@ using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
 using CollimationCircles.Services.Alpaca;
+using CollimationCircles.Services.ScreenCapturing;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using HanumanInstitute.MvvmDialogs;
-using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
-using OpenCvSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,7 +17,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using static OpenCvSharp.FileStorage;
 
 namespace CollimationCircles.ViewModels
 {
@@ -71,23 +69,17 @@ namespace CollimationCircles.ViewModels
         [NotifyCanExecuteChangedFor(nameof(PlayPauseCommand))]
         [NotifyPropertyChangedFor(nameof(IsAlpacaCameraSelected))]
         [NotifyPropertyChangedFor(nameof(ShowAlpacaServer))]
-        private Camera selectedCamera = new();
+        private Camera? selectedCamera;
 
-        private readonly Camera screenCaptureCamera = new()
-        {
-            Name = "Background screen",
-            APIType = APIType.ScreenCapture
-        };
+        private readonly Camera? screenCaptureCamera;
 
         public bool IsAlpacaCameraSelected => SelectedCamera?.APIType is APIType.Alpaca;
 
         /// <summary>
-        /// While not connected to a server there is no Alpaca camera to select, so the server controls
-        /// stay available when the screen capture camera is selected to let the user connect.
+        /// Server controls remain available when there is no camera to select or no server connection.
         /// </summary>
         public bool ShowAlpacaServer =>
-            IsAlpacaCameraSelected
-            || (SelectedCamera?.APIType is APIType.ScreenCapture && !IsServerConnected);
+            IsAlpacaCameraSelected || SelectedCamera is null || !IsServerConnected;
 
         [ObservableProperty]
         string alpacaServerAddress = "127.0.0.1";
@@ -153,13 +145,15 @@ namespace CollimationCircles.ViewModels
         private double captureProgressValue;
 
         [ObservableProperty]
-        private string captureProgressText = "Waiting for frame...";
+        private string captureProgressText = string.Empty;
 
-        public string ConnectButtonText => IsServerConnected ? "Disconnect" : "Connect";
+        public string ConnectButtonText => ResSvc.TryGetString(IsServerConnected ? "Disconnect" : "Connect");
 
         public bool CanEditServer => !IsServerConnected && !IsServerBusy && !IsPlaying;
 
         public bool HasTelescopeMounts => TelescopeMounts.Count > 0;
+
+        private readonly INotificationService notificationService;
 
         public bool CanControlTelescope =>
             IsServerConnected
@@ -168,8 +162,10 @@ namespace CollimationCircles.ViewModels
             && SelectedTelescopeMount is not null
             && HasTelescopeMounts;
 
-        public StreamViewModel()
+        public StreamViewModel(INotificationService notificationService)
         {
+            this.notificationService = notificationService;
+            captureProgressText = ResSvc.TryGetString("WaitingForFrame");
             this.cameraService = Ioc.Default.GetRequiredService<ICameraService>();
             this.settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
             this.cameraControlService = Ioc.Default.GetRequiredService<ICameraControlService>();
@@ -207,6 +203,19 @@ namespace CollimationCircles.ViewModels
                 });
             });
 
+            if (ScreenCaptureBackendFactory.IsSupported)
+            {
+                screenCaptureCamera = new Camera
+                {
+                    Name = ResSvc.TryGetString("BackgroundScreen"),
+                    APIType = APIType.ScreenCapture
+                };
+            }
+            else
+            {
+                logger.Info("Background screen capture is not supported on this platform.");
+            }
+
             // Assigned to the backing field so the persisted last selected camera is not overwritten at startup.
             selectedCamera = screenCaptureCamera;
             CameraList = BuildCameraList([]);
@@ -215,7 +224,11 @@ namespace CollimationCircles.ViewModels
 
         private ObservableCollection<Camera> BuildCameraList(IEnumerable<Camera> alpacaCameras)
         {
-            var cameras = new ObservableCollection<Camera> { screenCaptureCamera };
+            var cameras = new ObservableCollection<Camera>();
+            if (screenCaptureCamera is not null)
+            {
+                cameras.Add(screenCaptureCamera);
+            }
 
             foreach (var camera in alpacaCameras)
             {
@@ -235,6 +248,11 @@ namespace CollimationCircles.ViewModels
             if (newValue is not null)
             {
                 newValue.CollectionChanged += CameraList_CollectionChanged;
+            }
+
+            if (newValue?.LastOrDefault() is Camera camera)
+            {
+                notificationService.ShowInfo(ResSvc.TryGetString("ImageSourceDiscovered"), camera.Name);
             }
 
             OnPropertyChanged(nameof(HasCameras));
@@ -368,6 +386,11 @@ namespace CollimationCircles.ViewModels
 
             if (!cameraService.IsPlaying)
             {
+                if (SelectedCamera.APIType is APIType.ScreenCapture)
+                {
+                    notificationService.ShowInfo(ResSvc.TryGetString("ScreenCaptureHintTitle"), ResSvc.TryGetString("ScreenCaptureHintMessage"));
+                }
+
                 await cameraService.Play(SelectedCamera);
             }
             else
@@ -455,12 +478,13 @@ namespace CollimationCircles.ViewModels
                 {
                     if (IsPlaying)
                     {
+                        Guard.IsNotNull(SelectedCamera);
                         await cameraControlService.StopCamera(SelectedCamera);
                     }
 
                     await cameraControlService.DisconnectServer();
                     CameraList = BuildCameraList([]);
-                    SelectedCamera = CameraList.FirstOrDefault() ?? new();
+                    SelectedCamera = CameraList.FirstOrDefault();
                     await ResetTelescopeStateAsync();
                     IsServerConnected = false;
                     return;
@@ -475,8 +499,7 @@ namespace CollimationCircles.ViewModels
                 CameraList = BuildCameraList(cameras);
                 SelectedCamera = CameraList.FirstOrDefault(c => c.Name == SettingsViewModel.LastSelectedCamera)
                     ?? CameraList.FirstOrDefault(c => c.APIType is APIType.Alpaca)
-                    ?? CameraList.FirstOrDefault()
-                    ?? new();
+                    ?? CameraList.FirstOrDefault();
                 await RefreshTelescopeMountsAsync(address, port);
                 IsServerConnected = true;
             }
@@ -712,7 +735,7 @@ namespace CollimationCircles.ViewModels
             //SettingsDialogViewModel = null;
         }
 
-        partial void OnSelectedCameraChanged(Camera? oldValue, Camera newValue)
+        partial void OnSelectedCameraChanged(Camera? oldValue, Camera? newValue)
         {
             if (newValue is not null)
             {
@@ -720,6 +743,10 @@ namespace CollimationCircles.ViewModels
                 this.settingsViewModel.LastSelectedCamera = newValue.Name;
                 newValue.IsPlaying = IsPlaying;
                 logger.Info($"Selected camera changed to '{newValue.Name}'");
+            }
+            else
+            {
+                FullAddress = string.Empty;
             }
         }
 

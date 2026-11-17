@@ -1,7 +1,9 @@
 using ASCOM.Alpaca.Clients;
 using ASCOM.Common.Alpaca;
 using CollimationCircles.Messages;
+using CollimationCircles.Extensions;
 using CollimationCircles.Models;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,8 @@ namespace CollimationCircles.Services.Alpaca
     internal class AlpacaCameraClient : ICameraDetect
     {
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
+        private static string Res(string key) => Ioc.Default.GetRequiredService<IResourceService>().TryGetString(key);
 
         private const double DefaultExposureSec = 1;
         private const int DefaultBinning = 2;
@@ -140,7 +144,7 @@ namespace CollimationCircles.Services.Alpaca
                     cameras.Add(new Camera
                     {
                         Index = cameras.Count,
-                        Name = string.IsNullOrWhiteSpace(name) ? $"Camera {deviceNumber}" : name,
+                        Name = string.IsNullOrWhiteSpace(name) ? Res("DefaultCameraName").F(deviceNumber) : name,
                         APIType = APIType.Alpaca,
                         ServerAddress = address,
                         ServerPort = port,
@@ -264,7 +268,7 @@ namespace CollimationCircles.Services.Alpaca
                     cameras.Add(new Camera
                     {
                         Index = cameras.Count,
-                        Name = string.IsNullOrWhiteSpace(cameraName) ? $"Camera {deviceNumber}" : cameraName,
+                        Name = string.IsNullOrWhiteSpace(cameraName) ? Res("DefaultCameraName").F(deviceNumber) : cameraName,
                         APIType = APIType.Alpaca,
                         ServerAddress = address,
                         ServerPort = port,
@@ -822,7 +826,7 @@ namespace CollimationCircles.Services.Alpaca
                         appliedGain = gain;
                     }
 
-                    PublishCaptureProgress(CameraCaptureStage.Exposing, 0, "Exposing", true);
+                    PublishCaptureProgress(CameraCaptureStage.Exposing, 0, Res("CaptureExposing"), true);
                     bool exposureStarted = false;
                     for (int startAttempt = 1; startAttempt <= 3 && !exposureStarted; startAttempt++)
                     {
@@ -884,20 +888,20 @@ namespace CollimationCircles.Services.Alpaca
                         {
                             var elapsed = Stopwatch.GetElapsedTime(exposureStart, now).TotalSeconds;
                             var progress = Math.Clamp(elapsed / exposureDurationSec, 0d, 0.98d);
-                            PublishCaptureProgress(CameraCaptureStage.Exposing, progress, $"Exposing {elapsed:F2}/{exposureDurationSec:F2}s", true);
+                            PublishCaptureProgress(CameraCaptureStage.Exposing, progress, Res("CaptureExposingProgress").F(elapsed, exposureDurationSec), true);
                             nextExposureUpdate = now + exposureUpdateStep;
                         }
 
                         await Task.Delay(20, ct);
                     }
 
-                    PublishCaptureProgress(CameraCaptureStage.Exposing, 1, "Exposure complete", true);
+                    PublishCaptureProgress(CameraCaptureStage.Exposing, 1, Res("CaptureExposureComplete"), true);
 
                     Array? imageData = null;
-                    PublishCaptureProgress(CameraCaptureStage.Downloading, 0, "Downloading image", true);
+                    PublishCaptureProgress(CameraCaptureStage.Downloading, 0, Res("CaptureDownloadingImage"), true);
                     for (int readAttempt = 1; readAttempt <= 3; readAttempt++)
                     {
-                        PublishCaptureProgress(CameraCaptureStage.Downloading, (readAttempt - 1) / 3d, $"Downloading ({readAttempt}/3)", true);
+                        PublishCaptureProgress(CameraCaptureStage.Downloading, (readAttempt - 1) / 3d, Res("CaptureDownloadingAttempt").F(readAttempt, 3), true);
                         try
                         {
                             var downloadStart = Stopwatch.GetTimestamp();
@@ -910,7 +914,7 @@ namespace CollimationCircles.Services.Alpaca
                                 PublishCaptureProgress(
                                     CameraCaptureStage.Downloading,
                                     animated,
-                                    $"Downloading ({readAttempt}/3, {elapsedMs:F0} ms)",
+                                    Res("CaptureDownloadingAttemptElapsed").F(readAttempt, 3, elapsedMs),
                                     true);
 
                                 await Task.Delay(50, ct);
@@ -929,16 +933,16 @@ namespace CollimationCircles.Services.Alpaca
 
                     if (imageData is null)
                     {
-                        PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Waiting for next frame", false);
+                        PublishCaptureProgress(CameraCaptureStage.Idle, 0, Res("CaptureWaitingForNextFrame"), false);
                         await Task.Delay(100, ct);
                         continue;
                     }
 
-                    PublishCaptureProgress(CameraCaptureStage.Downloading, 1, "Download complete", true);
+                    PublishCaptureProgress(CameraCaptureStage.Downloading, 1, Res("CaptureDownloadComplete"), true);
 
-                    PublishCaptureProgress(CameraCaptureStage.Processing, 0, "Processing frame", true);
+                    PublishCaptureProgress(CameraCaptureStage.Processing, 0, Res("CaptureProcessingFrame"), true);
                     var frame = FitsUtils.ToFrame(imageData, effectiveBayerPattern);
-                    PublishCaptureProgress(CameraCaptureStage.Processing, 1, "Frame ready", frame is not null);
+                    PublishCaptureProgress(CameraCaptureStage.Processing, 1, Res("CaptureFrameReady"), frame is not null);
                     if (frame is not null)
                     {
                         WeakReferenceMessenger.Default.Send(new MatMessage(frame));
@@ -946,19 +950,19 @@ namespace CollimationCircles.Services.Alpaca
                     }
                     else
                     {
-                        PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Waiting for next frame", false);
+                        PublishCaptureProgress(CameraCaptureStage.Idle, 0, Res("CaptureWaitingForNextFrame"), false);
                     }
                 }
             }
             catch (OperationCanceledException)
             {
                 try { dev.AbortExposure(); } catch { }
-                PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Stopped", false);
+                PublishCaptureProgress(CameraCaptureStage.Idle, 0, Res("CaptureStopped"), false);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Alpaca capture loop failed");
-                PublishCaptureProgress(CameraCaptureStage.Idle, 0, "Capture failed", false);
+                PublishCaptureProgress(CameraCaptureStage.Idle, 0, Res("CaptureFailed"), false);
                 Avalonia.Threading.Dispatcher.UIThread.Post(() =>
                     WeakReferenceMessenger.Default.Send(new CameraStateMessage(CameraState.Stopped)));
             }

@@ -1,4 +1,6 @@
-﻿using CollimationCircles.Models;
+﻿using CollimationCircles.Extensions;
+using CollimationCircles.Models;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,7 +68,7 @@ namespace CollimationCircles.Services.Alpaca
                 mountList.Add(new TelescopeMount
                 {
                     DeviceNumber = deviceNumber,
-                    Name = string.IsNullOrWhiteSpace(name) ? $"Mount {deviceNumber}" : name,
+                    Name = string.IsNullOrWhiteSpace(name) ? Ioc.Default.GetRequiredService<IResourceService>().TryGetString("DefaultMountName").F(deviceNumber) : name,
                     UniqueId = uniqueId
                 });
             }

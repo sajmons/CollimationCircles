@@ -16,84 +16,91 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 
 # Features
 
-- support multiple helper shapes (circle, spider, screw, clip, bahtimov mask)
-- user interface for managing list of shapes
-- scaling up or down of whole setup
-- rotation of whole setup
-- transparent background
-- fully customizable shapes: radius, thickness, color, spacing, rotation, label, inclination
-- support for profile saving and loading (JSON files)
-- precise position control with keyboard
-- multiple platform support (Windows, Linux, macOS)
-- multilanguage (English, Slovenian, German)
-- always on top option
-- up to date online help available
-- 3.x and newer camera video stream support to display video from your telescope in background
-- background screen capture (e.g. a SharpCap preview) using native OS APIs: GDI on Windows, CoreGraphics on macOS (Screen Recording permission required), X11 on Linux, and the xdg-desktop-portal ScreenCast API with PipeWire on Wayland (asks once to share the screen; requires `gstreamer1.0-tools` and `gstreamer1.0-pipewire`), falling back to `grim` on wlroots desktops such as Raspberry Pi OS and StellarMate (`sudo apt install grim`, no prompt)
-
-# Dependancies
-Colimation circles depends on some external software for handling video streams. 
-
-- VLC for playing video streams.
-```
-sudo apt-get install -y libvlc-dev
-```
-- v4l-utils for detecting UVC cameras and their capabilities.
-```
-sudo apt-get install -y v4l-utils
-```
-- libcamera-vid for detecting Raspberry Pi Cameras. It should already be installed on Raspberry Pi OS by default.
-  - instalation instructions https://libcamera.org/getting-started.html
-
-## macOS camera control
-
-On macOS, UVC camera control (brightness, contrast, gain, exposure, sharpness, etc.) and streaming use [libuvc](https://github.com/libuvc/libuvc) (built from source with macOS-specific patches) on top of [libusb](https://github.com/libusb/libusb). This bypasses the macOS kernel UVC driver and gives the same level of control as `v4l2-ctl` on Linux and DirectShow on Windows.
-
-Cameras that are not UVC-compliant (e.g. FaceTime HD, OBS Virtual Camera, iPhone Continuity Camera) fall back to VLC's `avcapture` input via AVFoundation, with controls (exposure, focus, white balance) discovered through AVFoundation Swift scripts.
-
-The `libusb-1.0.0.dylib` and `libuvc.dylib` are bundled with the app — end users do **not** need to install them. Developers building from source on macOS need:
-
-```
-brew install libusb cmake
-```
-
-Both dylibs are copied to the build output by MSBuild targets and included in the `.app` bundle by the publish scripts.
-
-On macOS, this command can be run to list the available cameras:
-
-```
-system_profiler SPCameraDataType -json
-```
+- multiple helper shapes: circle, spider, screw, primary clip and Bahtinov mask, with ready-made presets for primary mirror, secondary mirror and focuser tube
+- user interface for managing the list of shapes (add, duplicate, reorder, reset)
+- fully customizable shapes: radius, thickness, color, spacing, count, rotation, inclination, label and opacity
+- scaling, rotation and offset of the whole setup
+- transparent, always on top overlay window with optional docked or undocked settings
+- profile management and saving/loading of shape lists for each telescope
+- precise position and parameter control with keyboard shortcuts (`Ctrl` + keys, press the shortcuts button to see the list)
+- light, dark and night (red) themes, optional system theme following and compact theme density
+- multilanguage (English, Slovenian, German, French)
+- multiple platform support (Windows, Linux, macOS; x64 and arm64)
+- ASCOM Alpaca camera support: server discovery, live view with exposure, gain and binning controls, FITS frames with Bayer demosaicing
+- ASCOM Alpaca telescope mount control: tracking, park/unpark, slew speed and directional movement
+- collimation analysis of the live image or of a loaded image file: defocused star (Airy disc) analysis with inside/outside focus, optical tube analysis and guided screw calibration with per-screw adjustment instructions
+- automatic check for new versions, application log viewer and about dialog
+- background screen capture (e.g. a SharpCap preview) using native OS APIs: GDI on Windows, CoreGraphics on macOS (Screen Recording permission required), X11 on Linux, and the xdg-desktop-portal ScreenCast API with PipeWire on Wayland (asks once to share the screen; requires `gstreamer1.0-tools` and `gstreamer1.0-pipewire`), falling back to `grim` on wlroots desktops such as Raspberry Pi OS and StellarMate (`sudo apt install grim`, no prompt). The camera is offered on these supported platforms; permissions and backend availability are checked when capture starts. On Linux, application windows cannot be excluded from capture and may appear in the captured image.
 
 # Prebuild binaries
-Here are prebuild binary files available for you to download (win-x64, linux-x64, linux-arm64, osx-x64 and osx-arm64).
-https://github.com/sajmons/CollimationCircles/releases/
+Prebuild binary files are available for download on the releases page: https://github.com/sajmons/CollimationCircles/releases/
 
-Download the latest release, extract it and run the executable. Windows releases are packaged as ZIP files, while Linux and macOS releases are packaged as tar.gz files which preserve executable permissions.
+The releases are self-contained, so you don't need to install .NET. Pick the file that matches your operating system and processor:
 
-## Instalation on MacOS
-1. Open terminal application and enter this command:
-```cd /Applications```
-2. Download latest version from GitHub releases page https://github.com/sajmons/CollimationCircles/releases
-3. Type this command in your MacOS terminal application:
-```curl -LO <url address from github releases page>```
-For example:
-```curl -LO https://github.com/sajmons/CollimationCircles/releases/download/version-3.1.0/5-CollimationCircles-3.1.0-osx-x64.tar.gz```
-4. When the download finishes, extract the archive:
-```tar -xzf 5-CollimationCircles-3.1.0-osx-x64.tar.gz```
-5. Remove the downloaded app quarantine attribute:
-```xattr -d com.apple.quarantine CollimationCircles.app/```
-6. Ensure the app bundle files are executable:
-```chmod -R +x CollimationCircles.app/```
-7. You should now see the CollimationCircles.app bundle. Run it with:
-```open CollimationCircles.app```
+| Platform | Architecture | File name |
+|----------|--------------|-----------|
+| Windows | x64 | `1-CollimationCircles-<version>-win-x64.zip` |
+| Windows | arm64 | `2-CollimationCircles-<version>-win-arm64.zip` |
+| Linux | x64 | `3-CollimationCircles-<version>-linux-x64.tar.gz` |
+| Linux (e.g. Raspberry Pi) | arm64 | `4-CollimationCircles-<version>-linux-arm64.tar.gz` |
+| macOS (Intel) | x64 | `5-CollimationCircles-<version>-osx-x64.tar.gz` |
+| macOS (Apple Silicon) | arm64 | `6-CollimationCircles-<version>-osx-arm64.tar.gz` |
 
-## Instalation on Linux
-1. Download latest version from GitHub releases page: https://github.com/sajmons/CollimationCircles/releases
-2. Extract the downloaded tar.gz file:
-```tar -xzf <downloaded-file>.tar.gz```
-3. Run the application by double clicking on it or run this command:
-```./CollimationCircles```
+Windows releases are packaged as ZIP files, while Linux and macOS releases are packaged as tar.gz files which preserve executable permissions.
+
+## Installation on Windows
+1. Download the ZIP file for your architecture (win-x64 or win-arm64) from the releases page.
+2. Extract the ZIP file to a folder of your choice.
+3. Run `CollimationCircles.exe`.
+
+If Windows SmartScreen warns about an unknown publisher, choose **More info** and then **Run anyway**.
+
+## Installation on macOS
+Requires macOS 11 or newer. Use the `osx-arm64` file on Apple Silicon and the `osx-x64` file on Intel Macs.
+
+1. Download the tar.gz file from the releases page, either with the browser or from the terminal, for example:
+```
+cd ~/Downloads
+curl -LO <url address from the releases page>
+```
+2. Extract the archive:
+```
+tar -xzf <downloaded-file>.tar.gz
+```
+3. Remove the quarantine attribute, because the app is not notarized by Apple:
+```
+xattr -dr com.apple.quarantine CollimationCircles.app
+```
+4. Optionally move the app to the Applications folder:
+```
+mv CollimationCircles.app /Applications/
+```
+5. Start the app by double clicking on `CollimationCircles.app` or with this command:
+```
+open /Applications/CollimationCircles.app
+```
+6. To use background screen capture, allow the app in **System Settings > Privacy & Security > Screen Recording** and restart the app. To use a camera, allow camera access when macOS asks for it.
+
+## Installation on Linux
+Use the `linux-x64` file on regular PCs and the `linux-arm64` file on 64-bit Raspberry Pi OS and other ARM boards.
+
+1. Download the tar.gz file from the releases page: https://github.com/sajmons/CollimationCircles/releases
+2. Extract it into a folder:
+```
+mkdir CollimationCircles
+tar -xzf <downloaded-file>.tar.gz -C CollimationCircles
+```
+3. Run the application by double clicking on `CollimationCircles` in your file manager or with this command:
+```
+cd CollimationCircles
+./CollimationCircles
+```
+4. Optional packages for background screen capture:
+   - X11 session: nothing to install.
+   - Wayland session (e.g. Ubuntu): `sudo apt install gstreamer1.0-tools gstreamer1.0-pipewire`. The desktop asks once for permission to share the screen.
+   - Wayland with wlroots desktops (e.g. Raspberry Pi OS, StellarMate): `sudo apt install grim`.
+
+If the main window is not transparent, see the known issue below.
 
 # How to use
 
@@ -118,155 +125,3 @@ xcompmgr
 and then run the CollimationCircles program again. Main Window should now be transparent!
 
 Latest version of **Raspberry PI OS Bookworm** uses newer Wayland window manager and transparency works as it should.
-
-# Running from GitHub source code (works on all platforms)
-After installing .NET Framework you type following terminal commands:
-```
-sudo apt-get install git
-```
-```
-git clone https://github.com/sajmons/CollimationCircles.git
-```
-```
-cd CollimationCircles/CollimationCircles
-```
-```
-dotnet run -f net10.0
-```
-
-# Building and publishing
-
-## Prerequisites for building
-To use this application, you must first install  Framework on your computer.
-
-##  Framework Instalation
-
-### Windows 10 and above
-https://learn.microsoft.com/en-us/dotnet/core/install/windows
-
-```
-winget install Microsoft.DotNet.SDK.10
-```
-
-### Ubuntu 22.04 and above
-https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu
-
-```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
-```
-
-### Raspbian OS Bullseye x64
-https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
-```
-wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-```
-```
-sudo dpkg -i packages-microsoft-prod.deb
-```
-```
-rm packages-microsoft-prod.deb
-```
-```
-sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
-```
-
-### Raspbian OS Bullseye ARM
-https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian
-```
-wget https://dot/v1/dotnet-install.sh -O dotnet-install.sh
-```
-```
-sudo chmod +x ./dotnet-install.sh
-```
-```
-sudo ./dotnet-install.sh --channel 10.0 --install-dir /opt/dotnet/
-```
-```
-echo 'export DOTNET_ROOT=/opt/dotnet/' >> ~/.bashrc
-echo 'export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools' >> ~/.bashrc
-```
-```
-sudo reboot
-```
-```
-dotnet --info
-```
-
-### macOS
-Use Homebrew and install .NET 10 + VLC first.
-
-1. Install Homebrew (if needed):
-```
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-```
-2. Install required tools and runtime dependencies:
-```
-brew update
-brew install git dotnet vlc
-```
-3. Verify installation:
-```
-dotnet --info
-dotnet --list-sdks
-dotnet --list-runtimes
-```
-
-For this project on Apple Silicon, these commands are recommended from repository root:
-
-```
-git clone https://github.com/sajmons/CollimationCircles.git
-cd CollimationCircles
-```
-
-Restore/build/run:
-```
-dotnet restore ./CollimationCircles/CollimationCircles.csproj -c Debug -r osx-arm64
-dotnet build CollimationCircles/CollimationCircles.csproj -c Debug -r osx-arm64
-dotnet run --project CollimationCircles/CollimationCircles.csproj -c Debug -r osx-arm64
-```
-
-Notes:
-- On macOS arm64, the app bootstraps VLC environment variables automatically at startup.
-- VLC should be installed as an app bundle (e.g. `/Applications/VLC.app`, or via Homebrew cask).
-- If VLC/libVLC is missing or incompatible, the app starts in degraded mode and shows a compatibility message.
-
-Publish a local release build (self-contained):
-```
-dotnet publish ./CollimationCircles/CollimationCircles.csproj \
-  -c Release -f net10.0 -r osx-arm64 \
-  --self-contained true \
-  -p:PublishSingleFile=true \
-  -p:PublishReadyToRun=true \
-  -o ./artifacts/publish/osx-arm64
-```
-
-Run published binary:
-```
-./artifacts/publish/osx-arm64/CollimationCircles
-```
-
-Create a tar.gz package for distribution:
-```
-mkdir -p ./artifacts/release
-tar -czf ./artifacts/release/CollimationCircles-net10.0-osx-arm64.tar.gz -C ./artifacts/publish/osx-arm64 .
-```
-
-Optional quick check before publishing:
-```
-dotnet clean ./CollimationCircles/CollimationCircles.csproj
-dotnet restore ./CollimationCircles/CollimationCircles.csproj -r osx-arm64 -p:RuntimeIdentifier=osx-arm64
-dotnet build ./CollimationCircles/CollimationCircles.csproj -c Release -f net10.0 -r osx-arm64
-```
-
-When restoring separately before a `--no-restore` publish, set `RuntimeIdentifier` explicitly as above (using the target RID). The project selects its OpenCV native runtime package using this property; `dotnet restore -r` alone does not set it for package selection.
-
-## Build and publish on Windows
-
-On windows I'm using these commands to make prebuild binaries.
-```
-dotnet restore .\CollimationCircles.sln -r win-x64
-```
-```
-dotnet publish -c Release -f net10.0 -r win-x64 -o D:\Projects\Publish\CC\win-64 --self-contained true /p:PublishSingleFile=true /p:PublishReadyToRun=true
-```
-For more on building see https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-publish.

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using CollimationCircles.Extensions;
 using CollimationCircles.Messages;
 using CollimationCircles.Models;
 using CollimationCircles.Services;
@@ -433,9 +434,9 @@ namespace CollimationCircles.ViewModels
                 var activeIds = adjustments.Where(a => a.Direction != "Fixed").Select(a => a.Id).ToList();
                 guidance = activeIds.Count switch
                 {
-                    0 => "Error is minimal. Stop adjusting.",
-                    1 => $"Turn only Screw {activeIds[0]}, then wait for the reading to settle and re-check.",
-                    _ => $"Turn only Screws {string.Join(" and ", activeIds)} together, then wait for the reading to settle and re-check."
+                    0 => ResSvc.TryGetString("GuidanceMinimal"),
+                    1 => ResSvc.TryGetString("GuidanceTurnOneScrew").F(activeIds[0]),
+                    _ => ResSvc.TryGetString("GuidanceTurnMultipleScrews").F(string.Join($" {ResSvc.TryGetString("And")} ", activeIds))
                 };
             }
 
@@ -590,7 +591,7 @@ namespace CollimationCircles.ViewModels
             return circles;
         }
 
-        private static (string Description, Dictionary<string, double>? Wavefront, Mat Image) RunAdvancedAnalysis(Mat image, bool insideFocus)
+        private (string Description, Dictionary<string, double>? Wavefront, Mat Image) RunAdvancedAnalysis(Mat image, bool insideFocus)
         {
             using Mat gray = new();
             Cv2.CvtColor(image, gray, ColorConversionCodes.BGR2GRAY);
@@ -616,7 +617,7 @@ namespace CollimationCircles.ViewModels
                 var cyan = new Scalar(255, 255, 0, 255);
                 Cv2.Circle(drawImage, new Point((int)x, (int)y), (int)Math.Round(radius), cyan, 2, LineTypes.AntiAlias);
                 DrawAlignmentMarkers(drawImage, new Point((int)x, (int)y), new Point((int)wavefront["CentroidX"], (int)wavefront["CentroidY"]),
-                    wavefront["ComaMagnitude"], $"{(insideFocus ? "In" : "Out")} focus  Offset {wavefront["ComaMagnitude"] * 100:F1}%  {wavefront["ComaAngle"]:F0} deg", ScaleOf(image));
+                    wavefront["ComaMagnitude"], ResSvc.TryGetString(insideFocus ? "OverlayInsideFocus" : "OverlayOutsideFocus").F(wavefront["ComaMagnitude"] * 100, wavefront["ComaAngle"]), ScaleOf(image));
             }
 
             return (DescribeAdvancedResult(wavefront), wavefront, drawImage);
@@ -647,18 +648,18 @@ namespace CollimationCircles.ViewModels
 
         private string DescribeOffsetScale(double offsetPx)
         {
-            string text = $"\nOffset: {offsetPx:F1} px";
+            string text = "\n" + ResSvc.TryGetString("AnalysisOffsetPx").F(offsetPx);
             double pixelUm = GetBinnedPixelUm();
             if (pixelUm > 0)
             {
-                text += $" ({offsetPx * pixelUm / 1000.0:F3} mm at sensor)";
+                text += " " + ResSvc.TryGetString("AnalysisOffsetMm").F(offsetPx * pixelUm / 1000.0);
                 if (settingsViewModel.TelescopeFocalLengthMm > 0)
                 {
-                    text += $", {offsetPx * 206.265 * pixelUm / settingsViewModel.TelescopeFocalLengthMm:F1} arcsec";
+                    text += $", {offsetPx * 206.265 * pixelUm / settingsViewModel.TelescopeFocalLengthMm:F1} {ResSvc.TryGetString("AnalysisArcsecUnit")}";
                 }
             }
 
-            text += $"\nDead zone: {GetDeadZonePx():F1} px";
+            text += "\n" + ResSvc.TryGetString("AnalysisDeadZone").F(GetDeadZonePx());
             return text;
         }
 
@@ -670,16 +671,16 @@ namespace CollimationCircles.ViewModels
             Mat drawnImage = new(image.Height, image.Width, MatType.CV_8UC4, Scalar.All(0));
             var analysis = AnalyzeResult(drawnImage, circles, options);
 
-            string desc = $"--- MECHANICAL RMSE ---\n" +
-                         $"Circles: {analysis.CircleCount}\n" +
-                         $"RMSE: {analysis.CenterRMSE:F2} px\n" +
-                         $"RMSE: {analysis.CenterRMSEPercent:F1}% of radius\n" +
-                         $"------------------------";
+            string desc = $"--- {ResSvc.TryGetString("AnalysisRmseHeader")} ---\n" +
+                         ResSvc.TryGetString("AnalysisCircles").F(analysis.CircleCount) + "\n" +
+                         ResSvc.TryGetString("AnalysisRmsePx").F(analysis.CenterRMSE) + "\n" +
+                         ResSvc.TryGetString("AnalysisRmsePercent").F(analysis.CenterRMSEPercent) + "\n" +
+                         "------------------------";
 
             Dictionary<string, double>? offset = null;
             if (circles.Count < 2)
             {
-                desc += $"\nNot enough circles detected ({circles.Count} of 2 needed). Adjust exposure/gain or camera position.";
+                desc += "\n" + ResSvc.TryGetString("AnalysisNotEnoughCircles").F(circles.Count);
             }
 
             if (circles.Count >= 2)
@@ -693,12 +694,12 @@ namespace CollimationCircles.ViewModels
                 double offsetPx = Math.Sqrt(dx * dx + dy * dy);
                 offset = new Dictionary<string, double> { { "ComaMagnitude", magnitude }, { "ComaAngle", angle }, { "OffsetPx", offsetPx }, { "CenterX", outer.CenterX }, { "CenterY", outer.CenterY }, { "ImageWidth", image.Width }, { "ImageHeight", image.Height } };
 
-                desc += $"\nInner/outer offset: {magnitude * 100:F1}% of radius\nOffset angle: {angle:F1}°";
+                desc += "\n" + ResSvc.TryGetString("AnalysisInnerOuterOffset").F(magnitude * 100) + "\n" + ResSvc.TryGetString("AnalysisOffsetAngle").F(angle);
                 desc += DescribeOffsetScale(offsetPx);
                 Cv2.Line(drawnImage, new Point(outer.X, outer.Y), new Point(inner.X, inner.Y), new Scalar(0, 255, 0, 255), 2, LineTypes.AntiAlias);
 
                 DrawAlignmentMarkers(drawnImage, new Point(outer.X, outer.Y), new Point(inner.X, inner.Y), magnitude,
-                    $"RMSE {analysis.CenterRMSEPercent:F1}%  {angle:F0} deg", ScaleOf(image));
+                    ResSvc.TryGetString("OverlayRmse").F(analysis.CenterRMSEPercent, angle), ScaleOf(image));
             }
 
             return (desc, drawnImage, offset);
@@ -727,17 +728,17 @@ namespace CollimationCircles.ViewModels
             Cv2.PutText(img, label, new Point(tx, ty), HersheyFonts.HersheySimplex, fontScale, markColor, thickness, LineTypes.AntiAlias);
         }        
 
-        private static string DescribeAdvancedResult(Dictionary<string, double>? wavefront)
+        private string DescribeAdvancedResult(Dictionary<string, double>? wavefront)
         {
             if (wavefront is null)
             {
-                return "Star not detected\n";
+                return ResSvc.TryGetString("AnalysisStarNotDetected") + "\n";
             }
 
-            return $"Focus: {(wavefront["InsideFocus"] > 0 ? "inside" : "outside")}\n" +
-                   $"Disc radius: {wavefront["Radius"]:F1}px\n" +
-                   $"Shadow offset: {wavefront["ComaMagnitude"] * 100:F1}% of radius\n" +
-                   $"Offset angle: {wavefront["ComaAngle"]:F1}°\n";
+            return ResSvc.TryGetString(wavefront["InsideFocus"] > 0 ? "AnalysisFocusInside" : "AnalysisFocusOutside") + "\n" +
+                   ResSvc.TryGetString("AnalysisDiscRadius").F(wavefront["Radius"]) + "\n" +
+                   ResSvc.TryGetString("AnalysisShadowOffset").F(wavefront["ComaMagnitude"] * 100) + "\n" +
+                   ResSvc.TryGetString("AnalysisOffsetAngle").F(wavefront["ComaAngle"]) + "\n";
         }
 
         private void UpdateScrewInstructions(List<ScrewAdjustment> adjustments, ScrewViewModel screwVM)
@@ -779,24 +780,25 @@ namespace CollimationCircles.ViewModels
 
         public IBrush Brush => new SolidColorBrush(Color);
 
-        public bool IsActive => DisplayText != "Locked";
+        public bool IsActive => Direction != "Fixed" && Turns * 360.0 >= 2;
 
         public string DisplayText => FormatTurns(Direction, Turns);
 
         private static string FormatTurns(string direction, double turns)
         {
+            var res = Ioc.Default.GetRequiredService<IResourceService>();
             const int steps = 16;
             double exactDegrees = turns * 360.0;
             if (direction == "Fixed" || exactDegrees < 2)
             {
-                return "Locked";
+                return res.TryGetString("ScrewLocked");
             }
 
-            string way = direction == "CW" ? "CW" : "CCW";
+            string way = res.TryGetString(direction == "CW" ? "ScrewClockwise" : "ScrewCounterclockwise");
             int sixteenths = (int)Math.Round(turns * steps);
             if (sixteenths == 0)
             {
-                return $"{way} small nudge (~{exactDegrees:F0}°)";
+                return $"{way} {res.TryGetString("ScrewSmallNudge").F(exactDegrees)}";
             }
             int whole = sixteenths / steps;
             int rest = sixteenths % steps;
@@ -814,8 +816,8 @@ namespace CollimationCircles.ViewModels
             }
 
             double degrees = sixteenths * 360.0 / steps;
-            string unit = sixteenths <= steps ? "turn" : "turns";
-            return $"{way} {amount} {unit} (~{degrees:F0}°)";
+            string unit = res.TryGetString(sixteenths <= steps ? "TurnSingular" : "TurnPlural");
+            return $"{way} {amount} {unit} {res.TryGetString("ScrewApproxDegrees").F(degrees)}";
         }
 
         private static int Gcd(int a, int b) => b == 0 ? a : Gcd(b, a % b);

@@ -52,6 +52,7 @@ public partial class App : Application
                     dialogFactory: new DialogFactory()
                         .AddMessageBox()),
                 viewModelFactory: x => Ioc.Default.GetService(x)))
+            .AddSingleton<INotificationService, NotificationService>()
             .AddSingleton<SettingsViewModel>()
             .AddSingleton<StreamViewModel>()
             .AddSingleton<AppLogViewModel>()
@@ -64,7 +65,7 @@ public partial class App : Application
             .AddTransient<IDrawHelperService, DrawHelperService>()
             .AddSingleton<IKeyHandlingService, KeyHandlingService>()
             .AddSingleton<ICameraControlService, CameraControlService>()
-            .AddSingleton<ICameraService, CameraService>()
+            .AddSingleton<ICameraService, CameraService>()            
             .BuildServiceProvider());
     }
 }

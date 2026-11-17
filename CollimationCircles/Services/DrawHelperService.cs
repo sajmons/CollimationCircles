@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using CollimationCircles.Models;
 using CollimationCircles.ViewModels;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Globalization;
 
@@ -68,7 +69,7 @@ namespace CollimationCircles.Services
                 if (item.IsLabelVisible)
                 {
                     var formattedText = new FormattedText(
-                        item?.Label ?? "Undefined",
+                        item?.Label ?? Ioc.Default.GetRequiredService<IResourceService>().TryGetString("Undefined"),
                         CultureInfo.CurrentCulture,
                         FlowDirection.LeftToRight,
                         Typeface.Default,

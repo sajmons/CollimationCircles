@@ -14,10 +14,10 @@
 		<TextBlock Text="{Binding SourceText}" FontSize="10" Opacity="0.7"/>
 
 		<StackPanel Orientation="Horizontal" Spacing="6">
-			<Button Content="Calibrate screws" Command="{Binding StartCalibrationCommand}" IsVisible="{Binding !IsCalibrating}"/>
-			<Button Content="Capture" Command="{Binding CaptureCalibrationCommand}" IsVisible="{Binding IsCalibrating}"/>
-			<Button Content="Cancel" Command="{Binding CancelCalibrationCommand}" IsVisible="{Binding IsCalibrating}"/>
-			<Button Content="Reset" Command="{Binding ClearCalibrationCommand}" IsVisible="{Binding HasCalibration}"/>
+			<Button Content="{DynamicResource Text.CalibrateScrews}" Command="{Binding StartCalibrationCommand}" IsVisible="{Binding !IsCalibrating}"/>
+			<Button Content="{DynamicResource Text.Capture}" Command="{Binding CaptureCalibrationCommand}" IsVisible="{Binding IsCalibrating}"/>
+			<Button Content="{DynamicResource Text.Cancel}" Command="{Binding CancelCalibrationCommand}" IsVisible="{Binding IsCalibrating}"/>
+			<Button Content="{DynamicResource Text.Reset}" Command="{Binding ClearCalibrationCommand}" IsVisible="{Binding HasCalibration}"/>
 		</StackPanel>
 	</StackPanel>
 </UserControl>

@@ -1,3 +1,4 @@
+using CollimationCircles.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
@@ -39,10 +40,10 @@ namespace CollimationCircles.ViewModels
         bool hasCalibration;
 
         [ObservableProperty]
-        string sourceText = "Guidance: estimated (not calibrated)";
+        string sourceText = string.Empty;
 
         partial void OnHasCalibrationChanged(bool value) =>
-            SourceText = value ? "Guidance: calibrated" : "Guidance: estimated (not calibrated)";
+            SourceText = ResSvc.TryGetString(value ? "GuidanceCalibrated" : "GuidanceEstimated");
 
         [ObservableProperty]
         string calibrationMessage = string.Empty;
@@ -50,7 +51,10 @@ namespace CollimationCircles.ViewModels
         public ScrewCalibrationViewModel()
         {
             settingsViewModel = Ioc.Default.GetRequiredService<SettingsViewModel>();
+            SourceText = ResSvc.TryGetString("GuidanceEstimated");
         }
+
+        private string ScrewLabel(int number) => $"{ResSvc.TryGetString("PrimaryScrew")} {number}";
 
         public void InvalidateIfScrewChanged()
         {
@@ -70,7 +74,7 @@ namespace CollimationCircles.ViewModels
                 screwVM?.Count, screwVM?.RotationAngle, calibratedRotation);
             screwResponse = null;
             HasCalibration = false;
-            CalibrationMessage = "Screw settings changed. Please recalibrate.";
+            CalibrationMessage = ResSvc.TryGetString("CalibrationScrewSettingsChanged");
             CalibrationChanged?.Invoke();
         }
 
@@ -130,8 +134,8 @@ namespace CollimationCircles.ViewModels
             if (screwVM is null || !IsAnyLiveAnalysisActive())
             {
                 CalibrationMessage = screwVM is null
-                    ? "Add a screw item first."
-                    : "Start live analysis (defocused star or optical tube) first.";
+                    ? ResSvc.TryGetString("CalibrationAddScrewFirst")
+                    : ResSvc.TryGetString("CalibrationStartLiveAnalysisFirst");
                 return;
             }
 
@@ -139,7 +143,7 @@ namespace CollimationCircles.ViewModels
             calibrationBaseline = null;
             logger.Info("Calibration started: screws={0}", screwVM.Count);
             IsCalibrating = true;
-            CalibrationMessage = "Do not touch the telescope, then press Capture to record the start position.";
+            CalibrationMessage = ResSvc.TryGetString("CalibrationDoNotTouch");
         }
 
         [RelayCommand]
@@ -152,11 +156,11 @@ namespace CollimationCircles.ViewModels
                 return;
             }
 
-            CalibrationMessage = "Measuring...";
+            CalibrationMessage = ResSvc.TryGetString("CalibrationMeasuring");
             var current = await MeasureOffsetAsync();
             if (current is null)
             {
-                CalibrationMessage = "No measurement: the analysis must detect both circles (inner and outer) for several frames. Adjust exposure/gain or nudge a screw so both circles are detected, then press Capture again.";
+                CalibrationMessage = ResSvc.TryGetString("CalibrationNoMeasurement");
                 return;
             }
 
@@ -164,7 +168,7 @@ namespace CollimationCircles.ViewModels
             {
                 calibrationBaseline = current;
                 logger.Info("Calibration baseline offset=({0:F4},{1:F4})", current.Value.X, current.Value.Y);
-                CalibrationMessage = "Turn the screw labelled 'Primary screw 1' on the image about 1/8 turn (45°) clockwise (tightening, seen from the screw head), wait, then press Capture.";
+                CalibrationMessage = ResSvc.TryGetString("CalibrationTurnFirstScrew").F(ScrewLabel(1));
                 return;
             }
 
@@ -173,7 +177,7 @@ namespace CollimationCircles.ViewModels
             double dy = current.Value.Y - start.Y;
             if (Math.Sqrt(dx * dx + dy * dy) < MinCalibrationDelta)
             {
-                CalibrationMessage = $"No change detected. Turn 'Primary screw {pendingResponse.Count + 1}' 1/8 turn clockwise (a little more if needed), wait, then press Capture.";
+                CalibrationMessage = ResSvc.TryGetString("CalibrationNoChange").F(ScrewLabel(pendingResponse.Count + 1));
                 return;
             }
 
@@ -184,14 +188,14 @@ namespace CollimationCircles.ViewModels
 
             if (pendingResponse.Count < screwVM.Count)
             {
-                CalibrationMessage = $"Screw {pendingResponse.Count} recorded. Now turn 'Primary screw {pendingResponse.Count + 1}' about 1/8 turn clockwise, wait, then press Capture.";
+                CalibrationMessage = ResSvc.TryGetString("CalibrationScrewRecorded").F(pendingResponse.Count, ScrewLabel(pendingResponse.Count + 1));
                 return;
             }
 
             if (CalculateCalibratedAdjustments(0.1, 0, pendingResponse) is null)
             {
                 IsCalibrating = false;
-                CalibrationMessage = "Screw directions are too similar. Check that each turn moved a different screw and repeat.";
+                CalibrationMessage = ResSvc.TryGetString("CalibrationScrewsTooSimilar");
                 return;
             }
 
@@ -202,7 +206,7 @@ namespace CollimationCircles.ViewModels
             calibratedRotation = screwVM.RotationAngle;
             HasCalibration = true;
             IsCalibrating = false;
-            CalibrationMessage = "Calibrated. Screw numbers match the 'Primary screw N' labels; CW means clockwise.";
+            CalibrationMessage = ResSvc.TryGetString("CalibrationDone").F(ResSvc.TryGetString("PrimaryScrew"));
             CalibrationChanged?.Invoke();
         }
 

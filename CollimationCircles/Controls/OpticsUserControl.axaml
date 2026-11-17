@@ -10,13 +10,13 @@
              x:Class="CollimationCircles.Controls.OpticsUserControl"
              x:DataType="vm:SettingsViewModel">
 
-    <GroupBox Header="Optics (optional)">
+    <GroupBox Header="{DynamicResource Text.OpticsOptional}">
         <StackPanel Spacing="{DynamicResource ControlSpacing}">
-            <TextBlock Text="Aperture (mm)" />
+            <TextBlock Text="{DynamicResource Text.ApertureMm}" />
             <NumericUpDown Value="{Binding TelescopeApertureMm}" Minimum="0" Maximum="10000" Increment="1" FormatString="0.#" />
-            <TextBlock Text="Focal length (mm)" />
+            <TextBlock Text="{DynamicResource Text.FocalLengthMm}" />
             <NumericUpDown Value="{Binding TelescopeFocalLengthMm}" Minimum="0" Maximum="100000" Increment="1" FormatString="0.#" />
-            <TextBlock Text="Pixel size (µm)" />
+            <TextBlock Text="{DynamicResource Text.PixelSizeUm}" />
             <NumericUpDown Value="{Binding CameraPixelSizeUm}" Minimum="0" Maximum="100" Increment="0.01" FormatString="0.00" />
         </StackPanel>
     </GroupBox>

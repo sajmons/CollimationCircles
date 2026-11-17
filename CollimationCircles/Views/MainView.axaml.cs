@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -20,8 +21,18 @@ namespace CollimationCircles.Views
         private readonly SettingsViewModel vm;
         private readonly IKeyHandlingService khs;
 
+        private readonly WindowNotificationManager _notificationManager;
+
         public MainView()
         {
+            _notificationManager = new WindowNotificationManager(this)
+            {
+                Position = NotificationPosition.BottomRight,
+                MaxItems = 3
+            };
+
+            Ioc.Default.GetRequiredService<INotificationService>().Initialize(_notificationManager);
+
             InitializeComponent();
 
             vm = Ioc.Default.GetRequiredService<SettingsViewModel>();
