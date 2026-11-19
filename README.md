@@ -28,9 +28,9 @@ https://saimons-astronomy.webador.com/software/collimation-circles
 - multiple platform support (Windows, Linux, macOS; x64 and arm64)
 - ASCOM Alpaca camera support: server discovery, live view with exposure, gain and binning controls, FITS frames with Bayer demosaicing
 - ASCOM Alpaca telescope mount control: tracking, park/unpark, slew speed and directional movement
-- collimation analysis of the live image or of a loaded image file: defocused star (Airy disc) analysis with inside/outside focus, optical tube analysis and guided screw calibration with per-screw adjustment instructions
+- collimation analysis of the live image: defocused star (Airy disc) analysis with inside/outside focus, optical tube analysis and guided screw calibration with per-screw adjustment instructions
+- background screen capture (e.g. a SharpCap preview) this can then be used as a source for Collimation analysis
 - automatic check for new versions, application log viewer and about dialog
-- background screen capture (e.g. a SharpCap preview) using native OS APIs: GDI on Windows, CoreGraphics on macOS (Screen Recording permission required), X11 on Linux, and the xdg-desktop-portal ScreenCast API with PipeWire on Wayland (asks once to share the screen; requires `gstreamer1.0-tools` and `gstreamer1.0-pipewire`), falling back to `grim` on wlroots desktops such as Raspberry Pi OS and StellarMate (`sudo apt install grim`, no prompt). The camera is offered on these supported platforms; permissions and backend availability are checked when capture starts. On Linux, application windows cannot be excluded from capture and may appear in the captured image.
 
 # Prebuild binaries
 Prebuild binary files are available for download on the releases page: https://github.com/sajmons/CollimationCircles/releases/
