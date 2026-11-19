@@ -9,7 +9,8 @@ namespace CollimationCircles.Services.ScreenCapturing
 {
     /// <summary>
     /// Hides application windows from screen capture so the content behind them is captured instead of our own
-    /// overlay. Supported on Windows 10 (2004+) and macOS; on Linux there is no equivalent for X11 or Wayland,
+    /// overlay. It is applied only for the duration of the application's own capture and restored right after,
+    /// so screenshots taken by the user or the system still include the windows. Supported on Windows 10 (2004+) and macOS; on Linux there is no equivalent for X11 or Wayland,
     /// so the call is a no-op and windows appear in captures.
     /// </summary>
     internal sealed class CaptureExclusion

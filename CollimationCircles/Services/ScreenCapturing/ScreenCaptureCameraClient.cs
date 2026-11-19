@@ -26,6 +26,7 @@ namespace CollimationCircles.Services.ScreenCapturing
         private static readonly NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
         private const int FrameIntervalMs = 250;
+        private const int ExclusionSettleMs = 40;
 
         private readonly CaptureExclusion exclusion = new();
         private CancellationTokenSource? cts;
@@ -97,7 +98,19 @@ namespace CollimationCircles.Services.ScreenCapturing
 
                     if (region is { Bounds: { Width: > 0, Height: > 0 } })
                     {
-                        using var frame = ToMat(backend.Capture(region));
+                        // Windows are excluded from capture only while we capture, so user screenshots still include them.
+                        ScreenCaptureFrame captured;
+                        try
+                        {
+                            await Task.Delay(ExclusionSettleMs, ct);
+                            captured = backend.Capture(region);
+                        }
+                        finally
+                        {
+                            await Dispatcher.UIThread.InvokeAsync(exclusion.Restore);
+                        }
+
+                        using var frame = ToMat(captured);
                         if (!ct.IsCancellationRequested)
                         {
                             // The captured screen is already visible behind the stream window, so only the overlay is drawn.
@@ -155,7 +168,6 @@ namespace CollimationCircles.Services.ScreenCapturing
             }
 
             var windows = lifetime.Windows;
-            exclusion.Apply(windows);
 
             Avalonia.Controls.Window? window = windows
                 .OfType<StreamView>()
@@ -169,6 +181,8 @@ namespace CollimationCircles.Services.ScreenCapturing
             {
                 return null;
             }
+
+            exclusion.Apply(windows);
 
             var bounds = target.GetCaptureRect();
             var screen = window.Screens.ScreenFromWindow(window) ?? window.Screens.Primary;
