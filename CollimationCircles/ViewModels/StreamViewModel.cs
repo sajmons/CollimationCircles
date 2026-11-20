@@ -91,6 +91,8 @@ namespace CollimationCircles.ViewModels
         [NotifyPropertyChangedFor(nameof(ConnectButtonText))]
         [NotifyPropertyChangedFor(nameof(CanEditServer))]
         [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
+        [NotifyPropertyChangedFor(nameof(CanControlFocuser))]
+        [NotifyPropertyChangedFor(nameof(CanMoveFocuser))]
         [NotifyPropertyChangedFor(nameof(ShowAlpacaServer))]
         private bool isServerConnected;
 
@@ -98,6 +100,8 @@ namespace CollimationCircles.ViewModels
         [NotifyPropertyChangedFor(nameof(CanEditServer))]
         [NotifyCanExecuteChangedFor(nameof(ToggleServerConnectionCommand))]
         [NotifyPropertyChangedFor(nameof(CanControlTelescope))]
+        [NotifyPropertyChangedFor(nameof(CanControlFocuser))]
+        [NotifyPropertyChangedFor(nameof(CanMoveFocuser))]
         private bool isServerBusy;
 
         [ObservableProperty]
@@ -486,6 +490,7 @@ namespace CollimationCircles.ViewModels
                     CameraList = BuildCameraList([]);
                     SelectedCamera = CameraList.FirstOrDefault();
                     await ResetTelescopeStateAsync();
+                    ResetFocuserState();
                     IsServerConnected = false;
                     return;
                 }
@@ -501,6 +506,7 @@ namespace CollimationCircles.ViewModels
                     ?? CameraList.FirstOrDefault(c => c.APIType is APIType.Alpaca)
                     ?? CameraList.FirstOrDefault();
                 await RefreshTelescopeMountsAsync(address, port);
+                await RefreshFocusersAsync(address, port);
                 IsServerConnected = true;
             }
             catch (TimeoutException ex)
@@ -508,12 +514,14 @@ namespace CollimationCircles.ViewModels
                 logger.Warn(ex, $"Connection to Alpaca server {AlpacaServerAddress}:{AlpacaServerPort} timed out");
                 IsServerConnected = false;
                 await ResetTelescopeStateAsync();
+                ResetFocuserState();
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Alpaca server connect/disconnect failed");
                 IsServerConnected = false;
                 await ResetTelescopeStateAsync();
+                ResetFocuserState();
             }
             finally
             {

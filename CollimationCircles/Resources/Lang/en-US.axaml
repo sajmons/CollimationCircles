@@ -217,6 +217,15 @@
     <system:String x:Key="Text.WaitingForFrame">Waiting for frame...</system:String>
     <system:String x:Key="Text.DefaultCameraName">Camera {0}</system:String>
     <system:String x:Key="Text.DefaultMountName">Mount {0}</system:String>
+    <system:String x:Key="Text.DefaultFocuserName">Focuser {0}</system:String>
+    <system:String x:Key="Text.FocuserControls">Focuser Controls</system:String>
+    <system:String x:Key="Text.FocuserDevice">Focuser:</system:String>
+    <system:String x:Key="Text.FocuserIn">◀ In</system:String>
+    <system:String x:Key="Text.FocuserOut">Out ▶</system:String>
+    <system:String x:Key="Text.FocuserHalt">Stop</system:String>
+    <system:String x:Key="Text.FocuserStep">Step size:</system:String>
+    <system:String x:Key="Text.FocuserInvertDirection">Invert In/Out</system:String>
+    <system:String x:Key="Text.FocuserPosition">Position:</system:String>
     <system:String x:Key="Text.Undefined">Undefined</system:String>
     <system:String x:Key="Text.CaptureExposing">Exposing</system:String>
     <system:String x:Key="Text.CaptureExposingProgress">Exposing {0:F2}/{1:F2}s</system:String>

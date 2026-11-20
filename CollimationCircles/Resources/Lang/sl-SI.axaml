@@ -203,6 +203,15 @@
     <system:String x:Key="Text.WaitingForFrame">Čakanje na sličico...</system:String>
     <system:String x:Key="Text.DefaultCameraName">Kamera {0}</system:String>
     <system:String x:Key="Text.DefaultMountName">Montaža {0}</system:String>
+    <system:String x:Key="Text.DefaultFocuserName">Izostritev {0}</system:String>
+    <system:String x:Key="Text.FocuserControls">Nadzor izostritve</system:String>
+    <system:String x:Key="Text.FocuserDevice">Izostritev:</system:String>
+    <system:String x:Key="Text.FocuserIn">◀ Noter</system:String>
+    <system:String x:Key="Text.FocuserOut">Ven ▶</system:String>
+    <system:String x:Key="Text.FocuserHalt">Ustavi</system:String>
+    <system:String x:Key="Text.FocuserStep">Velikost koraka:</system:String>
+    <system:String x:Key="Text.FocuserInvertDirection">Obrni noter/ven</system:String>
+    <system:String x:Key="Text.FocuserPosition">Položaj:</system:String>
     <system:String x:Key="Text.Undefined">Nedoločeno</system:String>
     <system:String x:Key="Text.CaptureExposing">Osvetljevanje</system:String>
     <system:String x:Key="Text.CaptureExposingProgress">Osvetljevanje {0:F2}/{1:F2}s</system:String>

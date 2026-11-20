@@ -39,6 +39,7 @@
                             <controls:LiveAnalysisUserControl/>
                             <controls:AlpacaServerUserControl />                            
                             <controls:AlpacaTelescopeUserControl />
+                            <controls:AlpacaFocuserUserControl />
                         </StackPanel>
                     </ScrollViewer>
 
