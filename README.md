@@ -1,7 +1,10 @@
 # Collimation Circles
 
-<img src="https://github.com/sajmons/CollimationCircles/assets/7437280/1424b10e-b81e-483d-bd1b-cf2ce30869a5" width="500">
-<img src="https://github.com/sajmons/CollimationCircles/assets/7437280/2495c622-4683-4d8e-b39d-667203580c19" width="500">
+| Defocused star analysis | Optical tube analysis |
+|----------|--------------|
+| <img width="1185" height="942" alt="image" src="https://github.com/user-attachments/assets/59cbc543-7c64-40ae-b296-3892544af612" /> | <img width="1185" height="942" alt="image" src="https://github.com/user-attachments/assets/0181f266-2ab2-46c2-beb4-58214d3b1f77" /> |
+| Main interface |  |
+| <img src="https://github.com/sajmons/CollimationCircles/assets/7437280/1424b10e-b81e-483d-bd1b-cf2ce30869a5" width="500"> | <img src="https://github.com/sajmons/CollimationCircles/assets/7437280/2495c622-4683-4d8e-b39d-667203580c19" width="500"> |
 
 This application was inspired by Mire De Collimation program written by Gilbert Grillot and Al's Collimation Aid. I combined best features of both and addes some of my own. Purpose of this program is not to reinvent the wheel, but rather to learn new technologies, become better at colimating my telescope and to learn something new.
 
