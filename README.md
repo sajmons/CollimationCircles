@@ -40,14 +40,14 @@ Prebuild binary files are available for download on the releases page: https://g
 
 The releases are self-contained, so you don't need to install .NET. Pick the file that matches your operating system and processor:
 
-| Platform | Architecture | File name |
-|----------|--------------|-----------|
-| Windows | x64 | `1-CollimationCircles-<version>-win-x64.zip` |
-| Windows | arm64 | `2-CollimationCircles-<version>-win-arm64.zip` |
-| Linux | x64 | `3-CollimationCircles-<version>-linux-x64.tar.gz` |
-| Linux (e.g. Raspberry Pi) | arm64 | `4-CollimationCircles-<version>-linux-arm64.tar.gz` |
-| macOS (Intel) | x64 | `5-CollimationCircles-<version>-osx-x64.tar.gz` |
-| macOS (Apple Silicon) | arm64 | `6-CollimationCircles-<version>-osx-arm64.tar.gz` |
+| Platform | Architecture |
+|----------|--------------|
+| Windows | x64 |
+| Windows | arm64 |
+| Linux | x64 |
+| Linux (e.g. Raspberry Pi) | arm64 |
+| macOS (Intel) | x64 |
+| macOS (Apple Silicon) | arm64 |
 
 Windows releases are packaged as ZIP files, while Linux and macOS releases are packaged as tar.gz files which preserve executable permissions.
 
